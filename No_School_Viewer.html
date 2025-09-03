@@ -102,7 +102,7 @@
     </div>
 
     <div class="footer">
-      Data source: <code id="dataUrlEcho"></code> • Auto‑refresh every <span id="refreshEcho"></span> min • Week start: Monday
+  Auto‑refresh every <span id="refreshEcho"></span> min • Week start: Monday
     </div>
   </div>
 
@@ -456,7 +456,7 @@
 
   // ===================== DATA LOAD =====================
   async function load(){
-    document.getElementById('dataUrlEcho').textContent = CONFIG.DATA_URL || '(sample data)';
+  // Removed dataUrlEcho display
     document.getElementById('refreshEcho').textContent = Math.round(CONFIG.REFRESH_MS/60000);
 
     try{
