@@ -311,14 +311,69 @@
             margin-bottom: 15px;
         }
 
+        .item-image-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            cursor: zoom-in;
+            text-decoration: none;
+        }
+
         .item-image {
-            max-width: 100%;
-            max-height: 100%;
+            max-width: 50%; /* show at half size while always fitting */
+            max-height: 50%;
             width: auto;
             height: auto;
             object-fit: contain; /* ensure the whole image is visible */
             object-position: center;
             display: block;
+        }
+
+        /* Lightbox styles */
+        .lightbox-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.75);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .lightbox-content {
+            position: relative;
+            max-width: 90vw;
+            max-height: 90vh;
+            background: #111;
+            border-radius: 10px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            padding: 10px;
+        }
+
+        .lightbox-img {
+            max-width: 88vw;
+            max-height: 80vh;
+            display: block;
+            border-radius: 6px;
+            background: #000;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 6px;
+            right: 10px;
+            background: rgba(255,255,255,0.9);
+            color: #333;
+            border: none;
+            border-radius: 20px;
+            width: 32px;
+            height: 32px;
+            font-size: 20px;
+            line-height: 32px;
+            text-align: center;
+            cursor: pointer;
         }
 
         .item-name {
@@ -584,6 +639,14 @@
             </form>
         </div>
     </div>
+    
+    <!-- Lightbox Overlay for image enlarge -->
+    <div id="lightboxOverlay" class="lightbox-overlay" aria-hidden="true">
+        <div class="lightbox-content" role="dialog" aria-modal="true">
+            <button id="lightboxClose" class="lightbox-close" aria-label="Close">×</button>
+            <img id="lightboxImg" class="lightbox-img" alt="Expanded image" src="" />
+        </div>
+    </div>
 
     <script>
         // Global variables
@@ -847,8 +910,10 @@
             container.innerHTML = availableItems.map((item, index) => `
                 <div class="item-card" data-item-id="${index}">
                     <div class="item-image-wrap">
-                        <img src="${item.image}" alt="${item.name}" class="item-image" 
-                             onerror="this.src='https://via.placeholder.com/300x200/cccccc/666666?text=No+Image'">
+                        <a href="${item.image}" class="item-image-link" data-image="${item.image}" data-title="${item.name}">
+                            <img src="${item.image}" alt="${item.name}" class="item-image" 
+                                 onerror="this.src='https://via.placeholder.com/300x200/cccccc/666666?text=No+Image'">
+                        </a>
                     </div>
                     <div class="item-name">${item.name}</div>
                     <div class="item-description">${item.description}</div>
@@ -975,7 +1040,69 @@
             
             // Check if returning from payment (optional)
             checkForPaymentReturn();
+
+            // Lightbox: delegate clicks on thumbnail links
+            document.addEventListener('click', function(e) {
+                const link = e.target.closest('.item-image-link');
+                if (link) {
+                    e.preventDefault();
+                    const src = link.dataset.image || link.getAttribute('href');
+                    const title = link.dataset.title || link.getAttribute('title') || '';
+                    openLightbox(src, title);
+                }
+            });
+
+            // Lightbox: clicking overlay outside image closes
+            const overlay = document.getElementById('lightboxOverlay');
+            const closeBtn = document.getElementById('lightboxClose');
+            if (overlay) {
+                overlay.addEventListener('click', function(e) {
+                    if (e.target === overlay) {
+                        closeLightbox();
+                    }
+                });
+            }
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function() { closeLightbox(); });
+            }
+            // ESC to close
+            window.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeLightbox();
+                }
+            });
         });
+
+        // Open the lightbox with the given image
+        function openLightbox(src, title) {
+            try {
+                const overlay = document.getElementById('lightboxOverlay');
+                const img = document.getElementById('lightboxImg');
+                if (!overlay || !img) return;
+                img.src = src || '';
+                img.alt = title || '';
+                overlay.style.display = 'flex';
+                overlay.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
+            } catch (err) {
+                console.error('Error opening lightbox:', err);
+            }
+        }
+
+        // Close the lightbox and reset content
+        function closeLightbox() {
+            try {
+                const overlay = document.getElementById('lightboxOverlay');
+                const img = document.getElementById('lightboxImg');
+                if (!overlay) return;
+                overlay.style.display = 'none';
+                overlay.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+                if (img) img.src = '';
+            } catch (err) {
+                console.error('Error closing lightbox:', err);
+            }
+        }
 
         // Check if user is returning from payment system
         async function checkForPaymentReturn() {
