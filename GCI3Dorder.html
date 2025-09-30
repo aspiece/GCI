@@ -590,42 +590,60 @@
         // Alternative: CSV format (easier to use)
         // const GOOGLE_SHEET_CSV = 'https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/export?format=csv&gid=0';
 
-        // Parse CSV data into array of objects
-        function parseCSV(csvText) {
-            const lines = csvText.trim().split('\n');
-            const headers = lines[0].split(',').map(header => header.trim().replace(/"/g, ''));
-            const rows = [];
-            
-            console.log('CSV Headers found:', headers);
-            
-            for (let i = 1; i < lines.length; i++) {
-                const values = [];
-                let current = '';
-                let inQuotes = false;
-                
-                // Parse CSV line, handling quoted values with commas
-                for (let j = 0; j < lines[i].length; j++) {
-                    const char = lines[i][j];
-                    if (char === '"') {
-                        inQuotes = !inQuotes;
-                    } else if (char === ',' && !inQuotes) {
-                        values.push(current.trim().replace(/"/g, ''));
-                        current = '';
+        // Normalize header names: strip BOM, trim, lowercase, snake_case
+        function normalizeHeader(h) {
+            return h.replace(/^\uFEFF/, '')
+                    .trim()
+                    .toLowerCase()
+                    .replace(/\s+/g, '_')
+                    .replace(/[^a-z0-9_]/g, '');
+        }
+
+        // Parse a single CSV line with support for quotes and escaped quotes
+        function parseCsvLine(line) {
+            const values = [];
+            let current = '';
+            let inQuotes = false;
+            for (let i = 0; i < line.length; i++) {
+                const ch = line[i];
+                if (ch === '"') {
+                    if (inQuotes && line[i + 1] === '"') {
+                        // Escaped quote
+                        current += '"';
+                        i++;
                     } else {
-                        current += char;
+                        inQuotes = !inQuotes;
                     }
-                }
-                values.push(current.trim().replace(/"/g, ''));
-                
-                if (values.length >= headers.length) {
-                    const row = {};
-                    headers.forEach((header, index) => {
-                        row[header] = values[index] || '';
-                    });
-                    rows.push(row);
+                } else if (ch === ',' && !inQuotes) {
+                    values.push(current);
+                    current = '';
+                } else {
+                    current += ch;
                 }
             }
-            
+            values.push(current);
+            return values.map(v => v.replace(/^\uFEFF/, '').replace(/\r$/, ''));
+        }
+
+        // Parse CSV data into array of objects (normalized keys)
+        function parseCSV(csvText) {
+            const cleaned = csvText.replace(/^\uFEFF/, ''); // remove BOM if present
+            const lines = cleaned.split(/\r?\n/).filter(l => l.length > 0);
+            if (lines.length === 0) return [];
+            const rawHeaders = parseCsvLine(lines[0]).map(h => h.replace(/"/g, ''));
+            const headers = rawHeaders.map(normalizeHeader);
+            console.log('CSV Headers (normalized):', headers);
+
+            const rows = [];
+            for (let i = 1; i < lines.length; i++) {
+                const vals = parseCsvLine(lines[i]).map(v => v.replace(/^\uFEFF/, '').replace(/^\"|\"$/g, '').trim());
+                if (vals.every(v => v === '')) continue; // skip empty lines
+                const row = {};
+                headers.forEach((h, idx) => {
+                    row[h] = (vals[idx] ?? '').trim();
+                });
+                rows.push(row);
+            }
             return rows;
         }
 
@@ -635,9 +653,10 @@
             console.log('Google Sheets URL:', GOOGLE_SHEET_URL);
             
             try {
-                // Load CSV data from Google Sheets
-                console.log('Fetching CSV data from Google Sheets...');
-                const response = await fetch(GOOGLE_SHEET_URL);
+                // Cache-busting and CORS-friendly fetch options
+                const url = GOOGLE_SHEET_URL + (GOOGLE_SHEET_URL.includes('?') ? '&' : '?') + 't=' + Date.now();
+                console.log('Fetching CSV data from:', url);
+                const response = await fetch(url, { cache: 'no-store', mode: 'cors', credentials: 'omit', redirect: 'follow', referrerPolicy: 'no-referrer' });
                 
                 console.log('Response status:', response.status);
                 console.log('Response headers:', Object.fromEntries(response.headers.entries()));
@@ -656,19 +675,23 @@
                 
                 // Parse CSV data
                 const rows = parseCSV(csvText);
-                console.log('Parsed CSV rows:', rows);
-                
+                console.log('Parsed CSV rows (count):', rows.length);
                 if (rows.length === 0) {
                     throw new Error('No data rows found in CSV');
                 }
                 
-                // Convert to our expected format
+                // Convert to our expected format using normalized keys
                 const items = rows.map((row, index) => {
+                    const name = row.name || '';
+                    const description = row.description || '';
+                    const priceStr = (row.price ?? '').toString();
+                    const price = parseFloat(priceStr.replace(/[^0-9.\-]/g, '')) || 0;
+                    const image = row.image_url || row.image || '';
                     const item = {
-                        name: row.Name || row.name || '',
-                        description: row.Description || row.description || '',
-                        price: parseFloat(row.Price || row.price || '0') || 0,
-                        image: row.Image_URL || row.image_url || row['Image URL'] || 'https://via.placeholder.com/300x200/cccccc/666666?text=No+Image'
+                        name,
+                        description,
+                        price,
+                        image: image || 'https://via.placeholder.com/300x200/cccccc/666666?text=No+Image'
                     };
                     console.log(`Row ${index + 1}:`, item);
                     return item;
@@ -677,7 +700,7 @@
                 console.log('Processed items from CSV:', items);
                 
                 // Filter out empty items (rows that have no name)
-                const validItems = items.filter(item => item.name && item.name.trim() !== '');
+                const validItems = items.filter(item => typeof item.name === 'string' && item.name.trim() !== '');
                 
                 if (validItems.length === 0) {
                     throw new Error('No valid items found - make sure Name column is not empty');
@@ -693,17 +716,12 @@
                 console.error('');
                 console.error('🔧 TROUBLESHOOTING CHECKLIST:');
                 console.error('1. ✅ Make sure your Google Sheet is published to the web as CSV:');
-                console.error('   - Go to File → Share → Publish to the web');
-                console.error('   - Select your sheet tab (not "Entire Document")');
-                console.error('   - Choose "Comma-separated values (.csv)" format');
-                console.error('   - Click "Publish"');
-                console.error('2. ✅ Check column headers (case-insensitive):');
-                console.error('   - Column A: Name');
-                console.error('   - Column B: Description');
-                console.error('   - Column C: Price (numbers only)');
-                console.error('   - Column D: Image_URL');
+                console.error('   - File → Share → Publish to the web → Select your sheet tab → CSV');
+                console.error('2. ✅ Check column headers (any case; we normalize them):');
+                console.error('   - Name, Description, Price, Image_URL (or "Image URL")');
                 console.error('3. ✅ Verify you have data in Row 2 and beyond');
-                console.error('4. ✅ Make sure there are no empty rows between data');
+                console.error('4. ✅ If opening this HTML file directly from disk, try serving over HTTP to avoid browser restrictions');
+                console.error('   - For example, use VS Code Live Server or a simple local server');
                 console.error('');
                 
                 // Show error message to user
