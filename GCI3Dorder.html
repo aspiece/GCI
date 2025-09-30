@@ -579,7 +579,7 @@
 
         // Configuration - Update this with your Google Sheet URLs
         // Your Product Sheet should be published to web and have columns: Name, Description, Price, Image_URL
-        const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSFv8ciBf5tpZ4_WKg_eV-qiUL0hF5G0-ucKI0NcETMosL2nG3gTOuyrLhR18AcH680fghVpcfhT13J/pubhtml';
+        const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1JNJhfEzoW06db6xEVsfJW9wEyb0sWaIqX356b4foqYk/edit?gid=774284231#gid=774284231';
         
         // Accounting/Transaction Sheet Configuration
         // Create a separate Google Sheet for logging transactions with these columns:
@@ -592,58 +592,30 @@
 
         // Load items from Google Sheets
         async function loadItemsFromGoogleSheets() {
+            console.log('Loading products from Google Sheets...');
+            console.log('Google Sheets URL:', GOOGLE_SHEET_URL);
+            
             try {
-                // For demo purposes, we'll use sample data. Replace this with actual Google Sheets integration
-                // To use real Google Sheets, uncomment the fetch code below and update the URL
-                
-                // Sample data - replace this with your actual Google Sheets integration
-                const sampleData = [
-                    {
-                        name: "Custom Phone Stand",
-                        description: "Adjustable phone stand perfect for video calls and watching videos. Available in multiple colors.",
-                        price: 15.99,
-                        image: "https://via.placeholder.com/300x200/667eea/white?text=Phone+Stand"
-                    },
-                    {
-                        name: "Desk Organizer",
-                        description: "Keep your desk tidy with this multi-compartment organizer. Great for pens, clips, and small items.",
-                        price: 22.50,
-                        image: "https://via.placeholder.com/300x200/764ba2/white?text=Desk+Organizer"
-                    },
-                    {
-                        name: "Plant Pot",
-                        description: "Beautiful geometric plant pot with drainage hole. Perfect for succulents and small plants.",
-                        price: 18.75,
-                        image: "https://via.placeholder.com/300x200/28a745/white?text=Plant+Pot"
-                    },
-                    {
-                        name: "Cable Management Clip",
-                        description: "Set of 5 clips to keep your cables organized and prevent them from falling behind your desk.",
-                        price: 8.99,
-                        image: "https://via.placeholder.com/300x200/ffc107/black?text=Cable+Clips"
-                    },
-                    {
-                        name: "Miniature Garden Tools",
-                        description: "Adorable set of miniature garden tools. Perfect for small planters or as decorative items.",
-                        price: 12.99,
-                        image: "https://via.placeholder.com/300x200/17a2b8/white?text=Garden+Tools"
-                    },
-                    {
-                        name: "Custom Keychain",
-                        description: "Personalized keychain with your name or custom text. Durable and lightweight plastic construction.",
-                        price: 6.50,
-                        image: "https://via.placeholder.com/300x200/e83e8c/white?text=Keychain"
-                    }
-                ];
-
-                /* 
-                // Uncomment this section to use real Google Sheets data
+                // Load data from Google Sheets
                 const response = await fetch(GOOGLE_SHEET_URL);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
                 const text = await response.text();
+                console.log('Google Sheets response received, length:', text.length);
                 
                 // Parse Google Sheets JSON response
+                // The response format is: google.visualization.Query.setResponse({...});
                 const jsonString = text.substring(47).slice(0, -2);
                 const data = JSON.parse(jsonString);
+                
+                console.log('Parsed Google Sheets data:', data);
+                
+                if (!data.table || !data.table.rows) {
+                    throw new Error('No table data found in Google Sheets response');
+                }
                 
                 const items = data.table.rows.map(row => ({
                     name: row.c[0]?.v || '',
@@ -651,14 +623,30 @@
                     price: parseFloat(row.c[2]?.v) || 0,
                     image: row.c[3]?.v || 'https://via.placeholder.com/300x200/cccccc/666666?text=No+Image'
                 }));
-                */
+                
+                console.log('Processed items from Google Sheets:', items);
+                
+                if (items.length === 0) {
+                    throw new Error('No items found in Google Sheets');
+                }
 
-                availableItems = sampleData;
+                availableItems = items;
+                console.log(`Successfully loaded ${items.length} products from Google Sheets`);
                 displayItems();
                 
             } catch (error) {
-                console.error('Error loading items:', error);
+                console.error('Error loading items from Google Sheets:', error);
+                console.error('Make sure your Google Sheet is:');
+                console.error('1. Published to the web');
+                console.error('2. Has the correct column headers: Name, Description, Price, Image_URL');
+                console.error('3. Contains data in those columns');
+                console.error('4. The GOOGLE_SHEET_URL is correct');
+                
+                // Show error message to user
                 showErrorMessage();
+                
+                // Set empty array so the rest of the app still works
+                availableItems = [];
             }
         }
 
@@ -1243,7 +1231,7 @@
         // Debug helper function to check system status
         function debugSystemStatus() {
             console.log('=== SYSTEM DEBUG STATUS ===');
-            console.log('Products loaded:', products.length > 0 ? `${products.length} products` : 'No products loaded');
+            console.log('Products loaded:', availableItems.length > 0 ? `${availableItems.length} products` : 'No products loaded');
             console.log('Cart items:', cartItems.length > 0 ? cartItems : 'Cart is empty');
             console.log('Google Sheets URL configured:', GOOGLE_SHEET_URL !== 'YOUR_GOOGLE_SHEET_URL_HERE');
             console.log('Google Apps Script URL configured:', GOOGLE_APPS_SCRIPT_URL !== 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE');
@@ -1271,7 +1259,7 @@
 
         // Load products on page load
         window.addEventListener('load', function() {
-            loadProducts();
+            loadItemsFromGoogleSheets();
             
             // Add debug info to console on load
             console.log('GCI 3D Order System loaded');
