@@ -579,7 +579,7 @@
 
         // Configuration - Update this with your Google Sheet URLs
         // Your Product Sheet should be published to web and have columns: Name, Description, Price, Image_URL
-        const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1JNJhfEzoW06db6xEVsfJW9wEyb0sWaIqX356b4foqYk/edit?gid=774284231#gid=774284231';
+        const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1JNJhfEzoW06db6xEVsfJW9wEyb0sWaIqX356b4foqYk/gviz/tq?tqx=out:json&gid=774284231';
         
         // Accounting/Transaction Sheet Configuration
         // Create a separate Google Sheet for logging transactions with these columns:
@@ -597,50 +597,95 @@
             
             try {
                 // Load data from Google Sheets
+                console.log('Fetching data from Google Sheets...');
                 const response = await fetch(GOOGLE_SHEET_URL);
                 
+                console.log('Response status:', response.status);
+                console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+                
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
                 }
                 
                 const text = await response.text();
                 console.log('Google Sheets response received, length:', text.length);
+                console.log('First 200 characters of response:', text.substring(0, 200));
+                
+                // Check if response looks like the expected format
+                if (!text.startsWith('google.visualization.Query.setResponse(')) {
+                    console.error('Unexpected response format. Full response:', text);
+                    throw new Error('Response is not in expected Google Visualization API format. Make sure the sheet is published to the web.');
+                }
                 
                 // Parse Google Sheets JSON response
                 // The response format is: google.visualization.Query.setResponse({...});
                 const jsonString = text.substring(47).slice(0, -2);
+                console.log('Extracted JSON string length:', jsonString.length);
+                
                 const data = JSON.parse(jsonString);
+                console.log('Parsed Google Sheets data structure:', {
+                    hasTable: !!data.table,
+                    hasRows: !!(data.table && data.table.rows),
+                    rowCount: data.table ? data.table.rows?.length || 0 : 0,
+                    hasColumns: !!(data.table && data.table.cols),
+                    columnCount: data.table ? data.table.cols?.length || 0 : 0
+                });
                 
-                console.log('Parsed Google Sheets data:', data);
-                
-                if (!data.table || !data.table.rows) {
-                    throw new Error('No table data found in Google Sheets response');
+                if (!data.table) {
+                    throw new Error('No table found in Google Sheets response - check if sheet exists and is accessible');
                 }
                 
-                const items = data.table.rows.map(row => ({
-                    name: row.c[0]?.v || '',
-                    description: row.c[1]?.v || '',
-                    price: parseFloat(row.c[2]?.v) || 0,
-                    image: row.c[3]?.v || 'https://via.placeholder.com/300x200/cccccc/666666?text=No+Image'
-                }));
+                if (!data.table.rows || data.table.rows.length === 0) {
+                    throw new Error('No rows found in Google Sheets - make sure your sheet has data beyond just headers');
+                }
+                
+                console.log('Column info:', data.table.cols?.map(col => col.label || col.id));
+                console.log('Raw row data (first row):', data.table.rows[0]);
+                
+                const items = data.table.rows.map((row, index) => {
+                    const item = {
+                        name: row.c[0]?.v || '',
+                        description: row.c[1]?.v || '',
+                        price: parseFloat(row.c[2]?.v) || 0,
+                        image: row.c[3]?.v || 'https://via.placeholder.com/300x200/cccccc/666666?text=No+Image'
+                    };
+                    console.log(`Row ${index}:`, item);
+                    return item;
+                });
                 
                 console.log('Processed items from Google Sheets:', items);
                 
-                if (items.length === 0) {
-                    throw new Error('No items found in Google Sheets');
+                // Filter out empty items (rows that have no name)
+                const validItems = items.filter(item => item.name.trim() !== '');
+                
+                if (validItems.length === 0) {
+                    throw new Error('No valid items found - make sure Name column is not empty');
                 }
 
-                availableItems = items;
-                console.log(`Successfully loaded ${items.length} products from Google Sheets`);
+                availableItems = validItems;
+                console.log(`Successfully loaded ${validItems.length} valid products from Google Sheets`);
                 displayItems();
                 
             } catch (error) {
-                console.error('Error loading items from Google Sheets:', error);
-                console.error('Make sure your Google Sheet is:');
-                console.error('1. Published to the web');
-                console.error('2. Has the correct column headers: Name, Description, Price, Image_URL');
-                console.error('3. Contains data in those columns');
-                console.error('4. The GOOGLE_SHEET_URL is correct');
+                console.error('❌ Error loading items from Google Sheets:', error);
+                console.error('Current URL:', GOOGLE_SHEET_URL);
+                console.error('');
+                console.error('🔧 TROUBLESHOOTING CHECKLIST:');
+                console.error('1. ✅ Make sure your Google Sheet is published to the web:');
+                console.error('   - Go to File → Share → Publish to the web');
+                console.error('   - Select your sheet tab (not "Entire Document")');
+                console.error('   - Choose "Web page" format');
+                console.error('   - Click "Publish"');
+                console.error('2. ✅ Check column headers (must be exact):');
+                console.error('   - Column A: Name');
+                console.error('   - Column B: Description');
+                console.error('   - Column C: Price');
+                console.error('   - Column D: Image_URL');
+                console.error('3. ✅ Verify you have data in Row 2 and beyond');
+                console.error('4. ✅ Check that the Sheet ID and GID are correct');
+                console.error('');
+                console.error('Current Sheet ID: 1JNJhfEzoW06db6xEVsfJW9wEyb0sWaIqX356b4foqYk');
+                console.error('Current GID: 774284231');
                 
                 // Show error message to user
                 showErrorMessage();
