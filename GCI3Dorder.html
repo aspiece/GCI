@@ -577,9 +577,12 @@
         let cartItems = [];
         let sheetsData = [];
 
-        // Configuration - Update this with your Google Sheet URLs
-        // Your Product Sheet should be published to web and have columns: Name, Description, Price, Image_URL
-        const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSFv8ciBf5tpZ4_WKg_eV-qiUL0hF5G0-ucKI0NcETMosL2nG3gTOuyrLhR18AcH680fghVpcfhT13J/pub?gid=774284231&single=true&output=csv';
+    // Configuration - Update this with your Google Sheet URLs
+    // Your Product Sheet should be published to web and have columns: Name, Description, Price, Image_URL
+    const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSFv8ciBf5tpZ4_WKg_eV-qiUL0hF5G0-ucKI0NcETMosL2nG3gTOuyrLhR18AcH680fghVpcfhT13J/pub?gid=774284231&single=true&output=csv';
+    // Optional: Provide Spreadsheet ID and GID for JSONP fallback (GViz) to bypass CORS when opened from file://
+    const PRODUCT_SHEET_ID = '1JNJhfEzoW06db6xEVsfJW9wEyb0sWaIqX356b4foqYk';
+    const PRODUCT_SHEET_GID = '774284231';
         
         // Accounting/Transaction Sheet Configuration
         // Create a separate Google Sheet for logging transactions with these columns:
@@ -729,7 +732,71 @@
                 
                 // Set empty array so the rest of the app still works
                 availableItems = [];
+                
+                // If likely a CORS issue from local file or network policy, try JSONP fallback
+                const isLocal = location.protocol === 'file:' || location.origin === 'null';
+                const looksLikeCors = /CORS|Access-Control-Allow-Origin|TypeError: Failed to fetch/i.test(String(error));
+                if (isLocal || looksLikeCors) {
+                    console.warn('Attempting JSONP (GViz) fallback due to possible CORS/local file restriction...');
+                    try {
+                        const items = await loadItemsViaGvizJsonp(PRODUCT_SHEET_ID, PRODUCT_SHEET_GID);
+                        if (items && items.length) {
+                            availableItems = items;
+                            console.log(`✅ Successfully loaded ${items.length} products via GViz JSONP fallback`);
+                            displayItems();
+                            return;
+                        }
+                    } catch (fallbackErr) {
+                        console.error('GViz JSONP fallback failed:', fallbackErr);
+                    }
+                }
             }
+        }
+
+        // JSONP (GViz) fallback to bypass CORS when running from file:// or blocked environments
+        function loadItemsViaGvizJsonp(sheetId, gid) {
+            return new Promise((resolve, reject) => {
+                if (!sheetId || !gid) {
+                    return reject(new Error('Sheet ID and GID are required for GViz fallback'));
+                }
+                const callbackName = 'gvizCallback_' + Math.random().toString(36).slice(2);
+                const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gid}&t=${Date.now()}&callback=${callbackName}`;
+                console.log('GViz JSONP URL:', url);
+
+                const timeout = setTimeout(() => {
+                    cleanup();
+                    reject(new Error('GViz JSONP request timed out'));
+                }, 15000);
+
+                function cleanup() {
+                    clearTimeout(timeout);
+                    try { delete window[callbackName]; } catch (_) {}
+                    if (script && script.parentNode) script.parentNode.removeChild(script);
+                }
+
+                window[callbackName] = function(response) {
+                    cleanup();
+                    try {
+                        if (!response || !response.table || !response.table.rows) {
+                            return reject(new Error('Invalid GViz response'));
+                        }
+                        const items = response.table.rows.map(row => ({
+                            name: row.c[0]?.v || '',
+                            description: row.c[1]?.v || '',
+                            price: parseFloat((row.c[2]?.v ?? '0').toString().replace(/[^0-9.\-]/g, '')) || 0,
+                            image: row.c[3]?.v || 'https://via.placeholder.com/300x200/cccccc/666666?text=No+Image'
+                        })).filter(it => it.name.trim() !== '');
+                        resolve(items);
+                    } catch (err) {
+                        reject(err);
+                    }
+                };
+
+                const script = document.createElement('script');
+                script.src = url;
+                script.onerror = () => { cleanup(); reject(new Error('GViz JSONP script load error')); };
+                document.head.appendChild(script);
+            });
         }
 
         // Display items in the UI
