@@ -221,9 +221,14 @@
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
         }
 
-        .submit-btn:hover {
+        .submit-btn:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
         }
 
         .reset-btn {
@@ -249,6 +254,177 @@
             font-style: italic;
         }
 
+        /* Item Selection Styles */
+        .loading-message, .error-message {
+            text-align: center;
+            padding: 40px 20px;
+            font-size: 1.1em;
+        }
+
+        .loading-message {
+            color: #667eea;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            background-color: #ffe6e6;
+            border-radius: 8px;
+        }
+
+        .items-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .item-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            background: white;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .item-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .item-card.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
+        }
+
+        .item-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            background: #f5f5f5;
+        }
+
+        .item-name {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .item-description {
+            color: #666;
+            font-size: 0.95em;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .item-price {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .item-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .quantity-btn {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .quantity-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .quantity-input {
+            width: 60px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 5px;
+        }
+
+        /* Cart Styles */
+        .cart-container {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .empty-cart {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 40px 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .cart-item-details {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .cart-item-total {
+            font-weight: bold;
+            color: #667eea;
+            margin-left: 20px;
+        }
+
+        .remove-item {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
+
+        .remove-item:hover {
+            background: #c0392b;
+        }
+
         @media (max-width: 768px) {
             .form-row {
                 flex-direction: column;
@@ -268,6 +444,16 @@
             .form-container {
                 padding: 20px;
             }
+
+            .items-container {
+                grid-template-columns: 1fr;
+            }
+
+            .cart-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
         }
     </style>
 </head>
@@ -275,7 +461,7 @@
     <div class="container">
         <div class="header">
             <h1>🖨️ 3D Print Order Form</h1>
-            <p>Get your custom 3D prints made with precision and quality</p>
+            <p>Turn your digital designs into real objects - we'll handle all the technical details!</p>
         </div>
 
         <div class="form-container">
@@ -313,239 +499,72 @@
                     </div>
                 </div>
 
-                <!-- Project Details Section -->
+                <!-- Item Selection Section -->
                 <div class="form-section">
-                    <h2 class="section-title">📋 Project Details</h2>
+                    <h2 class="section-title">�️ Choose Your Items</h2>
                     
-                    <div class="form-group">
-                        <label for="projectName">Project Name <span class="required">*</span></label>
-                        <input type="text" id="projectName" name="projectName" required>
-                        <div class="help-text">Give your project a descriptive name</div>
+                    <div id="loadingMessage" class="loading-message">
+                        <p>🔄 Loading available items...</p>
                     </div>
 
-                    <div class="form-group">
-                        <label for="description">Project Description</label>
-                        <textarea id="description" name="description" placeholder="Describe your 3D print project, intended use, special requirements, etc."></textarea>
+                    <div id="itemsContainer" class="items-container" style="display: none;">
+                        <!-- Items will be loaded here from Google Sheets -->
                     </div>
 
-                    <div class="form-group">
-                        <label for="quantity">Quantity <span class="required">*</span></label>
-                        <input type="number" id="quantity" name="quantity" min="1" value="1" required>
-                        <div class="help-text">How many copies do you need?</div>
+                    <div id="errorMessage" class="error-message" style="display: none;">
+                        <p>❌ Unable to load items. Please refresh the page or contact us.</p>
                     </div>
                 </div>
 
-                <!-- File Upload Section -->
+                <!-- Selected Items Summary -->
                 <div class="form-section">
-                    <h2 class="section-title">📁 3D Model Files</h2>
+                    <h2 class="section-title">🛒 Your Selected Items</h2>
                     
-                    <div class="form-group">
-                        <label for="modelFile">Upload 3D Model File <span class="required">*</span></label>
-                        <input type="file" id="modelFile" name="modelFile" accept=".stl,.obj,.3mf,.ply,.amf" required>
-                        <div class="help-text">Accepted formats: STL, OBJ, 3MF, PLY, AMF (Max size: 50MB)</div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="additionalFiles">Additional Files (Optional)</label>
-                        <input type="file" id="additionalFiles" name="additionalFiles" multiple>
-                        <div class="help-text">Reference images, technical drawings, or additional model files</div>
-                    </div>
-                </div>
-
-                <!-- Print Specifications Section -->
-                <div class="form-section">
-                    <h2 class="section-title">⚙️ Print Specifications</h2>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="material">Material <span class="required">*</span></label>
-                            <select id="material" name="material" required>
-                                <option value="">Select Material</option>
-                                <option value="pla" data-price="0.05">PLA - $0.05/gram</option>
-                                <option value="abs" data-price="0.06">ABS - $0.06/gram</option>
-                                <option value="petg" data-price="0.07">PETG - $0.07/gram</option>
-                                <option value="tpu" data-price="0.12">TPU (Flexible) - $0.12/gram</option>
-                                <option value="wood" data-price="0.10">Wood Fill - $0.10/gram</option>
-                                <option value="metal" data-price="0.15">Metal Fill - $0.15/gram</option>
-                                <option value="carbon" data-price="0.20">Carbon Fiber - $0.20/gram</option>
-                                <option value="resin" data-price="0.25">Resin - $0.25/gram</option>
-                            </select>
+                    <div id="cartContainer" class="cart-container">
+                        <div id="emptyCart" class="empty-cart">
+                            <p>No items selected yet. Choose items from above to add them to your order.</p>
                         </div>
-                        <div class="form-group">
-                            <label for="color">Color</label>
-                            <select id="color" name="color">
-                                <option value="white">White</option>
-                                <option value="black">Black</option>
-                                <option value="red">Red</option>
-                                <option value="blue">Blue</option>
-                                <option value="green">Green</option>
-                                <option value="yellow">Yellow</option>
-                                <option value="orange">Orange</option>
-                                <option value="purple">Purple</option>
-                                <option value="gray">Gray</option>
-                                <option value="natural">Natural</option>
-                                <option value="custom">Custom (specify in notes)</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="quality">Print Quality <span class="required">*</span></label>
-                            <div class="radio-group">
-                                <div class="radio-item">
-                                    <input type="radio" id="draft" name="quality" value="draft" data-multiplier="0.8">
-                                    <label for="draft">Draft (0.3mm) - Fast & Economical</label>
-                                </div>
-                                <div class="radio-item">
-                                    <input type="radio" id="standard" name="quality" value="standard" data-multiplier="1.0" checked>
-                                    <label for="standard">Standard (0.2mm) - Good Quality</label>
-                                </div>
-                                <div class="radio-item">
-                                    <input type="radio" id="high" name="quality" value="high" data-multiplier="1.5">
-                                    <label for="high">High (0.1mm) - Fine Detail</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="infill">Infill Density</label>
-                            <select id="infill" name="infill">
-                                <option value="10">10% - Hollow/Light</option>
-                                <option value="20" selected>20% - Standard</option>
-                                <option value="50">50% - Strong</option>
-                                <option value="80">80% - Very Strong</option>
-                                <option value="100">100% - Solid</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="supports">Support Material</label>
-                            <div class="radio-group">
-                                <div class="radio-item">
-                                    <input type="radio" id="noSupports" name="supports" value="none" checked>
-                                    <label for="noSupports">None</label>
-                                </div>
-                                <div class="radio-item">
-                                    <input type="radio" id="autoSupports" name="supports" value="auto">
-                                    <label for="autoSupports">Auto-Generate</label>
-                                </div>
-                                <div class="radio-item">
-                                    <input type="radio" id="customSupports" name="supports" value="custom">
-                                    <label for="customSupports">Custom</label>
-                                </div>
-                            </div>
+                        <div id="cartItems" style="display: none;">
+                            <!-- Selected items will appear here -->
                         </div>
                     </div>
                 </div>
 
-                <!-- Dimensions and Scaling -->
-                <div class="form-section">
-                    <h2 class="section-title">📏 Dimensions & Scaling</h2>
-                    
-                    <div class="form-group">
-                        <label>
-                            <input type="checkbox" id="customSize" name="customSize">
-                            Scale to custom dimensions
-                        </label>
-                    </div>
 
-                    <div id="dimensionsSection" style="display: none;">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="width">Width (mm)</label>
-                                <input type="number" id="width" name="width" step="0.1">
-                            </div>
-                            <div class="form-group">
-                                <label for="height">Height (mm)</label>
-                                <input type="number" id="height" name="height" step="0.1">
-                            </div>
-                            <div class="form-group">
-                                <label for="depth">Depth (mm)</label>
-                                <input type="number" id="depth" name="depth" step="0.1">
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Post-Processing -->
-                <div class="form-section">
-                    <h2 class="section-title">✨ Post-Processing</h2>
-                    
-                    <div class="checkbox-group">
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="sanding" name="postProcessing" value="sanding">
-                            <label for="sanding">Sanding (+$10)</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="painting" name="postProcessing" value="painting">
-                            <label for="painting">Painting (+$25)</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="assembly" name="postProcessing" value="assembly">
-                            <label for="assembly">Assembly (+$15)</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="drilling" name="postProcessing" value="drilling">
-                            <label for="drilling">Drilling Holes (+$5)</label>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Timeline -->
-                <div class="form-section">
-                    <h2 class="section-title">⏰ Timeline</h2>
-                    
-                    <div class="form-group">
-                        <label for="urgency">Delivery Priority</label>
-                        <div class="radio-group">
-                            <div class="radio-item">
-                                <input type="radio" id="standard-delivery" name="urgency" value="standard" data-rush="1.0" checked>
-                                <label for="standard-delivery">Standard (5-7 business days)</label>
-                            </div>
-                            <div class="radio-item">
-                                <input type="radio" id="rush" name="urgency" value="rush" data-rush="1.5">
-                                <label for="rush">Rush (2-3 business days) +50%</label>
-                            </div>
-                            <div class="radio-item">
-                                <input type="radio" id="express" name="urgency" value="express" data-rush="2.0">
-                                <label for="express">Express (24-48 hours) +100%</label>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="form-group">
-                        <label for="deadline">Preferred Completion Date</label>
-                        <input type="date" id="deadline" name="deadline">
-                    </div>
-                </div>
+
+
+
+
 
                 <!-- Special Instructions -->
                 <div class="form-section">
-                    <h2 class="section-title">💬 Special Instructions</h2>
+                    <h2 class="section-title">💬 Anything else we should know?</h2>
                     
                     <div class="form-group">
-                        <label for="instructions">Additional Instructions or Notes</label>
-                        <textarea id="instructions" name="instructions" placeholder="Any special requirements, concerns, or instructions for your 3D print..."></textarea>
+                        <label for="instructions">Tell us anything else that might be helpful</label>
+                        <textarea id="instructions" name="instructions" placeholder="Any special colors, concerns, or other details you want us to know about..."></textarea>
+                        <div class="help-text">This is optional, but the more you tell us, the better we can make your project!</div>
                     </div>
                 </div>
 
-                <!-- Price Estimate -->
+                <!-- Order Total -->
                 <div class="price-display">
-                    <h3>Estimated Total</h3>
+                    <h3>Order Total</h3>
                     <div class="price-amount" id="totalPrice">$0.00</div>
-                    <p>*Final price may vary based on actual model complexity and material usage</p>
+                    <p>*All prices are final. No hidden fees or additional charges.</p>
                 </div>
 
                 <!-- Submit Section -->
                 <div class="submit-section">
                     <p style="margin-bottom: 20px; color: #666;">
-                        By submitting this order, you agree to our terms of service and pricing structure.
-                        We'll contact you within 24 hours to confirm details and provide final pricing.
+                        By proceeding to payment, you agree to our terms of service and pricing.
+                        You will be redirected to a secure payment system to complete your transaction.
                     </p>
                     
-                    <button type="submit" class="submit-btn">🚀 Submit Order Request</button>
+                    <button type="submit" class="submit-btn" id="submitBtn">💳 Proceed to Payment</button>
                     <button type="reset" class="reset-btn">🔄 Reset Form</button>
                 </div>
             </form>
@@ -553,107 +572,312 @@
     </div>
 
     <script>
-        // Price calculation functionality
-        function calculatePrice() {
-            let basePrice = 25; // Base service fee
-            let materialPrice = 0;
-            let qualityMultiplier = 1;
-            let rushMultiplier = 1;
-            let postProcessingCost = 0;
-            let quantity = parseInt(document.getElementById('quantity').value) || 1;
+        // Global variables
+        let availableItems = [];
+        let cartItems = [];
+        let sheetsData = [];
 
-            // Material pricing (assuming 50g average weight for calculation)
-            const material = document.getElementById('material');
-            if (material.value) {
-                const pricePerGram = parseFloat(material.selectedOptions[0].dataset.price) || 0;
-                materialPrice = pricePerGram * 50; // 50g average
-            }
+        // Configuration - Update this with your Google Sheet URLs
+        // Your Product Sheet should be published to web and have columns: Name, Description, Price, Image_URL
+        const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSFv8ciBf5tpZ4_WKg_eV-qiUL0hF5G0-ucKI0NcETMosL2nG3gTOuyrLhR18AcH680fghVpcfhT13J/pubhtml';
+        
+        // Accounting/Transaction Sheet Configuration
+        // Create a separate Google Sheet for logging transactions with these columns:
+        // Order_Date, Transaction_ID, Customer_Name, Customer_Email, Customer_Phone, Company, Items_Ordered, Total_Amount, Payment_Status, Instructions
+        const ACCOUNTING_SHEET_ID = '1kVKEbZmfL_ylcCRf7r29SsiBAmx3igna1JPB5NMKG1I';
+        const GOOGLE_APPS_SCRIPT_URL = `https://script.google.com/a/macros/geneseeisd.org/s/AKfycbyD1M9Nu_UnhWQW7cG-9bF0gzUvTanCH8BX1WcgAeZc9w_zyXecwZpvMBSsEj85huGmiQ/exec`;
+        
+        // Alternative: CSV format (easier to use)
+        // const GOOGLE_SHEET_CSV = 'https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/export?format=csv&gid=0';
 
-            // Quality multiplier
-            const qualityRadios = document.getElementsByName('quality');
-            for (let radio of qualityRadios) {
-                if (radio.checked) {
-                    qualityMultiplier = parseFloat(radio.dataset.multiplier) || 1;
-                    break;
-                }
-            }
-
-            // Rush multiplier
-            const urgencyRadios = document.getElementsByName('urgency');
-            for (let radio of urgencyRadios) {
-                if (radio.checked) {
-                    rushMultiplier = parseFloat(radio.dataset.rush) || 1;
-                    break;
-                }
-            }
-
-            // Post-processing costs
-            const postProcessingChecks = document.getElementsByName('postProcessing');
-            for (let check of postProcessingChecks) {
-                if (check.checked) {
-                    switch (check.value) {
-                        case 'sanding': postProcessingCost += 10; break;
-                        case 'painting': postProcessingCost += 25; break;
-                        case 'assembly': postProcessingCost += 15; break;
-                        case 'drilling': postProcessingCost += 5; break;
+        // Load items from Google Sheets
+        async function loadItemsFromGoogleSheets() {
+            try {
+                // For demo purposes, we'll use sample data. Replace this with actual Google Sheets integration
+                // To use real Google Sheets, uncomment the fetch code below and update the URL
+                
+                // Sample data - replace this with your actual Google Sheets integration
+                const sampleData = [
+                    {
+                        name: "Custom Phone Stand",
+                        description: "Adjustable phone stand perfect for video calls and watching videos. Available in multiple colors.",
+                        price: 15.99,
+                        image: "https://via.placeholder.com/300x200/667eea/white?text=Phone+Stand"
+                    },
+                    {
+                        name: "Desk Organizer",
+                        description: "Keep your desk tidy with this multi-compartment organizer. Great for pens, clips, and small items.",
+                        price: 22.50,
+                        image: "https://via.placeholder.com/300x200/764ba2/white?text=Desk+Organizer"
+                    },
+                    {
+                        name: "Plant Pot",
+                        description: "Beautiful geometric plant pot with drainage hole. Perfect for succulents and small plants.",
+                        price: 18.75,
+                        image: "https://via.placeholder.com/300x200/28a745/white?text=Plant+Pot"
+                    },
+                    {
+                        name: "Cable Management Clip",
+                        description: "Set of 5 clips to keep your cables organized and prevent them from falling behind your desk.",
+                        price: 8.99,
+                        image: "https://via.placeholder.com/300x200/ffc107/black?text=Cable+Clips"
+                    },
+                    {
+                        name: "Miniature Garden Tools",
+                        description: "Adorable set of miniature garden tools. Perfect for small planters or as decorative items.",
+                        price: 12.99,
+                        image: "https://via.placeholder.com/300x200/17a2b8/white?text=Garden+Tools"
+                    },
+                    {
+                        name: "Custom Keychain",
+                        description: "Personalized keychain with your name or custom text. Durable and lightweight plastic construction.",
+                        price: 6.50,
+                        image: "https://via.placeholder.com/300x200/e83e8c/white?text=Keychain"
                     }
-                }
+                ];
+
+                /* 
+                // Uncomment this section to use real Google Sheets data
+                const response = await fetch(GOOGLE_SHEET_URL);
+                const text = await response.text();
+                
+                // Parse Google Sheets JSON response
+                const jsonString = text.substring(47).slice(0, -2);
+                const data = JSON.parse(jsonString);
+                
+                const items = data.table.rows.map(row => ({
+                    name: row.c[0]?.v || '',
+                    description: row.c[1]?.v || '',
+                    price: parseFloat(row.c[2]?.v) || 0,
+                    image: row.c[3]?.v || 'https://via.placeholder.com/300x200/cccccc/666666?text=No+Image'
+                }));
+                */
+
+                availableItems = sampleData;
+                displayItems();
+                
+            } catch (error) {
+                console.error('Error loading items:', error);
+                showErrorMessage();
             }
-
-            // Calculate total
-            const subtotal = (basePrice + materialPrice) * qualityMultiplier;
-            const total = (subtotal + postProcessingCost) * rushMultiplier * quantity;
-
-            // Display price
-            document.getElementById('totalPrice').textContent = `$${total.toFixed(2)}`;
         }
 
-        // Custom dimensions toggle
-        document.getElementById('customSize').addEventListener('change', function() {
-            const dimensionsSection = document.getElementById('dimensionsSection');
-            dimensionsSection.style.display = this.checked ? 'block' : 'none';
-        });
-
-        // Add event listeners for price calculation
-        document.addEventListener('DOMContentLoaded', function() {
-            const priceInputs = [
-                'quantity', 'material', 'quality', 'urgency'
-            ];
+        // Display items in the UI
+        function displayItems() {
+            const container = document.getElementById('itemsContainer');
+            const loadingMessage = document.getElementById('loadingMessage');
             
-            priceInputs.forEach(id => {
-                const element = document.getElementById(id);
-                if (element) {
-                    element.addEventListener('change', calculatePrice);
-                }
-            });
+            loadingMessage.style.display = 'none';
+            container.style.display = 'block';
+            
+            container.innerHTML = availableItems.map((item, index) => `
+                <div class="item-card" data-item-id="${index}">
+                    <img src="${item.image}" alt="${item.name}" class="item-image" 
+                         onerror="this.src='https://via.placeholder.com/300x200/cccccc/666666?text=No+Image'">
+                    <div class="item-name">${item.name}</div>
+                    <div class="item-description">${item.description}</div>
+                    <div class="item-price">$${item.price.toFixed(2)}</div>
+                    <div class="item-controls">
+                        <div class="quantity-control">
+                            <button type="button" class="quantity-btn" onclick="changeQuantity(${index}, -1)">-</button>
+                            <input type="number" class="quantity-input" id="qty-${index}" value="0" min="0" onchange="updateItemQuantity(${index})">
+                            <button type="button" class="quantity-btn" onclick="changeQuantity(${index}, 1)">+</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
 
-            // Add listeners for radio buttons
-            const radioGroups = ['quality', 'urgency'];
-            radioGroups.forEach(name => {
-                const radios = document.getElementsByName(name);
-                for (let radio of radios) {
-                    radio.addEventListener('change', calculatePrice);
-                }
-            });
+        // Show error message
+        function showErrorMessage() {
+            document.getElementById('loadingMessage').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'block';
+        }
 
-            // Add listeners for post-processing checkboxes
-            const postProcessingChecks = document.getElementsByName('postProcessing');
-            for (let check of postProcessingChecks) {
-                check.addEventListener('change', calculatePrice);
+        // Change quantity of an item
+        function changeQuantity(itemId, change) {
+            const qtyInput = document.getElementById(`qty-${itemId}`);
+            const currentQty = parseInt(qtyInput.value) || 0;
+            const newQty = Math.max(0, currentQty + change);
+            qtyInput.value = newQty;
+            updateItemQuantity(itemId);
+        }
+
+        // Update item quantity and cart
+        function updateItemQuantity(itemId) {
+            const qtyInput = document.getElementById(`qty-${itemId}`);
+            const quantity = parseInt(qtyInput.value) || 0;
+            const item = availableItems[itemId];
+            
+            // Remove item from cart if quantity is 0
+            if (quantity === 0) {
+                cartItems = cartItems.filter(cartItem => cartItem.id !== itemId);
+                document.querySelector(`[data-item-id="${itemId}"]`).classList.remove('selected');
+            } else {
+                // Update or add item to cart
+                const existingItem = cartItems.find(cartItem => cartItem.id === itemId);
+                if (existingItem) {
+                    existingItem.quantity = quantity;
+                } else {
+                    cartItems.push({
+                        id: itemId,
+                        name: item.name,
+                        price: item.price,
+                        quantity: quantity
+                    });
+                }
+                document.querySelector(`[data-item-id="${itemId}"]`).classList.add('selected');
             }
+            
+            updateCartDisplay();
+            calculateTotal();
+        }
 
-            // Initial price calculation
-            calculatePrice();
+        // Update cart display
+        function updateCartDisplay() {
+            const cartContainer = document.getElementById('cartItems');
+            const emptyCart = document.getElementById('emptyCart');
+            
+            if (cartItems.length === 0) {
+                emptyCart.style.display = 'block';
+                cartContainer.style.display = 'none';
+                return;
+            }
+            
+            emptyCart.style.display = 'none';
+            cartContainer.style.display = 'block';
+            
+            cartContainer.innerHTML = cartItems.map(item => `
+                <div class="cart-item">
+                    <div class="cart-item-info">
+                        <div class="cart-item-name">${item.name}</div>
+                        <div class="cart-item-details">Quantity: ${item.quantity} × $${item.price.toFixed(2)}</div>
+                    </div>
+                    <div class="cart-item-total">$${(item.quantity * item.price).toFixed(2)}</div>
+                    <button type="button" class="remove-item" onclick="removeFromCart(${item.id})">Remove</button>
+                </div>
+            `).join('');
+        }
+
+        // Remove item from cart
+        function removeFromCart(itemId) {
+            cartItems = cartItems.filter(item => item.id !== itemId);
+            document.getElementById(`qty-${itemId}`).value = 0;
+            document.querySelector(`[data-item-id="${itemId}"]`).classList.remove('selected');
+            updateCartDisplay();
+            calculateTotal();
+        }
+
+        // Calculate total price
+        function calculateTotal() {
+            const subtotal = cartItems.reduce((total, item) => total + (item.quantity * item.price), 0);
+            document.getElementById('totalPrice').textContent = `$${subtotal.toFixed(2)}`;
+            updateSubmitButton(subtotal);
+        }
+
+        // Update submit button based on cart contents
+        function updateSubmitButton(total) {
+            const submitBtn = document.getElementById('submitBtn');
+            if (total > 0) {
+                submitBtn.textContent = `💳 Pay $${total.toFixed(2)}`;
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = '1';
+            } else {
+                submitBtn.textContent = '💳 Select Items to Continue';
+                submitBtn.disabled = true;
+                submitBtn.style.opacity = '0.6';
+            }
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load items from Google Sheets
+            loadItemsFromGoogleSheets();
+            
+            // Initialize total display
+            calculateTotal();
+            
+            // Check if returning from payment (optional)
+            checkForPaymentReturn();
         });
+
+        // Check if user is returning from payment system
+        async function checkForPaymentReturn() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const paymentStatus = urlParams.get('payment_status');
+            
+            if (paymentStatus === 'success') {
+                // Update transaction status in spreadsheet
+                const pendingOrder = localStorage.getItem('pendingOrder');
+                if (pendingOrder) {
+                    const orderData = JSON.parse(pendingOrder);
+                    await updateTransactionStatus(orderData.transactionId, 'Completed');
+                }
+                
+                // Clear stored order data
+                localStorage.removeItem('pendingOrder');
+                alert('Payment successful! Thank you for your order. We will begin processing your items and contact you with updates.');
+                
+            } else if (paymentStatus === 'cancelled') {
+                // Update transaction status in spreadsheet
+                const pendingOrder = localStorage.getItem('pendingOrder');
+                if (pendingOrder) {
+                    const orderData = JSON.parse(pendingOrder);
+                    await updateTransactionStatus(orderData.transactionId, 'Cancelled');
+                    alert('Payment was cancelled. Your order items are still selected if you\'d like to try again.');
+                }
+            } else if (paymentStatus === 'failed') {
+                // Update transaction status in spreadsheet
+                const pendingOrder = localStorage.getItem('pendingOrder');
+                if (pendingOrder) {
+                    const orderData = JSON.parse(pendingOrder);
+                    await updateTransactionStatus(orderData.transactionId, 'Failed');
+                    alert('Payment failed. Please try again or contact us for assistance.');
+                }
+            }
+        }
+
+        // Function to update transaction status in spreadsheet
+        async function updateTransactionStatus(transactionId, status) {
+            if (!transactionId) return;
+            
+            try {
+                const updateData = {
+                    action: 'updateStatus',
+                    transactionId: transactionId,
+                    status: status,
+                    updateDate: new Date().toISOString()
+                };
+
+                const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(updateData)
+                });
+
+                if (response.ok) {
+                    console.log(`Transaction ${transactionId} status updated to: ${status}`);
+                } else {
+                    console.error('Failed to update transaction status:', response.statusText);
+                }
+                
+            } catch (error) {
+                console.error('Error updating transaction status:', error);
+            }
+        }
 
         // Form submission handling
         document.getElementById('orderForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
             // Basic validation
-            const requiredFields = ['firstName', 'lastName', 'email', 'projectName', 'modelFile', 'material'];
+            const requiredFields = ['firstName', 'lastName', 'email'];
             let isValid = true;
             
+            // Validate required customer fields
             requiredFields.forEach(fieldId => {
                 const field = document.getElementById(fieldId);
                 if (!field.value.trim()) {
@@ -664,41 +888,278 @@
                 }
             });
 
+            // Validate that at least one item is selected
+            if (cartItems.length === 0) {
+                alert('Please select at least one item to order.');
+                isValid = false;
+            }
+
             if (isValid) {
-                alert('Thank you for your order request! We will contact you within 24 hours to confirm details and provide final pricing.');
-                // Here you would typically submit the form data to your server
-                // this.submit();
+                // Calculate total amount
+                const totalAmount = cartItems.reduce((total, item) => total + (item.quantity * item.price), 0);
+                
+                // Prepare order data for local storage (optional - for order tracking)
+                const orderData = {
+                    customer: {
+                        firstName: document.getElementById('firstName').value,
+                        lastName: document.getElementById('lastName').value,
+                        email: document.getElementById('email').value,
+                        phone: document.getElementById('phone').value,
+                        company: document.getElementById('company').value
+                    },
+                    items: cartItems,
+                    total: totalAmount,
+                    instructions: document.getElementById('instructions').value,
+                    orderDate: new Date().toISOString()
+                };
+
+                // Store order data locally for reference
+                localStorage.setItem('pendingOrder', JSON.stringify(orderData));
+                
+                // Redirect to eFunds payment system with the total amount
+                redirectToPayment(totalAmount, orderData);
+                
             } else {
-                alert('Please fill in all required fields.');
+                alert('Please fill in all required fields and select at least one item.');
             }
         });
 
-        // File upload validation
-        document.getElementById('modelFile').addEventListener('change', function() {
-            const file = this.files[0];
-            if (file) {
-                const maxSize = 50 * 1024 * 1024; // 50MB
-                const allowedTypes = ['.stl', '.obj', '.3mf', '.ply', '.amf'];
-                const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
-                
-                if (file.size > maxSize) {
-                    alert('File size exceeds 50MB limit. Please compress your file or contact us for assistance.');
-                    this.value = '';
-                } else if (!allowedTypes.includes(fileExtension)) {
-                    alert('File type not supported. Please upload STL, OBJ, 3MF, PLY, or AMF files.');
-                    this.value = '';
+        // Function to redirect to eFunds payment system
+        async function redirectToPayment(amount, orderData) {
+            // First, log the transaction to accounting spreadsheet
+            const transactionLogged = await logTransactionToSheet(orderData);
+            
+            if (!transactionLogged) {
+                console.warn('Transaction logging failed, but proceeding with payment');
+            }
+            
+            // Base eFunds URL
+            const basePaymentUrl = 'https://payments.efundsforschools.com/v3/districts/56317/add-to-cart/3B3KtRq8LrG2%7C78zzRKCjcG78%7Cgeneral-item';
+            
+            // Create a description for the payment
+            const itemsList = orderData.items.map(item => `${item.name} (${item.quantity}x)`).join(', ');
+            const description = `3D Print Order - ${itemsList}`;
+            
+            // Prepare payment parameters
+            const paymentParams = new URLSearchParams({
+                amount: amount.toFixed(2),
+                description: description.substring(0, 100), // Limit description length
+                customer_name: `${orderData.customer.firstName} ${orderData.customer.lastName}`,
+                customer_email: orderData.customer.email
+            });
+
+            // Show confirmation before redirecting
+            const confirmMessage = `You will be redirected to complete payment for your order:\n\nTotal: $${amount.toFixed(2)}\nItems: ${itemsList}\n\nClick OK to proceed to payment.`;
+            
+            if (confirm(confirmMessage)) {
+                // Try to redirect with parameters, or fallback to base URL
+                try {
+                    // Some payment systems accept URL parameters
+                    const fullPaymentUrl = `${basePaymentUrl}?${paymentParams.toString()}`;
+                    window.location.href = fullPaymentUrl;
+                } catch (error) {
+                    // Fallback: redirect to base URL
+                    console.log('Redirecting to base payment URL');
+                    window.location.href = basePaymentUrl;
                 }
             }
-        });
+        }
+
+        // Function to log transaction to Google Sheets for accounting
+        async function logTransactionToSheet(orderData) {
+            try {
+                // Generate a unique transaction ID
+                const transactionId = generateTransactionId();
+                
+                // Prepare the data to send to Google Apps Script
+                const transactionData = {
+                    action: 'logTransaction',
+                    data: {
+                        orderDate: new Date().toISOString(),
+                        transactionId: transactionId,
+                        customerName: `${orderData.customer.firstName} ${orderData.customer.lastName}`,
+                        customerEmail: orderData.customer.email,
+                        customerPhone: orderData.customer.phone || '',
+                        company: orderData.customer.company || '',
+                        itemsOrdered: orderData.items.map(item => `${item.name} (Qty: ${item.quantity}, $${item.price.toFixed(2)})`).join('; '),
+                        totalAmount: orderData.total.toFixed(2),
+                        paymentStatus: 'Pending',
+                        instructions: orderData.instructions || ''
+                    }
+                };
+
+                // Send data to Google Apps Script
+                const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(transactionData)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Transaction logged successfully:', result);
+                    
+                    // Store transaction ID for reference
+                    orderData.transactionId = transactionId;
+                    localStorage.setItem('pendingOrder', JSON.stringify(orderData));
+                    
+                    return true;
+                } else {
+                    console.error('Failed to log transaction:', response.statusText);
+                    return false;
+                }
+                
+            } catch (error) {
+                console.error('Error logging transaction to spreadsheet:', error);
+                
+                // Fallback: Log to console for manual entry
+                console.log('MANUAL TRANSACTION LOG NEEDED:', {
+                    date: new Date().toISOString(),
+                    customer: `${orderData.customer.firstName} ${orderData.customer.lastName}`,
+                    email: orderData.customer.email,
+                    total: orderData.total,
+                    items: orderData.items
+                });
+                
+                return false;
+            }
+        }
+
+        // Generate a unique transaction ID
+        function generateTransactionId() {
+            const timestamp = Date.now().toString(36);
+            const randomStr = Math.random().toString(36).substring(2, 7);
+            return `TXN-${timestamp}-${randomStr}`.toUpperCase();
+        }
 
         // Reset form handler
-        document.querySelector('.reset-btn').addEventListener('click', function() {
-            if (confirm('Are you sure you want to reset the entire form? All entered data will be lost.')) {
+        document.querySelector('.reset-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+            if (confirm('Are you sure you want to reset the entire form? All selected items and information will be lost.')) {
+                // Reset form fields
                 document.getElementById('orderForm').reset();
-                document.getElementById('dimensionsSection').style.display = 'none';
-                calculatePrice();
+                
+                // Clear cart
+                cartItems = [];
+                
+                // Reset all quantity inputs
+                document.querySelectorAll('.quantity-input').forEach(input => {
+                    input.value = 0;
+                });
+                
+                // Remove selected styling from item cards
+                document.querySelectorAll('.item-card').forEach(card => {
+                    card.classList.remove('selected');
+                });
+                
+                // Update displays
+                updateCartDisplay();
+                calculateTotal();
             }
         });
+
+        // Instructions for setting up Google Sheets and Accounting Integration:
+        /*
+        PART 1: PRODUCT CATALOG SETUP
+        ==============================
+        1. Create a Google Sheet with these columns (in this exact order):
+           - Name (product name)
+           - Description (product description)
+           - Price (price as a number, e.g., 15.99)
+           - Image_URL (URL to product image)
+
+        2. Publish your sheet to the web:
+           - Go to File > Share > Publish to the web
+           - Choose the specific sheet tab
+           - Select "Web page" or "CSV"
+           - Click "Publish"
+
+        3. Get your sheet ID from the URL and update GOOGLE_SHEET_URL above
+
+        PART 2: ACCOUNTING/TRANSACTION LOGGING SETUP
+        =============================================
+        1. Create a separate Google Sheet for accounting with these columns:
+           - Order_Date
+           - Transaction_ID
+           - Customer_Name
+           - Customer_Email
+           - Customer_Phone
+           - Company
+           - Items_Ordered
+           - Total_Amount
+           - Payment_Status
+           - Instructions
+           - Last_Updated
+
+        2. Create a Google Apps Script:
+           - Go to script.google.com
+           - Create a new project
+           - Replace the default code with the script below
+           - Save and deploy as a web app
+           - Set permissions to "Anyone" and "Execute as: Me"
+           - Copy the web app URL and update GOOGLE_APPS_SCRIPT_URL above
+
+        3. Google Apps Script Code:
+        ```javascript
+        function doPost(e) {
+          try {
+            const data = JSON.parse(e.postData.contents);
+            const sheet = SpreadsheetApp.openById('YOUR_ACCOUNTING_SHEET_ID').getActiveSheet();
+            
+            if (data.action === 'logTransaction') {
+              const rowData = [
+                data.data.orderDate,
+                data.data.transactionId,
+                data.data.customerName,
+                data.data.customerEmail,
+                data.data.customerPhone,
+                data.data.company,
+                data.data.itemsOrdered,
+                data.data.totalAmount,
+                data.data.paymentStatus,
+                data.data.instructions,
+                new Date().toISOString()
+              ];
+              
+              sheet.appendRow(rowData);
+              return ContentService.createTextOutput(JSON.stringify({success: true, transactionId: data.data.transactionId}))
+                    .setMimeType(ContentService.MimeType.JSON);
+                    
+            } else if (data.action === 'updateStatus') {
+              const dataRange = sheet.getDataRange();
+              const values = dataRange.getValues();
+              
+              for (let i = 1; i < values.length; i++) {
+                if (values[i][1] === data.transactionId) { // Transaction_ID is in column B (index 1)
+                  sheet.getRange(i + 1, 9).setValue(data.status); // Payment_Status is column I (index 8)
+                  sheet.getRange(i + 1, 11).setValue(data.updateDate); // Last_Updated is column K (index 10)
+                  break;
+                }
+              }
+              
+              return ContentService.createTextOutput(JSON.stringify({success: true}))
+                    .setMimeType(ContentService.MimeType.JSON);
+            }
+            
+          } catch (error) {
+            return ContentService.createTextOutput(JSON.stringify({error: error.toString()}))
+                  .setMimeType(ContentService.MimeType.JSON);
+          }
+        }
+        ```
+
+        4. Update the ACCOUNTING_SHEET_ID and GOOGLE_APPS_SCRIPT_URL variables above
+
+        FEATURES:
+        - Automatic transaction logging when customers proceed to payment
+        - Unique transaction IDs for each order
+        - Payment status tracking (Pending, Completed, Cancelled, Failed)
+        - Complete customer and order details for accounting
+        - Fallback logging to browser console if spreadsheet is unavailable
+        */
     </script>
 </body>
 </html>
