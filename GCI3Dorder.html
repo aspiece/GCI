@@ -759,8 +759,7 @@
                 if (!sheetId || !gid) {
                     return reject(new Error('Sheet ID and GID are required for GViz fallback'));
                 }
-                const callbackName = 'gvizCallback_' + Math.random().toString(36).slice(2);
-                const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gid}&t=${Date.now()}&callback=${callbackName}`;
+                const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gid}&t=${Date.now()}`;
                 console.log('GViz JSONP URL:', url);
 
                 const timeout = setTimeout(() => {
@@ -768,13 +767,35 @@
                     reject(new Error('GViz JSONP request timed out'));
                 }, 15000);
 
+                let originalHandler = null;
+                let script = null;
+
+                function ensurePath(obj, pathArr) {
+                    let cur = obj;
+                    for (const key of pathArr) {
+                        if (!cur[key]) cur[key] = {};
+                        cur = cur[key];
+                    }
+                    return cur;
+                }
+
                 function cleanup() {
                     clearTimeout(timeout);
-                    try { delete window[callbackName]; } catch (_) {}
+                    try {
+                        if (originalHandler) {
+                            ensurePath(window, ['google', 'visualization', 'Query']);
+                            window.google.visualization.Query.setResponse = originalHandler;
+                        } else if (window.google && window.google.visualization && window.google.visualization.Query) {
+                            delete window.google.visualization.Query.setResponse;
+                        }
+                    } catch (_) {}
                     if (script && script.parentNode) script.parentNode.removeChild(script);
                 }
 
-                window[callbackName] = function(response) {
+                // Predefine the handler so GViz script can call it
+                ensurePath(window, ['google', 'visualization', 'Query']);
+                originalHandler = window.google.visualization.Query.setResponse;
+                window.google.visualization.Query.setResponse = function(response) {
                     cleanup();
                     try {
                         if (!response || !response.table || !response.table.rows) {
@@ -792,7 +813,7 @@
                     }
                 };
 
-                const script = document.createElement('script');
+                script = document.createElement('script');
                 script.src = url;
                 script.onerror = () => { cleanup(); reject(new Error('GViz JSONP script load error')); };
                 document.head.appendChild(script);
@@ -803,9 +824,11 @@
         function displayItems() {
             const container = document.getElementById('itemsContainer');
             const loadingMessage = document.getElementById('loadingMessage');
+            const errorMessage = document.getElementById('errorMessage');
             
             loadingMessage.style.display = 'none';
             container.style.display = 'block';
+            if (errorMessage) errorMessage.style.display = 'none';
             
             container.innerHTML = availableItems.map((item, index) => `
                 <div class="item-card" data-item-id="${index}">
