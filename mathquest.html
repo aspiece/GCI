@@ -854,49 +854,42 @@
       const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
       const fmtPct = n => Math.round(n * 100) + "%";
 
-      // NEW: mastery helpers
-      function median(arr) { if (!arr.length) return 0; const s = [...arr].sort((a, b) => a - b); const m = Math.floor(s.length / 2); return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; }
-      function dayKey(ts) { const d = new Date(ts); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; }
-
-      function computeMasteryFor(strand) {
-        const attempts = data.hist[strand] || [];
-        const total = attempts.length;
-        const window = attempts.slice(-20);
-        if (total < 25 || window.length < 20) return false;
-
-        const acc = window.reduce((s, a) => s + (a.correct ? 1 : 0), 0) / window.length;
-        if (acc < 0.90) return false;
-
-        const days = new Set(window.map(a => dayKey(a.t))).size;
-        if (days < 2) return false;
-
-        const medMs = median(window.map(a => a.ms || 0));
-        if (medMs > 25000) return false;
-
-        const hintRate = window.reduce((s, a) => s + (a.hint ? 1 : 0), 0) / window.length;
-        if (hintRate > 0.10) return false;
-
-        return true;
+      // NEW: core app helpers that were missing
+      function save() {
+        try { localStorage.setItem('csMathQuest', JSON.stringify(data)); } catch (_) { /* ignore */ }
       }
-
-      // Events
-      $('#submit').addEventListener('click', check);
-      $('#newQ').addEventListener('click', nextQuestion);
-      $('#hintBtn').addEventListener('click', () => {
-        if (current.hint) {
-          $('#hint').textContent = 'Hint: ' + current.hint + ' (−5 XP)';
-          $('#hint').style.display = 'block';
-          current.hinted = true; // NEW: mark hint used
-          data.xp = Math.max(0, data.xp - 5);
-          updateHUD();
-          save();
-        }
-      });
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') check();
-        if (e.key.toLowerCase() === 'n') nextQuestion();
-        if (e.key.toLowerCase() === 'h') $('#hintBtn').click();
-      });
+      function updateHUD() {
+        setText('#xp', data.xp);
+        setText('#streak', data.streak);
+        setText('#rank', data.rank);
+      }
+      function paintBadges() {
+        const box = $('#badges');
+        if (!box) return;
+        box.innerHTML = '';
+        Object.entries(data.badges || {}).forEach(([key, label]) => {
+          const el = document.createElement('div');
+          el.className = 'badge';
+          el.innerHTML = `🏅 <span>${label}</span>`;
+          box.appendChild(el);
+        });
+      }
+      function toast(msg) {
+        const el = document.createElement('div');
+        el.textContent = msg;
+        Object.assign(el.style, {
+          position: 'fixed', top: '12px', right: '12px', zIndex: 9999,
+          background: '#151e44', color: '#fff', border: '1px solid #2a3672',
+          padding: '8px 10px', borderRadius: '10px', boxShadow: '0 6px 20px #0008',
+          opacity: '0', transform: 'translateY(-6px)', transition: 'opacity .2s, transform .2s'
+        });
+        document.body.appendChild(el);
+        requestAnimationFrame(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; });
+        setTimeout(() => {
+          el.style.opacity = '0'; el.style.transform = 'translateY(-6px)';
+          setTimeout(() => el.remove(), 250);
+        }, 2000);
+      }
 
       // First render
       renderMode();
