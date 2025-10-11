@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CS Math Quest — Catch‑Up Arcade</title>
+<style>
+  :root{
+    --bg:#0b1020; --panel:#121935; --panel2:#0e1530; --acc:#6cf; --acc2:#9f6cff; --good:#2ecc71; --bad:#e74c3c; --text:#e6ecff; --muted:#9fb0d7;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(1000px 600px at 80% -10%, #1e2c6f22 0, transparent 60%),radial-gradient(1200px 800px at -10% 110%, #9f6cff14 0, transparent 70%),var(--bg);color:var(--text);font:16px/1.4 system-ui,Segoe UI,Roboto,Inter,sans-serif}
+  .app{display:grid;grid-template-columns: 280px 1fr; min-height:100vh}
+  header{grid-column:1/-1; background:linear-gradient(90deg,var(--panel2),#1a2555); padding:14px 18px; border-bottom:1px solid #263164; display:flex; align-items:center; gap:16px}
+  header h1{font-size:20px;margin:0;letter-spacing:.4px}
+  .stat{display:flex;align-items:center;gap:8px;background:#0b1230;border:1px solid #2a3672;padding:6px 10px;border-radius:10px}
+  .stat b{color:#fff}
+  .row{display:flex;gap:12px;align-items:center;margin-left:auto}
+  .side{background:linear-gradient(180deg,var(--panel),#0c1433);border-right:1px solid #28346e;padding:12px}
+  .sectionTitle{margin:10px 0 6px;color:#bcd3ff;font-weight:700;text-transform:uppercase;font-size:12px;letter-spacing:1.4px}
+  .navBtn{display:flex;justify-content:space-between;align-items:center;width:100%;padding:10px 12px;border-radius:12px;border:1px solid #2a3672;background:#0b1230;color:#e6ecff;cursor:pointer;margin:6px 0;transition:.15s}
+  .navBtn:hover{transform:translateY(-1px); box-shadow:0 4px 12px #0005}
+  .navBtn.active{outline:2px solid var(--acc)}
+  .progress{height:6px;background:#19224b;border-radius:999px;overflow:hidden}
+  .progress>span{display:block;height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2));width:0%}
+  main{padding:18px 18px 48px}
+  .card{background:linear-gradient(180deg,var(--panel),#0f1738); border:1px solid #2b3a78; border-radius:16px; padding:16px; box-shadow:0 10px 30px #0006}
+  .grid{display:grid; gap:16px}
+  @media(min-width:980px){.grid{grid-template-columns:1.1fr .9fr}}
+  h2{margin:4px 0 12px}
+  .question{font-size:22px; letter-spacing:.2px}
+  .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace}
+  .pill{display:inline-block;padding:4px 8px;border-radius:999px;border:1px solid #34448a;background:#0b1230;color:#bcd3ff;font-size:12px}
+  input[type=number], input[type=text]{width:100%;padding:10px 12px;border-radius:12px;border:1px solid #2c3a77;background:#0d1433;color:#e6ecff}
+  .btn{padding:10px 14px;border-radius:12px;border:1px solid #2c3a77;background:linear-gradient(180deg,#1a2555,#0d1433); color:#fff; cursor:pointer}
+  .btn:hover{filter:brightness(1.08)}
+  .btn.ghost{background:#0b1230}
+  .feedback{margin-top:10px; font-weight:700}
+  .good{color:var(--good)}
+  .bad{color:var(--bad)}
+  .badge{display:inline-flex;align-items:center;gap:6px;background:#151e44;border:1px solid #2a3672;border-radius:12px;padding:6px 10px;margin:4px 6px 0 0}
+  .tiny{font-size:12px;color:var(--muted)}
+  .hint{margin-top:10px;color:#ffd980}
+  .kbd{border:1px solid #2a3672;border-bottom-width:3px;border-radius:8px;padding:2px 6px;background:#0b1230}
+  .flex{display:flex;gap:10px; align-items:center; flex-wrap:wrap}
+  .right{margin-left:auto}
+  .footer{opacity:.8;font-size:12px;margin-top:8px}
+</style>
+</head>
+<body>
+  <header>
+    <h1>🕹️ CS Math Quest</h1>
+    <div class="row">
+      <div class="stat" title="Experience Points"><span>⭐</span> <span>XP:</span> <b id="xp">0</b></div>
+      <div class="stat" title="Streak"><span>🔥</span> <span>Streak:</span> <b id="streak">0</b></div>
+      <div class="stat" title="Rank"><span>🏆</span> <span>Rank:</span> <b id="rank">Novice</b></div>
+      <button class="btn ghost" id="resetBtn" title="Reset progress">↺ Reset</button>
+    </div>
+  </header>
+  <div class="app">
+    <aside class="side">
+      <div class="sectionTitle">Quest Map</div>
+      <button class="navBtn active" data-mode="pemdas">1) Order of Operations <span class="pill mono" id="p_pemdas">0/10</span></button>
+      <button class="navBtn" data-mode="integers">2) Integers ±×÷ <span class="pill mono" id="p_integers">0/10</span></button>
+      <button class="navBtn" data-mode="coords">3) Coordinate Plane <span class="pill mono" id="p_coords">0/10</span></button>
+      <button class="navBtn" data-mode="words">4) Word Problems <span class="pill mono" id="p_words">0/10</span></button>
+      <button class="navBtn" data-mode="puzzles">5) Problem‑Solving <span class="pill mono" id="p_puzzles">0/10</span></button>
+      <div class="sectionTitle">Boss Battle</div>
+      <button class="navBtn" data-mode="boss">Mixed 5‑round Challenge <span class="pill" id="bossDone">0/1</span></button>
+      <div class="sectionTitle">Progress</div>
+      <div class="tiny">Mastery = 10 correct per strand</div>
+      <div class="progress" style="margin:8px 0 6px"><span id="overallBar"></span></div>
+      <div class="tiny" id="overallPct">0% complete</div>
+      <div class="sectionTitle">Badges</div>
+      <div id="badges"></div>
+    </aside>
+
+    <main>
+      <div class="grid">
+        <section class="card">
+          <h2 id="modeTitle">Quest 1: Order of Operations</h2>
+          <div class="tiny">Tip: Use parentheses like you would in code to control precedence.</div>
+          <div id="qWrap" style="margin-top:10px">
+            <div class="question mono" id="question">Loading…</div>
+            <div class="flex" style="margin-top:12px">
+              <input id="answer" type="text" inputmode="numeric" placeholder="Enter your answer" />
+              <button class="btn" id="submit">Submit</button>
+              <button class="btn ghost" id="newQ">New</button>
+              <button class="btn ghost" id="hintBtn" title="Costs 5 XP">💡 Hint</button>
+              <span class="right pill" id="strandLabel">PEMDAS</span>
+            </div>
+            <div class="feedback" id="feedback"></div>
+            <div class="hint" id="hint" style="display:none"></div>
+          </div>
+          <div class="footer">Keyboard: <span class="kbd">Enter</span> to submit, <span class="kbd">N</span> new, <span class="kbd">H</span> hint.</div>
+        </section>
+
+        <section class="card">
+          <h3>Strand Progress</h3>
+          <div class="flex"><div class="pill">PEMDAS</div><div class="progress" style="flex:1"><span id="bar_pemdas"></span></div></div>
+          <div class="flex"><div class="pill">Integers</div><div class="progress" style="flex:1"><span id="bar_integers"></span></div></div>
+          <div class="flex"><div class="pill">Coordinates</div><div class="progress" style="flex:1"><span id="bar_coords"></span></div></div>
+          <div class="flex"><div class="pill">Word</div><div class="progress" style="flex:1"><span id="bar_words"></span></div></div>
+          <div class="flex"><div class="pill">Puzzles</div><div class="progress" style="flex:1"><span id="bar_puzzles"></span></div></div>
+          <div style="margin-top:10px" class="tiny">Earn 10 correct in a strand to master it. Correct = +10 XP (streak +2 XP/step), Hint = −5 XP.</div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+<script>
+(function(){
+  const state = JSON.parse(localStorage.getItem('csMathQuest')||'{}');
+  const data = Object.assign({
+    xp:0, streak:0, rank:"Novice", mode:"pemdas",
+    correct:{pemdas:0, integers:0, coords:0, words:0, puzzles:0},
+    badges:{}, boss:{done:false},
+  }, state);
+
+  const $ = sel => document.querySelector(sel);
+  const setText = (id,val)=>{ const el=$(id); if(el) el.textContent=val };
+  const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+  const fmtPct = n => Math.round(n*100)+"%";
+
+  function save(){ localStorage.setItem('csMathQuest', JSON.stringify(data)); }
+
+  // Ranks
+  function computeRank(xp){
+    if(xp>=300) return 'Architect';
+    if(xp>=150) return 'Hacker';
+    if(xp>=50) return 'Coder';
+    return 'Novice';
+  }
+
+  // UI init
+  const navBtns=[...document.querySelectorAll('.navBtn')];
+  navBtns.forEach(btn=>btn.addEventListener('click',()=>{
+    navBtns.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    data.mode = btn.dataset.mode;
+    renderMode();
+    nextQuestion();
+    save();
+  }));
+
+  $('#resetBtn').addEventListener('click',()=>{
+    if(!confirm('Reset XP and progress?')) return;
+    Object.assign(data,{xp:0,streak:0,rank:'Novice',correct:{pemdas:0,integers:0,coords:0,words:0,puzzles:0},badges:{},boss:{done:false}});
+    updateHUD();
+    updateProgress();
+    nextQuestion();
+    save();
+  });
+
+  // Question generators
+  const R = (a,b)=> Math.floor(Math.random()*(b-a+1))+a;
+  const choice = arr => arr[R(0,arr.length-1)];
+
+  const gens = {
+    pemdas(){
+      const t = choice([0,1,2,3]);
+      let q, ans, hint;
+      const a=R(2,9), b=R(2,9), c=R(2,9), d=R(1,5);
+      switch(t){
+        case 0: q=`${a} + ${b} * ${c}`; ans=a + b*c; hint='Remember × before +.'; break;
+        case 1: q=`(${a} + ${b}) * ${c}`; ans=(a+b)*c; hint='Parentheses first, then ×.'; break;
+        case 2: q=`${a}^2 - ${d}^2`; ans=a*a - d*d; hint='Square then subtract.'; break;
+        case 3: q=`${a} + ${b} * (${c} + ${d})`; ans=a + b*(c+d); hint='Do the () then × then +.'; break;
+      }
+      return {q, ans, hint};
+    },
+    integers(){
+      const t = choice(['add','sub','mul','div']);
+      let x = R(-15,15), y = R(-15,15); if(t==='div'){ y = choice([-10,-5,-2,2,5,10]); x = y*R(-5,5);} 
+      let q,ans,hint;
+      if(t==='add'){ q=`${x} + ${y}`; ans=x+y; hint='Use a number line: move right for +, left for −.' }
+      if(t==='sub'){ q=`${x} - (${y})`; ans=x-y; hint='Keep‑Change‑Flip: a−(b) = a + (−b).'}
+      if(t==='mul'){ q=`(${x}) * (${y})`; ans=x*y; hint='Sign rule: (−×−)=+, (−×+)=−.'}
+      if(t==='div'){ q=`(${x}) / (${y})`; ans=x/y; hint='Division keeps sign rules too.'}
+      return {q,ans,hint};
+    },
+    coords(){
+      const t = choice(['quad','reflectX','reflectY','translate']);
+      const x=R(-8,8), y=R(-8,8);
+      let q, ans, hint;
+      if(t==='quad'){
+        q=`Which quadrant is (${x}, ${y})? (Enter I, II, III, IV or axis)`;
+        const quad = x===0||y===0? 'axis' : x>0&&y>0? 'I' : x<0&&y>0? 'II' : x<0&&y<0? 'III' : 'IV';
+        ans=quad; hint='Sign of x then sign of y.';
+      }
+      if(t==='reflectX'){
+        q=`Reflect (${x}, ${y}) across the x‑axis. Enter as x,y`;
+        ans=`${x},${-y}`; hint='Flip the sign of y.';
+      }
+      if(t==='reflectY'){
+        q=`Reflect (${x}, ${y}) across the y‑axis. Enter as x,y`;
+        ans=`${-x},${y}`; hint='Flip the sign of x.';
+      }
+      if(t==='translate'){
+        const dx=R(-5,5), dy=R(-5,5);
+        q=`Translate (${x}, ${y}) by Δx=${dx}, Δy=${dy}. Enter as x,y`;
+        ans=`${x+dx},${y+dy}`; hint='Add Δx to x and Δy to y.';
+      }
+      return {q,ans,hint, normalize:(s)=>s.replace(/\s+/g,'').toUpperCase()};
+    },
+    words(){
+      const t = choice(['temp','bank','elev','rate']);
+      let q,ans,hint;
+      if(t==='temp'){
+        const start=R(-10,5), up=R(3,12), down=R(2,9);
+        q=`Temperature starts at ${start}°; rises ${up}°, then drops ${down}°. Final temp?`;
+        ans=start+up-down; hint='Translate: start + up − down.';
+      }
+      if(t==='bank'){
+        const bal=R(-20,10), dep=R(10,40), cost=R(3,15);
+        q=`Account balance $${bal}. Deposit $${dep}, then buy a snack for $${cost}. New balance?`;
+        ans=bal+dep-cost; hint='Deposit adds, purchase subtracts.';
+      }
+      if(t==='elev'){
+        const start=-R(5,40), up=R(5,20), down=R(1,15);
+        q=`Start ${Math.abs(start)} ft below sea level. Ascend ${up} ft; descend ${down} ft. Final elevation (signed)?`;
+        ans=start+up-down; hint='Below sea level is negative.';
+      }
+      if(t==='rate'){
+        const speed=choice([20,30,40,50]), time=choice([0.5,1,1.5,2]);
+        q=`You travel at ${speed} mi/hr for ${time} hr. How many miles?`;
+        ans=speed*time; hint='Distance = rate × time.';
+      }
+      return {q,ans,hint};
+    },
+    puzzles(){
+      const t = choice(['stairs','sequence','grid']);
+      let q,ans,hint;
+      if(t==='stairs'){
+        const rise=choice([0.5,0.75,0.25]), total=choice([8,10,12,15]);
+        q=`A staircase rises ${total} ft with ${rise}‑ft rises. How many steps?`;
+        ans=Math.round(total/rise); hint='Steps = total ÷ rise.';
+      }
+      if(t==='sequence'){
+        const start=R(-5,10), step=R(2,9), n=R(5,12);
+        q=`Arithmetic sequence starts at ${start}, step +${step}. What is term #${n}?`;
+        ans=start + (n-1)*step; hint='a_n = a_1 + (n−1)d';
+      }
+      if(t==='grid'){
+        const x1=R(-3,1), y1=R(1,4), x2=R(3,7), y2=R(-4,-1);
+        q=`From (${x1},${y1}) to (${x2},${y2}) moving only right or down. Shortest path length (grid steps)?`;
+        ans=(x2-x1) + (y1-y2); hint='Δx right + Δy down.';
+      }
+      return {q,ans,hint};
+    }
+  };
+
+  // Boss mix
+  function bossGen(){
+    const pick = choice(['pemdas','integers','coords','words','puzzles']);
+    let g = gens[pick]();
+    g.strand = pick;
+    return g;
+  }
+
+  let current={q:'', ans:null, hint:'', normalize:null, strand:null};
+
+  function renderMode(){
+    const titles={
+      pemdas:'Quest 1: Order of Operations',
+      integers:'Quest 2: Integers ±×÷',
+      coords:'Quest 3: Coordinate Plane',
+      words:'Quest 4: Word Problems',
+      puzzles:'Quest 5: Problem‑Solving',
+      boss:'Boss Battle: Mixed 5‑Round Challenge'
+    };
+    setText('#modeTitle', titles[data.mode]);
+    $('#strandLabel').textContent = (data.mode==='boss'?'MIXED':titles[data.mode].split(':')[0].replace('Quest ','Q')); 
+  }
+
+  function nextQuestion(){
+    $('#feedback').textContent='';
+    $('#hint').style.display='none';
+    $('#answer').value='';
+    const g = (data.mode==='boss') ? bossGen() : gens[data.mode]();
+    current = g;
+    $('#question').textContent = g.q;
+    $('#answer').focus();
+  }
+
+  function awardXP(base){
+    let bonus = Math.max(0, (data.streak-1)*2); // +2 per extra streak
+    data.xp = Math.max(0, data.xp + base + bonus);
+    const oldRank=data.rank; data.rank = computeRank(data.xp);
+    if(oldRank!==data.rank) toast(`🎖️ Rank Up: ${data.rank}!`);
+  }
+
+  function addBadge(key,label){ if(data.badges[key]) return; data.badges[key]=label; paintBadges(); toast(`🏅 Badge unlocked: ${label}`); }
+
+  function paintBadges(){
+    const box=$('#badges'); box.innerHTML='';
+    Object.values(data.badges).forEach(txt=>{
+      const span=document.createElement('div'); span.className='badge'; span.textContent=txt; box.appendChild(span);
+    });
+  }
+
+  function updateHUD(){
+    setText('#xp', data.xp);
+    setText('#streak', data.streak);
+    setText('#rank', data.rank);
+  }
+
+  function updateProgress(){
+    ['pemdas','integers','coords','words','puzzles'].forEach(k=>{
+      setText('#p_'+k, `${data.correct[k]}/10`);
+      $('#bar_'+k).style.width = Math.min(100, data.correct[k]*10)+'%';
+    });
+    const total = Object.values(data.correct).reduce((a,b)=>a+b,0);
+    $('#overallBar').style.width = clamp(total/50,0,1)*100 + '%';
+    $('#overallPct').textContent = Math.round((total/50)*100)+'% complete';
+    if(total>=5 && !data.badges.first){ addBadge('first','First Blood (5 problems)'); }
+    if(data.streak>=3) addBadge('combo','Combo x3 (Streak)');
+    if(data.xp>=150) addBadge('hacker','Hacker (150 XP)');
+    ['pemdas','integers','coords','words','puzzles'].forEach(k=>{
+      if(data.correct[k]>=10) addBadge('m_'+k, `Master: ${k}`);
+    });
+    if(data.boss.done) $('#bossDone').textContent='1/1';
+  }
+
+  function toast(msg){
+    const t=document.createElement('div');
+    t.textContent=msg; t.style.position='fixed'; t.style.right='12px'; t.style.bottom='14px'; t.style.padding='10px 12px'; t.style.background='#0b1230'; t.style.border='1px solid #2a3672'; t.style.borderRadius='10px'; t.style.boxShadow='0 10px 20px #0006'; t.style.zIndex=9999;
+    document.body.appendChild(t); setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity .6s'; setTimeout(()=>t.remove(),700); }, 1100);
+  }
+
+  function check(){
+    const raw = $('#answer').value.trim();
+    if(!raw){ $('#feedback').innerHTML='<span class="bad">Enter an answer.</span>'; return; }
+
+    let user = raw;
+    if(current.normalize){ user = current.normalize(raw); }
+
+    const ans = (typeof current.ans==='number') ? Number(current.ans) : String(current.ans);
+    let correct=false;
+    if(typeof ans==='number'){
+      const guess = Number(user);
+      correct = Math.abs(guess - ans) < 1e-9;
+    } else {
+      correct = String(user) === String(ans);
+    }
+
+    if(correct){
+      $('#feedback').innerHTML = `<span class="good">✔ Correct!</span> <span class="tiny">+10 XP${data.streak?` +${Math.max(0,(data.streak)*2)} streak bonus`:''}</span>`;
+      data.streak += 1; awardXP(10);
+      const strand = data.mode==='boss' ? current.strand : data.mode;
+      if(strand) data.correct[strand] = Math.min(10, data.correct[strand]+1);
+      if(data.mode==='boss'){
+        data.boss.round = (data.boss.round||0)+1;
+        if(data.boss.round>=5){ data.boss.done=true; addBadge('boss','Boss Beaten'); data.boss.round=0; }
+      }
+      updateHUD(); updateProgress(); save();
+      setTimeout(nextQuestion, 450);
+    } else {
+      $('#feedback').innerHTML = `<span class="bad">✖ Not quite.</span> <span class="tiny">Try a hint or new question.</span>`;
+      data.streak = 0; updateHUD(); save();
+    }
+  }
+
+  // Events
+  $('#submit').addEventListener('click', check);
+  $('#newQ').addEventListener('click', nextQuestion);
+  $('#hintBtn').addEventListener('click',()=>{
+    if(current.hint){
+      $('#hint').textContent = 'Hint: '+current.hint + ' (−5 XP)';
+      $('#hint').style.display='block';
+      data.xp = Math.max(0, data.xp-5); updateHUD(); save();
+    }
+  });
+  document.addEventListener('keydown', (e)=>{
+    if(e.key==='Enter') check();
+    if(e.key.toLowerCase()==='n') nextQuestion();
+    if(e.key.toLowerCase()==='h') $('#hintBtn').click();
+  });
+
+  // First render
+  renderMode(); updateHUD(); updateProgress(); paintBadges(); nextQuestion();
+})();
+</script>
+</body>
+</html>
