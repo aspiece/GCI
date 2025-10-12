@@ -933,10 +933,55 @@
         const pct = (STRANDS.length ? total / (STRANDS.length * 10) : 0);
         const overall = document.getElementById('overallBar'); if (overall) overall.style.width = Math.min(100, Math.max(0, pct * 100)) + '%';
         setText('#overallPct', fmtPct(pct));
-        // NEW: refresh stats each progress update
+        // refresh stats each progress update
         updateStatsUI();
       }
       function computeRank(xp) { if (xp >= 300) return 'Architect'; if (xp >= 150) return 'Hacker'; if (xp >= 50) return 'Coder'; return 'Novice'; }
+
+      // --- Strand Stats (recent 20 attempts per strand) ---
+      function msToStr(ms) { if (!ms) return '—'; const s = ms / 1000; return s < 1 ? s.toFixed(2) + 's' : s.toFixed(1) + 's'; }
+      function calcStats(strand) {
+        // prefer statsWin window; fallback to hist
+        const src = (data.statsWin && data.statsWin[strand] && data.statsWin[strand].length ? data.statsWin[strand] : data.hist[strand]) || [];
+        const arr = src.slice(-20);
+        const n = arr.length;
+        const acc = n ? arr.reduce((s, a) => s + (a.correct ? 1 : 0), 0) / n : 0;
+        const times = arr.map(a => a.ms || 0).filter(x => Number.isFinite(x) && x > 0).sort((a, b) => a - b);
+        const med = times.length ? (times.length % 2 ? times[(times.length - 1) / 2] : (times[times.length / 2 - 1] + times[times.length / 2]) / 2) : 0;
+        const hint = n ? arr.reduce((s, a) => s + (a.hint ? 1 : 0), 0) / n : 0;
+        return { n, acc, med, hint };
+      }
+      function updateStatsUI() {
+        const box = document.getElementById('statsBox');
+        if (!box) return;
+        box.innerHTML = '';
+        STRANDS.forEach(k => {
+          const s = calcStats(k);
+          const row = document.createElement('div');
+          row.className = 'stats-row';
+          row.innerHTML = `
+            <div class="pill">${k.toUpperCase()}</div>
+            <div class="tiny">Items: <b>${s.n}</b></div>
+            <div class="tiny">Accuracy: <b>${Math.round(s.acc * 100)}%</b></div>
+            <div class="tiny">Median time: <b>${msToStr(s.med)}</b></div>
+            <div class="tiny">Hint rate: <b>${Math.round(s.hint * 100)}%</b></div>
+          `;
+          box.appendChild(row);
+        });
+      }
+      // Bind Reset Stats (clears only stats window, not progress)
+      (function bindResetStats() {
+        const btn = document.getElementById('resetStatsBtn');
+        if (btn && !btn.dataset.bound) {
+          btn.addEventListener('click', () => {
+            if (!confirm('Reset the Strand Stats view? (no change to XP or progress)')) return;
+            data.statsWin = STRANDS.reduce((o, k) => (o[k] = [], o), {});
+            save();
+            updateStatsUI();
+          });
+          btn.dataset.bound = '1';
+        }
+      })();
 
       // --- Mode/title + theme helpers (single) ---
       function themeForMode(mode) {
