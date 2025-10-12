@@ -491,6 +491,54 @@
       outline: 3px solid var(--acc);
       outline-offset: 2px;
     }
+
+    /* Quest Picker modal */
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: #0009;
+      z-index: 3;
+      padding: 16px;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal .dialog {
+      width: min(720px, 96vw);
+      background: linear-gradient(180deg, var(--panel), #0f1738);
+      border: 1px solid #2b3a78;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 10px 30px #000c;
+    }
+
+    .qp-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .qp-btn {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid #2a3672;
+      background: #0b1230;
+      color: #e6ecff;
+      cursor: pointer;
+    }
+
+    .qp-btn .tiny {
+      color: var(--muted);
+    }
   </style>
 </head>
 
@@ -514,6 +562,7 @@
         <option value="workshop">Workshop</option>
         <option value="portal">Portal</option>
       </select>
+      <button class="btn ghost" id="pickQuestBtn" title="Choose a quest">🎯 Choose Quest</button>
       <button class="btn ghost" id="resetBtn" title="Reset progress" aria-label="Reset progress">↺ Reset</button>
     </div>
   </header>
@@ -1017,13 +1066,29 @@
       initNav();
 
       $('#resetBtn').addEventListener('click', () => {
-        if (!confirm('Reset XP and progress?')) return;
-        data.xp = 0; data.streak = 0; data.rank = 'Novice';
+        if (!confirm('Reset XP, progress, and daily challenges?')) return;
+
+        // Reset core progress
+        data.xp = 0;
+        data.streak = 0;
+        data.rank = 'Novice';
         data.correct = STRANDS.reduce((o, k) => (o[k] = 0, o), {});
         data.hist = STRANDS.reduce((o, k) => (o[k] = [], o), {});
         data.mastered = STRANDS.reduce((o, k) => (o[k] = false, o), {});
-        data.badges = {}; data.boss = { done: false };
-        updateHUD(); updateProgress(); paintBadges(); save(); nextQuestion();
+        data.badges = {};
+        data.boss = { done: false };
+
+        // Force new Daily + Challenges on reset
+        data.daily = null;            // trigger fresh daily init
+        data.challenges = [];         // re-roll with new set
+        ensureDaily();                // initializes today’s goal + challenges
+
+        updateHUD();
+        updateProgress();
+        paintBadges();
+        updateEngagementUI();
+        save();
+        nextQuestion();
       });
 
       // Question generators
@@ -1545,13 +1610,9 @@
         const strands = ['pemdas', 'integers', 'coords', 'words', 'puzzles', 'logic', 'mod', 'prob'];
         const pick = strands[Math.floor(Math.random() * strands.length)];
         return [
-          // Solve more in a targeted strand
-          { id: 'c_strand', label: `Solve  8 in ${pick.toUpperCase()}`, type: 'strand', strand: pick, progress: 0, target: 8, done: false, reward: 35 },
-          // Longer streak
+          { id: 'c_strand', label: `Solve 8 in ${pick.toUpperCase()}`, type: 'strand', strand: pick, progress: 0, target: 8, done: false, reward: 35 },
           { id: 'c_streak', label: 'Get a 5‑answer streak', type: 'streak', progress: 0, target: 5, done: false, reward: 30 },
-          // Fewer hints, more items
           { id: 'c_nohint', label: 'Answer 6 with no hints', type: 'nohint', progress: 0, target: 6, done: false, reward: 30 },
-          // Speed challenge (under 15s each)
           { id: 'c_speed', label: 'Speedster: 3 correct under 15s', type: 'speed', threshold: 15, progress: 0, target: 3, done: false, reward: 25 },
         ];
       }
@@ -1763,10 +1824,138 @@
         }
         if (changed) { updateEngagementUI(); save(); }
       }
+
+      // Open/close quest picker
+      function openQuestPicker() {
+        const el = document.getElementById('questPicker');
+        if (!el) return;
+        el.style.display = 'flex';
+        el.classList.add('show');
+        document.body.style.overflow = 'hidden';
+        const first = el.querySelector('button[data-mode]');
+        if (first) first.focus();
+      }
+      function closeQuestPicker() {
+        const el = document.getElementById('questPicker');
+        if (!el) return;
+        el.classList.remove('show');
+        el.style.display = 'none';
+        document.body.style.overflow = '';
+      }
+      function pickMode(mode) {
+        if (!STRANDS.includes(mode)) return;
+        data.mode = mode;
+        // reflect in sidebar
+        const btn = document.querySelector(`.navBtn[data-mode="${mode}"]`);
+        if (btn) setActiveNav(btn);
+        renderMode();
+        if (data.themePref === 'auto') applyTheme(themeForMode(data.mode));
+        save();
+        closeQuestPicker();
+        nextQuestion();
+      }
+
+      // Bind header button and modal events
+      (function bindQuestPicker() {
+        const openBtn = document.getElementById('pickQuestBtn');
+        if (openBtn && !openBtn.dataset.bound) {
+          openBtn.addEventListener('click', openQuestPicker);
+          openBtn.dataset.bound = '1';
+        }
+        const qp = document.getElementById('questPicker');
+        if (qp && !qp.dataset.bound) {
+          qp.addEventListener('click', (e) => { if (e.target === qp) closeQuestPicker(); });
+          const cancel = document.getElementById('qpCancel');
+          if (cancel) cancel.addEventListener('click', closeQuestPicker);
+          qp.querySelectorAll('button[data-mode]').forEach(b => {
+            if (b.dataset.bound) return;
+            b.addEventListener('click', () => pickMode(b.dataset.mode));
+            b.dataset.bound = '1';
+          });
+          document.addEventListener('keydown', (e) => {
+            if (qp.classList.contains('show') && e.key === 'Escape') closeQuestPicker();
+          });
+          qp.dataset.bound = '1';
+        }
+      })();
+
+      // Validate all quests generate a question
+      function validateQuests() {
+        let ok = true;
+        STRANDS.forEach(k => {
+          try {
+            const g = gens[k]();
+            if (!g || typeof g.q !== 'string' || typeof g.ans === 'undefined') {
+              ok = false;
+              console.error('Quest gen invalid:', k, g);
+            }
+          } catch (err) {
+            ok = false;
+            console.error('Quest gen threw for', k, err);
+          }
+        });
+        if (!ok) toast('⚠ Some quests may be misconfigured. Check console.');
+      }
+
+      // Initial render + start flow
+      function initialStart() {
+        renderMode();
+        updateHUD();
+        updateProgress();
+        paintBadges();
+        updateEngagementUI();
+        // Show picker on first visit or if mode is invalid
+        const firstTime = !('onboarded' in data);
+        if (firstTime || !STRANDS.includes(data.mode)) {
+          openQuestPicker();
+          data.onboarded = true;
+          save();
+        } else {
+          nextQuestion();
+        }
+        validateQuests();
+      }
+
+      // Apply theme on load (already present above)
+      // ensureDaily() already called above
+
+      // Kick off the app
+      initialStart();
     })();
   </script>
   <!-- place before closing body -->
   <div id="ariaLive" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+  <!-- Place just before the <script> tag -->
+  <section id="questPicker" class="modal" role="dialog" aria-modal="true" aria-labelledby="qpTitle"
+    style="display:none">
+    <div class="dialog">
+      <h3 id="qpTitle" style="margin:0 0 6px">Choose your Quest</h3>
+      <div class="tiny">Pick a strand to begin. You can change anytime from the sidebar.</div>
+      <div class="qp-grid" id="qpGrid">
+        <!-- Buttons created by JS; fallback static buttons for no-JS -->
+        <button class="qp-btn" data-mode="pemdas"><span>Q1) Temple of PEMDAS</span> <span class="tiny">Arithmetic
+            order</span></button>
+        <button class="qp-btn" data-mode="integers"><span>Q2) Integer Ice Caves</span> <span class="tiny">Signed
+            numbers</span></button>
+        <button class="qp-btn" data-mode="coords"><span>Q3) Quadrant Frontier</span> <span
+            class="tiny">Coordinates</span></button>
+        <button class="qp-btn" data-mode="words"><span>Q4) Wordsmith Workshop</span> <span class="tiny">Translate to
+            math</span></button>
+        <button class="qp-btn" data-mode="puzzles"><span>Q5) Puzzle Portal</span> <span class="tiny">Patterns &
+            grids</span></button>
+        <button class="qp-btn" data-mode="logic"><span>Q6) Circuit of Logic</span> <span
+            class="tiny">AND/OR/NOT</span></button>
+        <button class="qp-btn" data-mode="mod"><span>Q7) Modulus Monastery</span> <span
+            class="tiny">Remainders</span></button>
+        <button class="qp-btn" data-mode="prob"><span>Q8) Probability Pirates</span> <span
+            class="tiny">Fractions</span></button>
+      </div>
+      <div class="flex" style="margin-top:12px">
+        <button class="btn ghost" id="qpCancel">Close</button>
+      </div>
+    </div>
+  </section>
 </body>
 
 </html>
