@@ -1646,8 +1646,6 @@
       updateProgress(); // calls updateStatsUI()
       paintBadges();
       updateEngagementUI();
-      ensureFocus();            // NEW
-      updateFocusUI();          // NEW
       nextQuestion();
 
       // --- NEW: THEME CODE ---
@@ -1744,6 +1742,9 @@
       }
       const focusBtn = document.getElementById('focusSwitchBtn');
       if (focusBtn && !focusBtn.dataset.bound) { focusBtn.addEventListener('click', switchToFocus); focusBtn.dataset.bound = '1'; }
+
+      ensureFocus();
+      updateFocusUI();
     })();
   </script>
   <!-- place before closing body -->
