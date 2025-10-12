@@ -909,6 +909,11 @@
 
       // --- existing game code starts here ---
 
+      // Focus removed: define global no-op stubs for any legacy calls
+      window.ensureFocus = window.ensureFocus || function () { };
+      window.currentFocusPlan = window.currentFocusPlan || function () { return { accept: () => false }; };
+      window.updateFocusUI = window.updateFocusUI || function () { };
+
       const STRANDS = ['pemdas', 'integers', 'coords', 'words', 'puzzles', 'logic', 'mod', 'prob'];
 
       const state = JSON.parse(localStorage.getItem('csMathQuest') || '{}');
@@ -1921,11 +1926,6 @@
 
       // Kick off the app
       initialStart();
-
-      // Focus removed: add no-op stubs to satisfy any legacy calls safely
-      function ensureFocus() { /* no-op */ }
-      function currentFocusPlan() { return { accept: () => false }; }
-      function updateFocusUI() { /* no-op */ }
     })();
   </script>
   <!-- place before closing body -->
