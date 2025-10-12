@@ -505,11 +505,48 @@
         boss: { done: false },
       }, state);
 
-      // NEW: helpers moved up so they exist before any use
+      // helpers already here:
       function $(sel) { return document.querySelector(sel); }
       function setText(sel, val) { const el = document.querySelector(sel); if (el) el.textContent = val; }
       function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
       function fmtPct(n) { return Math.round(n * 100) + "%"; }
+
+      // NEW: core app helpers (add right after helpers above)
+      function save() {
+        try { localStorage.setItem('csMathQuest', JSON.stringify(data)); } catch (_) { /* ignore */ }
+      }
+      function updateHUD() {
+        setText('#xp', String(data.xp));
+        setText('#streak', String(data.streak));
+        setText('#rank', data.rank);
+      }
+      function paintBadges() {
+        const box = document.getElementById('badges');
+        if (!box) return;
+        box.innerHTML = '';
+        Object.values(data.badges || {}).forEach(label => {
+          const el = document.createElement('div');
+          el.className = 'badge';
+          el.innerHTML = `🏅 <span>${label}</span>`;
+          box.appendChild(el);
+        });
+      }
+      function toast(msg) {
+        const el = document.createElement('div');
+        el.textContent = msg;
+        Object.assign(el.style, {
+          position: 'fixed', top: '12px', right: '12px', zIndex: 9999,
+          background: '#151e44', color: '#fff', border: '1px solid #2a3672',
+          padding: '8px 10px', borderRadius: '10px', boxShadow: '0 6px 20px #0008',
+          opacity: '0', transform: 'translateY(-6px)', transition: 'opacity .2s, transform .2s'
+        });
+        document.body.appendChild(el);
+        requestAnimationFrame(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; });
+        setTimeout(() => {
+          el.style.opacity = '0'; el.style.transform = 'translateY(-6px)';
+          setTimeout(() => el.remove(), 250);
+        }, 2000);
+      }
 
       // NEW: mastery helpers + compute function
       function median(arr) { if (!arr.length) return 0; const s = [...arr].sort((a, b) => a - b); const m = Math.floor(s.length / 2); return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; }
