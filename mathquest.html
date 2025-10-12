@@ -317,6 +317,55 @@
       font-size: 12px;
       color: var(--muted);
     }
+
+    /* Engagement UI */
+    .meter {
+      height: 8px;
+      background: #19224b;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .meter>span {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #2ecc71, #6cf);
+      transition: width .3s;
+    }
+
+    .challenge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 8px;
+      border: 1px solid #2a3672;
+      border-radius: 10px;
+      background: #0b1230;
+    }
+
+    .challenge.done {
+      opacity: .7;
+      filter: saturate(.7);
+    }
+
+    .challenge .prog {
+      margin-left: auto;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .challenge .check {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      border: 1px solid #2a3672;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #0d1433;
+      color: #2ecc71;
+    }
   </style>
 </head>
 
@@ -451,6 +500,26 @@
               class="kbd">*</span>, <span class="kbd">/</span>, <span class="kbd">-</span>, and <span
               class="kbd">^</span>.</div>
         </section>
+
+        <!-- NEW: Daily Goal -->
+        <section class="card">
+          <h3>Daily Goal</h3>
+          <div class="tiny">Solve problems today to build strong habits.</div>
+          <div class="flex" style="margin-top:8px">
+            <div class="pill">Today</div>
+            <div class="right tiny">Completed: <b id="dailyCount">0/20</b></div>
+          </div>
+          <div class="meter" style="margin-top:8px"><span id="dailyBar"></span></div>
+          <div class="tiny" id="dailyHint" style="margin-top:6px; opacity:.9">Tip: Keep a streak going for bonus XP.
+          </div>
+        </section>
+
+        <!-- NEW: Daily Challenges -->
+        <section class="card">
+          <h3>Daily Challenges</h3>
+          <div class="tiny">Complete mini‑goals for extra XP and fun.</div>
+          <div id="challenges" style="display:grid; gap:8px; margin-top:8px"></div>
+        </section>
       </div>
     </main>
   </div>
@@ -580,6 +649,9 @@
         correct: { pemdas: 0, integers: 0, coords: 0, words: 0, puzzles: 0 },
         hist: { pemdas: [], integers: [], coords: [], words: [], puzzles: [] },
         mastered: { pemdas: false, integers: false, coords: false, words: false, puzzles: false },
+        // NEW: engagement state
+        daily: { date: "", solved: 0, goal: 20, completed: false },
+        challenges: [],
         badges: {},
         boss: { done: false },
       }, state);
@@ -973,14 +1045,30 @@
           correct = String(user) === String(ans);
         }
 
-        // Determine strand for logging
         const strand = (data.mode === 'boss' ? current.strand : data.mode);
         const elapsed = Math.max(0, Date.now() - (current.started || Date.now()));
 
-        // NEW: record attempt
+        // record attempt
         if (strand) {
           const rec = { t: Date.now(), strand, correct: correct ? 1 : 0, ms: elapsed, hint: current.hinted ? 1 : 0 };
           data.hist[strand] = (data.hist[strand] || []).concat(rec).slice(-200);
+        }
+
+        // NEW: engagement updates
+        if (correct) {
+          // Daily
+          ensureDaily();
+          if (!data.daily.completed) {
+            data.daily.solved += 1;
+            if (data.daily.solved >= data.daily.goal) {
+              data.daily.completed = true;
+              addBadge('daily_' + data.daily.date, 'Daily Goal Complete');
+              toast('✅ Daily goal complete!');
+              celebrate('mastery');
+            }
+          }
+          // Challenges
+          applyChallengeProgress({ correct: true, noHint: !current.hinted, strand });
         }
 
         if (correct) {
@@ -994,13 +1082,16 @@
           }
           updateHUD();
           updateProgress();
+          updateEngagementUI(); // NEW
           save();
+          nudgeNearMastery(strand); // NEW
           setTimeout(nextQuestion, 450);
         } else {
           $('#feedback').innerHTML = `<span class="bad">✖ Not quite.</span> <span class="tiny">Try a hint or new question.</span>`;
           data.streak = 0;
           updateHUD();
           updateProgress();
+          updateEngagementUI(); // NEW
           save();
         }
       }
@@ -1040,11 +1131,125 @@
         }
       });
 
+      // Engagement: Daily + Challenges (add after helpers/mastery)
+      function todayKey() { return new Date().toISOString().slice(0, 10); }
+
+      function rollDailyChallenges() {
+        const strands = ['pemdas', 'integers', 'coords', 'words', 'puzzles'];
+        const pick = strands[Math.floor(Math.random() * strands.length)];
+        // 3 simple challenges
+        return [
+          { id: 'c_strand', label: `Solve 5 in ${pick.toUpperCase()}`, type: 'strand', strand: pick, progress: 0, target: 5, done: false, reward: 25 },
+          { id: 'c_streak', label: 'Get a 3‑answer streak', type: 'streak', progress: 0, target: 3, done: false, reward: 20 },
+          { id: 'c_nohint', label: 'Answer 5 with no hints', type: 'nohint', progress: 0, target: 5, done: false, reward: 20 },
+        ];
+      }
+
+      function ensureDaily() {
+        const today = todayKey();
+        if (!data.daily || data.daily.date !== today) {
+          const goal = (data.daily && data.daily.goal) || 20;
+          data.daily = { date: today, solved: 0, goal, completed: false };
+          data.challenges = rollDailyChallenges();
+          save();
+        } else if (!Array.isArray(data.challenges) || !data.challenges.length) {
+          data.challenges = rollDailyChallenges();
+          save();
+        }
+        updateEngagementUI();
+      }
+
+      function updateEngagementUI() {
+        // Daily meter
+        const solved = data.daily?.solved || 0;
+        const goal = data.daily?.goal || 20;
+        const pct = Math.max(0, Math.min(1, solved / goal));
+        const bar = document.getElementById('dailyBar');
+        if (bar) bar.style.width = (pct * 100).toFixed(0) + '%';
+        setText('#dailyCount', `${solved}/${goal}`);
+        const hint = document.getElementById('dailyHint');
+        if (hint) {
+          hint.textContent = data.daily?.completed
+            ? 'Great work! Daily goal complete. 🎉'
+            : (goal - solved <= 5 ? 'So close! Just a few more to hit today’s goal.' : 'Tip: Keep a streak going for bonus XP.');
+        }
+        // Challenges list
+        const box = document.getElementById('challenges');
+        if (!box) return;
+        box.innerHTML = '';
+        (data.challenges || []).forEach(ch => {
+          const row = document.createElement('div');
+          row.className = 'challenge' + (ch.done ? ' done' : '');
+          row.innerHTML = `
+            <span class="check">${ch.done ? '✔' : ''}</span>
+            <div>${ch.label}</div>
+            <div class="prog">${Math.min(ch.progress, ch.target)}/${ch.target}</div>
+          `;
+          box.appendChild(row);
+        });
+      }
+
+      function applyChallengeProgress({ correct, noHint, strand }) {
+        let changed = false;
+        for (const ch of (data.challenges || [])) {
+          if (ch.done) continue;
+          if (ch.type === 'strand' && correct && strand === ch.strand) { ch.progress++; changed = true; }
+          if (ch.type === 'streak' && correct && data.streak > 0) {
+            ch.progress = Math.max(ch.progress, Math.min(data.streak, ch.target)); changed = true;
+          }
+          if (ch.type === 'nohint' && correct && noHint) { ch.progress++; changed = true; }
+          if (ch.progress >= ch.target && !ch.done) {
+            ch.done = true; awardXP(ch.reward); addBadge(ch.id, ch.label + ` (+${ch.reward} XP)`); toast('🎯 Challenge complete!'); celebrate('correct');
+            changed = true;
+          }
+        }
+        if (changed) { updateEngagementUI(); save(); }
+      }
+
+      function nudgeNearMastery(strand) {
+        if (!strand || data.mastered[strand]) return;
+        const attempts = data.hist[strand] || [];
+        const last = attempts.slice(-20);
+        const total = attempts.length;
+        const acc = last.length ? last.reduce((s, a) => s + (a.correct ? 1 : 0), 0) / last.length : 0;
+        if (total >= 18 && last.length < 20) toast(`Almost there in ${strand}! Just ${20 - last.length} more recent attempts counted.`);
+        else if (last.length === 20 && acc >= 0.80 && acc < 0.90) toast(`So close to mastering ${strand}! Push accuracy to 90% over last 20.`);
+        else if (last.length === 20 && acc >= 0.90) toast(`Mastery in reach for ${strand}! Keep the speed and low hints.`);
+      }
+
+      // Bind actions (submit/new/hint) so the game advances
+      document.getElementById('submit').addEventListener('click', () => check());
+      document.getElementById('newQ').addEventListener('click', () => nextQuestion());
+      document.getElementById('hintBtn').addEventListener('click', () => {
+        if (current.hint) {
+          const h = document.getElementById('hint');
+          h.textContent = 'Hint: ' + current.hint + ' (−5 XP)';
+          h.style.display = 'block';
+          current.hinted = true;
+          data.xp = Math.max(0, data.xp - 5);
+          updateHUD(); save();
+        }
+      });
+
+      // Keyboard shortcuts
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { check(); }
+        if (e.key.toLowerCase && e.key.toLowerCase() === 'n') { nextQuestion(); }
+        if (e.key.toLowerCase && e.key.toLowerCase() === 'h') {
+          const btn = document.getElementById('hintBtn');
+          if (btn) btn.click();
+        }
+      });
+
+      // Initialize daily/challenges on load
+      ensureDaily();
+
       // First render
       renderMode();
       updateHUD();
       updateProgress();
       paintBadges();
+      updateEngagementUI(); // NEW
       nextQuestion();
     })();
   </script>
