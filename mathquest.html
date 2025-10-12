@@ -1577,7 +1577,6 @@
         box.innerHTML = `
           <div>${ck(solvedOK)} Solved: <b>${stats.correct}/${rules.minSolved}</b></div>
           <div>${ck(accOK)} Accuracy: <b>${pct(stats.acc)}</b> (target ≥ ${pct(rules.minAcc)})</div>
-          <div>${ck(accOK)} Accuracy: <b>${pct(stats.acc)}</b> (target ≥ ${pct(rules.minAcc)})</div>
           <div>${ck(hintOK)} Hint rate: <b>${pct(stats.hintRate)}</b> (target ≤ ${pct(rules.maxHintRate)})</div>
           ${streakNeed != null ? `<div>${ck(streakOK)} Best streak: <b>${stats.bestStreak}/${streakNeed}</b></div>` : ``}
         `;
@@ -1922,6 +1921,11 @@
 
       // Kick off the app
       initialStart();
+
+      // Focus removed: add no-op stubs to satisfy any legacy calls safely
+      function ensureFocus() { /* no-op */ }
+      function currentFocusPlan() { return { accept: () => false }; }
+      function updateFocusUI() { /* no-op */ }
     })();
   </script>
   <!-- place before closing body -->
