@@ -530,6 +530,13 @@
           id="p_words">0/10</span></button>
       <button class="navBtn" data-mode="puzzles">Q5) Puzzle Portal <span class="pill mono"
           id="p_puzzles">0/10</span></button>
+      <!-- NEW -->
+      <button class="navBtn" data-mode="logic">Q6) Circuit of Logic <span class="pill mono"
+          id="p_logic">0/10</span></button>
+      <button class="navBtn" data-mode="mod">Q7) Modulus Monastery <span class="pill mono"
+          id="p_mod">0/10</span></button>
+      <button class="navBtn" data-mode="prob">Q8) Probability Pirates <span class="pill mono"
+          id="p_prob">0/10</span></button>
       <div class="sectionTitle">Progress</div>
       <div class="tiny" title="Mastery is checked on a rolling window of your last 20 attempts in each strand.">
         Mastery = 90%+ over last 20, 25+ attempts total, ≤10% hints, median ≤25s, across ≥2 days.
@@ -548,7 +555,7 @@
           <div id="qWrap" style="margin-top:10px">
             <div class="question mono" id="question">Loading…</div>
             <div class="flex" style="margin-top:12px">
-              <input id="answer" type="text" inputmode="numeric" placeholder="Enter your answer"
+              <input id="answer" type="text" inputmode="text" placeholder="Enter your answer"
                 aria-label="Your answer" />
               <button class="btn" id="submit">Submit</button>
               <button class="btn ghost" id="newQ">New</button>
@@ -583,6 +590,19 @@
           <div class="flex">
             <div class="pill">Puzzles</div>
             <div class="progress" style="flex:1"><span id="bar_puzzles"></span></div>
+          </div>
+          <!-- NEW -->
+          <div class="flex">
+            <div class="pill">Logic</div>
+            <div class="progress" style="flex:1"><span id="bar_logic"></span></div>
+          </div>
+          <div class="flex">
+            <div class="pill">Modulus</div>
+            <div class="progress" style="flex:1"><span id="bar_mod"></span></div>
+          </div>
+          <div class="flex">
+            <div class="pill">Probability</div>
+            <div class="progress" style="flex:1"><span id="bar_prob"></span></div>
           </div>
           <div style="margin-top:10px" class="tiny">
             When mastered, the strand pill shows “Mastered” and the bar fills. Correct = +10 XP (+2/step streak), Hint =
@@ -773,10 +793,7 @@
       }
       requestAnimationFrame(fxLoop);
 
-      // Reduced motion preference
       const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-      // Only run starfield/confetti if not reduced
       if (!prefersReducedMotion) {
         requestAnimationFrame(fxLoop);
       } else {
@@ -826,23 +843,23 @@
 
       // --- existing game code starts here ---
 
+      const STRANDS = ['pemdas', 'integers', 'coords', 'words', 'puzzles', 'logic', 'mod', 'prob'];
+
       const state = JSON.parse(localStorage.getItem('csMathQuest') || '{}');
       const data = Object.assign({
         xp: 0,
         streak: 0,
         rank: "Novice",
         mode: "pemdas",
-        correct: { pemdas: 0, integers: 0, coords: 0, words: 0, puzzles: 0 },
-        hist: { pemdas: [], integers: [], coords: [], words: [], puzzles: [] },
-        mastered: { pemdas: false, integers: false, coords: false, words: false, puzzles: false },
-        // NEW: engagement state
+        correct: { pemdas: 0, integers: 0, coords: 0, words: 0, puzzles: 0, logic: 0, mod: 0, prob: 0 },
+        hist: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [], prob: [] },
+        mastered: { pemdas: false, integers: false, coords: false, words: false, puzzles: false, logic: false, mod: false, prob: false },
         daily: { date: "", solved: 0, goal: 20, completed: false },
         challenges: [],
         badges: {},
         boss: { done: false },
         themePref: 'auto',
-        // NEW: stats buffer + mode (stats card uses this; history/mastery unaffected)
-        statsWin: { pemdas: [], integers: [], coords: [], words: [], puzzles: [] },
+        statsWin: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [], prob: [] },
         statsMode: 'hist'
       }, state);
 
@@ -913,20 +930,22 @@
         // Recompute mastery first
         recomputeMastery();
 
-        ['pemdas', 'integers', 'coords', 'words', 'puzzles'].forEach(k => {
+        STRANDS.forEach(k => {
           if (data.mastered[k]) {
             setText('#p_' + k, 'Mastered');
-            $('#bar_' + k).style.width = '100%';
+            const bar = document.getElementById('bar_' + k); if (bar) bar.style.width = '100%';
           } else {
             setText('#p_' + k, `${data.correct[k]}/10`);
-            $('#bar_' + k).style.width = Math.min(100, data.correct[k] * 10) + '%';
+            const bar = document.getElementById('bar_' + k); if (bar) bar.style.width = Math.min(100, data.correct[k] * 10) + '%';
           }
           const pill = document.getElementById('p_' + k);
           if (pill) pill.classList.toggle('mastered', !!data.mastered[k]);
         });
-        const total = Object.values(data.correct).reduce((a, b) => a + b, 0);
-        $('#overallBar').style.width = clamp(total / 50, 0, 1) * 100 + '%';
-        setText('#overallPct', fmtPct(clamp(total / 50, 0, 1)));
+        const total = STRANDS.reduce((s, k) => s + (data.correct[k] || 0), 0);
+        const denom = STRANDS.length * 10;
+        const pct = denom ? total / denom : 0;
+        const overall = document.getElementById('overallBar'); if (overall) overall.style.width = Math.min(100, Math.max(0, pct * 100)) + '%';
+        setText('#overallPct', fmtPct(Math.max(0, Math.min(1, pct))));
       }
 
       // Ranks
@@ -954,11 +973,12 @@
 
       $('#resetBtn').addEventListener('click', () => {
         if (!confirm('Reset XP and progress?')) return;
-        Object.assign(data, { xp: 0, streak: 0, rank: 'Novice', correct: { pemdas: 0, integers: 0, coords: 0, words: 0, puzzles: 0 }, badges: {}, boss: { done: false } });
-        updateHUD();
-        updateProgress();
-        nextQuestion();
-        save();
+        data.xp = 0; data.streak = 0; data.rank = 'Novice';
+        data.correct = STRANDS.reduce((o, k) => (o[k] = 0, o), {});
+        data.hist = STRANDS.reduce((o, k) => (o[k] = [], o), {});
+        data.mastered = STRANDS.reduce((o, k) => (o[k] = false, o), {});
+        data.badges = {}; data.boss = { done: false };
+        updateHUD(); updateProgress(); paintBadges(); save(); nextQuestion();
       });
 
       // Question generators
@@ -1094,13 +1114,95 @@
             hint = 'Δx right + Δy down.';
           }
           return { q, ans, hint };
+        },
+
+        // NEW: Circuit of Logic
+        logic() {
+          const vars = { A: Math.random() < 0.5, B: Math.random() < 0.5, C: Math.random() < 0.5 };
+          const forms = [
+            { f: 'A ∧ B', eval: v => v.A && v.B, hint: 'AND is true only if both are true.' },
+            { f: 'A ∨ B', eval: v => v.A || v.B, hint: 'OR is true if at least one is true.' },
+            { f: '¬A', eval: v => !v.A, hint: 'NOT flips truth.' },
+            { f: 'A ∧ (¬B)', eval: v => v.A && !v.B, hint: 'Negate B, then AND.' },
+            { f: '(A ∨ B) ∧ C', eval: v => (v.A || v.B) && v.C, hint: 'Parentheses first.' },
+            { f: '¬(A ∧ B)', eval: v => !(v.A && v.B), hint: 'De Morgan: ¬(A∧B) = ¬A ∨ ¬B.' },
+            { f: 'A → B', eval: v => (!v.A) || v.B, hint: 'Implication is false only when A is true and B is false.' },
+          ];
+          const pick = choice(forms);
+          const fmt = b => b ? 'T' : 'F';
+          const q = `Given A=${fmt(vars.A)}, B=${fmt(vars.B)}${Math.random() < 0.5 ? ', C=' + fmt(vars.C) : ''}, evaluate: ${pick.f} (answer T/F)`;
+          const ans = pick.eval(vars) ? 'T' : 'F';
+          const hint = pick.hint;
+          return { q, ans, hint, normalize: s => s.trim().toUpperCase() };
+        },
+
+        // NEW: Modulus Monastery
+        mod() {
+          const t = choice(['a%b', 'cong', 'parity']);
+          if (t === 'a%b') {
+            const a = R(10, 199), b = R(2, 12);
+            const q = `Compute ${a} mod ${b}`;
+            const ans = a % b;
+            const hint = 'Remainder after dividing a by b.';
+            return { q, ans, hint };
+          } else if (t === 'cong') {
+            const b = R(3, 12);
+            const k = R(0, b - 1);
+            const a = b * R(2, 12) + k;
+            const c = b * R(2, 12) + k;
+            const q = `Are ${a} and ${c} congruent mod ${b}? (answer T/F)`;
+            const ans = 'T';
+            const hint = 'Same remainder modulo b ⇒ congruent.';
+            return { q, ans, hint, normalize: s => s.trim().toUpperCase() };
+          } else {
+            const n = R(0, 199);
+            const q = `Is ${n} even? (answer T/F)`;
+            const ans = (n % 2 === 0) ? 'T' : 'F';
+            const hint = 'Even ⇔ n mod 2 = 0.';
+            return { q, ans, hint, normalize: s => s.trim().toUpperCase() };
+          }
+        },
+
+        // NEW: Probability Pirates (answer as simplified fraction a/b)
+        prob() {
+          function gcd(a, b) { while (b) { const t = b; b = a % b; a = t; } return Math.abs(a); }
+          function frac(num, den) { const g = gcd(num, den); return `${num / g}/${den / g}`; }
+
+          const t = choice(['coin2', 'die', 'sum2dice', 'bag']);
+          if (t === 'coin2') {
+            const q = 'Flip a fair coin twice. Probability of exactly 2 heads? (fraction a/b)';
+            const ans = '1/4';
+            const hint = 'Outcomes: HH, HT, TH, TT.';
+            return { q, ans, hint, normalize: s => s.replace(/\s+/g, '') };
+          } else if (t === 'die') {
+            const face = R(1, 6);
+            const q = `Roll a fair die. Probability of rolling ${face}? (fraction a/b)`;
+            const ans = '1/6';
+            const hint = '1 favorable out of 6.';
+            return { q, ans, hint, normalize: s => s.replace(/\s+/g, '') };
+          } else if (t === 'sum2dice') {
+            const sum = choice([3, 4, 5, 6, 7, 8, 9, 10, 11]);
+            // counts for sums on 2d6
+            const counts = { 2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 5, 9: 4, 10: 3, 11: 2, 12: 1 };
+            const num = counts[sum], den = 36;
+            const q = `Roll two dice. Probability the sum is ${sum}? (fraction a/b)`;
+            const ans = frac(num, den);
+            const hint = 'There are 36 equally likely outcomes on two dice.';
+            return { q, ans, hint, normalize: s => s.replace(/\s+/g, '') };
+          } else {
+            const red = R(2, 8), blue = R(2, 8);
+            const q = `Bag has ${red} red and ${blue} blue marbles. P(red)? (fraction a/b)`;
+            const ans = (function () { const n = red + blue; const g = gcd(red, n); return `${red / g}/${n / g}`; })();
+            const hint = 'Favorable/Total, then simplify.';
+            return { q, ans, hint, normalize: s => s.replace(/\s+/g, '') };
+          }
         }
       };
 
       // Boss mix
       function bossGen() {
-        const pick = choice(['pemdas', 'integers', 'coords', 'words', 'puzzles']);
-        let g = gens[pick]();
+        const pick = STRANDS[Math.floor(Math.random() * STRANDS.length)];
+        const g = gens[pick]();
         g.strand = pick;
         return g;
       }
@@ -1113,15 +1215,14 @@
           coords: 'Q3: Quadrant Frontier',
           words: 'Q4: Wordsmith Workshop',
           puzzles: 'Q5: Puzzle Portal',
+          logic: 'Q6: Circuit of Logic',
+          mod: 'Q7: Modulus Monastery',
+          prob: 'Q8: Probability Pirates',
           boss: 'Boss Battle: Final Gauntlet'
         };
         const shortPills = {
-          pemdas: 'Q1',
-          integers: 'Q2',
-          coords: 'Q3',
-          words: 'Q4',
-          puzzles: 'Q5',
-          boss: 'BOSS'
+          pemdas: 'Q1', integers: 'Q2', coords: 'Q3', words: 'Q4', puzzles: 'Q5',
+          logic: 'Q6', mod: 'Q7', prob: 'Q8', boss: 'BOSS'
         };
         setText('#modeTitle', titles[data.mode] || 'Quest');
         const label = document.getElementById('strandLabel');
@@ -1195,7 +1296,7 @@
 
       // Mastery fanfare (add sound alongside celebrate)
       function recomputeMastery() {
-        ['pemdas', 'integers', 'coords', 'words', 'puzzles'].forEach(k => {
+        STRANDS.forEach(k => {
           const was = data.mastered[k];
           const now = computeMasteryFor(k);
           data.mastered[k] = now;
@@ -1312,9 +1413,7 @@
       function todayKey() { return new Date().toISOString().slice(0, 10); }
 
       function rollDailyChallenges() {
-        const strands = ['pemdas', 'integers', 'coords', 'words', 'puzzles'];
-        const pick = strands[Math.floor(Math.random() * strands.length)];
-        // 3 simple challenges
+        const pick = STRANDS[Math.floor(Math.random() * STRANDS.length)];
         return [
           { id: 'c_strand', label: `Solve 5 in ${pick.toUpperCase()}`, type: 'strand', strand: pick, progress: 0, target: 5, done: false, reward: 25 },
           { id: 'c_streak', label: 'Get a 3‑answer streak', type: 'streak', progress: 0, target: 3, done: false, reward: 20 },
@@ -1413,10 +1512,12 @@
           integers: 'Q2 • Integers',
           coords: 'Q3 • Coordinates',
           words: 'Q4 • Word Problems',
-          puzzles: 'Q5 • Puzzles'
+          puzzles: 'Q5 • Puzzles',
+          logic: 'Q6 • Logic',
+          mod: 'Q7 • Modulus',
+          prob: 'Q8 • Probability'
         };
-        const strands = ['pemdas', 'integers', 'coords', 'words', 'puzzles'];
-        box.innerHTML = strands.map(k => {
+        box.innerHTML = STRANDS.map(k => {
           const s = calcStats(k);
           const acc = Math.round((s.acc || 0) * 100);
           const hints = Math.round((s.hint || 0) * 100);
@@ -1452,11 +1553,14 @@
       // THEME: map modes -> themes
       function themeForMode(mode) {
         switch (mode) {
-          case 'pemdas': return 'dungeon';      // Temple of PEMDAS
-          case 'integers': return 'ice';        // Integer Ice Caves
-          case 'coords': return 'space';        // Quadrant Frontier
-          case 'words': return 'workshop';      // Wordsmith Workshop
-          case 'puzzles': return 'portal';      // Puzzle Portal
+          case 'pemdas': return 'dungeon';
+          case 'integers': return 'ice';
+          case 'coords': return 'space';
+          case 'words': return 'workshop';
+          case 'puzzles': return 'portal';
+          case 'logic': return 'workshop';
+          case 'mod': return 'dungeon';
+          case 'prob': return 'jungle';
           default: return 'space';
         }
       }
@@ -1480,11 +1584,12 @@
       applyTheme((data.themePref === 'auto') ? themeForMode(data.mode) : data.themePref);
       initThemeSelect();
 
+
       // NEW: reset stats card (clears stats-only buffer)
       function resetStatsCard() {
         if (!confirm('Reset the Strand Stats? This does not change XP, badges, or progress.')) return;
-        data.statsWin = { pemdas: [], integers: [], coords: [], words: [], puzzles: [] };
-        data.statsMode = 'statsWin'; // show empty, then refill from new attempts
+        data.statsWin = STRANDS.reduce((o, k) => (o[k] = [], o), {});
+        data.statsMode = 'statsWin';
         updateStatsUI();
         save();
         toast('📊 Stats reset. New attempts will rebuild the card.');
