@@ -623,7 +623,11 @@
 
         <!-- NEW: Strand Stats -->
         <section class="card">
-          <h3>Strand Stats</h3>
+          <div class="flex" style="justify-content: space-between; align-items: center;">
+            <h3 style="margin:0">Strand Stats</h3>
+            <button class="btn ghost tiny" id="resetStatsBtn"
+              title="Clear stats shown below (does not change XP or progress)">Reset Stats</button>
+          </div>
           <div id="statsBox" class="tiny"></div>
         </section>
       </div>
@@ -760,7 +764,10 @@
         challenges: [],
         badges: {},
         boss: { done: false },
-        themePref: 'auto'
+        themePref: 'auto',
+        // NEW: stats buffer + mode (stats card uses this; history/mastery unaffected)
+        statsWin: { pemdas: [], integers: [], coords: [], words: [], puzzles: [] },
+        statsMode: 'hist'
       }, state);
 
       // helpers already here:
@@ -854,7 +861,7 @@
         return 'Novice';
       }
 
-      // UI init
+      // UI init (single declaration + handles theme auto-switch)
       const navBtns = [...document.querySelectorAll('.navBtn')];
       navBtns.forEach(btn => btn.addEventListener('click', () => {
         navBtns.forEach(b => b.classList.remove('active'));
@@ -862,6 +869,10 @@
         data.mode = btn.dataset.mode;
         renderMode();
         nextQuestion();
+        // Apply theme if in Auto mode
+        if (data.themePref === 'auto') {
+          applyTheme(themeForMode(data.mode));
+        }
         save();
       }));
 
@@ -1168,6 +1179,8 @@
         if (strand) {
           const rec = { t: Date.now(), strand, correct: correct ? 1 : 0, ms: elapsed, hint: current.hinted ? 1 : 0 };
           data.hist[strand] = (data.hist[strand] || []).concat(rec).slice(-200);
+          // NEW: always mirror into stats window (used by stats card)
+          data.statsWin[strand] = (data.statsWin[strand] || []).concat(rec).slice(-200);
         }
 
         // NEW: engagement updates
@@ -1336,7 +1349,9 @@
       // Stats helpers
       function msToStr(ms) { if (!ms) return '—'; const s = ms / 1000; return s < 1 ? s.toFixed(2) + 's' : s.toFixed(1) + 's'; }
       function calcStats(k) {
-        const arr = (data.hist[k] || []).slice(-20);
+        // NEW: prefer stats window when in stats mode; otherwise use history
+        const source = (data.statsMode === 'statsWin') ? (data.statsWin[k] || []) : (data.hist[k] || []);
+        const arr = source.slice(-20);
         const n = arr.length;
         const acc = n ? arr.reduce((s, a) => s + (a.correct ? 1 : 0), 0) / n : 0;
         const med = median(arr.map(a => a.ms || 0));
@@ -1426,6 +1441,20 @@
         }
         save();
       }));
+
+      // NEW: reset stats card (clears stats-only buffer)
+      function resetStatsCard() {
+        if (!confirm('Reset the Strand Stats? This does not change XP, badges, or progress.')) return;
+        data.statsWin = { pemdas: [], integers: [], coords: [], words: [], puzzles: [] };
+        data.statsMode = 'statsWin'; // show empty, then refill from new attempts
+        updateStatsUI();
+        save();
+        toast('📊 Stats reset. New attempts will rebuild the card.');
+      }
+
+      // Bind button
+      const resetStatsBtn = document.getElementById('resetStatsBtn');
+      if (resetStatsBtn) resetStatsBtn.addEventListener('click', resetStatsCard);
 
       // ...existing code (renderMode, nextQuestion, etc.)...
     })();
