@@ -287,6 +287,36 @@
       box-shadow: 0 6px 16px #0007;
       transform: translateY(-1px);
     }
+
+    /* Symbol legend */
+    .legend-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 12px;
+      margin-top: 8px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .legend-sym {
+      min-width: 44px;
+      text-align: center;
+      font-size: 20px;
+      padding: 4px 8px;
+      border: 1px solid #2a3672;
+      border-radius: 10px;
+      background: #0b1230;
+      color: #e6ecff;
+    }
+
+    .legend-note {
+      font-size: 12px;
+      color: var(--muted);
+    }
   </style>
 </head>
 
@@ -371,6 +401,55 @@
             When mastered, the strand pill shows “Mastered” and the bar fills. Correct = +10 XP (+2/step streak), Hint =
             −5 XP.
           </div>
+        </section>
+
+        <!-- NEW: Symbol Legend card -->
+        <section class="card">
+          <h3>Symbol Legend</h3>
+          <div class="legend-grid">
+            <div class="legend-item"><span class="legend-sym">×</span>
+              <div>Multiply <span class="legend-note">(keyboard: <span class="kbd">*</span>)</span></div>
+            </div>
+            <div class="legend-item"><span class="legend-sym">÷</span>
+              <div>Divide <span class="legend-note">(keyboard: <span class="kbd">/</span>)</span></div>
+            </div>
+            <div class="legend-item"><span class="legend-sym">·</span>
+              <div>Multiply dot <span class="legend-note">(same as ×)</span></div>
+            </div>
+            <div class="legend-item"><span class="legend-sym">−</span>
+              <div>Subtract <span class="legend-note">(keyboard: <span class="kbd">-</span>)</span></div>
+            </div>
+            <div class="legend-item"><span class="legend-sym">+</span>
+              <div>Add</div>
+            </div>
+            <div class="legend-item"><span class="legend-sym">=</span>
+              <div>Equals</div>
+            </div>
+            <div class="legend-item"><span class="legend-sym">≠</span>
+              <div>Not equal</div>
+            </div>
+            <div class="legend-item"><span class="legend-sym">≤ ≥</span>
+              <div>Less/Greater than or equal</div>
+            </div>
+            <div class="legend-item"><span class="legend-sym">±</span>
+              <div>Plus or minus</div>
+            </div>
+            <div class="legend-item"><span class="legend-sym">^</span>
+              <div>Exponent <span class="legend-note">(e.g., 2^3 = 8)</span></div>
+            </div>
+            <div class="legend-item"><span class="legend-sym">|x|</span>
+              <div>Absolute value</div>
+            </div>
+            <div class="legend-item"><span class="legend-sym">√</span>
+              <div>Square root <span class="legend-note">(type <span class="kbd">sqrt()</span>)</span></div>
+            </div>
+            <div class="legend-item"><span class="legend-sym">π</span>
+              <div>Pi <span class="legend-note">(≈ 3.14159)</span></div>
+            </div>
+          </div>
+          <div class="tiny" style="margin-top:8px;">Tip: The game accepts keyboard symbols like <span
+              class="kbd">*</span>, <span class="kbd">/</span>, <span class="kbd">-</span>, and <span
+              class="kbd">^</span>.</div>
         </section>
       </div>
     </main>
