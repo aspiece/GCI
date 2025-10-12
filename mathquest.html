@@ -887,7 +887,9 @@
         boss: { done: false },
         themePref: 'auto',
         statsWin: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [], prob: [] },
-        statsMode: 'hist'
+        statsMode: 'hist',
+        // NEW: Daily Focus state
+        focus: { date: "", key: "", mode: "", solved: 0, target: 0, done: false, label: "" }
       }, state);
 
       // ADD after data is created:
@@ -1698,7 +1700,50 @@
       const resetStatsBtn = document.getElementById('resetStatsBtn');
       if (resetStatsBtn) resetStatsBtn.addEventListener('click', resetStatsCard);
 
-      // ...existing code (renderMode, nextQuestion, etc.)...
+      // --- Daily Focus (Mon–Fri schedule) ---
+      function dowKey(d = new Date()) { return d.getDay(); } // 0=Sun..6=Sat
+      const DAILY_SCHEDULE = {
+        1: { key: 'logic', mode: 'logic', label: 'Circuit of Logic (Boolean algebra)', target: 8, accept: s => s === 'logic' },
+        2: { key: 'mod', mode: 'mod', label: 'Modulus Monastery (remainders/congruence)', target: 8, accept: s => s === 'mod' },
+        3: { key: 'prob', mode: 'prob', label: 'Probability Pirates (fractions)', target: 8, accept: s => s === 'prob' },
+        4: { key: 'mixed', mode: 'mixed', label: 'Mixed Practice (any strand)', target: 10, accept: _ => true },
+        5: { key: 'mastery', mode: 'mixed', label: 'Mastery Push (any strand)', target: 10, accept: _ => true },
+        0: { key: 'choice', mode: 'mixed', label: 'Choice Day (your pick)', target: 6, accept: _ => true },
+        6: { key: 'choice', mode: 'mixed', label: 'Choice Day (your pick)', target: 6, accept: _ => true }
+      };
+      function todayStr() { return new Date().toISOString().slice(0, 10); }
+      function currentFocusPlan() { return DAILY_SCHEDULE[dowKey()] || DAILY_SCHEDULE[0]; }
+      function ensureFocus() {
+        const today = todayStr();
+        const plan = currentFocusPlan();
+        if (!data.focus || data.focus.date !== today) {
+          data.focus = { date: today, key: plan.key, mode: plan.mode, solved: 0, target: plan.target, done: false, label: plan.label };
+          save();
+        }
+        updateFocusUI();
+      }
+      function updateFocusUI() {
+        const f = data.focus || {};
+        const info = document.getElementById('focusInfo');
+        const cnt = document.getElementById('focusCount');
+        const bar = document.getElementById('focusBar');
+        if (info) info.textContent = f.done ? `✅ ${f.label} — Completed for today` : `Today: ${f.label}`;
+        if (cnt) cnt.textContent = `${Math.min(f.solved || 0, f.target || 0)}/${f.target || 0}`;
+        if (bar) bar.style.width = ((Math.max(0, Math.min(1, (f.solved || 0) / (f.target || 1)))) * 100).toFixed(0) + '%';
+      }
+      function switchToFocus() {
+        const f = data.focus || {};
+        if (f.mode && f.mode !== 'mixed' && STRANDS.includes(f.mode)) {
+          data.mode = f.mode;
+          const btn = document.querySelector(`.navBtn[data-mode="${f.mode}"]`);
+          if (btn && typeof setActiveNav === 'function') setActiveNav(btn);
+          renderMode(); nextQuestion();
+          if (data.themePref === 'auto') applyTheme(themeForMode(data.mode));
+          save();
+        }
+      }
+      const focusBtn = document.getElementById('focusSwitchBtn');
+      if (focusBtn && !focusBtn.dataset.bound) { focusBtn.addEventListener('click', switchToFocus); focusBtn.dataset.bound = '1'; }
     })();
   </script>
   <!-- place before closing body -->
