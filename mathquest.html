@@ -505,6 +505,52 @@
         boss: { done: false },
       }, state);
 
+      // NEW: helpers moved up so they exist before any use
+      function $(sel) { return document.querySelector(sel); }
+      function setText(sel, val) { const el = document.querySelector(sel); if (el) el.textContent = val; }
+      function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
+      function fmtPct(n) { return Math.round(n * 100) + "%"; }
+
+      // NEW: mastery helpers + compute function
+      function median(arr) { if (!arr.length) return 0; const s = [...arr].sort((a, b) => a - b); const m = Math.floor(s.length / 2); return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; }
+      function dayKey(ts) { const d = new Date(ts); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; }
+      function computeMasteryFor(strand) {
+        const attempts = data.hist[strand] || [];
+        const total = attempts.length;
+        const window20 = attempts.slice(-20);
+        if (total < 25 || window20.length < 20) return false;
+        const acc = window20.reduce((s, a) => s + (a.correct ? 1 : 0), 0) / window20.length;
+        if (acc < 0.90) return false;
+        const days = new Set(window20.map(a => dayKey(a.t))).size;
+        if (days < 2) return false;
+        const medMs = median(window20.map(a => a.ms || 0));
+        if (medMs > 25000) return false;
+        const hintRate = window20.reduce((s, a) => s + (a.hint ? 1 : 0), 0) / window20.length;
+        if (hintRate > 0.10) return false;
+        return true;
+      }
+
+      // NEW: progress bar + mastery UI updater
+      function updateProgress() {
+        // Recompute mastery first
+        recomputeMastery();
+
+        ['pemdas', 'integers', 'coords', 'words', 'puzzles'].forEach(k => {
+          if (data.mastered[k]) {
+            setText('#p_' + k, 'Mastered');
+            $('#bar_' + k).style.width = '100%';
+          } else {
+            setText('#p_' + k, `${data.correct[k]}/10`);
+            $('#bar_' + k).style.width = Math.min(100, data.correct[k] * 10) + '%';
+          }
+          const pill = document.getElementById('p_' + k);
+          if (pill) pill.classList.toggle('mastered', !!data.mastered[k]);
+        });
+        const total = Object.values(data.correct).reduce((a, b) => a + b, 0);
+        $('#overallBar').style.width = clamp(total / 50, 0, 1) * 100 + '%';
+        setText('#overallPct', fmtPct(clamp(total / 50, 0, 1)));
+      }
+
       // Ranks
       function computeRank(xp) {
         if (xp >= 300) return 'Architect';
@@ -848,48 +894,35 @@
       document.getElementById('submit').addEventListener('click', () => audio.click(), { capture: true });
       document.getElementById('newQ').addEventListener('click', () => audio.click(), { capture: true });
 
-      // Helpers
-      const $ = sel => document.querySelector(sel);
-      const setText = (id, val) => { const el = $(id); if (el) el.textContent = val };
-      const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
-      const fmtPct = n => Math.round(n * 100) + "%";
+      // REPLACE OLD helper consts (moved above) — remove these four lines if present:
+      // const $ = sel => document.querySelector(sel);
+      // const setText = (id, val) => { const el = $(id); if (el) el.textContent = val };
+      // const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+      // const fmtPct = n => Math.round(n * 100) + "%";
 
-      // NEW: core app helpers that were missing
-      function save() {
-        try { localStorage.setItem('csMathQuest', JSON.stringify(data)); } catch (_) { /* ignore */ }
-      }
-      function updateHUD() {
-        setText('#xp', data.xp);
-        setText('#streak', data.streak);
-        setText('#rank', data.rank);
-      }
-      function paintBadges() {
-        const box = $('#badges');
-        if (!box) return;
-        box.innerHTML = '';
-        Object.entries(data.badges || {}).forEach(([key, label]) => {
-          const el = document.createElement('div');
-          el.className = 'badge';
-          el.innerHTML = `🏅 <span>${label}</span>`;
-          box.appendChild(el);
-        });
-      }
-      function toast(msg) {
-        const el = document.createElement('div');
-        el.textContent = msg;
-        Object.assign(el.style, {
-          position: 'fixed', top: '12px', right: '12px', zIndex: 9999,
-          background: '#151e44', color: '#fff', border: '1px solid #2a3672',
-          padding: '8px 10px', borderRadius: '10px', boxShadow: '0 6px 20px #0008',
-          opacity: '0', transform: 'translateY(-6px)', transition: 'opacity .2s, transform .2s'
-        });
-        document.body.appendChild(el);
-        requestAnimationFrame(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; });
-        setTimeout(() => {
-          el.style.opacity = '0'; el.style.transform = 'translateY(-6px)';
-          setTimeout(() => el.remove(), 250);
-        }, 2000);
-      }
+      // Bind actions (submit/new/hint) so the game advances
+      document.getElementById('submit').addEventListener('click', () => check());
+      document.getElementById('newQ').addEventListener('click', () => nextQuestion());
+      document.getElementById('hintBtn').addEventListener('click', () => {
+        if (current.hint) {
+          const h = document.getElementById('hint');
+          h.textContent = 'Hint: ' + current.hint + ' (−5 XP)';
+          h.style.display = 'block';
+          current.hinted = true;
+          data.xp = Math.max(0, data.xp - 5);
+          updateHUD(); save();
+        }
+      });
+
+      // Keyboard shortcuts
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { check(); }
+        if (e.key.toLowerCase && e.key.toLowerCase() === 'n') { nextQuestion(); }
+        if (e.key.toLowerCase && e.key.toLowerCase() === 'h') {
+          const btn = document.getElementById('hintBtn');
+          if (btn) btn.click();
+        }
+      });
 
       // First render
       renderMode();
