@@ -1189,6 +1189,113 @@
       }
       window.updateEngagementUI = updateEngagementUI;
 
+      // --- Generators + answer checking + challenges (required by nextQuestion/checkAnswer) ---
+      const rnd = (a, b) => (Math.random() * (b - a + 1) + a) | 0;
+      const choice = a => a[(Math.random() * a.length) | 0];
+      function reduceFrac(n, d) {
+        const g = (x, y) => y ? g(y, x % y) : Math.abs(x);
+        const gg = g(n, d) || 1;
+        const s = Math.sign(n) * Math.sign(d) || 1;
+        n = Math.abs(n) / gg; d = Math.abs(d) / gg;
+        return { n: s < 0 ? -n : n, d };
+      }
+      const gens = {
+        pemdas() {
+          const a = rnd(2, 12), b = rnd(2, 9), c = rnd(1, 8), d = rnd(1, 6);
+          const ops = [['+', (x, y) => x + y], ['-', (x, y) => x - y]];
+          const [s, f] = choice(ops);
+          const expr = `${a} + ${b} * (${c} ${s} ${d})`;
+          return { q: `Evaluate: ${expr}`, ans: a + b * f(c, d), hint: 'Parentheses → multiply → add/subtract.' };
+        },
+        integers() {
+          const a = rnd(-20, 20), b = rnd(-20, 20), op = choice(['+', '-', '*']);
+          const ans = op === '+' ? a + b : op === '-' ? a - b : a * b;
+          return { q: `Compute: ${a} ${op} ${b}`, ans, hint: 'Negative × negative = positive.' };
+        },
+        coords() {
+          const x = rnd(-9, 9), y = rnd(-9, 9);
+          return { q: `Point P(${x}, ${y}). What is x + y?`, ans: x + y, hint: 'Add the x and y coordinates.' };
+        },
+        words() {
+          const a = rnd(3, 12), b = rnd(2, 9);
+          return { q: `Translate and compute: "the product of ${a} and ${b}, then add ${a}"`, ans: a * b + a, hint: 'Product means multiply, then add.' };
+        },
+        puzzles() {
+          const a = rnd(2, 6), d = rnd(2, 7), n = rnd(5, 8);
+          const seq = Array.from({ length: n - 1 }, (_, i) => a + i * d).join(', ');
+          return { q: `Sequence: ${seq}, … What is the ${n}th term?`, ans: a + (n - 1) * d, hint: 'aₙ = a₁ + (n−1)d.' };
+        },
+        logic() {
+          const A = Math.random() < 0.5, B = Math.random() < 0.5;
+          const op = choice(['∧', '∨', '→']);
+          let ans; if (op === '∧') ans = A && B; else if (op === '∨') ans = A || B; else ans = (!A) || B;
+          return { q: `Let A=${A ? 'T' : 'F'}, B=${B ? 'T' : 'F'}. Evaluate: A ${op} B`, ans: ans ? 'T' : 'F', hint: 'A→B is false only when A=T, B=F.' };
+        },
+        mod() {
+          const n = rnd(10, 99), m = choice([3, 4, 5, 6, 7, 8, 9]);
+          return { q: `Compute: ${n} mod ${m}`, ans: n % m, hint: 'Remainder after dividing n by m.' };
+        },
+        prob() {
+          const k = choice([2, 3, 4, 5]); const n = k, d = 6; const rf = reduceFrac(n, d);
+          return { q: `Roll a fair die. P(value ≤ ${k}) = ? (simplify as a/b)`, ans: `${rf.n}/${rf.d}`, hint: `Favorable outcomes: ${n} of 6.` };
+        }
+      };
+      window.gens = gens;
+
+      function norm(input) {
+        if (typeof input === 'number') return { kind: 'num', v: input };
+        const s = String(input).trim();
+        if (/^[tTfF]$/.test(s)) return { kind: 'bool', v: s.toUpperCase() };
+        if (/^-?\d+\/-?\d+$/.test(s)) {
+          const [a, b] = s.split('/').map(Number); if (b === 0) return { kind: 'str', v: s };
+          const { n, d } = reduceFrac(a, b); return { kind: 'frac', v: `${n}/${d}` };
+        }
+        if (/^-?\d+(\.\d+)?$/.test(s)) return { kind: 'num', v: Number(s) };
+        return { kind: 'str', v: s.toLowerCase() };
+      }
+      function eqAns(user, correct) {
+        const u = norm(user), c = norm(correct);
+        if (u.kind === 'bool' || c.kind === 'bool') return u.v === (typeof c.v === 'string' ? c.v.toUpperCase() : c.v);
+        if (u.kind === 'frac' || c.kind === 'frac') return u.v === (c.kind === 'frac' ? c.v : String(c.v));
+        if (u.kind === 'num' && c.kind === 'num') return Math.abs(u.v - c.v) < 1e-9;
+        return String(user).trim().toLowerCase() === String(correct).trim().toLowerCase();
+      }
+
+      // Daily challenge progress
+      function applyChallengeProgress({ correct, noHint, strand, ms = 0, streak = 0 }) {
+        if (!Array.isArray(data.challenges) || !data.challenges.length) return;
+        let changed = false;
+        for (const ch of data.challenges) {
+          if (ch.done) continue;
+          switch (ch.type) {
+            case 'strand':
+              if (correct && strand === ch.strand) { ch.progress++; changed = true; }
+              break;
+            case 'streak': {
+              const prog = Math.min(streak, ch.target);
+              if (prog > (ch.progress || 0)) { ch.progress = prog; changed = true; }
+              break;
+            }
+            case 'nohint':
+              if (correct && noHint) { ch.progress++; changed = true; }
+              break;
+            case 'speed': {
+              const thrMs = Math.max(1000, (ch.threshold || 15) * 1000);
+              if (correct && ms > 0 && ms <= thrMs) { ch.progress++; changed = true; }
+              break;
+            }
+          }
+          if (!ch.done && ch.progress >= ch.target) {
+            ch.done = true;
+            const reward = ch.reward || 20;
+            data.xp += reward; data.rank = computeRank(data.xp);
+            toast(`🎯 Challenge complete! (+${reward} XP)`);
+            changed = true;
+          }
+        }
+        if (changed) { updateHUD(); save(); updateEngagementUI(); }
+      }
+
       // --- Current question + flow ---
       let current = null;
       function nextQuestion() {
