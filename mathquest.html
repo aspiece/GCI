@@ -562,8 +562,6 @@
         <option value="workshop">Workshop</option>
         <option value="portal">Portal</option>
       </select>
-      <button class="btn ghost" id="pickQuestBtn" title="Choose a quest">🎯 Choose Quest</button>
-      <button class="btn ghost" id="resetBtn" title="Reset progress" aria-label="Reset progress">↺ Reset</button>
     </div>
   </header>
   <div class="app">
@@ -1579,6 +1577,7 @@
         box.innerHTML = `
           <div>${ck(solvedOK)} Solved: <b>${stats.correct}/${rules.minSolved}</b></div>
           <div>${ck(accOK)} Accuracy: <b>${pct(stats.acc)}</b> (target ≥ ${pct(rules.minAcc)})</div>
+          <div>${ck(accOK)} Accuracy: <b>${pct(stats.acc)}</b> (target ≥ ${pct(rules.minAcc)})</div>
           <div>${ck(hintOK)} Hint rate: <b>${pct(stats.hintRate)}</b> (target ≤ ${pct(rules.maxHintRate)})</div>
           ${streakNeed != null ? `<div>${ck(streakOK)} Best streak: <b>${stats.bestStreak}/${streakNeed}</b></div>` : ``}
         `;
@@ -1899,20 +1898,22 @@
 
       // Initial render + start flow
       function initialStart() {
+        // Randomize starting quest on every reload
+        const modes = STRANDS.slice(); // all playable strands
+        data.mode = modes[(Math.random() * modes.length) | 0];
+
+        // Reflect in sidebar and theme
+        const btn = document.querySelector(`.navBtn[data-mode="${data.mode}"]`);
+        if (btn) setActiveNav(btn);
         renderMode();
+        if (data.themePref === 'auto') applyTheme(themeForMode(data.mode));
+
         updateHUD();
         updateProgress();
         paintBadges();
         updateEngagementUI();
-        // Show picker on first visit or if mode is invalid
-        const firstTime = !('onboarded' in data);
-        if (firstTime || !STRANDS.includes(data.mode)) {
-          openQuestPicker();
-          data.onboarded = true;
-          save();
-        } else {
-          nextQuestion();
-        }
+        save();
+        nextQuestion();
         validateQuests();
       }
 
@@ -1925,37 +1926,6 @@
   </script>
   <!-- place before closing body -->
   <div id="ariaLive" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
-
-  <!-- Place just before the <script> tag -->
-  <section id="questPicker" class="modal" role="dialog" aria-modal="true" aria-labelledby="qpTitle"
-    style="display:none">
-    <div class="dialog">
-      <h3 id="qpTitle" style="margin:0 0 6px">Choose your Quest</h3>
-      <div class="tiny">Pick a strand to begin. You can change anytime from the sidebar.</div>
-      <div class="qp-grid" id="qpGrid">
-        <!-- Buttons created by JS; fallback static buttons for no-JS -->
-        <button class="qp-btn" data-mode="pemdas"><span>Q1) Temple of PEMDAS</span> <span class="tiny">Arithmetic
-            order</span></button>
-        <button class="qp-btn" data-mode="integers"><span>Q2) Integer Ice Caves</span> <span class="tiny">Signed
-            numbers</span></button>
-        <button class="qp-btn" data-mode="coords"><span>Q3) Quadrant Frontier</span> <span
-            class="tiny">Coordinates</span></button>
-        <button class="qp-btn" data-mode="words"><span>Q4) Wordsmith Workshop</span> <span class="tiny">Translate to
-            math</span></button>
-        <button class="qp-btn" data-mode="puzzles"><span>Q5) Puzzle Portal</span> <span class="tiny">Patterns &
-            grids</span></button>
-        <button class="qp-btn" data-mode="logic"><span>Q6) Circuit of Logic</span> <span
-            class="tiny">AND/OR/NOT</span></button>
-        <button class="qp-btn" data-mode="mod"><span>Q7) Modulus Monastery</span> <span
-            class="tiny">Remainders</span></button>
-        <button class="qp-btn" data-mode="prob"><span>Q8) Probability Pirates</span> <span
-            class="tiny">Fractions</span></button>
-      </div>
-      <div class="flex" style="margin-top:12px">
-        <button class="btn ghost" id="qpCancel">Close</button>
-      </div>
-    </div>
-  </section>
 </body>
 
 </html>
