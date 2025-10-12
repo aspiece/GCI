@@ -981,160 +981,122 @@
         callIf(window.updateEngagementUI);
       }
 
-      // --- Reset binding (single) ---
-      const resetEl = document.getElementById('resetBtn');
-      if (resetEl && !resetEl.dataset.bound) {
-        resetEl.addEventListener('click', () => {
-          if (!confirm('Reset XP, progress, and daily challenges?')) return;
-          data.xp = 0; data.streak = 0; data.rank = 'Novice';
-          data.correct = STRANDS.reduce((o, k) => (o[k] = 0, o), {});
-          data.hist = STRANDS.reduce((o, k) => (o[k] = [], o), {});
-          data.mastered = STRANDS.reduce((o, k) => (o[k] = false, o), {});
-          data.badges = {}; data.boss = { done: false };
-          data.daily = null; data.challenges = []; ensureDaily();
-          updateHUD(); updateProgress(); paintBadges(); callIf(window.updateEngagementUI);
-          save(); callIf(window.nextQuestion);
-        });
-        resetEl.dataset.bound = '1';
-      }
-
-      // --- Init: bind nav, randomize quest on load, render once ---
-      initNav();
-      ensureDaily();
-
-      // INSERT: core generators, answer checking, controls, and UI updates
-      // --- Generators (one per strand) ---
-      const rnd = (a, b) => (Math.random() * (b - a + 1) + a) | 0;
-      const choice = a => a[(Math.random() * a.length) | 0];
-      function reduceFrac(n, d) {
-        const g = (x, y) => y ? g(y, x % y) : Math.abs(x);
-        const gg = g(n, d) || 1;
-        const s = Math.sign(n) * Math.sign(d) || 1;
-        n = Math.abs(n) / gg; d = Math.abs(d) / gg;
-        return { n: s < 0 ? -n : n, d };
-      }
-      const gens = {
-        pemdas() {
-          const a = rnd(2, 12), b = rnd(2, 9), c = rnd(1, 8), d = rnd(1, 6);
-          const ops = [['+', (x, y) => x + y], ['-', (x, y) => x - y]];
-          const [s, f] = choice(ops);
-          const expr = `${a} + ${b} * (${c} ${s} ${d})`;
-          const ans = a + b * f(c, d);
-          return { q: `Evaluate: ${expr}`, ans, hint: 'Do parentheses first, then multiply, then add/subtract.' };
-        },
-        integers() {
-          const a = rnd(-20, 20), b = rnd(-20, 20), op = choice(['+', '-', '*']);
-          const expr = `${a} ${op} ${b}`;
-          const ans = op === '+' ? a + b : op === '-' ? a - b : a * b;
-          return { q: `Compute: ${expr}`, ans, hint: 'Remember: negative × negative = positive.' };
-        },
-        coords() {
-          const x = rnd(-9, 9), y = rnd(-9, 9);
-          const ans = x + y;
-          return { q: `Point P(${x}, ${y}). What is x + y?`, ans, hint: 'Add the x and y coordinates.' };
-        },
-        words() {
-          const a = rnd(3, 12), b = rnd(2, 9);
-          return { q: `Translate and compute: "the product of ${a} and ${b}, then add ${a}"`, ans: a * b + a, hint: 'Product means multiply, then add.' };
-        },
-        puzzles() {
-          const a = rnd(2, 6), d = rnd(2, 7), n = rnd(5, 8);
-          const seq = Array.from({ length: n - 1 }, (_, i) => a + i * d).join(', ');
-          const ans = a + (n - 1) * d;
-          return { q: `Sequence: ${seq}, … What is the ${n}ᵗʰ term?`, ans, hint: `Arithmetic seq: aₙ = a₁ + (n−1)d (d=${d}).` };
-        },
-        logic() {
-          const A = Math.random() < 0.5, B = Math.random() < 0.5;
-          const op = choice(['∧', '∨', '→']);
-          let ans;
-          if (op === '∧') ans = A && B;
-          else if (op === '∨') ans = A || B;
-          else ans = (!A) || B; // implication
-          return { q: `Let A=${A ? 'T' : 'F'}, B=${B ? 'T' : 'F'}. Evaluate: A ${op} B`, ans: ans ? 'T' : 'F', hint: 'A→B is false only when A=T and B=F.' };
-        },
-        mod() {
-          const n = rnd(10, 99), m = choice([3, 4, 5, 6, 7, 8, 9]);
-          return { q: `Compute: ${n} mod ${m}`, ans: n % m, hint: 'Remainder after dividing n by m.' };
-        },
-        prob() {
-          // Die roll: probability of rolling value ≤ k
-          const k = choice([2, 3, 4, 5]);
-          const n = k, d = 6; const rf = reduceFrac(n, d);
-          return { q: `Roll a fair die. P(value ≤ ${k}) = ? (simplify as a/b)`, ans: `${rf.n}/${rf.d}`, hint: `Favorable outcomes: ${n} of 6.` };
-        }
+      // NEW: Daily goal logic
+      function dowKey(d = new Date()) { return d.getDay(); } // 0=Sun..6=Sat
+      const DAILY_GOALS = {
+        1: { label: 'Logic Monday — Boolean practice', rules: { minSolved: 8, minAcc: 0.80, maxHintRate: 0.15 } },
+        2: { label: 'Mod Tuesday — Remainders & congruence', rules: { minSolved: 8, minAcc: 0.80, maxHintRate: 0.15 } },
+        3: { label: 'Probability Wednesday — Fractions & outcomes', rules: { minSolved: 8, minAcc: 0.80, maxHintRate: 0.15 } },
+        4: { label: 'Thorough Thursday — Mixed practice', rules: { minSolved: 10, minAcc: 0.80, maxHintRate: 0.10 } },
+        5: { label: 'Focus Friday — Mastery push', rules: { minSolved: 10, minAcc: 0.85, maxHintRate: 0.10, minStreak: 5 } },
+        0: { label: 'Weekend — Choice day', rules: { minSolved: 6, minAcc: 0.75, maxHintRate: 0.20 } },
+        6: { label: 'Weekend — Choice day', rules: { minSolved: 6, minAcc: 0.75, maxHintRate: 0.20 } },
       };
-
-      // --- Answer normalization and compare ---
-      function norm(input) {
-        if (typeof input === 'number') return { kind: 'num', v: input };
-        if (typeof input === 'string') {
-          const s = input.trim();
-          if (/^[tTfF]$/.test(s)) return { kind: 'bool', v: s.toUpperCase() };
-          if (/^-?\d+\/-?\d+$/.test(s)) {
-            const [a, b] = s.split('/').map(Number);
-            if (b === 0) return { kind: 'str', v: s };
-            const { n, d } = reduceFrac(a, b);
-            return { kind: 'frac', v: `${n}/${d}` };
-          }
-          if (/^-?\d+(\.\d+)?$/.test(s)) return { kind: 'num', v: Number(s) };
-          return { kind: 'str', v: s };
+      function currentDailyGoal() { return DAILY_GOALS[dowKey()] || DAILY_GOALS[0]; }
+      function todayStats() {
+        const today = todayKey();
+        const all = [];
+        for (const k of STRANDS) (data.hist[k] || []).forEach(a => { if (a && a.t && new Date(a.t).toISOString().slice(0, 10) === today) all.push(a); });
+        all.sort((a, b) => a.t - b.t);
+        const total = all.length;
+        const correct = all.reduce((s, a) => s + (a.correct ? 1 : 0), 0);
+        const hints = all.reduce((s, a) => s + (a.hint ? 1 : 0), 0);
+        let best = 0, cur = 0;
+        for (const a of all) { cur = a.correct ? cur + 1 : 0; best = Math.max(best, cur); }
+        return { total, correct, hints, acc: total ? correct / total : 0, hintRate: total ? hints / total : 0, bestStreak: best };
+      }
+      function renderDailyChecklist(stats, rules) {
+        const box = document.getElementById('dailyChecklist');
+        if (!box) return;
+        const solvedOK = stats.correct >= rules.minSolved;
+        const accOK = stats.acc >= rules.minAcc;
+        const hintOK = stats.hintRate <= rules.maxHintRate;
+        const streakNeed = typeof rules.minStreak === 'number' ? rules.minStreak : null;
+        const streakOK = streakNeed != null ? stats.bestStreak >= streakNeed : true;
+        const ck = ok => ok ? '✔' : '○';
+        const pct = x => Math.round(x * 100) + '%';
+        box.innerHTML = `
+          <div>${ck(solvedOK)} Solved: <b>${stats.correct}/${rules.minSolved}</b></div>
+          <div>${ck(accOK)} Accuracy: <b>${pct(stats.acc)}</b> (target ≥ ${pct(rules.minAcc)})</div>
+          <div>${ck(hintOK)} Hint rate: <b>${pct(stats.hintRate)}</b> (target ≤ ${pct(rules.maxHintRate)})</div>
+          ${streakNeed != null ? `<div>${ck(streakOK)} Best streak: <b>${stats.bestStreak}/${streakNeed}</b></div>` : ``}
+        `;
+      }
+      function checkDailyCompletion() {
+        const plan = currentDailyGoal();
+        const rules = Object.assign({ minSolved: 10, minAcc: 0.80, maxHintRate: 0.10 }, data.daily?.rules || {}, plan.rules || {});
+        const stats = todayStats();
+        const solvedOK = stats.correct >= rules.minSolved;
+        const accOK = stats.acc >= rules.minAcc;
+        const hintOK = stats.hintRate <= rules.maxHintRate;
+        const streakOK = (typeof rules.minStreak === 'number') ? (stats.bestStreak >= rules.minStreak) : true;
+        const done = solvedOK && accOK && hintOK && streakOK;
+        if (done && !data.daily.completed) {
+          data.daily.completed = true;
+          data.badges['daily_' + data.daily.date] = 'Daily Goal Complete';
+          data.xp += 30; data.rank = computeRank(data.xp);
+          toast('✅ Daily CS goal complete! (+30 XP)');
+          celebrate('mastery');
+          save();
+          updateHUD();
         }
-        return { kind: 'str', v: String(input) };
-      }
-      function eqAns(user, correct) {
-        const u = norm(user), c = norm(correct);
-        if (u.kind === 'bool' || c.kind === 'bool') return u.v === (typeof c.v === 'string' ? c.v.toUpperCase() : c.v);
-        if (u.kind === 'frac' || c.kind === 'frac') return u.v === (c.kind === 'frac' ? c.v : String(c.v));
-        if (u.kind === 'num' && c.kind === 'num') return Math.abs(u.v - c.v) < 1e-9;
-        return String(user).trim().toLowerCase() === String(correct).trim().toLowerCase();
+        return { rules, stats, plan };
       }
 
-      // --- Challenges (HS level) ---
-      function applyChallengeProgress({ correct, noHint, strand, ms = 0, streak = 0 }) {
-        if (!Array.isArray(data.challenges) || !data.challenges.length) return;
-        let changed = false;
-        for (const ch of data.challenges) {
-          if (ch.done) continue;
-          switch (ch.type) {
-            case 'strand':
-              if (correct && strand === ch.strand) { ch.progress++; changed = true; }
-              break;
-            case 'streak': {
-              const prog = Math.min(streak, ch.target);
-              if (prog > (ch.progress || 0)) { ch.progress = prog; changed = true; }
-              break;
-            }
-            case 'nohint':
-              if (correct && noHint) { ch.progress++; changed = true; }
-              break;
-            case 'speed': {
-              const thrMs = Math.max(1000, (ch.threshold || 15) * 1000);
-              if (correct && ms > 0 && ms <= thrMs) { ch.progress++; changed = true; }
-              break;
-            }
+      // Update ensureDaily to include label/rules (keeps compatibility)
+      (function patchEnsureDaily() {
+        const _ensureDaily = ensureDaily;
+        ensureDaily = function () {
+          const today = todayKey();
+          const plan = currentDailyGoal();
+          if (!data.daily || data.daily.date !== today) {
+            const rules = Object.assign({ minSolved: 10, minAcc: 0.80, maxHintRate: 0.10 }, plan.rules || {});
+            data.daily = { date: today, solved: 0, goal: rules.minSolved, completed: false, rules, label: plan.label };
+            data.challenges = rollDailyChallenges();
+          } else if (!Array.isArray(data.challenges) || !data.challenges.length) {
+            data.challenges = rollDailyChallenges();
           }
-          if (!ch.done && ch.progress >= ch.target) {
-            ch.done = true;
-            const reward = ch.reward || 20;
-            data.xp += reward;
-            data.rank = computeRank(data.xp);
-            toast(`🎯 Challenge complete! (+${reward} XP)`);
-            celebrate('correct');
-            changed = true;
-          }
-        }
-        if (changed) { updateHUD(); save(); updateEngagementUI(); }
-      }
+          _ensureDaily && _ensureDaily(); // still calls UI update via callIf
+        };
+      })();
 
-      // --- Engagement UI (daily + challenges) ---
+      // Replace updateEngagementUI body to include label + checklist + meter
       function updateEngagementUI() {
-        // Daily meter
-        const solved = data.daily?.solved || 0;
-        const goal = data.daily?.goal || 10;
+        const plan = currentDailyGoal();
+        const { rules, stats } = (function () {
+          const r = Object.assign({ minSolved: 10, minAcc: 0.80, maxHintRate: 0.10 }, data.daily?.rules || {}, plan.rules || {});
+          const s = todayStats();
+          return { rules: r, stats: s };
+        })();
+
+        // Label
+        const goalLabel = document.getElementById('dailyGoalLabel');
+        if (goalLabel) goalLabel.textContent = `Today: ${data.daily?.label || plan.label || ''}`;
+
+        // Meter + count
         const bar = document.getElementById('dailyBar');
-        if (bar) bar.style.width = Math.min(100, Math.max(0, (solved / goal) * 100)) + '%';
+        const solved = stats.correct, goal = rules.minSolved;
+        if (bar) bar.style.width = (Math.max(0, Math.min(1, solved / goal)) * 100).toFixed(0) + '%';
         const cnt = document.getElementById('dailyCount');
         if (cnt) cnt.textContent = `${Math.min(solved, goal)}/${goal}`;
+
+        // Checklist
+        renderDailyChecklist(stats, rules);
+
+        // Hint message
+        const hint = document.getElementById('dailyHint');
+        if (hint) {
+          if (data.daily?.completed) hint.textContent = 'Great work! Daily goal complete. 🎉';
+          else {
+            const needs = [];
+            if (solved < goal) needs.push(`${goal - solved} more solved`);
+            if (stats.acc < rules.minAcc) needs.push('raise accuracy');
+            if (stats.hintRate > rules.maxHintRate) needs.push('use fewer hints');
+            if (typeof rules.minStreak === 'number' && stats.bestStreak < rules.minStreak) needs.push(`build a ${rules.minStreak}+ streak`);
+            hint.textContent = needs.length ? `To finish: ${needs.join(', ')}.` : 'Almost there!';
+          }
+        }
+
         // Challenges list
         const box = document.getElementById('challenges');
         if (box) {
@@ -1200,9 +1162,18 @@
         // trim history lightly
         if (data.hist[current.strand].length > 400) data.hist[current.strand] = data.hist[current.strand].slice(-300);
 
+        (data.statsWin[current.strand] = data.statsWin[current.strand] || []).push({
+          t: Date.now(), correct, hint: current.hinted, ms: Math.round(elapsed)
+        });
+        if (data.statsWin[current.strand].length > 120) {
+          data.statsWin[current.strand] = data.statsWin[current.strand].slice(-100);
+        }
+        updateStatsUI();
+
         updateHUD();
         updateProgress();
         updateEngagementUI();
+        checkDailyCompletion(); // added
         save();
       }
 
@@ -1233,10 +1204,11 @@
           ans.addEventListener('keydown', e => { if (e.key === 'Enter') checkAnswer(); });
           ans.dataset.bound = '1';
         }
+        // CHANGE: keep this listener active, not once
         document.addEventListener('keydown', e => {
           if (e.key === 'n' || e.key === 'N') nextQuestion();
           else if (e.key === 'h' || e.key === 'H') showHint();
-        }, { once: true }); // only bind once
+        });
       }
       bindControls();
 
