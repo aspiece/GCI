@@ -18,6 +18,79 @@
       --muted: #9fb0d7;
     }
 
+    /* THEMES */
+    [data-theme="space"] {
+      --bg: #0b1020;
+      --panel: #121935;
+      --panel2: #0e1530;
+      --acc: #6cf;
+      --acc2: #9f6cff;
+      --good: #2ecc71;
+      --bad: #e74c3c;
+      --text: #e6ecff;
+      --muted: #9fb0d7;
+    }
+
+    [data-theme="ice"] {
+      --bg: #0a1224;
+      --panel: #0f1a3a;
+      --panel2: #0b1f47;
+      --acc: #77d9ff;
+      --acc2: #b3ecff;
+      --good: #5ce6b8;
+      --bad: #ff6b6b;
+      --text: #eef7ff;
+      --muted: #b7d2ea;
+    }
+
+    [data-theme="jungle"] {
+      --bg: #0b140d;
+      --panel: #0f2616;
+      --panel2: #0c331f;
+      --acc: #5de38a;
+      --acc2: #9cff6c;
+      --good: #4de07a;
+      --bad: #ff6b6b;
+      --text: #e8ffe8;
+      --muted: #a7d7b1;
+    }
+
+    [data-theme="dungeon"] {
+      --bg: #0e0c09;
+      --panel: #171208;
+      --panel2: #241a0b;
+      --acc: #ffcf67;
+      --acc2: #ffd76a;
+      --good: #8be881;
+      --bad: #ff6b6b;
+      --text: #fff5e2;
+      --muted: #d7c7a0;
+    }
+
+    [data-theme="workshop"] {
+      --bg: #140f0a;
+      --panel: #1b140e;
+      --panel2: #231a12;
+      --acc: #ffad66;
+      --acc2: #ffd180;
+      --good: #8be881;
+      --bad: #ff7d7d;
+      --text: #fff0e0;
+      --muted: #d7c0a7;
+    }
+
+    [data-theme="portal"] {
+      --bg: #120a18;
+      --panel: #1b0f2a;
+      --panel2: #2a1342;
+      --acc: #9f6cff;
+      --acc2: #ff6cd9;
+      --good: #78f0c8;
+      --bad: #ff6b9e;
+      --text: #f6eaff;
+      --muted: #c9b3e0;
+    }
+
     * {
       box-sizing: border-box
     }
@@ -394,6 +467,16 @@
       <div class="stat" title="Experience Points"><span>⭐</span> <span>XP:</span> <b id="xp">0</b></div>
       <div class="stat" title="Streak"><span>🔥</span> <span>Streak:</span> <b id="streak">0</b></div>
       <div class="stat" title="Rank"><span>🏆</span> <span>Rank:</span> <b id="rank">Novice</b></div>
+      <!-- NEW: Theme selector -->
+      <select id="themeSelect" class="btn ghost" title="Theme">
+        <option value="auto">Auto (by Quest)</option>
+        <option value="space">Space</option>
+        <option value="ice">Ice Caves</option>
+        <option value="jungle">Jungle</option>
+        <option value="dungeon">Temple</option>
+        <option value="workshop">Workshop</option>
+        <option value="portal">Portal</option>
+      </select>
       <button class="btn ghost" id="resetBtn" title="Reset progress">↺ Reset</button>
     </div>
   </header>
@@ -677,6 +760,7 @@
         challenges: [],
         badges: {},
         boss: { done: false },
+        themePref: 'auto'
       }, state);
 
       // helpers already here:
@@ -1301,7 +1385,49 @@
       updateEngagementUI();
       nextQuestion();
 
-      // ...existing code...
+      // --- NEW: THEME CODE ---
+      // THEME: map modes -> themes
+      function themeForMode(mode) {
+        switch (mode) {
+          case 'pemdas': return 'dungeon';      // Temple of PEMDAS
+          case 'integers': return 'ice';        // Integer Ice Caves
+          case 'coords': return 'space';        // Quadrant Frontier
+          case 'words': return 'workshop';      // Wordsmith Workshop
+          case 'puzzles': return 'portal';      // Puzzle Portal
+          default: return 'space';
+        }
+      }
+      function applyTheme(key) {
+        const t = key || 'space';
+        document.documentElement.setAttribute('data-theme', t);
+      }
+      function initThemeSelect() {
+        const sel = document.getElementById('themeSelect');
+        if (!sel) return;
+        sel.value = data.themePref || 'auto';
+        sel.addEventListener('change', () => {
+          data.themePref = sel.value || 'auto';
+          const chosen = data.themePref === 'auto' ? themeForMode(data.mode) : data.themePref;
+          applyTheme(chosen);
+          save();
+        });
+      }
+
+      // Apply theme on load
+      applyTheme((data.themePref === 'auto') ? themeForMode(data.mode) : data.themePref);
+      initThemeSelect();
+
+      // Update theme when switching quests if Auto
+      const navBtns = [...document.querySelectorAll('.navBtn')];
+      navBtns.forEach(btn => btn.addEventListener('click', () => {
+        // ...existing code...
+        if (data.themePref === 'auto') {
+          applyTheme(themeForMode(data.mode));
+        }
+        save();
+      }));
+
+      // ...existing code (renderMode, nextQuestion, etc.)...
     })();
   </script>
 </body>
