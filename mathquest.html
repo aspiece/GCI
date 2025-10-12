@@ -518,7 +518,7 @@
     </div>
   </header>
   <div class="app">
-    <aside class="side">
+    <aside class="side" role="navigation" aria-label="Quest Map">
       <div class="sectionTitle">Quest Map</div>
       <button class="navBtn active" data-mode="pemdas">Q1) Temple of PEMDAS <span class="pill mono"
           id="p_pemdas">0/10</span></button>
@@ -540,7 +540,7 @@
       <div id="badges"></div>
     </aside>
 
-    <main id="main">
+    <main id="main" role="main">
       <div class="grid">
         <section class="card">
           <h2 id="modeTitle">Q1: Temple of PEMDAS</h2>
@@ -967,77 +967,66 @@
 
       const gens = {
         pemdas() {
-          const t = choice([0, 1, 2, 3]);
+          const a = R(1, 9), b = R(1, 9), c = R(1, 9);
+          const pat = choice(['addMul', 'parenAddMul', 'mulParenSub', 'mix']);
           let q, ans, hint;
-          const a = R(2, 9),
-            b = R(2, 9),
-            c = R(2, 9),
-            d = R(1, 5);
-          switch (t) {
-            case 0:
-              q = `${a} + ${b} * ${c}`;
-              ans = a + b * c;
-              hint = 'Remember × before +.';
-              break;
-            case 1:
-              q = `(${a} + ${b}) * ${c}`;
-              ans = (a + b) * c;
-              hint = 'Parentheses first, then ×.';
-              break;
-            case 2:
-              q = `${a}^2 - ${d}^2`;
-              ans = a * a - d * d;
-              hint = 'Square then subtract.';
-              break;
-            case 3:
-              q = `${a} + ${b} * (${c} + ${d})`;
-              ans = a + b * (c + d);
-              hint = 'Do the () then × then +.';
-              break;
+          if (pat === 'addMul') {
+            q = `${a} + ${b} * ${c}`;
+            ans = a + b * c;
+            hint = 'PEMDAS: multiply before adding.';
+          } else if (pat === 'parenAddMul') {
+            q = `(${a} + ${b}) * ${c}`;
+            ans = (a + b) * c;
+            hint = 'Parentheses first, then multiply.';
+          } else if (pat === 'mulParenSub') {
+            q = `${a} * (${b} - ${c})`;
+            ans = a * (b - c);
+            hint = 'Do the subtraction inside parentheses first.';
+          } else {
+            q = `${a} + ${b} - ${c}`;
+            ans = a + b - c;
+            hint = 'Left to right for + and −.';
           }
           return { q, ans, hint };
         },
+
         integers() {
           const t = choice(['add', 'sub', 'mul', 'div']);
-          let x = R(-15, 15),
-            y = R(-15, 15);
-          if (t === 'div') {
-            y = choice([-10, -5, -2, 2, 5, 10]);
-            x = y * R(-5, 5);
-          }
+          const x = R(-15, 15);
+          let y = R(-12, 12);
+          if (t === 'div') { while (y === 0) y = R(-12, 12); }
           let q, ans, hint;
           if (t === 'add') {
-            q = `${x} + ${y}`;
-            ans = x + y;
-            hint = 'Use a number line: move right for +, left for −.'
-          }
-          if (t === 'sub') {
+            const z = R(-15, 15);
+            q = `${x} + (${z})`;
+            ans = x + z;
+            hint = 'Add signed numbers carefully.';
+          } else if (t === 'sub') {
             q = `${x} - (${y})`;
             ans = x - y;
-            hint = 'Keep‑Change‑Flip: a−(b) = a + (−b).'
-          }
-          if (t === 'mul') {
+            hint = 'Keep‑Change‑Flip helps: a − (b) = a + (−b).';
+          } else if (t === 'mul') {
             q = `(${x}) * (${y})`;
             ans = x * y;
-            hint = 'Sign rule: (−×−)=+, (−×+)=−.'
-          }
-          if (t === 'div') {
+            hint = 'Sign rule: (−×−)=+, (−×+)=−.';
+          } else {
             q = `(${x}) / (${y})`;
             ans = x / y;
-            hint = 'Division keeps sign rules too.'
+            hint = 'Division follows the same sign rules.';
           }
           return { q, ans, hint };
         },
+
         coords() {
           const t = choice(['quad', 'reflectX', 'reflectY', 'translate']);
-          const x = R(-8, 8),
-            y = R(-8, 8);
+          const x = R(-8, 8), y = R(-8, 8);
           let q, ans, hint;
           if (t === 'quad') {
             q = `Which quadrant is (${x}, ${y})? (Enter I, II, III, IV or axis)`;
-            const quad = x === 0 || y === 0 ? 'axis' : x > 0 && y > 0 ? 'I' : x < 0 && y > 0 ? 'II' : x < 0 && y < 0 ? 'III' : 'IV';
+            const quad = (x === 0 || y === 0) ? 'axis' : x > 0 && y > 0 ? 'I' : x < 0 && y > 0 ? 'II' : x < 0 && y < 0 ? 'III' : 'IV';
             ans = quad;
             hint = 'Sign of x then sign of y.';
+            return { q, ans, hint, normalize: s => s.trim().toUpperCase() };
           }
           if (t === 'reflectX') {
             q = `Reflect (${x}, ${y}) across the x‑axis. Enter as x,y`;
@@ -1050,73 +1039,56 @@
             hint = 'Flip the sign of x.';
           }
           if (t === 'translate') {
-            const dx = R(-5, 5),
-              dy = R(-5, 5);
+            const dx = R(-5, 5), dy = R(-5, 5);
             q = `Translate (${x}, ${y}) by Δx=${dx}, Δy=${dy}. Enter as x,y`;
             ans = `${x + dx},${y + dy}`;
             hint = 'Add Δx to x and Δy to y.';
           }
-          return { q, ans, hint, normalize: (s) => s.replace(/\s+/g, '').toUpperCase() };
+          return { q, ans, hint, normalize: s => s.replace(/\s+/g, '') };
         },
+
         words() {
           const t = choice(['temp', 'bank', 'elev', 'rate']);
           let q, ans, hint;
           if (t === 'temp') {
-            const start = R(-10, 5),
-              up = R(3, 12),
-              down = R(2, 9);
+            const start = R(-10, 5), up = R(3, 12), down = R(2, 9);
             q = `Temperature starts at ${start}°; rises ${up}°, then drops ${down}°. Final temp?`;
             ans = start + up - down;
             hint = 'Translate: start + up − down.';
-          }
-          if (t === 'bank') {
-            const bal = R(-20, 10),
-              dep = R(10, 40),
-              cost = R(3, 15);
+          } else if (t === 'bank') {
+            const bal = R(-20, 10), dep = R(10, 40), cost = R(3, 15);
             q = `Account balance $${bal}. Deposit $${dep}, then buy a snack for $${cost}. New balance?`;
             ans = bal + dep - cost;
             hint = 'Deposit adds, purchase subtracts.';
-          }
-          if (t === 'elev') {
-            const start = -R(5, 40),
-              up = R(5, 20),
-              down = R(1, 15);
+          } else if (t === 'elev') {
+            const start = -R(5, 40), up = R(5, 20), down = R(1, 15);
             q = `Start ${Math.abs(start)} ft below sea level. Ascend ${up} ft; descend ${down} ft. Final elevation (signed)?`;
             ans = start + up - down;
             hint = 'Below sea level is negative.';
-          }
-          if (t === 'rate') {
-            const speed = choice([20, 30, 40, 50]),
-              time = choice([0.5, 1, 1.5, 2]);
+          } else {
+            const speed = choice([20, 30, 40, 50]), time = choice([0.5, 1, 1.5, 2]);
             q = `You travel at ${speed} mi/hr for ${time} hr. How many miles?`;
             ans = speed * time;
             hint = 'Distance = rate × time.';
           }
           return { q, ans, hint };
         },
+
         puzzles() {
           const t = choice(['stairs', 'sequence', 'grid']);
           let q, ans, hint;
           if (t === 'stairs') {
-            const rise = choice([0.5, 0.75, 0.25]),
-              total = choice([8, 10, 12, 15]);
+            const rise = choice([0.5, 0.75, 0.25]), total = choice([8, 10, 12, 15]);
             q = `A staircase rises ${total} ft with ${rise}‑ft rises. How many steps?`;
             ans = Math.round(total / rise);
             hint = 'Steps = total ÷ rise.';
-          }
-          if (t === 'sequence') {
-            const start = R(-5, 10),
-              step = R(2, 9),
-              n = R(5, 12);
+          } else if (t === 'sequence') {
+            const start = R(-5, 10), step = R(2, 9), n = R(5, 12);
             q = `Arithmetic sequence starts at ${start}, step +${step}. What is term #${n}?`;
             ans = start + (n - 1) * step;
-            hint = 'a_n = a_1 + (n−1)d';
-          }
-          if (t === 'grid') {
-            const x1 = R(-3, 1),
-              y1 = R(1, 4),
-              x2 = R(3, 7),
-              y2 = R(-4, -1);
+            hint = 'aₙ = a₁ + (n−1)d';
+          } else {
+            const x1 = R(-3, 1), y1 = R(1, 4), x2 = R(3, 7), y2 = R(-4, -1);
             q = `From (${x1},${y1}) to (${x2},${y2}) moving only right or down. Shortest path length (grid steps)?`;
             ans = (x2 - x1) + (y1 - y2);
             hint = 'Δx right + Δy down.';
