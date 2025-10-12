@@ -1432,16 +1432,6 @@
       applyTheme((data.themePref === 'auto') ? themeForMode(data.mode) : data.themePref);
       initThemeSelect();
 
-      // Update theme when switching quests if Auto
-      const navBtns = [...document.querySelectorAll('.navBtn')];
-      navBtns.forEach(btn => btn.addEventListener('click', () => {
-        // ...existing code...
-        if (data.themePref === 'auto') {
-          applyTheme(themeForMode(data.mode));
-        }
-        save();
-      }));
-
       // NEW: reset stats card (clears stats-only buffer)
       function resetStatsCard() {
         if (!confirm('Reset the Strand Stats? This does not change XP, badges, or progress.')) return;
