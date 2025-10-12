@@ -820,15 +820,9 @@
 
         requestAnimationFrame(fxLoop);
       }
-      // REMOVE duplicate immediate start to avoid double loop
-      // requestAnimationFrame(fxLoop);
-
+      // REMOVE any extra: requestAnimationFrame(fxLoop);
       const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (!prefersReducedMotion) requestAnimationFrame(fxLoop);
-      else {
-        const fxCanvas = document.getElementById('fx');
-        if (fxCanvas) fxCanvas.style.display = 'none';
-      }
+      if (!prefersReducedMotion) requestAnimationFrame(fxLoop); else { const fxCanvas = document.getElementById('fx'); if (fxCanvas) fxCanvas.style.display = 'none'; }
 
       function celebrate(kind = 'correct') {
         if (prefersReducedMotion) return;
@@ -852,10 +846,10 @@
       }
 
       function initNav() {
-        if (initNav._done) return;           // guard: run once
+        if (initNav._done) return;                 // guard
         const btns = [...document.querySelectorAll('.navBtn')];
         btns.forEach(btn => {
-          if (btn.dataset.bound) return;     // skip if already bound
+          if (btn.dataset.bound) return;           // per-button guard
           btn.addEventListener('click', () => {
             setActiveNav(btn);
             data.mode = btn.dataset.mode;
@@ -871,7 +865,7 @@
         initNav._done = true;
       }
 
-      // call once after DOM is ready (inside this IIFE after elements exist)
+      // call once
       initNav();
 
       // --- existing game code starts here ---
