@@ -366,6 +366,23 @@
       background: #0d1433;
       color: #2ecc71;
     }
+
+    .stats-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin: 6px 0;
+    }
+
+    .stats-row .pill {
+      min-width: 140px;
+      text-align: center;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
   </style>
 </head>
 
@@ -383,15 +400,15 @@
   <div class="app">
     <aside class="side">
       <div class="sectionTitle">Quest Map</div>
-      <button class="navBtn active" data-mode="pemdas">1) Order of Operations <span class="pill mono"
+      <button class="navBtn active" data-mode="pemdas">Q1) Temple of PEMDAS <span class="pill mono"
           id="p_pemdas">0/10</span></button>
-      <button class="navBtn" data-mode="integers">2) Integers ±×÷ <span class="pill mono"
+      <button class="navBtn" data-mode="integers">Q2) Integer Ice Caves <span class="pill mono"
           id="p_integers">0/10</span></button>
-      <button class="navBtn" data-mode="coords">3) Coordinate Plane <span class="pill mono"
+      <button class="navBtn" data-mode="coords">Q3) Quadrant Frontier <span class="pill mono"
           id="p_coords">0/10</span></button>
-      <button class="navBtn" data-mode="words">4) Word Problems <span class="pill mono"
+      <button class="navBtn" data-mode="words">Q4) Wordsmith Workshop <span class="pill mono"
           id="p_words">0/10</span></button>
-      <button class="navBtn" data-mode="puzzles">5) Problem‑Solving <span class="pill mono"
+      <button class="navBtn" data-mode="puzzles">Q5) Puzzle Portal <span class="pill mono"
           id="p_puzzles">0/10</span></button>
       <div class="sectionTitle">Progress</div>
       <div class="tiny" title="Mastery is checked on a rolling window of your last 20 attempts in each strand.">
@@ -406,7 +423,7 @@
     <main>
       <div class="grid">
         <section class="card">
-          <h2 id="modeTitle">Quest 1: Order of Operations</h2>
+          <h2 id="modeTitle">Q1: Temple of PEMDAS</h2>
           <div class="tiny">Tip: Use parentheses like you would in code to control precedence.</div>
           <div id="qWrap" style="margin-top:10px">
             <div class="question mono" id="question">Loading…</div>
@@ -519,6 +536,12 @@
           <h3>Daily Challenges</h3>
           <div class="tiny">Complete mini‑goals for extra XP and fun.</div>
           <div id="challenges" style="display:grid; gap:8px; margin-top:8px"></div>
+        </section>
+
+        <!-- NEW: Strand Stats -->
+        <section class="card">
+          <h3>Strand Stats</h3>
+          <div id="statsBox" class="tiny"></div>
         </section>
       </div>
     </main>
@@ -942,15 +965,24 @@
       let current = { q: '', ans: null, hint: '', normalize: null, strand: null };
       function renderMode() {
         const titles = {
-          pemdas: 'Quest 1: Order of Operations',
-          integers: 'Quest 2: Integers ±×÷',
-          coords: 'Quest 3: Coordinate Plane',
-          words: 'Quest 4: Word Problems',
-          puzzles: 'Quest 5: Problem‑Solving',
-          boss: 'Boss Battle: Mixed 5‑Round Challenge'
+          pemdas: 'Q1: Temple of PEMDAS',
+          integers: 'Q2: Integer Ice Caves',
+          coords: 'Q3: Quadrant Frontier',
+          words: 'Q4: Wordsmith Workshop',
+          puzzles: 'Q5: Puzzle Portal',
+          boss: 'Boss Battle: Final Gauntlet'
         };
-        setText('#modeTitle', titles[data.mode]);
-        $('#strandLabel').textContent = (data.mode === 'boss' ? 'MIXED' : titles[data.mode].split(':')[0].replace('Quest ', 'Q'));
+        const shortPills = {
+          pemdas: 'Q1',
+          integers: 'Q2',
+          coords: 'Q3',
+          words: 'Q4',
+          puzzles: 'Q5',
+          boss: 'BOSS'
+        };
+        setText('#modeTitle', titles[data.mode] || 'Quest');
+        const label = document.getElementById('strandLabel');
+        if (label) label.textContent = shortPills[data.mode] || 'Q?';
       }
 
       function nextQuestion() {
@@ -1217,40 +1249,59 @@
         else if (last.length === 20 && acc >= 0.90) toast(`Mastery in reach for ${strand}! Keep the speed and low hints.`);
       }
 
-      // Bind actions (submit/new/hint) so the game advances
-      document.getElementById('submit').addEventListener('click', () => check());
-      document.getElementById('newQ').addEventListener('click', () => nextQuestion());
-      document.getElementById('hintBtn').addEventListener('click', () => {
-        if (current.hint) {
-          const h = document.getElementById('hint');
-          h.textContent = 'Hint: ' + current.hint + ' (−5 XP)';
-          h.style.display = 'block';
-          current.hinted = true;
-          data.xp = Math.max(0, data.xp - 5);
-          updateHUD(); save();
-        }
-      });
+      // Stats helpers
+      function msToStr(ms) { if (!ms) return '—'; const s = ms / 1000; return s < 1 ? s.toFixed(2) + 's' : s.toFixed(1) + 's'; }
+      function calcStats(k) {
+        const arr = (data.hist[k] || []).slice(-20);
+        const n = arr.length;
+        const acc = n ? arr.reduce((s, a) => s + (a.correct ? 1 : 0), 0) / n : 0;
+        const med = median(arr.map(a => a.ms || 0));
+        const hint = n ? arr.reduce((s, a) => s + (a.hint ? 1 : 0), 0) / n : 0;
+        return { n, acc, med, hint };
+      }
+      function updateStatsUI() {
+        const box = document.getElementById('statsBox'); if (!box) return;
+        const labels = {
+          pemdas: 'Q1 • PEMDAS',
+          integers: 'Q2 • Integers',
+          coords: 'Q3 • Coordinates',
+          words: 'Q4 • Word Problems',
+          puzzles: 'Q5 • Puzzles'
+        };
+        const strands = ['pemdas', 'integers', 'coords', 'words', 'puzzles'];
+        box.innerHTML = strands.map(k => {
+          const s = calcStats(k);
+          const acc = Math.round((s.acc || 0) * 100);
+          const hints = Math.round((s.hint || 0) * 100);
+          return `
+            <div class="stats-row">
+              <div class="pill">${labels[k]}</div>
+              <div>Accuracy: <b>${acc}%</b></div>
+              <div>Median time: <b>${msToStr(s.med)}</b></div>
+              <div>Hints: <b>${hints}%</b></div>
+              <div class="muted">n=${s.n}</div>
+            </div>
+          `;
+        }).join('');
+      }
 
-      // Keyboard shortcuts
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') { check(); }
-        if (e.key.toLowerCase && e.key.toLowerCase() === 'n') { nextQuestion(); }
-        if (e.key.toLowerCase && e.key.toLowerCase() === 'h') {
-          const btn = document.getElementById('hintBtn');
-          if (btn) btn.click();
-        }
-      });
+      // Wire stats updates into existing flow
+      const _updateProgress = updateProgress;
+      updateProgress = function () {
+        _updateProgress();
+        updateStatsUI();
+      };
 
-      // Initialize daily/challenges on load
-      ensureDaily();
-
-      // First render
+      // After check() updates UI, stats will refresh via updateProgress(); ensure an initial render too
+      // Initial render
       renderMode();
       updateHUD();
-      updateProgress();
+      updateProgress(); // calls updateStatsUI()
       paintBadges();
-      updateEngagementUI(); // NEW
+      updateEngagementUI();
       nextQuestion();
+
+      // ...existing code...
     })();
   </script>
 </body>
