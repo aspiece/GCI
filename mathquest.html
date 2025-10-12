@@ -762,145 +762,93 @@
   </div>
 
   <script>
-    // Focus feature removed: global no-op stubs to satisfy any legacy calls
-    window.ensureFocus = function () { };
-    window.currentFocusPlan = function () { return { accept: () => false }; };
-    window.updateFocusUI = function () { };
-
     (function () {
-      // --- FX: starfield + confetti ---
+      // Focus feature removed: global no‑op stubs (prevent legacy call errors)
+      window.ensureFocus = window.ensureFocus || function () { };
+      window.currentFocusPlan = window.currentFocusPlan || function () { return { accept: () => false }; };
+      window.updateFocusUI = window.updateFocusUI || function () { };
+
+      // Utility to safely call optional functions if they exist
+      function callIf(fn, ...args) { if (typeof fn === 'function') return fn(...args); }
+
+      // --- FX: starfield + confetti (single instance) ---
       const fx = document.getElementById('fx');
       const ctx = fx.getContext('2d');
-      let W = 0,
-        H = 0,
-        stars = [],
-        confetti = [];
-
-      function resizeFX() {
-        W = fx.width = window.innerWidth;
-        H = fx.height = window.innerHeight;
-      }
-      window.addEventListener('resize', resizeFX);
-      resizeFX();
-
+      let W = 0, H = 0, stars = [], confetti = [];
+      function resizeFX() { W = fx.width = window.innerWidth; H = fx.height = window.innerHeight; }
+      window.addEventListener('resize', resizeFX); resizeFX();
       function initStars(n = 120) {
         stars = Array.from({ length: n }, () => ({
-          x: Math.random() * W,
-          y: Math.random() * H,
-          r: Math.random() * 1.2 + 0.3,
-          a: Math.random() * Math.PI * 2,
-          s: 0.2 + Math.random() * 0.6
+          x: Math.random() * W, y: Math.random() * H, r: Math.random() * 1.2 + 0.3,
+          a: Math.random() * Math.PI * 2, s: 0.2 + Math.random() * 0.6
         }));
       }
       initStars();
-
-      function addConfetti({
-        x = W / 2,
-        y = H / 2,
-        count = 80,
-        spread = 1,
-        colors = ['#6cf', '#9f6cff', '#2ecc71', '#ffd76a']
-      } = {}) {
+      function addConfetti({ x = W / 2, y = H / 2, count = 80, spread = 1, colors = ['#6cf', '#9f6cff', '#2ecc71', '#ffd76a'] } = {}) {
         for (let i = 0; i < count; i++) {
-          const ang = Math.random() * Math.PI * 2;
-          const spd = (2 + Math.random() * 4) * spread;
+          const ang = Math.random() * Math.PI * 2, spd = (2 + Math.random() * 4) * spread;
           confetti.push({
-            x,
-            y,
-            vx: Math.cos(ang) * spd,
-            vy: Math.sin(ang) * spd - 2,
-            g: 0.06 + Math.random() * 0.08,
-            life: 60 + Math.random() * 40,
+            x, y, vx: Math.cos(ang) * spd, vy: Math.sin(ang) * spd - 2,
+            g: 0.06 + Math.random() * 0.08, life: 60 + Math.random() * 40,
             color: colors[(Math.random() * colors.length) | 0],
-            w: 2 + Math.random() * 3,
-            h: 6 + Math.random() * 8,
-            rot: Math.random() * Math.PI,
-            vr: (Math.random() - 0.5) * 0.3,
-            alpha: 1
+            w: 2 + Math.random() * 3, h: 6 + Math.random() * 8,
+            rot: Math.random() * Math.PI, vr: (Math.random() - 0.5) * 0.3, alpha: 1
           });
         }
       }
-
       function fxLoop() {
-        // clear
         ctx.clearRect(0, 0, W, H);
-
         // stars
         ctx.save();
         for (const st of stars) {
-          st.a += 0.02;
-          const tw = (Math.sin(st.a) + 1) * 0.5; // 0..1
-          ctx.globalAlpha = 0.3 + tw * 0.7;
-          ctx.fillStyle = '#9fb0d7';
-          ctx.beginPath();
-          ctx.arc(st.x, st.y, st.r, 0, Math.PI * 2);
-          ctx.fill();
-          st.y += st.s * 0.15;
-          if (st.y > H + 2) {
-            st.y = -2;
-            st.x = Math.random() * W;
-          }
+          st.a += 0.02; const tw = (Math.sin(st.a) + 1) * 0.5;
+          ctx.globalAlpha = 0.3 + tw * 0.7; ctx.fillStyle = '#9fb0d7';
+          ctx.beginPath(); ctx.arc(st.x, st.y, st.r, 0, Math.PI * 2); ctx.fill();
+          st.y += st.s * 0.15; if (st.y > H + 2) { st.y = -2; st.x = Math.random() * W; }
         }
         ctx.restore();
-
         // confetti
         ctx.save();
         for (let i = confetti.length - 1; i >= 0; i--) {
           const p = confetti[i];
-          p.vy += p.g;
-          p.x += p.vx;
-          p.y += p.vy;
-          p.rot += p.vr;
-          p.life -= 1;
+          p.vy += p.g; p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.life -= 1;
           p.alpha = Math.max(0, p.life / 100);
-          ctx.globalAlpha = p.alpha;
-          ctx.fillStyle = p.color;
-          ctx.translate(p.x, p.y);
-          ctx.rotate(p.rot);
-          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
-          ctx.setTransform(1, 0, 0, 1, 0, 0);
+          ctx.globalAlpha = p.alpha; ctx.fillStyle = p.color;
+          ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); ctx.setTransform(1, 0, 0, 1, 0, 0);
           if (p.life <= 0 || p.y > H + 20) confetti.splice(i, 1);
         }
         ctx.restore();
-
         requestAnimationFrame(fxLoop);
       }
-      // REMOVE any extra: requestAnimationFrame(fxLoop);
       const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (!prefersReducedMotion) requestAnimationFrame(fxLoop); else { const fxCanvas = document.getElementById('fx'); if (fxCanvas) fxCanvas.style.display = 'none'; }
-
       function celebrate(kind = 'correct') {
         if (prefersReducedMotion) return;
         const anchor = document.getElementById('qWrap');
-        const rect = anchor ? anchor.getBoundingClientRect() : { left: W / 2, top: H / 3, width: 0, height: 0 };
-        const cx = (rect.left + rect.right) / 2;
-        const cy = rect.top + 10;
-        if (kind === 'mastery') {
-          addConfetti({ x: cx, y: cy, count: 160, spread: 1.4, colors: ['#ffd76a', '#ffcf67', '#fff2b0', '#9f6cff'] });
-        } else {
-          addConfetti({ x: cx, y: cy, count: 80, spread: 1.0 });
-        }
+        const rect = anchor ? anchor.getBoundingClientRect() : { left: W / 2, top: H / 3, right: W / 2, height: 0 };
+        const cx = (rect.left + (rect.right ?? rect.left)) / 2; const cy = rect.top + 10;
+        if (kind === 'mastery') addConfetti({ x: cx, y: cy, count: 160, spread: 1.4, colors: ['#ffd76a', '#ffcf67', '#fff2b0', '#9f6cff'] });
+        else addConfetti({ x: cx, y: cy, count: 80, spread: 1.0 });
       }
 
-      // NAV: single initialization with guard and per-button bound flag
+      // --- Nav: single init with guard ---
       function setActiveNav(btn) {
         const btns = [...document.querySelectorAll('.navBtn')];
         btns.forEach(b => { b.classList.remove('active'); b.removeAttribute('aria-current'); });
-        btn.classList.add('active');
-        btn.setAttribute('aria-current', 'page');
+        btn.classList.add('active'); btn.setAttribute('aria-current', 'page');
       }
-
       function initNav() {
-        if (initNav._done) return;                 // guard
+        if (initNav._done) return;
         const btns = [...document.querySelectorAll('.navBtn')];
         btns.forEach(btn => {
-          if (btn.dataset.bound) return;           // per-button guard
+          if (btn.dataset.bound) return;
           btn.addEventListener('click', () => {
             setActiveNav(btn);
             data.mode = btn.dataset.mode;
             renderMode();
-            nextQuestion();
-            if (data.themePref === 'auto') applyTheme(themeForMode(data.mode));
+            callIf(window.nextQuestion);
+            if (data.themePref === 'auto') callIf(window.applyTheme, themeForMode(data.mode));
             save();
           });
           btn.dataset.bound = '1';
@@ -910,2169 +858,178 @@
         initNav._done = true;
       }
 
-      // call once
-      initNav();
-
-      const resetEl = document.getElementById('resetBtn');
-      if (resetEl) {
-        resetEl.addEventListener('click', () => {
-          if (!confirm('Reset XP, progress, and daily challenges?')) return;
-
-          // Reset core progress
-          data.xp = 0;
-          data.streak = 0;
-          data.rank = 'Novice';
-          data.correct = STRANDS.reduce((o, k) => (o[k] = 0, o), {});
-          data.hist = STRANDS.reduce((o, k) => (o[k] = [], o), {});
-          data.mastered = STRANDS.reduce((o, k) => (o[k] = false, o), {});
-          data.badges = {};
-          data.boss = { done: false };
-
-          // Force new Daily + Challenges on reset
-          data.daily = null;
-          data.challenges = [];
-          ensureDaily();
-
-          updateHUD();
-          updateProgress();
-          paintBadges();
-          updateEngagementUI();
-          save();
-          nextQuestion();
-        });
-      }
-
-      // --- existing game code starts here ---
-
-      // Focus removed: define global no-op stubs for any legacy calls
-      window.ensureFocus = window.ensureFocus || function () { };
-      window.currentFocusPlan = window.currentFocusPlan || function () { return { accept: () => false }; };
-      window.updateFocusUI = window.updateFocusUI || function () { };
-
+      // --- Core state (single) ---
       const STRANDS = ['pemdas', 'integers', 'coords', 'words', 'puzzles', 'logic', 'mod', 'prob'];
-
       const state = JSON.parse(localStorage.getItem('csMathQuest') || '{}');
       const data = Object.assign({
-        xp: 0,
-        streak: 0,
-        rank: "Novice",
-        mode: "pemdas",
+        xp: 0, streak: 0, rank: 'Novice', mode: 'pemdas',
         correct: { pemdas: 0, integers: 0, coords: 0, words: 0, puzzles: 0, logic: 0, mod: 0, prob: 0 },
         hist: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [], prob: [] },
         mastered: { pemdas: false, integers: false, coords: false, words: false, puzzles: false, logic: false, mod: false, prob: false },
-        daily: { date: "", solved: 0, goal: 20, completed: false },
+        daily: { date: '', solved: 0, goal: 20, completed: false, rules: { minSolved: 10, minAcc: 0.80, maxHintRate: 0.10 } },
         challenges: [],
         badges: {},
         boss: { done: false },
         themePref: 'auto',
         statsWin: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [], prob: [] },
         statsMode: 'hist'
-        // REMOVED: focus
       }, state);
-
-      // ADD after data is created:
       function ensureDataShape() {
         for (const k of STRANDS) {
-          if (!data.correct || typeof data.correct[k] !== 'number') {
-            if (!data.correct) data.correct = {};
-            if (!Number.isFinite(data.correct[k])) data.correct[k] = 0;
-          }
-          if (!data.hist || !Array.isArray(data.hist[k])) {
-            if (!data.hist) data.hist = {};
-            if (!Array.isArray(data.hist[k])) data.hist[k] = [];
-          }
-          if (!data.mastered || typeof data.mastered[k] !== 'boolean') {
-            if (!data.mastered) data.mastered = {};
-            if (typeof data.mastered[k] !== 'boolean') data.mastered[k] = false;
-          }
-          if (!data.statsWin || !Array.isArray(data.statsWin[k])) {
-            if (!data.statsWin) data.statsWin = {};
-            if (!Array.isArray(data.statsWin[k])) data.statsWin[k] = [];
-          }
+          if (!data.correct || typeof data.correct[k] !== 'number') { if (!data.correct) data.correct = {}; if (!Number.isFinite(data.correct[k])) data.correct[k] = 0; }
+          if (!data.hist || !Array.isArray(data.hist[k])) { if (!data.hist) data.hist = {}; if (!Array.isArray(data.hist[k])) data.hist[k] = []; }
+          if (!data.mastered || typeof data.mastered[k] !== 'boolean') { if (!data.mastered) data.mastered = {}; if (typeof data.mastered[k] !== 'boolean') data.mastered[k] = false; }
+          if (!data.statsWin || !Array.isArray(data.statsWin[k])) { if (!data.statsWin) data.statsWin = {}; if (!Array.isArray(data.statsWin[k])) data.statsWin[k] = []; }
         }
       }
-      ensureDataShape(); save();
+      ensureDataShape();
 
-      // helpers already here:
+      // --- Helpers (single) ---
       function $(sel) { return document.querySelector(sel); }
       function setText(sel, val) { const el = document.querySelector(sel); if (el) el.textContent = val; }
-      function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
-      function fmtPct(n) { return Math.round(n * 100) + "%"; }
-
-      // NEW: core app helpers (add right after helpers above)
-      function save() {
-        try { localStorage.setItem('csMathQuest', JSON.stringify(data)); } catch (_) { /* ignore */ }
-      }
-      function updateHUD() {
-        setText('#xp', String(data.xp));
-        setText('#streak', String(data.streak));
-        setText('#rank', data.rank);
-      }
-      function paintBadges() {
-        const box = document.getElementById('badges');
-        if (!box) return;
-        box.innerHTML = '';
-        Object.values(data.badges || {}).forEach(label => {
-          const el = document.createElement('div');
-          el.className = 'badge';
-          el.innerHTML = `🏅 <span>${label}</span>`;
-          box.appendChild(el);
-        });
-      }
-      // REMOVE this wrapper block (we’ll fold it into toast itself):
-      // const oldToast = toast;
-      // toast = function (msg) {
-      //   oldToast(msg);
-      //   const live = document.getElementById('ariaLive');
-      //   if (live) { live.textContent = ''; setTimeout(() => live.textContent = msg, 0); }
-      // };
-
-      // Replace the toast function with this version (keeps visuals + ARIA live)
+      function fmtPct(n) { return Math.round(Math.max(0, Math.min(1, n)) * 100) + '%'; }
+      function save() { try { localStorage.setItem('csMathQuest', JSON.stringify(data)); } catch (_) { } }
       function toast(msg) {
-        const el = document.createElement('div');
-        el.textContent = msg;
-        Object.assign(el.style, {
-          position: 'fixed', top: '12px', right: '12px', zIndex: 9999,
-          background: '#151e44', color: '#fff', border: '1px solid #2a3672',
-          padding: '8px 10px', borderRadius: '10px', boxShadow: '0 6px 20px #0008',
-          opacity: '0', transform: 'translateY(-6px)', transition: 'opacity .2s, transform .2s'
-        });
+        const el = document.createElement('div'); el.textContent = msg;
+        Object.assign(el.style, { position: 'fixed', top: '12px', right: '12px', zIndex: 9999, background: '#151e44', color: '#fff', border: '1px solid #2a3672', padding: '8px 10px', borderRadius: '10px', boxShadow: '0 6px 20px #0008', opacity: '0', transform: 'translateY(-6px)', transition: 'opacity .2s, transform .2s' });
         document.body.appendChild(el);
         requestAnimationFrame(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; });
-        setTimeout(() => {
-          el.style.opacity = '0'; el.style.transform = 'translateY(-6px)';
-          setTimeout(() => el.remove(), 250);
-        }, 2000);
-        const live = document.getElementById('ariaLive');
-        if (live) { live.textContent = ''; setTimeout(() => (live.textContent = msg), 0); }
+        setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateY(-6px)'; setTimeout(() => el.remove(), 250); }, 2000);
+      }
+      function updateHUD() { setText('#xp', String(data.xp)); setText('#streak', String(data.streak)); setText('#rank', data.rank); }
+      function paintBadges() {
+        const box = document.getElementById('badges'); if (!box) return;
+        box.innerHTML = ''; Object.values(data.badges || {}).forEach(label => { const el = document.createElement('div'); el.className = 'badge'; el.innerHTML = `🏅 <span>${label}</span>`; box.appendChild(el); });
       }
 
-      // NEW: mastery helpers + compute function
+      // --- Mastery & Progress (single) ---
       function median(arr) { if (!arr.length) return 0; const s = [...arr].sort((a, b) => a - b); const m = Math.floor(s.length / 2); return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; }
       function dayKey(ts) { const d = new Date(ts); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; }
       function computeMasteryFor(strand) {
-        const attempts = data.hist[strand] || [];
-        const total = attempts.length;
-        const window20 = attempts.slice(-20);
+        const attempts = data.hist[strand] || []; const total = attempts.length; const window20 = attempts.slice(-20);
         if (total < 25 || window20.length < 20) return false;
-        const acc = window20.reduce((s, a) => s + (a.correct ? 1 : 0), 0) / window20.length;
-        if (acc < 0.90) return false;
-        const days = new Set(window20.map(a => dayKey(a.t))).size;
-        if (days < 2) return false;
-        const medMs = median(window20.map(a => a.ms || 0));
-        if (medMs > 25000) return false;
-        const hintRate = window20.reduce((s, a) => s + (a.hint ? 1 : 0), 0) / window20.length;
-        if (hintRate > 0.10) return false;
+        const acc = window20.reduce((s, a) => s + (a.correct ? 1 : 0), 0) / window20.length; if (acc < 0.90) return false;
+        const days = new Set(window20.map(a => dayKey(a.t))).size; if (days < 2) return false;
+        const medMs = median(window20.map(a => a.ms || 0)); if (medMs > 25000) return false;
+        const hintRate = window20.reduce((s, a) => s + (a.hint ? 1 : 0), 0) / window20.length; if (hintRate > 0.10) return false;
         return true;
       }
-
-      // NEW: progress bar + mastery UI updater
+      function recomputeMastery() { STRANDS.forEach(k => { data.mastered[k] = computeMasteryFor(k); }); }
       function updateProgress() {
-        // Recompute mastery first
         recomputeMastery();
-
         STRANDS.forEach(k => {
-          if (data.mastered[k]) {
-            setText('#p_' + k, 'Mastered');
-            const bar = document.getElementById('bar_' + k); if (bar) bar.style.width = '100%';
-          } else {
-            setText('#p_' + k, `${data.correct[k]}/10`);
-            const bar = document.getElementById('bar_' + k); if (bar) bar.style.width = Math.min(100, data.correct[k] * 10) + '%';
-          }
           const pill = document.getElementById('p_' + k);
-          if (pill) pill.classList.toggle('mastered', !!data.mastered[k]);
+          const bar = document.getElementById('bar_' + k);
+          if (data.mastered[k]) {
+            if (pill) { pill.textContent = 'Mastered'; pill.classList.add('mastered'); }
+            if (bar) bar.style.width = '100%';
+          } else {
+            if (pill) { pill.textContent = `${data.correct[k]}/10`; pill.classList.remove('mastered'); }
+            if (bar) bar.style.width = Math.min(100, (data.correct[k] || 0) * 10) + '%';
+          }
         });
         const total = STRANDS.reduce((s, k) => s + (data.correct[k] || 0), 0);
-        const denom = STRANDS.length * 10;
-        const pct = denom ? total / denom : 0;
+        const pct = (STRANDS.length ? total / (STRANDS.length * 10) : 0);
         const overall = document.getElementById('overallBar'); if (overall) overall.style.width = Math.min(100, Math.max(0, pct * 100)) + '%';
-        setText('#overallPct', fmtPct(Math.max(0, Math.min(1, pct))));
+        setText('#overallPct', fmtPct(pct));
       }
+      function computeRank(xp) { if (xp >= 300) return 'Architect'; if (xp >= 150) return 'Hacker'; if (xp >= 50) return 'Coder'; return 'Novice'; }
 
-      // Ranks
-      function computeRank(xp) {
-        if (xp >= 300) return 'Architect';
-        if (xp >= 150) return 'Hacker';
-        if (xp >= 50) return 'Coder';
-        return 'Novice';
-      }
-
-      // UI init (single declaration + handles theme auto-switch)
-      // const navBtns = [...document.querySelectorAll('.navBtn')];
-      // navBtns.forEach(btn => btn.addEventListener('click', () => { /* duplicate — removed */ }));
-      // Use the guarded initializer defined above:
-      initNav();
-
-      const resetEl = document.getElementById('resetBtn');
-      if (resetEl) {
-        resetEl.addEventListener('click', () => {
-          if (!confirm('Reset XP, progress, and daily challenges?')) return;
-
-          // Reset core progress
-          data.xp = 0;
-          data.streak = 0;
-          data.rank = 'Novice';
-          data.correct = STRANDS.reduce((o, k) => (o[k] = 0, o), {});
-          data.hist = STRANDS.reduce((o, k) => (o[k] = [], o), {});
-          data.mastered = STRANDS.reduce((o, k) => (o[k] = false, o), {});
-          data.badges = {};
-          data.boss = { done: false };
-
-          // Force new Daily + Challenges on reset
-          data.daily = null;
-          data.challenges = [];
-          ensureDaily();
-
-          updateHUD();
-          updateProgress();
-          paintBadges();
-          updateEngagementUI();
-          save();
-          nextQuestion();
-        });
-      }
-
-      // --- existing game code starts here ---
-
-      // Focus removed: define global no-op stubs for any legacy calls
-      window.ensureFocus = window.ensureFocus || function () { };
-      window.currentFocusPlan = window.currentFocusPlan || function () { return { accept: () => false }; };
-      window.updateFocusUI = window.updateFocusUI || function () { };
-
-      const STRANDS = ['pemdas', 'integers', 'coords', 'words', 'puzzles', 'logic', 'mod', 'prob'];
-
-      const state = JSON.parse(localStorage.getItem('csMathQuest') || '{}');
-      const data = Object.assign({
-        xp: 0,
-        streak: 0,
-        rank: "Novice",
-        mode: "pemdas",
-        correct: { pemdas: 0, integers: 0, coords: 0, words: 0, puzzles: 0, logic: 0, mod: 0, prob: 0 },
-        hist: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [], prob: [] },
-        mastered: { pemdas: false, integers: false, coords: false, words: false, puzzles: false, logic: false, mod: false, prob: false },
-        daily: { date: "", solved: 0, goal: 20, completed: false },
-        challenges: [],
-        badges: {},
-        boss: { done: false },
-        themePref: 'auto',
-        statsWin: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [], prob: [] },
-        statsMode: 'hist'
-        // REMOVED: focus
-      }, state);
-
-      // ADD after data is created:
-      function ensureDataShape() {
-        for (const k of STRANDS) {
-          if (!data.correct || typeof data.correct[k] !== 'number') {
-            if (!data.correct) data.correct = {};
-            if (!Number.isFinite(data.correct[k])) data.correct[k] = 0;
-          }
-          if (!data.hist || !Array.isArray(data.hist[k])) {
-            if (!data.hist) data.hist = {};
-            if (!Array.isArray(data.hist[k])) data.hist[k] = [];
-          }
-          if (!data.mastered || typeof data.mastered[k] !== 'boolean') {
-            if (!data.mastered) data.mastered = {};
-            if (typeof data.mastered[k] !== 'boolean') data.mastered[k] = false;
-          }
-          if (!data.statsWin || !Array.isArray(data.statsWin[k])) {
-            if (!data.statsWin) data.statsWin = {};
-            if (!Array.isArray(data.statsWin[k])) data.statsWin[k] = [];
-          }
+      // --- Mode/title + theme helpers (single) ---
+      function themeForMode(mode) {
+        switch (mode) {
+          case 'pemdas': return 'dungeon';
+          case 'integers': return 'ice';
+          case 'coords': return 'space';
+          case 'words': return 'workshop';
+          case 'puzzles': return 'portal';
+          case 'logic': return 'workshop';
+          case 'mod': return 'dungeon';
+          case 'prob': return 'jungle';
+          default: return 'space';
         }
       }
-      ensureDataShape(); save();
-
-      // helpers already here:
-      function $(sel) { return document.querySelector(sel); }
-      function setText(sel, val) { const el = document.querySelector(sel); if (el) el.textContent = val; }
-      function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
-      function fmtPct(n) { return Math.round(n * 100) + "%"; }
-
-      // NEW: core app helpers (add right after helpers above)
-      function save() {
-        try { localStorage.setItem('csMathQuest', JSON.stringify(data)); } catch (_) { /* ignore */ }
-      }
-      function updateHUD() {
-        setText('#xp', String(data.xp));
-        setText('#streak', String(data.streak));
-        setText('#rank', data.rank);
-      }
-      function paintBadges() {
-        const box = document.getElementById('badges');
-        if (!box) return;
-        box.innerHTML = '';
-        Object.values(data.badges || {}).forEach(label => {
-          const el = document.createElement('div');
-          el.className = 'badge';
-          el.innerHTML = `🏅 <span>${label}</span>`;
-          box.appendChild(el);
-        });
-      }
-      // REMOVE this wrapper block (we’ll fold it into toast itself):
-      // const oldToast = toast;
-      // toast = function (msg) {
-      //   oldToast(msg);
-      //   const live = document.getElementById('ariaLive');
-      //   if (live) { live.textContent = ''; setTimeout(() => live.textContent = msg, 0); }
-      // };
-
-      // Replace the toast function with this version (keeps visuals + ARIA live)
-      function toast(msg) {
-        const el = document.createElement('div');
-        el.textContent = msg;
-        Object.assign(el.style, {
-          position: 'fixed', top: '12px', right: '12px', zIndex: 9999,
-          background: '#151e44', color: '#fff', border: '1px solid #2a3672',
-          padding: '8px 10px', borderRadius: '10px', boxShadow: '0 6px 20px #0008',
-          opacity: '0', transform: 'translateY(-6px)', transition: 'opacity .2s, transform .2s'
-        });
-        document.body.appendChild(el);
-        requestAnimationFrame(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; });
-        setTimeout(() => {
-          el.style.opacity = '0'; el.style.transform = 'translateY(-6px)';
-          setTimeout(() => el.remove(), 250);
-        }, 2000);
-        const live = document.getElementById('ariaLive');
-        if (live) { live.textContent = ''; setTimeout(() => (live.textContent = msg), 0); }
+      function renderMode() {
+        const titles = {
+          pemdas: 'Q1: Temple of PEMDAS', integers: 'Q2: Integer Ice Caves', coords: 'Q3: Quadrant Frontier',
+          words: 'Q4: Wordsmith Workshop', puzzles: 'Q5: Puzzle Portal', logic: 'Q6: Circuit of Logic',
+          mod: 'Q7: Modulus Monastery', prob: 'Q8: Probability Pirates', boss: 'Boss Battle: Final Gauntlet'
+        };
+        setText('#modeTitle', titles[data.mode] || 'Quest');
+        setText('#strandLabel', (data.mode || '').toUpperCase().replace('PUZZLES', 'PUZZLES'));
       }
 
-      // NEW: mastery helpers + compute function
-      function median(arr) { if (!arr.length) return 0; const s = [...arr].sort((a, b) => a - b); const m = Math.floor(s.length / 2); return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; }
-      function dayKey(ts) { const d = new Date(ts); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; }
-      function computeMasteryFor(strand) {
-        const attempts = data.hist[strand] || [];
-        const total = attempts.length;
-        const window20 = attempts.slice(-20);
-        if (total < 25 || window20.length < 20) return false;
-        const acc = window20.reduce((s, a) => s + (a.correct ? 1 : 0), 0) / window20.length;
-        if (acc < 0.90) return false;
-        const days = new Set(window20.map(a => dayKey(a.t))).size;
-        if (days < 2) return false;
-        const medMs = median(window20.map(a => a.ms || 0));
-        if (medMs > 25000) return false;
-        const hintRate = window20.reduce((s, a) => s + (a.hint ? 1 : 0), 0) / window20.length;
-        if (hintRate > 0.10) return false;
-        return true;
+      // --- Daily (stubs kept minimal; your existing robust logic can sit elsewhere) ---
+      function todayKey() { return new Date().toISOString().slice(0, 10); }
+      function rollDailyChallenges() {
+        const strands = STRANDS; const pick = strands[(Math.random() * strands.length) | 0];
+        return [
+          { id: 'c_strand', label: `Solve 8 in ${pick.toUpperCase()}`, type: 'strand', strand: pick, progress: 0, target: 8, done: false, reward: 35 },
+          { id: 'c_streak', label: 'Get a 5‑answer streak', type: 'streak', progress: 0, target: 5, done: false, reward: 30 },
+          { id: 'c_nohint', label: 'Answer 6 with no hints', type: 'nohint', progress: 0, target: 6, done: false, reward: 30 },
+          { id: 'c_speed', label: 'Speedster: 3 correct under 15s', type: 'speed', threshold: 15, progress: 0, target: 3, done: false, reward: 25 },
+        ];
+      }
+      function ensureDaily() {
+        const today = todayKey();
+        if (!data.daily || data.daily.date !== today) {
+          data.daily = { date: today, solved: 0, goal: 10, completed: false, rules: { minSolved: 10, minAcc: 0.80, maxHintRate: 0.10 } };
+          data.challenges = rollDailyChallenges();
+        } else if (!Array.isArray(data.challenges) || !data.challenges.length) {
+          data.challenges = rollDailyChallenges();
+        }
+        callIf(window.updateEngagementUI);
       }
 
-      // NEW: progress bar + mastery UI updater
-      function updateProgress() {
-        // Recompute mastery first
-        recomputeMastery();
-
-        STRANDS.forEach(k => {
-          if (data.mastered[k]) {
-            setText('#p_' + k, 'Mastered');
-            const bar = document.getElementById('bar_' + k); if (bar) bar.style.width = '100%';
-          } else {
-            setText('#p_' + k, `${data.correct[k]}/10`);
-            const bar = document.getElementById('bar_' + k); if (bar) bar.style.width = Math.min(100, data.correct[k] * 10) + '%';
-          }
-          const pill = document.getElementById('p_' + k);
-          if (pill) pill.classList.toggle('mastered', !!data.mastered[k]);
-        });
-        const total = STRANDS.reduce((s, k) => s + (data.correct[k] || 0), 0);
-        const denom = STRANDS.length * 10;
-        const pct = denom ? total / denom : 0;
-        const overall = document.getElementById('overallBar'); if (overall) overall.style.width = Math.min(100, Math.max(0, pct * 100)) + '%';
-        setText('#overallPct', fmtPct(Math.max(0, Math.min(1, pct))));
-      }
-
-      // Ranks
-      function computeRank(xp) {
-        if (xp >= 300) return 'Architect';
-        if (xp >= 150) return 'Hacker';
-        if (xp >= 50) return 'Coder';
-        return 'Novice';
-      }
-
-      // UI init (single declaration + handles theme auto-switch)
-      // const navBtns = [...document.querySelectorAll('.navBtn')];
-      // navBtns.forEach(btn => btn.addEventListener('click', () => { /* duplicate — removed */ }));
-      // Use the guarded initializer defined above:
-      initNav();
-
+      // --- Reset binding (single) ---
       const resetEl = document.getElementById('resetBtn');
-      if (resetEl) {
+      if (resetEl && !resetEl.dataset.bound) {
         resetEl.addEventListener('click', () => {
           if (!confirm('Reset XP, progress, and daily challenges?')) return;
-
-          // Reset core progress
-          data.xp = 0;
-          data.streak = 0;
-          data.rank = 'Novice';
+          data.xp = 0; data.streak = 0; data.rank = 'Novice';
           data.correct = STRANDS.reduce((o, k) => (o[k] = 0, o), {});
           data.hist = STRANDS.reduce((o, k) => (o[k] = [], o), {});
           data.mastered = STRANDS.reduce((o, k) => (o[k] = false, o), {});
-          data.badges = {};
-          data.boss = { done: false };
-
-          // Force new Daily + Challenges on reset
-          data.daily = null;
-          data.challenges = [];
-          ensureDaily();
-
-          updateHUD();
-          updateProgress();
-          paintBadges();
-          updateEngagementUI();
-          save();
-          nextQuestion();
+          data.badges = {}; data.boss = { done: false };
+          data.daily = null; data.challenges = []; ensureDaily();
+          updateHUD(); updateProgress(); paintBadges(); callIf(window.updateEngagementUI);
+          save(); callIf(window.nextQuestion);
         });
+        resetEl.dataset.bound = '1';
       }
 
-      // --- existing game code starts here ---
+      // --- Init: bind nav, randomize quest on load, render once ---
+      initNav();
+      ensureDaily();
 
-      // Focus removed: define global no-op stubs for any legacy calls
-      window.ensureFocus = window.ensureFocus || function () { };
-      window.currentFocusPlan = window.currentFocusPlan || function () { return { accept: () => false }; };
-      window.updateFocusUI = window.updateFocusUI || function () { };
+      function randomizeStartMode() {
+        const m = STRANDS[(Math.random() * STRANDS.length) | 0];
+        data.mode = m;
+        const btn = document.querySelector(`.navBtn[data-mode="${m}"]`);
+        if (btn) setActiveNav(btn);
+      }
 
-      const STRANDS = ['pemdas', 'integers', 'coords', 'words', 'puzzles', 'logic', 'mod', 'prob'];
-
-      const state = JSON.parse(localStorage.getItem('csMathQuest') || '{}');
-      const data = Object.assign({
-        xp: 0,
-        streak: 0,
-        rank: "Novice",
-        mode: "pemdas",
-        correct: { pemdas: 0, integers: 0, coords: 0, words: 0, puzzles: 0, logic: 0, mod: 0, prob: 0 },
-        hist: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [], prob: [] },
-        mastered: { pemdas: false, integers: false, coords: false, words: false, puzzles: false, logic: false, mod: false, prob: false },
-        daily: { date: "", solved: 0, goal: 20, completed: false },
-        challenges: [],
-        badges: {},
-        boss: { done: false },
-        themePref: 'auto',
-        statsWin: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [], prob: [] },
-        statsMode: 'hist'
-        // REMOVED: focus
-      }, state);
-
-      // ADD after data is created:
-      function ensureDataShape() {
-        for (const k of STRANDS) {
-          if (!data.correct || typeof data.correct[k] !== 'number') {
-            if (!data.correct) data.correct = {};
-            if (!Number.isFinite(data.correct[k])) data.correct[k] = 0;
-          }
-          if (!data.hist || !Array.isArray(data.hist[k])) {
-            if (!data.hist) data.hist = {};
-            if (!Array.isArray(data.hist[k])) data.hist[k] = [];
-          }
-          if (!data.mastered || typeof data.mastered[k] !== 'boolean') {
-            if (!data.mastered) data.mastered = {};
-            if (typeof data.mastered[k] !== 'boolean') data.mastered[k] = false;
-          }
-          if (!data.statsWin || !Array.isArray(data.statsWin[k])) {
-            if (!data.statsWin) data.statsWin = {};
-            if (!Array.isArray(data.statsWin[k])) data.statsWin[k] = [];
-          }
+      function initialStart() {
+        randomizeStartMode();
+        renderMode();
+        if (data.themePref === 'auto') callIf(window.applyTheme, themeForMode(data.mode));
+        updateHUD(); updateProgress(); paintBadges(); callIf(window.updateEngagementUI);
+        save();
+        callIf(window.nextQuestion);
+        // Optional: validate gens if present
+        if (window.gens && typeof window.gens === 'object') {
+          try {
+            STRANDS.forEach(k => {
+              const g = window.gens[k] && window.gens[k]();
+              if (!g || typeof g.q !== 'string' || typeof g.ans === 'undefined') console.warn('Quest generator invalid:', k, g);
+            });
+          } catch (e) { console.warn('Quest validation error:', e); }
         }
       }
-      ensureDataShape(); save();
 
-      // helpers already here:
-      function $(sel) { return document.querySelector(sel); }
-      function setText(sel, val) { const el = document.querySelector(sel); if (el) el.textContent = val; }
-      function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
-      function fmtPct(n) { return Math.round(n * 100) + "%"; }
+      initialStart();
+    })();
+  </script>
+</body>
 
-      // NEW: core app helpers (add right after helpers above)
-      function save() {
-        try { localStorage.setItem('csMathQuest', JSON.stringify(data)); } catch (_) { /* ignore */ }
-      }
-      function updateHUD() {
-        setText('#xp', String(data.xp));
-        setText('#streak', String(data.streak));
-        setText('#rank', data.rank);
-      }
-      function paintBadges() {
-        const box = document.getElementById('badges');
-        if (!box) return;
-        box.innerHTML = '';
-        Object.values(data.badges || {}).forEach(label => {
-          const el = document.createElement('div');
-          el.className = 'badge';
-          el.innerHTML = `🏅 <span>${label}</span>`;
-          box.appendChild(el);
-        });
-      }
-      // REMOVE this wrapper block (we’ll fold it into toast itself):
-      // const oldToast = toast;
-      // toast = function (msg) {
-      //   oldToast(msg);
-      //   const live = document.getElementById('ariaLive');
-      //   if (live) { live.textContent = ''; setTimeout(() => live.textContent = msg, 0); }
-      // };
-
-      // Replace the toast function with this version (keeps visuals + ARIA live)
-      function toast(msg) {
-        const el = document.createElement('div');
-        el.textContent = msg;
-        Object.assign(el.style, {
-          position: 'fixed', top: '12px', right: '12px', zIndex: 9999,
-          background: '#151e44', color: '#fff', border: '1px solid #2a3672',
-          padding: '8px 10px', borderRadius: '10px', boxShadow: '0 6px 20px #0008',
-          opacity: '0', transform: 'translateY(-6px)', transition: 'opacity .2s, transform .2s'
-        });
-        document.body.appendChild(el);
-        requestAnimationFrame(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; });
-        setTimeout(() => {
-          el.style.opacity = '0'; el.style.transform = 'translateY(-6px)';
-          setTimeout(() => el.remove(), 250);
-        }, 2000);
-        const live = document.getElementById('ariaLive');
-        if (live) { live.textContent = ''; setTimeout(() => (live.textContent = msg), 0); }
-      }
-
-      // NEW: mastery helpers + compute function
-      function median(arr) { if (!arr.length) return 0; const s = [...arr].sort((a, b) => a - b); const m = Math.floor(s.length / 2); return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; }
-      function dayKey(ts) { const d = new Date(ts); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; }
-      function computeMasteryFor(strand) {
-        const attempts = data.hist[strand] || [];
-        const total = attempts.length;
-        const window20 = attempts.slice(-20);
-        if (total < 25 || window20.length < 20) return false;
-        const acc = window20.reduce((s, a) => s + (a.correct ? 1 : 0), 0) / window20.length;
-        if (acc < 0.90) return false;
-        const days = new Set(window20.map(a => dayKey(a.t))).size;
-        if (days < 2) return false;
-        const medMs = median(window20.map(a => a.ms || 0));
-        if (medMs > 25000) return false;
-        const hintRate = window20.reduce((s, a) => s + (a.hint ? 1 : 0), 0) / window20.length;
-        if (hintRate > 0.10) return false;
-        return true;
-      }
-
-      // NEW: progress bar + mastery UI updater
-      function updateProgress() {
-        // Recompute mastery first
-        recomputeMastery();
-
-        STRANDS.forEach(k => {
-          if (data.mastered[k]) {
-            setText('#p_' + k, 'Mastered');
-            const bar = document.getElementById('bar_' + k); if (bar) bar.style.width = '100%';
-          } else {
-            setText('#p_' + k, `${data.correct[k]}/10`);
-            const bar = document.getElementById('bar_' + k); if (bar) bar.style.width = Math.min(100, data.correct[k] * 10) + '%';
-          }
-          const pill = document.getElementById('p_' + k);
-          if (pill) pill.classList.toggle('mastered', !!data.mastered[k]);
-        });
-        const total = STRANDS.reduce((s, k) => s + (data.correct[k] || 0), 0);
-        const denom = STRANDS.length * 10;
-        const pct = denom ? total / denom : 0;
-        const overall = document.getElementById('overallBar'); if (overall) overall.style.width = Math.min(100, Math.max(0, pct * 100)) + '%';
-        setText('#overallPct', fmtPct(Math.max(0, Math.min(1, pct))));
-      }
-
-      // Ranks
-      function computeRank(xp) {
-        if (xp >= 300) return 'Architect';
-        if (xp >= 150) return 'Hacker';
-        if (xp >= 50) return 'Coder';
-        return 'Novice';
-      }
-
-      // UI init (single declaration + handles theme auto-switch)
-      // const navBtns = [...document.querySelectorAll('.navBtn')];
-      // navBtns.forEach(btn => btn.addEventListener('click', () => { /* duplicate — removed */ }));
-      // Use the guarded initializer defined above:
-      initNav();
-
-      const resetEl = document.getElementById('resetBtn');
-      if (resetEl) {
-        resetEl.addEventListener('click', () => {
-          if (!confirm('Reset XP, progress, and daily challenges?')) return;
-
-          // Reset core progress
-          data.xp = 0;
-          data.streak = 0;
-          data.rank = 'Novice';
-          data.correct = STRANDS.reduce((o, k) => (o[k] = 0, o), {});
-          data.hist = STRANDS.reduce((o, k) => (o[k] = [], o), {});
-          data.mastered = STRANDS.reduce((o, k) => (o[k] = false, o), {});
-          data.badges = {};
-          data.boss = { done: false };
-
-          // Force new Daily + Challenges on reset
-          data.daily = null;
-          data.challenges = [];
-          ensureDaily();
-
-          updateHUD();
-          updateProgress();
-          paintBadges();
-          updateEngagementUI();
-          save();
-          nextQuestion();
-        });
-      }
-
-      // --- existing game code starts here ---
-
-      // Focus removed: define global no-op stubs for any legacy calls
-      window.ensureFocus = window.ensureFocus || function () { };
-      window.currentFocusPlan = window.currentFocusPlan || function () { return { accept: () => false }; };
-      window.updateFocusUI = window.updateFocusUI || function () { };
-
-      const STRANDS = ['pemdas', 'integers', 'coords', 'words', 'puzzles', 'logic', 'mod', 'prob'];
-
-      const state = JSON.parse(localStorage.getItem('csMathQuest') || '{}');
-      const data = Object.assign({
-        xp: 0,
-        streak: 0,
-        rank: "Novice",
-        mode: "pemdas",
-        correct: { pemdas: 0, integers: 0, coords: 0, words: 0, puzzles: 0, logic: 0, mod: 0, prob: 0 },
-        hist: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [], prob: [] },
-        mastered: { pemdas: false, integers: false, coords: false, words: false, puzzles: false, logic: false, mod: false, prob: false },
-        daily: { date: "", solved: 0, goal: 20, completed: false },
-        challenges: [],
-        badges: {},
-        boss: { done: false },
-        themePref: 'auto',
-        statsWin: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [], prob: [] },
-        statsMode: 'hist'
-        // REMOVED: focus
-      }, state);
-
-      // ADD after data is created:
-      function ensureDataShape() {
-        for (const k of STRANDS) {
-          if (!data.correct || typeof data.correct[k] !== 'number') {
-            if (!data.correct) data.correct = {};
-            if (!Number.isFinite(data.correct[k])) data.correct[k] = 0;
-          }
-          if (!data.hist || !Array.isArray(data.hist[k])) {
-            if (!data.hist) data.hist = {};
-            if (!Array.isArray(data.hist[k])) data.hist[k] = [];
-          }
-          if (!data.mastered || typeof data.mastered[k] !== 'boolean') {
-            if (!data.mastered) data.mastered = {};
-            if (typeof data.mastered[k] !== 'boolean') data.mastered[k] = false;
-          }
-          if (!data.statsWin || !Array.isArray(data.statsWin[k])) {
-            if (!data.statsWin) data.statsWin = {};
-            if (!Array.isArray(data.statsWin[k])) data.statsWin[k] = [];
-          }
-        }
-      }
-      ensureDataShape(); save();
-
-      // helpers already here:
-      function $(sel) { return document.querySelector(sel); }
-      function setText(sel, val) { const el = document.querySelector(sel); if (el) el.textContent = val; }
-      function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
-      function fmtPct(n) { return Math.round(n * 100) + "%"; }
-
-      // NEW: core app helpers (add right after helpers above)
-      function save() {
-        try { localStorage.setItem('csMathQuest', JSON.stringify(data)); } catch (_) { /* ignore */ }
-      }
-      function updateHUD() {
-        setText('#xp', String(data.xp));
-        setText('#streak', String(data.streak));
-        setText('#rank', data.rank);
-      }
-      function paintBadges() {
-        const box = document.getElementById('badges');
-        if (!box) return;
-        box.innerHTML = '';
-        Object.values(data.badges || {}).forEach(label => {
-          const el = document.createElement('div');
-          el.className = 'badge';
-          el.innerHTML = `🏅 <span>${label}</span>`;
-          box.appendChild(el);
-        });
-      }
-      // REMOVE this wrapper block (we’ll fold it into toast itself):
-      // const oldToast = toast;
-      // toast = function (msg) {
-      //   oldToast(msg);
-      //   const live = document.getElementById('ariaLive');
-      //   if (live) { live.textContent = ''; setTimeout(() => live.textContent = msg, 0); }
-      // };
-
-      // Replace the toast function with this version (keeps visuals + ARIA live)
-      function toast(msg) {
-        const el = document.createElement('div');
-        el.textContent = msg;
-        Object.assign(el.style, {
-          position: 'fixed', top: '12px', right: '12px', zIndex: 9999,
-          background: '#151e44', color: '#fff', border: '1px solid #2a3672',
-          padding: '8px 10px', borderRadius: '10px', boxShadow: '0 6px 20px #0008',
-          opacity: '0', transform: 'translateY(-6px)', transition: 'opacity .2s, transform .2s'
-        });
-        document.body.appendChild(el);
-        requestAnimationFrame(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; });
-        setTimeout(() => {
-          el.style.opacity = '0'; el.style.transform = 'translateY(-6px)';
-          setTimeout(() => el.remove(), 250);
-        }, 2000);
-        const live = document.getElementById('ariaLive');
-        if (live) { live.textContent = ''; setTimeout(() => (live.textContent = msg), 0); }
-      }
-
-      // NEW: mastery helpers + compute function
-      function median(arr) { if (!arr.length) return 0; const s = [...arr].sort((a, b) => a - b); const m = Math.floor(s.length / 2); return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; }
-      function dayKey(ts) { const d = new Date(ts); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; }
-      function computeMasteryFor(strand) {
-        const attempts = data.hist[strand] || [];
-        const total = attempts.length;
-        const window20 = attempts.slice(-20);
-        if (total < 25 || window20.length < 20) return false;
-        const acc = window20.reduce((s, a) => s + (a.correct ? 1 : 0), 0) / window20.length;
-        if (acc < 0.90) return false;
-        const days = new Set(window20.map(a => dayKey(a.t))).size;
-        if (days < 2) return false;
-        const medMs = median(window20.map(a => a.ms || 0));
-        if (medMs > 25000) return false;
-        const hintRate = window20.reduce((s, a) => s + (a.hint ? 1 : 0), 0) / window20.length;
-        if (hintRate > 0.10) return false;
-        return true;
-      }
-
-      // NEW: progress bar + mastery UI updater
-      function updateProgress() {
-        // Recompute mastery first
-        recomputeMastery();
-
-        STRANDS.forEach(k => {
-          if (data.mastered[k]) {
-            setText('#p_' + k, 'Mastered');
-            const bar = document.getElementById('bar_' + k); if (bar) bar.style.width = '100%';
-          } else {
-            setText('#p_' + k, `${data.correct[k]}/10`);
-            const bar = document.getElementById('bar_' + k); if (bar) bar.style.width = Math.min(100, data.correct[k] * 10) + '%';
-          }
-          const pill = document.getElementById('p_' + k);
-          if (pill) pill.classList.toggle('mastered', !!data.mastered[k]);
-        });
-        const total = STRANDS.reduce((s, k) => s + (data.correct[k] || 0), 0);
-        const denom = STRANDS.length * 10;
-        const pct = denom ? total / denom : 0;
-        const overall = document.getElementById('overallBar'); if (overall) overall.style.width = Math.min(100, Math.max(0, pct * 100)) + '%';
-        setText('#overallPct', fmtPct(Math.max(0, Math.min(1, pct))));
-      }
-
-      // Ranks
-      function computeRank(xp) {
-        if (xp >= 300) return 'Architect';
-        if (xp >= 150) return 'Hacker';
-        if (xp >= 50) return 'Coder';
-        return 'Novice';
-      }
-
-      // UI init (single declaration + handles theme auto-switch)
-      // const navBtns = [...document.querySelectorAll('.navBtn')];
-      // navBtns.forEach(btn => btn.addEventListener('click', () => { /* duplicate — removed */ }));
-      // Use the guarded initializer defined above:
-      initNav();
-
-      const resetEl = document.getElementById('resetBtn');
-      if (resetEl) {
-        resetEl.addEventListener('click', () => {
-          if (!confirm('Reset XP, progress, and daily challenges?')) return;
-
-          // Reset core progress
-          data.xp = 0;
-          data.streak = 0;
-          data.rank = 'Novice';
-          data.correct = STRANDS.reduce((o, k) => (o[k] = 0, o), {});
-          data.hist = STRANDS.reduce((o, k) => (o[k] = [], o), {});
-          data.mastered = STRANDS.reduce((o, k) => (o[k] = false, o), {});
-          data.badges = {};
-          data.boss = { done: false };
-
-          // Force new Daily + Challenges on reset
-          data.daily = null;
-          data.challenges = [];
-          ensureDaily();
-
-          updateHUD();
-          updateProgress();
-          paintBadges();
-          updateEngagementUI();
-          save();
-          nextQuestion();
-        });
-      }
-
-      // --- existing game code starts here ---
-
-      // Focus removed: define global no-op stubs for any legacy calls
-      window.ensureFocus = window.ensureFocus || function () { };
-      window.currentFocusPlan = window.currentFocusPlan || function () { return { accept: () => false }; };
-      window.updateFocusUI = window.updateFocusUI || function () { };
-
-      const STRANDS = ['pemdas', 'integers', 'coords', 'words', 'puzzles', 'logic', 'mod', 'prob'];
-
-      const state = JSON.parse(localStorage.getItem('csMathQuest') || '{}');
-      const data = Object.assign({
-        xp: 0,
-        streak: 0,
-        rank: "Novice",
-        mode: "pemdas",
-        correct: { pemdas: 0, integers: 0, coords: 0, words: 0, puzzles: 0, logic: 0, mod: 0, prob: 0 },
-        hist: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [], prob: [] },
-        mastered: { pemdas: false, integers: false, coords: false, words: false, puzzles: false, logic: false, mod: false, prob: false },
-        daily: { date: "", solved: 0, goal: 20, completed: false },
-        challenges: [],
-        badges: {},
-        boss: { done: false },
-        themePref: 'auto',
-        statsWin: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [], prob: [] },
-        statsMode: 'hist'
-        // REMOVED: focus
-      }, state);
-
-      // ADD after data is created:
-      function ensureDataShape() {
-        for (const k of STRANDS) {
-          if (!data.correct || typeof data.correct[k] !== 'number') {
-            if (!data.correct) data.correct = {};
-            if (!Number.isFinite(data.correct[k])) data.correct[k] = 0;
-          }
-          if (!data.hist || !Array.isArray(data.hist[k])) {
-            if (!data.hist) data.hist = {};
-            if (!Array.isArray(data.hist[k])) data.hist[k] = [];
-          }
-          if (!data.mastered || typeof data.mastered[k] !== 'boolean') {
-            if (!data.mastered) data.mastered = {};
-            if (typeof data.mastered[k] !== 'boolean') data.mastered[k] = false;
-          }
-          if (!data.statsWin || !Array.isArray(data.statsWin[k])) {
-            if (!data.statsWin) data.statsWin = {};
-            if (!Array.isArray(data.statsWin[k])) data.statsWin[k] = [];
-          }
-        }
-      }
-      ensureDataShape(); save();
-
-      // helpers already here:
-      function $(sel) { return document.querySelector(sel); }
-      function setText(sel, val) { const el = document.querySelector(sel); if (el) el.textContent = val; }
-      function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
-      function fmtPct(n) { return Math.round(n * 100) + "%"; }
-
-      // NEW: core app helpers (add right after helpers above)
-      function save() {
-        try { localStorage.setItem('csMathQuest', JSON.stringify(data)); } catch (_) { /* ignore */ }
-      }
-      function updateHUD() {
-        setText('#xp', String(data.xp));
-        setText('#streak', String(data.streak));
-        setText('#rank', data.rank);
-      }
-      function paintBadges() {
-        const box = document.getElementById('badges');
-        if (!box) return;
-        box.innerHTML = '';
-        Object.values(data.badges || {}).forEach(label => {
-          const el = document.createElement('div');
-          el.className = 'badge';
-          el.innerHTML = `🏅 <span>${label}</span>`;
-          box.appendChild(el);
-        });
-      }
-      // REMOVE this wrapper block (we’ll fold it into toast itself):
-      // const oldToast = toast;
-      // toast = function (msg) {
-      //   oldToast(msg);
-      //   const live = document.getElementById('ariaLive');
-      //   if (live) { live.textContent = ''; setTimeout(() => live.textContent = msg, 0); }
-      // };
-
-      // Replace the toast function with this version (keeps visuals + ARIA live)
-      function toast(msg) {
-        const el = document.createElement('div');
-        el.textContent = msg;
-        Object.assign(el.style, {
-          position: 'fixed', top: '12px', right: '12px', zIndex: 9999,
-          background: '#151e44', color: '#fff', border: '1px solid #2a3672',
-          padding: '8px 10px', borderRadius: '10px', boxShadow: '0 6px 20px #0008',
-          opacity: '0', transform: 'translateY(-6px)', transition: 'opacity .2s, transform .2s'
-        });
-        document.body.appendChild(el);
-        requestAnimationFrame(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; });
-        setTimeout(() => {
-          el.style.opacity = '0'; el.style.transform = 'translateY(-6px)';
-          setTimeout(() => el.remove(), 250);
-        }, 2000);
-        const live = document.getElementById('ariaLive');
-        if (live) { live.textContent = ''; setTimeout(() => (live.textContent = msg), 0); }
-      }
-
-      // NEW: mastery helpers + compute function
-      function median(arr) { if (!arr.length) return 0; const s = [...arr].sort((a, b) => a - b); const m = Math.floor(s.length / 2); return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; }
-      function dayKey(ts) { const d = new Date(ts); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; }
-      function computeMasteryFor(strand) {
-        const attempts = data.hist[strand] || [];
-        const total = attempts.length;
-        const window20 = attempts.slice(-20);
-        if (total < 25 || window20.length < 20) return false;
-        const acc = window20.reduce((s, a) => s + (a.correct ? 1 : 0), 0) / window20.length;
-        if (acc < 0.90) return false;
-        const days = new Set(window20.map(a => dayKey(a.t))).size;
-        if (days < 2) return false;
-        const medMs = median(window20.map(a => a.ms || 0));
-        if (medMs > 25000) return false;
-        const hintRate = window20.reduce((s, a) => s + (a.hint ? 1 : 0), 0) / window20.length;
-        if (hintRate > 0.10) return false;
-        return true;
-      }
-
-      // NEW: progress bar + mastery UI updater
-      function updateProgress() {
-        // Recompute mastery first
-        recomputeMastery();
-
-        STRANDS.forEach(k => {
-          if (data.mastered[k]) {
-            setText('#p_' + k, 'Mastered');
-            const bar = document.getElementById('bar_' + k); if (bar) bar.style.width = '100%';
-          } else {
-            setText('#p_' + k, `${data.correct[k]}/10`);
-            const bar = document.getElementById('bar_' + k); if (bar) bar.style.width = Math.min(100, data.correct[k] * 10) + '%';
-          }
-          const pill = document.getElementById('p_' + k);
-          if (pill) pill.classList.toggle('mastered', !!data.mastered[k]);
-        });
-        const total = STRANDS.reduce((s, k) => s + (data.correct[k] || 0), 0);
-        const denom = STRANDS.length * 10;
-        const pct = denom ? total / denom : 0;
-        const overall = document.getElementById('overallBar'); if (overall) overall.style.width = Math.min(100, Math.max(0, pct * 100)) + '%';
-        setText('#overallPct', fmtPct(Math.max(0, Math.min(1, pct))));
-      }
-
-      // Ranks
-      function computeRank(xp) {
-        if (xp >= 300) return 'Architect';
-        if (xp >= 150) return 'Hacker';
-        if (xp >= 50) return 'Coder';
-        return 'Novice';
-      }
-
-      // UI init (single declaration + handles theme auto-switch)
-      // const navBtns = [...document.querySelectorAll('.navBtn')];
-      // navBtns.forEach(btn => btn.addEventListener('click', () => { /* duplicate — removed */ }));
-      // Use the guarded initializer defined above:
-      initNav();
-
-      const resetEl = document.getElementById('resetBtn');
-      if (resetEl) {
-        resetEl.addEventListener('click', () => {
-          if (!confirm('Reset XP, progress, and daily challenges?')) return;
-
-          // Reset core progress
-          data.xp = 0;
-          data.streak = 0;
-          data.rank = 'Novice';
-          data.correct = STRANDS.reduce((o, k) => (o[k] = 0, o), {});
-          data.hist = STRANDS.reduce((o, k) => (o[k] = [], o), {});
-          data.mastered = STRANDS.reduce((o, k) => (o[k] = false, o), {});
-          data.badges = {};
-          data.boss = { done: false };
-
-          // Force new Daily + Challenges on reset
-          data.daily = null;
-          data.challenges = [];
-          ensureDaily();
-
-          updateHUD();
-          updateProgress();
-          paintBadges();
-          updateEngagementUI();
-          save();
-          nextQuestion();
-        });
-      }
-
-      // --- existing game code starts here ---
-
-      // Focus removed: define global no-op stubs for any legacy calls
-      window.ensureFocus = window.ensureFocus || function () { };
-      window.currentFocusPlan = window.currentFocusPlan || function () { return { accept: () => false }; };
-      window.updateFocusUI = window.updateFocusUI || function () { };
-
-      const STRANDS = ['pemdas', 'integers', 'coords', 'words', 'puzzles', 'logic', 'mod', 'prob'];
-
-      const state = JSON.parse(localStorage.getItem('csMathQuest') || '{}');
-      const data = Object.assign({
-        xp: 0,
-        streak: 0,
-        rank: "Novice",
-        mode: "pemdas",
-        correct: { pemdas: 0, integers: 0, coords: 0, words: 0, puzzles: 0, logic: 0, mod: 0, prob: 0 },
-        hist: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [], prob: [] },
-        mastered: { pemdas: false, integers: false, coords: false, words: false, puzzles: false, logic: false, mod: false, prob: false },
-        daily: { date: "", solved: 0, goal: 20, completed: false },
-        challenges: [],
-        badges: {},
-        boss: { done: false },
-        themePref: 'auto',
-        statsWin: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [], prob: [] },
-        statsMode: 'hist'
-        // REMOVED: focus
-      }, state);
-
-      // ADD after data is created:
-      function ensureDataShape() {
-        for (const k of STRANDS) {
-          if (!data.correct || typeof data.correct[k] !== 'number') {
-            if (!data.correct) data.correct = {};
-            if (!Number.isFinite(data.correct[k])) data.correct[k] = 0;
-          }
-          if (!data.hist || !Array.isArray(data.hist[k])) {
-            if (!data.hist) data.hist = {};
-            if (!Array.isArray(data.hist[k])) data.hist[k] = [];
-          }
-          if (!data.mastered || typeof data.mastered[k] !== 'boolean') {
-            if (!data.mastered) data.mastered = {};
-            if (typeof data.mastered[k] !== 'boolean') data.mastered[k] = false;
-          }
-          if (!data.statsWin || !Array.isArray(data.statsWin[k])) {
-            if (!data.statsWin) data.statsWin = {};
-            if (!Array.isArray(data.statsWin[k])) data.statsWin[k] = [];
-          }
-        }
-      }
-      ensureDataShape(); save();
-
-      // helpers already here:
-      function $(sel) { return document.querySelector(sel); }
-      function setText(sel, val) { const el = document.querySelector(sel); if (el) el.textContent = val; }
-      function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
-      function fmtPct(n) { return Math.round(n * 100) + "%"; }
-
-      // NEW: core app helpers (add right after helpers above)
-      function save() {
-        try { localStorage.setItem('csMathQuest', JSON.stringify(data)); } catch (_) { /* ignore */ }
-      }
-      function updateHUD() {
-        setText('#xp', String(data.xp));
-        setText('#streak', String(data.streak));
-        setText('#rank', data.rank);
-      }
-      function paintBadges() {
-        const box = document.getElementById('badges');
-        if (!box) return;
-        box.innerHTML = '';
-        Object.values(data.badges || {}).forEach(label => {
-          const el = document.createElement('div');
-          el.className = 'badge';
-          el.innerHTML = `🏅 <span>${label}</span>`;
-          box.appendChild(el);
-        });
-      }
-      // REMOVE this wrapper block (we’ll fold it into toast itself):
-      // const oldToast = toast;
-      // toast = function (msg) {
-      //   oldToast(msg);
-      //   const live = document.getElementById('ariaLive');
-      //   if (live) { live.textContent = ''; setTimeout(() => live.textContent = msg, 0); }
-      // };
-
-      // Replace the toast function with this version (keeps visuals + ARIA live)
-      function toast(msg) {
-        const el = document.createElement('div');
-        el.textContent = msg;
-        Object.assign(el.style, {
-          position: 'fixed', top: '12px', right: '12px', zIndex: 9999,
-          background: '#151e44', color: '#fff', border: '1px solid #2a3672',
-          padding: '8px 10px', borderRadius: '10px', boxShadow: '0 6px 20px #0008',
-          opacity: '0', transform: 'translateY(-6px)', transition: 'opacity .2s, transform .2s'
-        });
-        document.body.appendChild(el);
-        requestAnimationFrame(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; });
-        setTimeout(() => {
-          el.style.opacity = '0'; el.style.transform = 'translateY(-6px)';
-          setTimeout(() => el.remove(), 250);
-        }, 2000);
-        const live = document.getElementById('ariaLive');
-        if (live) { live.textContent = ''; setTimeout(() => (live.textContent = msg), 0); }
-      }
-
-      // NEW: mastery helpers + compute function
-      function median(arr) { if (!arr.length) return 0; const s = [...arr].sort((a, b) => a - b); const m = Math.floor(s.length / 2); return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; }
-      function dayKey(ts) { const d = new Date(ts); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; }
-      function computeMasteryFor(strand) {
-        const attempts = data.hist[strand] || [];
-        const total = attempts.length;
-        const window20 = attempts.slice(-20);
-        if (total < 25 || window20.length < 20) return false;
-        const acc = window20.reduce((s, a) => s + (a.correct ? 1 : 0), 0) / window20.length;
-        if (acc < 0.90) return false;
-        const days = new Set(window20.map(a => dayKey(a.t))).size;
-        if (days < 2) return false;
-        const medMs = median(window20.map(a => a.ms || 0));
-        if (medMs > 25000) return false;
-        const hintRate = window20.reduce((s, a) => s + (a.hint ? 1 : 0), 0) / window20.length;
-        if (hintRate > 0.10) return false;
-        return true;
-      }
-
-      // NEW: progress bar + mastery UI updater
-      function updateProgress() {
-        // Recompute mastery first
-        recomputeMastery();
-
-        STRANDS.forEach(k => {
-          if (data.mastered[k]) {
-            setText('#p_' + k, 'Mastered');
-            const bar = document.getElementById('bar_' + k); if (bar) bar.style.width = '100%';
-          } else {
-            setText('#p_' + k, `${data.correct[k]}/10`);
-            const bar = document.getElementById('bar_' + k); if (bar) bar.style.width = Math.min(100, data.correct[k] * 10) + '%';
-          }
-          const pill = document.getElementById('p_' + k);
-          if (pill) pill.classList.toggle('mastered', !!data.mastered[k]);
-        });
-        const total = STRANDS.reduce((s, k) => s + (data.correct[k] || 0), 0);
-        const denom = STRANDS.length * 10;
-        const pct = denom ? total / denom : 0;
-        const overall = document.getElementById('overallBar'); if (overall) overall.style.width = Math.min(100, Math.max(0, pct * 100)) + '%';
-        setText('#overallPct', fmtPct(Math.max(0, Math.min(1, pct))));
-      }
-
-      // Ranks
-      function computeRank(xp) {
-        if (xp >= 300) return 'Architect';
-        if (xp >= 150) return 'Hacker';
-        if (xp >= 50) return 'Coder';
-        return 'Novice';
-      }
-
-      // UI init (single declaration + handles theme auto-switch)
-      // const navBtns = [...document.querySelectorAll('.navBtn')];
-      // navBtns.forEach(btn => btn.addEventListener('click', () => { /* duplicate — removed */ }));
-      // Use the guarded initializer defined above:
-      initNav();
-
-      const resetEl = document.getElementById('resetBtn');
-      if (resetEl) {
-        resetEl.addEventListener('click', () => {
-          if (!confirm('Reset XP, progress, and daily challenges?')) return;
-
-          // Reset core progress
-          data.xp = 0;
-          data.streak = 0;
-          data.rank = 'Novice';
-          data.correct = STRANDS.reduce((o, k) => (o[k] = 0, o), {});
-          data.hist = STRANDS.reduce((o, k) => (o[k] = [], o), {});
-          data.mastered = STRANDS.reduce((o, k) => (o[k] = false, o), {});
-          data.badges = {};
-          data.boss = { done: false };
-
-          // Force new Daily + Challenges on reset
-          data.daily = null;
-          data.challenges = [];
-          ensureDaily();
-
-          updateHUD();
-          updateProgress();
-          paintBadges();
-          updateEngagementUI();
-          save();
-          nextQuestion();
-        });
-      }
-
-      // --- existing game code starts here ---
-
-      // Focus removed: define global no-op stubs for any legacy calls
-      window.ensureFocus = window.ensureFocus || function () { };
-      window.currentFocusPlan = window.currentFocusPlan || function () { return { accept: () => false }; };
-      window.updateFocusUI = window.updateFocusUI || function () { };
-
-      const STRANDS = ['pemdas', 'integers', 'coords', 'words', 'puzzles', 'logic', 'mod', 'prob'];
-
-      const state = JSON.parse(localStorage.getItem('csMathQuest') || '{}');
-      const data = Object.assign({
-        xp: 0,
-        streak: 0,
-        rank: "Novice",
-        mode: "pemdas",
-        correct: { pemdas: 0, integers: 0, coords: 0, words: 0, puzzles: 0, logic: 0, mod: 0, prob: 0 },
-        hist: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [], prob: [] },
-        mastered: { pemdas: false, integers: false, coords: false, words: false, puzzles: false, logic: false, mod: false, prob: false },
-        daily: { date: "", solved: 0, goal: 20, completed: false },
-        challenges: [],
-        badges: {},
-        boss: { done: false },
-        themePref: 'auto',
-        statsWin: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [], prob: [] },
-        statsMode: 'hist'
-        // REMOVED: focus
-      }, state);
-
-      // ADD after data is created:
-      function ensureDataShape() {
-        for (const k of STRANDS) {
-          if (!data.correct || typeof data.correct[k] !== 'number') {
-            if (!data.correct) data.correct = {};
-            if (!Number.isFinite(data.correct[k])) data.correct[k] = 0;
-          }
-          if (!data.hist || !Array.isArray(data.hist[k])) {
-            if (!data.hist) data.hist = {};
-            if (!Array.isArray(data.hist[k])) data.hist[k] = [];
-          }
-          if (!data.mastered || typeof data.mastered[k] !== 'boolean') {
-            if (!data.mastered) data.mastered = {};
-            if (typeof data.mastered[k] !== 'boolean') data.mastered[k] = false;
-          }
-          if (!data.statsWin || !Array.isArray(data.statsWin[k])) {
-            if (!data.statsWin) data.statsWin = {};
-            if (!Array.isArray(data.statsWin[k])) data.statsWin[k] = [];
-          }
-        }
-      }
-      ensureDataShape(); save();
-
-      // helpers already here:
-      function $(sel) { return document.querySelector(sel); }
-      function setText(sel, val) { const el = document.querySelector(sel); if (el) el.textContent = val; }
-      function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
-      function fmtPct(n) { return Math.round(n * 100) + "%"; }
-
-      // NEW: core app helpers (add right after helpers above)
-      function save() {
-        try { localStorage.setItem('csMathQuest', JSON.stringify(data)); } catch (_) { /* ignore */ }
-      }
-      function updateHUD() {
-        setText('#xp', String(data.xp));
-        setText('#streak', String(data.streak));
-        setText('#rank', data.rank);
-      }
-      function paintBadges() {
-        const box = document.getElementById('badges');
-        if (!box) return;
-        box.innerHTML = '';
-        Object.values(data.badges || {}).forEach(label => {
-          const el = document.createElement('div');
-          el.className = 'badge';
-          el.innerHTML = `🏅 <span>${label}</span>`;
-          box.appendChild(el);
-        });
-      }
-      // REMOVE this wrapper block (we’ll fold it into toast itself):
-      // const oldToast = toast;
-      // toast = function (msg) {
-      //   oldToast(msg);
-      //   const live = document.getElementById('ariaLive');
-      //   if (live) { live.textContent = ''; setTimeout(() => live.textContent = msg, 0); }
-      // };
-
-      // Replace the toast function with this version (keeps visuals + ARIA live)
-      function toast(msg) {
-        const el = document.createElement('div');
-        el.textContent = msg;
-        Object.assign(el.style, {
-          position: 'fixed', top: '12px', right: '12px', zIndex: 9999,
-          background: '#151e44', color: '#fff', border: '1px solid #2a3672',
-          padding: '8px 10px', borderRadius: '10px', boxShadow: '0 6px 20px #0008',
-          opacity: '0', transform: 'translateY(-6px)', transition: 'opacity .2s, transform .2s'
-        });
-        document.body.appendChild(el);
-        requestAnimationFrame(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; });
-        setTimeout(() => {
-          el.style.opacity = '0'; el.style.transform = 'translateY(-6px)';
-          setTimeout(() => el.remove(), 250);
-        }, 2000);
-        const live = document.getElementById('ariaLive');
-        if (live) { live.textContent = ''; setTimeout(() => (live.textContent = msg), 0); }
-      }
-
-      // NEW: mastery helpers + compute function
-      function median(arr) { if (!arr.length) return 0; const s = [...arr].sort((a, b) => a - b); const m = Math.floor(s.length / 2); return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; }
-      function dayKey(ts) { const d = new Date(ts); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; }
-      function computeMasteryFor(strand) {
-        const attempts = data.hist[strand] || [];
-        const total = attempts.length;
-        const window20 = attempts.slice(-20);
-        if (total < 25 || window20.length < 20) return false;
-        const acc = window20.reduce((s, a) => s + (a.correct ? 1 : 0), 0) / window20.length;
-        if (acc < 0.90) return false;
-        const days = new Set(window20.map(a => dayKey(a.t))).size;
-        if (days < 2) return false;
-        const medMs = median(window20.map(a => a.ms || 0));
-        if (medMs > 25000) return false;
-        const hintRate = window20.reduce((s, a) => s + (a.hint ? 1 : 0), 0) / window20.length;
-        if (hintRate > 0.10) return false;
-        return true;
-      }
-
-      // NEW: progress bar + mastery UI updater
-      function updateProgress() {
-        // Recompute mastery first
-        recomputeMastery();
-
-        STRANDS.forEach(k => {
-          if (data.mastered[k]) {
-            setText('#p_' + k, 'Mastered');
-            const bar = document.getElementById('bar_' + k); if (bar) bar.style.width = '100%';
-          } else {
-            setText('#p_' + k, `${data.correct[k]}/10`);
-            const bar = document.getElementById('bar_' + k); if (bar) bar.style.width = Math.min(100, data.correct[k] * 10) + '%';
-          }
-          const pill = document.getElementById('p_' + k);
-          if (pill) pill.classList.toggle('mastered', !!data.mastered[k]);
-        });
-        const total = STRANDS.reduce((s, k) => s + (data.correct[k] || 0), 0);
-        const denom = STRANDS.length * 10;
-        const pct = denom ? total / denom : 0;
-        const overall = document.getElementById('overallBar'); if (overall) overall.style.width = Math.min(100, Math.max(0, pct * 100)) + '%';
-        setText('#overallPct', fmtPct(Math.max(0, Math.min(1, pct))));
-      }
-
-      // Ranks
-      function computeRank(xp) {
-        if (xp >= 300) return 'Architect';
-        if (xp >= 150) return 'Hacker';
-        if (xp >= 50) return 'Coder';
-        return 'Novice';
-      }
-
-      // UI init (single declaration + handles theme auto-switch)
-      // const navBtns = [...document.querySelectorAll('.navBtn')];
-      // navBtns.forEach(btn => btn.addEventListener('click', () => { /* duplicate — removed */ }));
-      // Use the guarded initializer defined above:
-      initNav();
-
-      const resetEl = document.getElementById('resetBtn');
-      if (resetEl) {
-        resetEl.addEventListener('click', () => {
-          if (!confirm('Reset XP, progress, and daily challenges?')) return;
-
-          // Reset core progress
-          data.xp = 0;
-          data.streak = 0;
-          data.rank = 'Novice';
-          data.correct = STRANDS.reduce((o, k) => (o[k] = 0, o), {});
-          data.hist = STRANDS.reduce((o, k) => (o[k] = [], o), {});
-          data.mastered = STRANDS.reduce((o, k) => (o[k] = false, o), {});
-          data.badges = {};
-          data.boss = { done: false };
-
-          // Force new Daily + Challenges on reset
-          data.daily = null;
-          data.challenges = [];
-          ensureDaily();
-
-          updateHUD();
-          updateProgress();
-          paintBadges();
-          updateEngagementUI();
-          save();
-          nextQuestion();
-        });
-      }
-
-      // --- existing game code starts here ---
-
-      // Focus removed: define global no-op stubs for any legacy calls
-      window.ensureFocus = window.ensureFocus || function () { };
-      window.currentFocusPlan = window.currentFocusPlan || function () { return { accept: () => false }; };
-      window.updateFocusUI = window.updateFocusUI || function () { };
-
-      const STRANDS = ['pemdas', 'integers', 'coords', 'words', 'puzzles', 'logic', 'mod', 'prob'];
-
-      const state = JSON.parse(localStorage.getItem('csMathQuest') || '{}');
-      const data = Object.assign({
-        xp: 0,
-        streak: 0,
-        rank: "Novice",
-        mode: "pemdas",
-        correct: { pemdas: 0, integers: 0, coords: 0, words: 0, puzzles: 0, logic: 0, mod: 0, prob: 0 },
-        hist: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [], prob: [] },
-        mastered: { pemdas: false, integers: false, coords: false, words: false, puzzles: false, logic: false, mod: false, prob: false },
-        daily: { date: "", solved: 0, goal: 20, completed: false },
-        challenges: [],
-        badges: {},
-        boss: { done: false },
-        themePref: 'auto',
-        statsWin: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [], prob: [] },
-        statsMode: 'hist'
-        // REMOVED: focus
-      }, state);
-
-      // ADD after data is created:
-      function ensureDataShape() {
-        for (const k of STRANDS) {
-          if (!data.correct || typeof data.correct[k] !== 'number') {
-            if (!data.correct) data.correct = {};
-            if (!Number.isFinite(data.correct[k])) data.correct[k] = 0;
-          }
-          if (!data.hist || !Array.isArray(data.hist[k])) {
-            if (!data.hist) data.hist = {};
-            if (!Array.isArray(data.hist[k])) data.hist[k] = [];
-          }
-          if (!data.mastered || typeof data.mastered[k] !== 'boolean') {
-            if (!data.mastered) data.mastered = {};
-            if (typeof data.mastered[k] !== 'boolean') data.mastered[k] = false;
-          }
-          if (!data.statsWin || !Array.isArray(data.statsWin[k])) {
-            if (!data.statsWin) data.statsWin = {};
-            if (!Array.isArray(data.statsWin[k])) data.statsWin[k] = [];
-          }
-        }
-      }
-      ensureDataShape(); save();
-
-      // helpers already here:
-      function $(sel) { return document.querySelector(sel); }
-      function setText(sel, val) { const el = document.querySelector(sel); if (el) el.textContent = val; }
-      function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
-      function fmtPct(n) { return Math.round(n * 100) + "%"; }
-
-      // NEW: core app helpers (add right after helpers above)
-      function save() {
-        try { localStorage.setItem('csMathQuest', JSON.stringify(data)); } catch (_) { /* ignore */ }
-      }
-      function updateHUD() {
-        setText('#xp', String(data.xp));
-        setText('#streak', String(data.streak));
-        setText('#rank', data.rank);
-      }
-      function paintBadges() {
-        const box = document.getElementById('badges');
-        if (!box) return;
-        box.innerHTML = '';
-        Object.values(data.badges || {}).forEach(label => {
-          const el = document.createElement('div');
-          el.className = 'badge';
-          el.innerHTML = `🏅 <span>${label}</span>`;
-          box.appendChild(el);
-        });
-      }
-      // REMOVE this wrapper block (we’ll fold it into toast itself):
-      // const oldToast = toast;
-      // toast = function (msg) {
-      //   oldToast(msg);
-      //   const live = document.getElementById('ariaLive');
-      //   if (live) { live.textContent = ''; setTimeout(() => live.textContent = msg, 0); }
-      // };
-
-      // Replace the toast function with this version (keeps visuals + ARIA live)
-      function toast(msg) {
-        const el = document.createElement('div');
-        el.textContent = msg;
-        Object.assign(el.style, {
-          position: 'fixed', top: '12px', right: '12px', zIndex: 9999,
-          background: '#151e44', color: '#fff', border: '1px solid #2a3672',
-          padding: '8px 10px', borderRadius: '10px', boxShadow: '0 6px 20px #0008',
-          opacity: '0', transform: 'translateY(-6px)', transition: 'opacity .2s, transform .2s'
-        });
-        document.body.appendChild(el);
-        requestAnimationFrame(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; });
-        setTimeout(() => {
-          el.style.opacity = '0'; el.style.transform = 'translateY(-6px)';
-          setTimeout(() => el.remove(), 250);
-        }, 2000);
-        const live = document.getElementById('ariaLive');
-        if (live) { live.textContent = ''; setTimeout(() => (live.textContent = msg), 0); }
-      }
-
-      // NEW: mastery helpers + compute function
-      function median(arr) { if (!arr.length) return 0; const s = [...arr].sort((a, b) => a - b); const m = Math.floor(s.length / 2); return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; }
-      function dayKey(ts) { const d = new Date(ts); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; }
-      function computeMasteryFor(strand) {
-        const attempts = data.hist[strand] || [];
-        const total = attempts.length;
-        const window20 = attempts.slice(-20);
-        if (total < 25 || window20.length < 20) return false;
-        const acc = window20.reduce((s, a) => s + (a.correct ? 1 : 0), 0) / window20.length;
-        if (acc < 0.90) return false;
-        const days = new Set(window20.map(a => dayKey(a.t))).size;
-        if (days < 2) return false;
-        const medMs = median(window20.map(a => a.ms || 0));
-        if (medMs > 25000) return false;
-        const hintRate = window20.reduce((s, a) => s + (a.hint ? 1 : 0), 0) / window20.length;
-        if (hintRate > 0.10) return false;
-        return true;
-      }
-
-      // NEW: progress bar + mastery UI updater
-      function updateProgress() {
-        // Recompute mastery first
-        recomputeMastery();
-
-        STRANDS.forEach(k => {
-          if (data.mastered[k]) {
-            setText('#p_' + k, 'Mastered');
-            const bar = document.getElementById('bar_' + k); if (bar) bar.style.width = '100%';
-          } else {
-            setText('#p_' + k, `${data.correct[k]}/10`);
-            const bar = document.getElementById('bar_' + k); if (bar) bar.style.width = Math.min(100, data.correct[k] * 10) + '%';
-          }
-          const pill = document.getElementById('p_' + k);
-          if (pill) pill.classList.toggle('mastered', !!data.mastered[k]);
-        });
-        const total = STRANDS.reduce((s, k) => s + (data.correct[k] || 0), 0);
-        const denom = STRANDS.length * 10;
-        const pct = denom ? total / denom : 0;
-        const overall = document.getElementById('overallBar'); if (overall) overall.style.width = Math.min(100, Math.max(0, pct * 100)) + '%';
-        setText('#overallPct', fmtPct(Math.max(0, Math.min(1, pct))));
-      }
-
-      // Ranks
-      function computeRank(xp) {
-        if (xp >= 300) return 'Architect';
-        if (xp >= 150) return 'Hacker';
-        if (xp >= 50) return 'Coder';
-        return 'Novice';
-      }
-
-      // UI init (single declaration + handles theme auto-switch)
-      // const navBtns = [...document.querySelectorAll('.navBtn')];
-      // navBtns.forEach(btn => btn.addEventListener('click', () => { /* duplicate — removed */ }));
-      // Use the guarded initializer defined above:
-      initNav();
-
-      const resetEl = document.getElementById('resetBtn');
-      if (resetEl) {
-        resetEl.addEventListener('click', () => {
-          if (!confirm('Reset XP, progress, and daily challenges?')) return;
-
-          // Reset core progress
-          data.xp = 0;
-          data.streak = 0;
-          data.rank = 'Novice';
-          data.correct = STRANDS.reduce((o, k) => (o[k] = 0, o), {});
-          data.hist = STRANDS.reduce((o, k) => (o[k] = [], o), {});
-          data.mastered = STRANDS.reduce((o, k) => (o[k] = false, o), {});
-          data.badges = {};
-          data.boss = { done: false };
-
-          // Force new Daily + Challenges on reset
-          data.daily = null;
-          data.challenges = [];
-          ensureDaily();
-
-          updateHUD();
-          updateProgress();
-          paintBadges();
-          updateEngagementUI();
-          save();
-          nextQuestion();
-        });
-      }
-
-      // --- existing game code starts here ---
-
-      // Focus removed: define global no-op stubs for any legacy calls
-      window.ensureFocus = window.ensureFocus || function () { };
-      window.currentFocusPlan = window.currentFocusPlan || function () { return { accept: () => false }; };
-      window.updateFocusUI = window.updateFocusUI || function () { };
-
-      const STRANDS = ['pemdas', 'integers', 'coords', 'words', 'puzzles', 'logic', 'mod', 'prob'];
-
-      const state = JSON.parse(localStorage.getItem('csMathQuest') || '{}');
-      const data = Object.assign({
-        xp: 0,
-        streak: 0,
-        rank: "Novice",
-        mode: "pemdas",
-        correct: { pemdas: 0, integers: 0, coords: 0, words: 0, puzzles: 0, logic: 0, mod: 0, prob: 0 },
-        hist: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [], prob: [] },
-        mastered: { pemdas: false, integers: false, coords: false, words: false, puzzles: false, logic: false, mod: false, prob: false },
-        daily: { date: "", solved: 0, goal: 20, completed: false },
-        challenges: [],
-        badges: {},
-        boss: { done: false },
-        themePref: 'auto',
-        statsWin: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [], prob: [] },
-        statsMode: 'hist'
-        // REMOVED: focus
-      }, state);
-
-      // ADD after data is created:
-      function ensureDataShape() {
-        for (const k of STRANDS) {
-          if (!data.correct || typeof data.correct[k] !== 'number') {
-            if (!data.correct) data.correct = {};
-            if (!Number.isFinite(data.correct[k])) data.correct[k] = 0;
-          }
-          if (!data.hist || !Array.isArray(data.hist[k])) {
-            if (!data.hist) data.hist = {};
-            if (!Array.isArray(data.hist[k])) data.hist[k] = [];
-          }
-          if (!data.mastered || typeof data.mastered[k] !== 'boolean') {
-            if (!data.mastered) data.mastered = {};
-            if (typeof data.mastered[k] !== 'boolean') data.mastered[k] = false;
-          }
-          if (!data.statsWin || !Array.isArray(data.statsWin[k])) {
-            if (!data.statsWin) data.statsWin = {};
-            if (!Array.isArray(data.statsWin[k])) data.statsWin[k] = [];
-          }
-        }
-      }
-      ensureDataShape(); save();
-
-      // helpers already here:
-      function $(sel) { return document.querySelector(sel); }
-      function setText(sel, val) { const el = document.querySelector(sel); if (el) el.textContent = val; }
-      function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
-      function fmtPct(n) { return Math.round(n * 100) + "%"; }
-
-      // NEW: core app helpers (add right after helpers above)
-      function save() {
-        try { localStorage.setItem('csMathQuest', JSON.stringify(data)); } catch (_) { /* ignore */ }
-      }
-      function updateHUD() {
-        setText('#xp', String(data.xp));
-        setText('#streak', String(data.streak));
-        setText('#rank', data.rank);
-      }
-      function paintBadges() {
-        const box = document.getElementById('badges');
-        if (!box) return;
-        box.innerHTML = '';
-        Object.values(data.badges || {}).forEach(label => {
-          const el = document.createElement('div');
-          el.className = 'badge';
-          el.innerHTML = `🏅 <span>${label}</span>`;
-          box.appendChild(el);
-        });
-      }
-      // REMOVE this wrapper block (we’ll fold it into toast itself):
-      // const oldToast = toast;
-      // toast = function (msg) {
-      //   oldToast(msg);
-      //   const live = document.getElementById('ariaLive');
-      //   if (live) { live.textContent = ''; setTimeout(() => live.textContent = msg, 0); }
-      // };
-
-      // Replace the toast function with this version (keeps visuals + ARIA live)
-      function toast(msg) {
-        const el = document.createElement('div');
-        el.textContent = msg;
-        Object.assign(el.style, {
-          position: 'fixed', top: '12px', right: '12px', zIndex: 9999,
-          background: '#151e44', color: '#fff', border: '1px solid #2a3672',
-          padding: '8px 10px', borderRadius: '10px', boxShadow: '0 6px 20px #0008',
-          opacity: '0', transform: 'translateY(-6px)', transition: 'opacity .2s, transform .2s'
-        });
-        document.body.appendChild(el);
-        requestAnimationFrame(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; });
-        setTimeout(() => {
-          el.style.opacity = '0'; el.style.transform = 'translateY(-6px)';
-          setTimeout(() => el.remove(), 250);
-        }, 2000);
-        const live = document.getElementById('ariaLive');
-        if (live) { live.textContent = ''; setTimeout(() => (live.textContent = msg), 0); }
-      }
-
-      // NEW: mastery helpers + compute function
-      function median(arr) { if (!arr.length) return 0; const s = [...arr].sort((a, b) => a - b); const m = Math.floor(s.length / 2); return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; }
-      function dayKey(ts) { const d = new Date(ts); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; }
-      function computeMasteryFor(strand) {
-        const attempts = data.hist[strand] || [];
-        const total = attempts.length;
-        const window20 = attempts.slice(-20);
-        if (total < 25 || window20.length < 20) return false;
-        const acc = window20.reduce((s, a) => s + (a.correct ? 1 : 0), 0) / window20.length;
-        if (acc < 0.90) return false;
-        const days = new Set(window20.map(a => dayKey(a.t))).size;
-        if (days < 2) return false;
-        const medMs = median(window20.map(a => a.ms || 0));
-        if (medMs > 25000) return false;
-        const hintRate = window20.reduce((s, a) => s + (a.hint ? 1 : 0), 0) / window20.length;
-        if (hintRate > 0.10) return false;
-        return true;
-      }
-
-      // NEW: progress bar + mastery UI updater
-      function updateProgress() {
-        // Recompute mastery first
-        recomputeMastery();
-
-        STRANDS.forEach(k => {
-          if (data.mastered[k]) {
-            setText('#p_' + k, 'Mastered');
-            const bar = document.getElementById('bar_' + k); if (bar) bar.style.width = '100%';
-          } else {
-            setText('#p_' + k, `${data.correct[k]}/10`);
-            const bar = document.getElementById('bar_' + k); if (bar) bar.style.width = Math.min(100, data.correct[k] * 10) + '%';
-          }
-          const pill = document.getElementById('p_' + k);
-          if (pill) pill.classList.toggle('mastered', !!data.mastered[k]);
-        });
-        const total = STRANDS.reduce((s, k) => s + (data.correct[k] || 0), 0);
-        const denom = STRANDS.length * 10;
-        const pct = denom ? total / denom : 0;
-        const overall = document.getElementById('overallBar'); if (overall) overall.style.width = Math.min(100, Math.max(0, pct * 100)) + '%';
-        setText('#overallPct', fmtPct(Math.max(0, Math.min(1, pct))));
-      }
-
-      // Ranks
-      function computeRank(xp) {
-        if (xp >= 300) return 'Architect';
-        if (xp >= 150) return 'Hacker';
-        if (xp >= 50) return 'Coder';
-        return 'Novice';
-      }
-
-      // UI init (single declaration + handles theme auto-switch)
-      // const navBtns = [...document.querySelectorAll('.navBtn')];
-      // navBtns.forEach(btn => btn.addEventListener('click', () => { /* duplicate — removed */ }));
-      // Use the guarded initializer defined above:
-      initNav();
-
-      const resetEl = document.getElementById('resetBtn');
-      if (resetEl) {
-        resetEl.addEventListener('click', () => {
-          if (!confirm('Reset XP, progress, and daily challenges?')) return;
-
-          // Reset core progress
-          data.xp = 0;
-          data.streak = 0;
-          data.rank = 'Novice';
-          data.correct = STRANDS.reduce((o, k) => (o[k] = 0, o), {});
-          data.hist = STRANDS.reduce((o, k) => (o[k] = [], o), {});
-          data.mastered = STRANDS.reduce((o, k) => (o[k] = false, o), {});
-          data.badges = {};
-          data.boss = { done: false };
-
-          // Force new Daily + Challenges on reset
-          data.daily = null;
-          data.challenges = [];
-          ensureDaily();
-
-          updateHUD();
-          updateProgress();
-          paintBadges();
-          updateEngagementUI();
-          save();
-          nextQuestion();
-        });
-      }
-
-      // --- existing game code starts here ---
-
-      // Focus removed: define global no-op stubs for any legacy calls
-      window.ensureFocus = window.ensureFocus || function () { };
-      window.currentFocusPlan = window.currentFocusPlan || function () { return { accept: () => false }; };
-      window.updateFocusUI = window.updateFocusUI || function () { };
-
-      const STRANDS = ['pemdas', 'integers', 'coords', 'words', 'puzzles', 'logic', 'mod', 'prob'];
-
-      const state = JSON.parse(localStorage.getItem('csMathQuest') || '{}');
-      const data = Object.assign({
-        xp: 0,
-        streak: 0,
-        rank: "Novice",
-        mode: "pemdas",
-        correct: { pemdas: 0, integers: 0, coords: 0, words: 0, puzzles: 0, logic: 0, mod: 0, prob: 0 },
-        hist: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [], prob: [] },
-        mastered: { pemdas: false, integers: false, coords: false, words: false, puzzles: false, logic: false, mod: false, prob: false },
-        daily: { date: "", solved: 0, goal: 20, completed: false },
-        challenges: [],
-        badges: {},
-        boss: { done: false },
-        themePref: 'auto',
-        statsWin: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [], prob: [] },
-        statsMode: 'hist'
-        // REMOVED: focus
-      }, state);
-
-      // ADD after data is created:
-      function ensureDataShape() {
-        for (const k of STRANDS) {
-          if (!data.correct || typeof data.correct[k] !== 'number') {
-            if (!data.correct) data.correct = {};
-            if (!Number.isFinite(data.correct[k])) data.correct[k] = 0;
-          }
-          if (!data.hist || !Array.isArray(data.hist[k])) {
-            if (!data.hist) data.hist = {};
-            if (!Array.isArray(data.hist[k])) data.hist[k] = [];
-          }
-          if (!data.mastered || typeof data.mastered[k] !== 'boolean') {
-            if (!data.mastered) data.mastered = {};
-            if (typeof data.mastered[k] !== 'boolean') data.mastered[k] = false;
-          }
-          if (!data.statsWin || !Array.isArray(data.statsWin[k])) {
-            if (!data.statsWin) data.statsWin = {};
-            if (!Array.isArray(data.statsWin[k])) data.statsWin[k] = [];
-          }
-        }
-      }
-      ensureDataShape(); save();
-
-      // helpers already here:
-      function $(sel) { return document.querySelector(sel); }
-      function setText(sel, val) { const el = document.querySelector(sel); if (el) el.textContent = val; }
-      function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
-      function fmtPct(n) { return Math.round(n * 100) + "%"; }
-
-      // NEW: core app helpers (add right after helpers above)
-      function save() {
-        try { localStorage.setItem('csMathQuest', JSON.stringify(data)); } catch (_) { /* ignore */ }
-      }
-      function updateHUD() {
-        setText('#xp', String(data.xp));
-        setText('#streak', String(data.streak));
-        setText('#rank', data.rank);
-      }
-      function paintBadges() {
-        const box = document.getElementById('badges');
-        if (!box) return;
-        box.innerHTML = '';
-        Object.values(data.badges || {}).forEach(label => {
-          const el = document.createElement('div');
-          el.className = 'badge';
-          el.innerHTML = `🏅 <span>${label}</span>`;
-          box.appendChild(el);
-        });
-      }
-      // REMOVE this wrapper block (we’ll fold it into toast itself):
-      // const oldToast = toast;
-      // toast = function (msg) {
-      //   oldToast(msg);
-      //   const live = document.getElementById('ariaLive');
-      //   if (live) { live.textContent = ''; setTimeout(() => live.textContent = msg, 0); }
-      // };
-
-      // Replace the toast function with this version (keeps visuals + ARIA live)
-      function toast(msg) {
-        const el = document.createElement('div');
-        el.textContent = msg;
-        Object.assign(el.style, {
-          position: 'fixed', top: '12px', right: '12px', zIndex: 9999,
-          background: '#151e44', color: '#fff', border: '1px solid #2a3672',
-          padding: '8px 10px', borderRadius: '10px', boxShadow: '0 6px 20px #0008',
-          opacity: '0', transform: 'translateY(-6px)', transition: 'opacity .2s, transform .2s'
-        });
-        document.body.appendChild(el);
-        requestAnimationFrame(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; });
-        setTimeout(() => {
-          el.style.opacity = '0'; el.style.transform = 'translateY(-6px)';
-          setTimeout(() => el.remove(), 250);
-        }, 2000);
-        const live = document.getElementById('ariaLive');
-        if (live) { live.textContent = ''; setTimeout(() => (live.textContent = msg), 0); }
-      }
-
-      // NEW: mastery helpers + compute function
-      function median(arr) { if (!arr.length) return 0; const s = [...arr].sort((a, b) => a - b); const m = Math.floor(s.length / 2); return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; }
-      function dayKey(ts) { const d = new Date(ts); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; }
-      function computeMasteryFor(strand) {
-        const attempts = data.hist[strand] || [];
-        const total = attempts.length;
-        const window20 = attempts.slice(-20);
-        if (total < 25 || window20.length < 20) return false;
-        const acc = window20.reduce((s, a) => s + (a.correct ? 1 : 0), 0) / window20.length;
-        if (acc < 0.90) return false;
-        const days = new Set(window20.map(a => dayKey(a.t))).size;
-        if (days < 2) return false;
-        const medMs = median(window20.map(a => a.ms || 0));
-        if (medMs > 25000) return false;
-        const hintRate = window20.reduce((s, a) => s + (a.hint ? 1 : 0), 0) / window20.length;
-        if (hintRate > 0.10) return false;
-        return true;
-      }
-
-      // NEW: progress bar + mastery UI updater
-      function updateProgress() {
-        // Recompute mastery first
-        recomputeMastery();
-
-        STRANDS.forEach(k => {
-          if (data.mastered[k]) {
-            setText('#p_' + k, 'Mastered');
-            const bar = document.getElementById('bar_' + k); if (bar) bar.style.width = '100%';
-          } else {
-            setText('#p_' + k, `${data.correct[k]}/10`);
-            const bar = document.getElementById('bar_' + k); if (bar) bar.style.width = Math.min(100, data.correct[k] * 10) + '%';
-          }
-          const pill = document.getElementById('p_' + k);
-          if (pill) pill.classList.toggle('mastered', !!data.mastered[k]);
-        });
-        const total = STRANDS.reduce((s, k) => s + (data.correct[k] || 0), 0);
-        const denom = STRANDS.length * 10;
-        const pct = denom ? total / denom : 0;
-        const overall = document.getElementById('overallBar'); if (overall) overall.style.width = Math.min(100, Math.max(0, pct * 100)) + '%';
-        setText('#overallPct', fmtPct(Math.max(0, Math.min(1, pct))));
-      }
-
-      // Ranks
-      function computeRank(xp) {
-        if (xp >= 300) return 'Architect';
-        if (xp >= 150) return 'Hacker';
-        if (xp >= 50) return 'Coder';
-        return 'Novice';
-      }
-
-      // UI init (single declaration + handles theme auto-switch)
-      // const navBtns = [...document.querySelectorAll('.navBtn')];
-      // navBtns.forEach(btn => btn.addEventListener('click', () => { /* duplicate — removed */ }));
-      // Use the guarded initializer defined above:
-      initNav();
-
-      const resetEl = document.getElementById('resetBtn');
-      if (resetEl) {
-        resetEl.addEventListener('click', () => {
-          if (!confirm('Reset XP, progress, and daily challenges?')) return;
-
-          // Reset core progress
-          data.xp = 0;
-          data.streak = 0;
-          data.rank = 'Novice';
-          data.correct = STRANDS.reduce((o, k) => (o[k] = 0, o), {});
-          data.hist = STRANDS.reduce((o, k) => (o[k] = [], o), {});
-          data.mastered = STRANDS.reduce((o, k) => (o[k] = false, o), {});
-          data.badges = {};
-          data.boss = { done: false };
-
-          // Force new Daily + Challenges on reset
-          data.daily = null;
-          data.challenges = [];
-          ensureDaily();
-
-          updateHUD();
-          updateProgress();
-          paintBadges();
-          updateEngagementUI();
-          save();
-          nextQuestion();
-        });
-      }
-
-      // --- existing game code starts here ---
-
-      // Focus removed: define global no-op stubs for any legacy calls
-      window.ensureFocus = window.ensureFocus || function () { };
-      window.currentFocusPlan = window.currentFocusPlan || function () { return { accept: () => false }; };
-      window.updateFocusUI = window.updateFocusUI || function () { };
-
-      const STRANDS = ['pemdas', 'integers', 'coords', 'words', 'puzzles', 'logic', 'mod', 'prob'];
-
-      const state = JSON.parse(localStorage.getItem('csMathQuest') || '{}');
-      const data = Object.assign({
-        xp: 0,
-        streak: 0,
-        rank: "Novice",
-        mode: "pemdas",
-        correct: { pemdas: 0, integers: 0, coords: 0, words: 0, puzzles: 0, logic: 0, mod: 0, prob: 0 },
-        hist: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [], prob: [] },
-        mastered: { pemdas: false, integers: false, coords: false, words: false, puzzles: false, logic: false, mod: false, prob: false },
-        daily: { date: "", solved: 0, goal: 20, completed: false },
-        challenges: [],
-        badges: {},
-        boss: { done: false },
-        themePref: 'auto',
-        statsWin: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [], prob: [] },
-        statsMode: 'hist'
-        // REMOVED: focus
-      }, state);
-
-      // ADD after data is created:
-      function ensureDataShape() {
-        for (const k of STRANDS) {
-          if (!data.correct || typeof data.correct[k] !== 'number') {
-            if (!data.correct) data.correct = {};
-            if (!Number.isFinite(data.correct[k])) data.correct[k] = 0;
-          }
-          if (!data.hist || !Array.isArray(data.hist[k])) {
-            if (!data.hist) data.hist = {};
-            if (!Array.isArray(data.hist[k])) data.hist[k] = [];
-          }
-          if (!data.mastered || typeof data.mastered[k] !== 'boolean') {
-            if (!data.mastered) data.mastered = {};
-            if (typeof data.mastered[k] !== 'boolean') data.mastered[k] = false;
-          }
-          if (!data.statsWin || !Array.isArray(data.statsWin[k])) {
-            if (!data.statsWin) data.statsWin = {};
-            if (!Array.isArray(data.statsWin[k])) data.statsWin[k] = [];
-          }
-        }
-      }
-      ensureDataShape(); save();
-
-      // helpers already here:
-      function $(sel) { return document.querySelector(sel); }
-      function setText(sel, val) { const el = document.querySelector(sel); if (el) el.textContent = val; }
-      function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
-      function fmtPct(n) { return Math.round(n * 100) + "%"; }
-
-      // NEW: core app helpers (add right after helpers above)
-      function save() {
-        try { localStorage.setItem('csMathQuest', JSON.stringify(data)); } catch (_) { /* ignore */ }
-      }
-      function updateHUD() {
-        setText('#xp', String(data.xp));
-        setText('#streak', String(data.streak));
-        setText('#rank', data.rank);
-      }
-      function paintBadges() {
-        const box = document.getElementById('badges');
-        if (!box) return;
-        box.innerHTML = '';
-        Object.values(data.badges || {}).forEach(label => {
-          const el = document.createElement('div');
-          el.className = 'badge';
-          el.innerHTML = `🏅 <span>${label}</span>`;
-          box.appendChild(el);
-        });
-      }
-      // REMOVE this wrapper block (we’ll fold it into toast itself):
-      // const oldToast = toast;
-      // toast = function (msg) {
-      //   oldToast(msg);
-      //   const live = document.getElementById('ariaLive');
-      //   if (live) { live.textContent = ''; setTimeout(() => live.textContent = msg, 0); }
-      // };
-
-      // Replace the toast function with this version (keeps visuals + ARIA live)
-      function toast(msg) {
-        const el = document.createElement('div');
-        el.textContent = msg;
-        Object.assign(el.style, {
-          position: 'fixed', top: '12px', right: '12px', zIndex: 9999,
-          background: '#151e44', color: '#fff', border: '1px solid #2a3672',
-          padding: '8px 10px', borderRadius: '10px', boxShadow: '0 6px 20px #0008',
-          opacity: '0', transform: 'translateY(-6px)', transition: 'opacity .2s, transform .2s'
-        });
-        document.body.appendChild(el);
-        requestAnimationFrame(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; });
-        setTimeout(() => {
-          el.style.opacity = '0'; el.style.transform = 'translateY(-6px)';
-          setTimeout(() => el.remove(), 250);
-        }, 2000);
-        const live = document.getElementById('ariaLive');
-        if (live) { live.textContent = ''; setTimeout(() => (live.textContent = msg), 0); }
-      }
-
-      // NEW: mastery helpers + compute function
-      function median(arr) { if (!arr.length) return 0; const s = [...arr].sort((a, b) => a - b); const m = Math.floor(s.length / 2); return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; }
-      function dayKey(ts) { const d = new Date(ts); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; }
-      function computeMasteryFor(strand) {
-        const attempts = data.hist[strand] || [];
-        const total = attempts.length;
-        const window20 = attempts.slice(-20);
-        if (total < 25 || window20.length < 20) return false;
-        const acc = window20.reduce((s, a) => s + (a.correct ? 1 : 0), 0) / window20.length;
-        if (acc < 0.90) return false;
-        const days = new Set(window20.map(a => dayKey(a.t))).size;
-        if (days < 2) return false;
-        const medMs = median(window20.map(a => a.ms || 0));
-        if (medMs > 25000) return false;
-        const hintRate = window20.reduce((s, a) => s + (a.hint ? 1 : 0), 0) / window20.length;
-        if (hintRate > 0.10) return false;
-        return true;
-      }
-
-      // NEW: progress bar + mastery UI updater
-      function updateProgress() {
-        // Recompute mastery first
-        recomputeMastery();
-
-        STRANDS.forEach(k => {
-          if (data.mastered[k]) {
-            setText('#p_' + k, 'Mastered');
-            const bar = document.getElementById('bar_' + k); if (bar) bar.style.width = '100%';
-          } else {
-            setText('#p_' + k, `${data.correct[k]}/10`);
-            const bar = document.getElementById('bar_' + k); if (bar) bar.style.width = Math.min(100, data.correct[k] * 10) + '%';
-          }
-          const pill = document.getElementById('p_' + k);
-          if (pill) pill.classList.toggle('mastered', !!data.mastered[k]);
-        });
-        const total = STRANDS.reduce((s, k) => s + (data.correct[k] || 0), 0);
-        const denom = STRANDS.length * 10;
-        const pct = denom ? total / denom : 0;
-        const overall = document.getElementById('overallBar'); if (overall) overall.style.width = Math.min(100, Math.max(0, pct * 100)) + '%';
-        setText('#overallPct', fmtPct(Math.max(0, Math.min(1, pct))));
-      }
-
-      // Ranks
-      function computeRank(xp) {
-        if (xp >= 300) return 'Architect';
-        if (xp >= 150) return 'Hacker';
-        if (xp >= 50) return 'Coder';
-        return 'Novice';
-      }
-
-      // UI init (single declaration + handles theme auto-switch)
-      // const navBtns = [...document.querySelectorAll('.navBtn')];
-      // navBtns.forEach(btn => btn.addEventListener('click', () => { /* duplicate — removed */ }));
-      // Use the guarded initializer defined above:
-      initNav();
-
-      const resetEl = document.getElementById('resetBtn');
-      if (resetEl) {
-        resetEl.addEventListener('click', () => {
-          if (!confirm('Reset XP, progress, and daily challenges?')) return;
-
-          // Reset core progress
-          data.xp = 0;
-          data.streak = 0;
-          data.rank = 'Novice';
-          data.correct = STRANDS.reduce((o, k) => (o[k] = 0, o), {});
-          data.hist = STRANDS.reduce((o, k) => (o[k] = [], o), {});
-          data.mastered = STRANDS.reduce((o, k) => (o[k] = false, o), {});
-          data.badges = {};
-          data.boss = { done: false };
-
-          // Force new Daily + Challenges on reset
-          data.daily = null;
-          data.challenges = [];
-          ensureDaily();
-
-          updateHUD();
-          updateProgress();
-          paintBadges();
-          updateEngagementUI();
-          save();
-          nextQuestion();
-        });
-      }
-
-      // --- existing game code starts here ---
-
-      // Focus removed: define global no-op stubs for any legacy calls
-      window.ensureFocus = window.ensureFocus || function () { };
-      window.currentFocusPlan = window.currentFocusPlan || function () { return { accept: () => false }; };
-      window.updateFocusUI = window.updateFocusUI || function () { };
-
-      const STRANDS = ['pemdas', 'integers', 'coords', 'words', 'puzzles', 'logic', 'mod', 'prob'];
-
-      const state = JSON.parse(localStorage.getItem('csMathQuest') || '{}');
-      const data = Object.assign({
-        xp: 0,
-        streak: 0,
-        rank: "Novice",
-        mode: "pemdas",
-        correct: { pemdas: 0, integers: 0, coords: 0, words: 0, puzzles: 0, logic: 0, mod: 0, prob: 0 },
-        hist: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [], prob: [] },
-        mastered: { pemdas: false, integers: false, coords: false, words: false, puzzles: false, logic: false, mod: false, prob: false },
-        daily: { date: "", solved: 0, goal: 20, completed: false },
-        challenges: [],
-        badges: {},
-        boss: { done: false },
-        themePref: 'auto',
-        statsWin: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [], prob: [] },
-        statsMode: 'hist'
-        // REMOVED: focus
-      }, state);
-
-      // ADD after data is created:
-      function ensureDataShape() {
-        for (const k of STRANDS) {
-          if (!data.correct || typeof data.correct[k] !== 'number') {
-            if (!data.correct) data.correct = {};
-            if (!Number.isFinite(data.correct[k])) data.correct[k] = 0;
-          }
-          if (!data.hist || !Array.isArray(data.hist[k])) {
-            if (!data.hist) data.hist = {};
-            if (!Array.isArray(data.hist[k])) data.hist[k] = [];
-          }
-          if (!data.mastered || typeof data.mastered[k] !== 'boolean') {
-            if (!data.mastered) data.mastered = {};
-            if (typeof data.mastered[k] !== 'boolean') data.mastered[k] = false;
-          }
-  
+</html>
