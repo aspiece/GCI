@@ -794,9 +794,8 @@
       requestAnimationFrame(fxLoop);
 
       const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (!prefersReducedMotion) {
-        requestAnimationFrame(fxLoop);
-      } else {
+      if (!prefersReducedMotion) requestAnimationFrame(fxLoop);
+      else {
         const fxCanvas = document.getElementById('fx');
         if (fxCanvas) fxCanvas.style.display = 'none';
       }
@@ -814,24 +813,36 @@
         }
       }
 
-      // Nav buttons: set aria-current for active
-      const navBtns = [...document.querySelectorAll('.navBtn')];
+      // NAV: single initialization with guard and per-button bound flag
       function setActiveNav(btn) {
-        navBtns.forEach(b => { b.classList.remove('active'); b.removeAttribute('aria-current'); });
+        const btns = [...document.querySelectorAll('.navBtn')];
+        btns.forEach(b => { b.classList.remove('active'); b.removeAttribute('aria-current'); });
         btn.classList.add('active');
         btn.setAttribute('aria-current', 'page');
       }
-      navBtns.forEach(btn => btn.addEventListener('click', () => {
-        setActiveNav(btn);
-        data.mode = btn.dataset.mode;
-        renderMode();
-        nextQuestion();
-        if (data.themePref === 'auto') applyTheme(themeForMode(data.mode));
-        save();
-      }));
-      // Initialize aria-current on the pre-active button
-      const initActive = document.querySelector('.navBtn.active');
-      if (initActive) initActive.setAttribute('aria-current', 'page');
+
+      function initNav() {
+        if (initNav._done) return;           // guard: run once
+        const btns = [...document.querySelectorAll('.navBtn')];
+        btns.forEach(btn => {
+          if (btn.dataset.bound) return;     // skip if already bound
+          btn.addEventListener('click', () => {
+            setActiveNav(btn);
+            data.mode = btn.dataset.mode;
+            renderMode();
+            nextQuestion();
+            if (data.themePref === 'auto') applyTheme(themeForMode(data.mode));
+            save();
+          });
+          btn.dataset.bound = '1';
+        });
+        const initActive = document.querySelector('.navBtn.active');
+        if (initActive) initActive.setAttribute('aria-current', 'page');
+        initNav._done = true;
+      }
+
+      // call once after DOM is ready (inside this IIFE after elements exist)
+      initNav();
 
       // Mirror toasts to a live region for screen readers
       const oldToast = toast;
