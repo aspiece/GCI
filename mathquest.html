@@ -614,32 +614,15 @@
         <section class="card">
           <h3>Symbol Legend</h3>
           <div class="legend-grid">
+            <!-- Arithmetic -->
             <div class="legend-item"><span class="legend-sym">×</span>
               <div>Multiply <span class="legend-note">(keyboard: <span class="kbd">*</span>)</span></div>
             </div>
             <div class="legend-item"><span class="legend-sym">÷</span>
               <div>Divide <span class="legend-note">(keyboard: <span class="kbd">/</span>)</span></div>
             </div>
-            <div class="legend-item"><span class="legend-sym">·</span>
-              <div>Multiply dot <span class="legend-note">(same as ×)</span></div>
-            </div>
             <div class="legend-item"><span class="legend-sym">−</span>
               <div>Subtract <span class="legend-note">(keyboard: <span class="kbd">-</span>)</span></div>
-            </div>
-            <div class="legend-item"><span class="legend-sym">+</span>
-              <div>Add</div>
-            </div>
-            <div class="legend-item"><span class="legend-sym">=</span>
-              <div>Equals</div>
-            </div>
-            <div class="legend-item"><span class="legend-sym">≠</span>
-              <div>Not equal</div>
-            </div>
-            <div class="legend-item"><span class="legend-sym">≤ ≥</span>
-              <div>Less/Greater than or equal</div>
-            </div>
-            <div class="legend-item"><span class="legend-sym">±</span>
-              <div>Plus or minus</div>
             </div>
             <div class="legend-item"><span class="legend-sym">^</span>
               <div>Exponent <span class="legend-note">(e.g., 2^3 = 8)</span></div>
@@ -647,16 +630,51 @@
             <div class="legend-item"><span class="legend-sym">|x|</span>
               <div>Absolute value</div>
             </div>
-            <div class="legend-item"><span class="legend-sym">√</span>
-              <div>Square root <span class="legend-note">(type <span class="kbd">sqrt()</span>)</span></div>
+            <!-- Logic -->
+            <div class="legend-item"><span class="legend-sym">∧</span>
+              <div>AND <span class="legend-note">(true only if both true)</span></div>
             </div>
-            <div class="legend-item"><span class="legend-sym">π</span>
-              <div>Pi <span class="legend-note">(≈ 3.14159)</span></div>
+            <div class="legend-item"><span class="legend-sym">∨</span>
+              <div>OR <span class="legend-note">(true if at least one true)</span></div>
+            </div>
+            <div class="legend-item"><span class="legend-sym">¬</span>
+              <div>NOT <span class="legend-note">(negation)</span></div>
+            </div>
+            <div class="legend-item"><span class="legend-sym">→</span>
+              <div>Implies <span class="legend-note">(A→B false when A=T, B=F)</span></div>
+            </div>
+            <div class="legend-item"><span class="legend-sym">T / F</span>
+              <div>Truth values <span class="legend-note">(type T or F)</span></div>
+            </div>
+            <!-- Modulus -->
+            <div class="legend-item"><span class="legend-sym">mod</span>
+              <div>Remainder <span class="legend-note">(e.g., 17 mod 5 = 2)</span></div>
+            </div>
+            <div class="legend-item"><span class="legend-sym">≡ (mod n)</span>
+              <div>Congruent mod n <span class="legend-note">(same remainder)</span></div>
+            </div>
+            <div class="legend-item"><span class="legend-sym">even/odd</span>
+              <div>Parity <span class="legend-note">(n mod 2)</span></div>
+            </div>
+            <!-- Probability -->
+            <div class="legend-item"><span class="legend-sym">P(A)</span>
+              <div>Probability of A</div>
+            </div>
+            <div class="legend-item"><span class="legend-sym">∩ / ∪</span>
+              <div>And / Or of events <span class="legend-note">(intersection/union)</span></div>
+            </div>
+            <div class="legend-item"><span class="legend-sym">A′</span>
+              <div>Complement of A</div>
+            </div>
+            <div class="legend-item"><span class="legend-sym">a/b</span>
+              <div>Simplified fraction <span class="legend-note">(e.g., 2/6 → 1/3)</span></div>
             </div>
           </div>
-          <div class="tiny" style="margin-top:8px;">Tip: The game accepts keyboard symbols like <span
+          <div class="tiny" style="margin-top:8px;">
+            Tip: Answers can be numbers, T/F, or simplified fractions (a/b). Use keyboard symbols like <span
               class="kbd">*</span>, <span class="kbd">/</span>, <span class="kbd">-</span>, and <span
-              class="kbd">^</span>.</div>
+              class="kbd">^</span>.
+          </div>
         </section>
 
         <!-- NEW: Daily Goal -->
