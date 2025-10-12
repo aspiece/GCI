@@ -679,15 +679,16 @@
 
         <!-- NEW: Daily Goal -->
         <section class="card">
-          <h3>Daily Goal</h3>
-          <div class="tiny">Solve problems today to build strong habits.</div>
+          <h3>Today's CS Goal</h3>
+          <div class="tiny">Solve enough with good accuracy and low hint use.</div>
           <div class="flex" style="margin-top:8px">
             <div class="pill">Today</div>
-            <div class="right tiny">Completed: <b id="dailyCount">0/20</b></div>
+            <div class="right tiny">Completed: <b id="dailyCount">0/10</b></div>
           </div>
           <div class="meter" style="margin-top:8px"><span id="dailyBar"></span></div>
-          <div class="tiny" id="dailyHint" style="margin-top:6px; opacity:.9">Tip: Keep a streak going for bonus XP.
-          </div>
+          <!-- NEW: criteria checklist -->
+          <div id="dailyChecklist" class="tiny" style="display:grid; gap:6px; margin-top:8px"></div>
+          <div class="tiny" id="dailyHint" style="margin-top:6px; opacity:.9"></div>
         </section>
 
         <!-- NEW: Daily Challenges -->
@@ -1388,16 +1389,15 @@
 
         // NEW: engagement updates
         if (correct) {
-          // Daily
+          // Daily + Focus
           ensureDaily();
-          // Focus
           ensureFocus();
           const plan = currentFocusPlan();
           if (!data.focus.done && plan.accept(strand)) {
             data.focus.solved += 1;
             if (data.focus.solved >= data.focus.target) {
               data.focus.done = true;
-              awardXP(30); // bonus XP for completing focus
+              awardXP(30);
               addBadge('focus_' + data.focus.date, 'Daily Focus Complete');
               toast('🎯 Daily Focus complete!');
               celebrate('mastery');
@@ -1405,15 +1405,8 @@
             updateFocusUI();
             save();
           }
-          if (!data.daily.completed) {
-            data.daily.solved += 1;
-            if (data.daily.solved >= data.daily.goal) {
-              data.daily.completed = true;
-              addBadge('daily_' + data.daily.date, 'Daily Goal Complete');
-              toast('✅ Daily goal complete!');
-              celebrate('mastery');
-            }
-          }
+          // keep compatibility counter for solved; actual goal uses todayStats
+          data.daily.solved = Math.max(data.daily.solved || 0, todayStats().correct);
           // Challenges
           applyChallengeProgress({ correct: true, noHint: !current.hinted, strand });
         }
@@ -1481,6 +1474,62 @@
       // Engagement: Daily + Challenges (add after helpers/mastery)
       function todayKey() { return new Date().toISOString().slice(0, 10); }
 
+      // NEW: compute today’s cross‑strand stats
+      function todayStats() {
+        const today = todayKey();
+        const all = [];
+        for (const k of STRANDS) {
+          (data.hist[k] || []).forEach(a => { if (a && dayKey(a.t) === today) all.push(a); });
+        }
+        all.sort((a, b) => a.t - b.t);
+        const total = all.length;
+        const correct = all.reduce((s, a) => s + (a.correct ? 1 : 0), 0);
+        const hints = all.reduce((s, a) => s + (a.hint ? 1 : 0), 0);
+        // longest streak today
+        let best = 0, cur = 0;
+        for (const a of all) { cur = a.correct ? cur + 1 : 0; best = Math.max(best, cur); }
+        return {
+          total,
+          correct,
+          hints,
+          acc: total ? correct / total : 0,
+          hintRate: total ? hints / total : 0,
+          bestStreak: best
+        };
+      }
+
+      // NEW: render checklist items
+      function renderDailyChecklist(stats, rules) {
+        const box = document.getElementById('dailyChecklist');
+        if (!box) return;
+        const solvedOK = stats.correct >= rules.minSolved;
+        const accOK = stats.acc >= rules.minAcc;
+        const hintOK = stats.hintRate <= rules.maxHintRate;
+        const ck = ok => ok ? '✔' : '○';
+        const pct = x => Math.round(x * 100) + '%';
+        box.innerHTML = `
+          <div>${ck(solvedOK)} Solved: <b>${stats.correct}/${rules.minSolved}</b></div>
+          <div>${ck(accOK)} Accuracy: <b>${pct(stats.acc)}</b> (target ≥ ${pct(rules.minAcc)})</div>
+          <div>${ck(hintOK)} Hint rate: <b>${pct(stats.hintRate)}</b> (target ≤ ${pct(rules.maxHintRate)})</div>
+        `;
+      }
+
+      // NEW: check/award daily completion using CS criteria
+      function checkDailyCompletion() {
+        const rules = Object.assign({ minSolved: 10, minAcc: 0.80, maxHintRate: 0.10 }, (data.daily && data.daily.rules) || {});
+        const stats = todayStats();
+        const done = stats.correct >= rules.minSolved && stats.acc >= rules.minAcc && stats.hintRate <= rules.maxHintRate;
+        if (done && !data.daily.completed) {
+          data.daily.completed = true;
+          addBadge('daily_' + data.daily.date, 'Daily Goal Complete');
+          awardXP(30);
+          toast('✅ Daily CS goal complete!');
+          celebrate('mastery');
+          save();
+        }
+        return { rules, stats };
+      }
+
       function rollDailyChallenges() {
         const pick = STRANDS[Math.floor(Math.random() * STRANDS.length)];
         return [
@@ -1493,8 +1542,14 @@
       function ensureDaily() {
         const today = todayKey();
         if (!data.daily || data.daily.date !== today) {
-          const goal = (data.daily && data.daily.goal) || 20;
-          data.daily = { date: today, solved: 0, goal, completed: false };
+          // NEW: CS‑relevant defaults
+          data.daily = {
+            date: today,
+            solved: 0,                 // retained for compatibility (not relied on)
+            goal: 10,                  // retained for compatibility (minSolved)
+            completed: false,
+            rules: { minSolved: 10, minAcc: 0.80, maxHintRate: 0.10 }
+          };
           data.challenges = rollDailyChallenges();
           save();
         } else if (!Array.isArray(data.challenges) || !data.challenges.length) {
@@ -1505,148 +1560,59 @@
       }
 
       function updateEngagementUI() {
-        // Daily meter
-        const solved = data.daily?.solved || 0;
-        const goal = data.daily?.goal || 20;
-        const pct = Math.max(0, Math.min(1, solved / goal));
+        // Daily meter + checklist
+        const { rules, stats } = (function () {
+          const r = Object.assign({ minSolved: 10, minAcc: 0.80, maxHintRate: 0.10 }, (data.daily && data.daily.rules) || {});
+          const s = todayStats();
+          return { rules: r, stats: s };
+        })();
         const bar = document.getElementById('dailyBar');
-        if (bar) bar.style.width = (pct * 100).toFixed(0) + '%';
-        setText('#dailyCount', `${solved}/${goal}`);
+        const solved = stats.correct, goal = rules.minSolved;
+        if (bar) bar.style.width = (Math.max(0, Math.min(1, solved / goal)) * 100).toFixed(0) + '%';
+        setText('#dailyCount', `${Math.min(solved, goal)}/${goal}`);
+        renderDailyChecklist(stats, rules);
+
         const hint = document.getElementById('dailyHint');
         if (hint) {
-          hint.textContent = data.daily?.completed
-            ? 'Great work! Daily goal complete. 🎉'
-            : (goal - solved <= 5 ? 'So close! Just a few more to hit today’s goal.' : 'Tip: Keep a streak going for bonus XP.');
+          if (data.daily.completed) {
+            hint.textContent = 'Great work! Daily goal complete. 🎉';
+          } else {
+            const needs = [];
+            if (solved < goal) needs.push(`${goal - solved} more solved`);
+            if (stats.acc < rules.minAcc) needs.push('raise accuracy');
+            if (stats.hintRate > rules.maxHintRate) needs.push('use fewer hints');
+            hint.textContent = needs.length ? `To finish: ${needs.join(', ')}.` : 'Almost there!';
+          }
         }
 
         // Challenges list
         const box = document.getElementById('challenges');
-        if (!box) return;
-        box.innerHTML = '';
-        (data.challenges || []).forEach(ch => {
-          const row = document.createElement('div');
-          row.className = 'challenge' + (ch.done ? ' done' : '');
-          row.innerHTML = `
-            <span class="check">${ch.done ? '✔' : ''}</span>
-            <div>${ch.label}</div>
-            <div class="prog">${Math.min(ch.progress, ch.target)}/${ch.target}</div>
-          `;
-          box.appendChild(row);
-        });
+        if (box) {
+          box.innerHTML = '';
+          (data.challenges || []).forEach(ch => {
+            const row = document.createElement('div');
+            row.className = 'challenge' + (ch.done ? ' done' : '');
+            row.innerHTML = `
+              <span class="check">${ch.done ? '✔' : ''}</span>
+              <div>${ch.label}</div>
+              <div class="prog">${Math.min(ch.progress, ch.target)}/${ch.target}</div>
+            `;
+            box.appendChild(row);
+          });
+        }
 
-        // Daily focus info
+        // Daily Focus info (kept)
         const focusInfo = document.getElementById('focusInfo');
         const focusCount = document.getElementById('focusCount');
         const focusBar = document.getElementById('focusBar');
-        if (data.daily.date === todayKey()) {
-          const progress = Math.min(8, data.daily.solved);
-          const pct = progress / 8;
-          focusInfo.textContent = `Stay focused on ${data.mode.toUpperCase()}!`;
-          focusCount.innerHTML = `${progress}/8`;
-          if (focusBar) focusBar.style.width = (pct * 100) + '%';
-        } else {
-          focusInfo.textContent = 'No focus set for today.';
-          focusCount.innerHTML = `0/8`;
-          if (focusBar) focusBar.style.width = '0%';
+        if (focusInfo && focusCount) {
+          const progress = Math.min((data.focus && data.focus.solved) || 0, (data.focus && data.focus.target) || 0);
+          const pct = (data.focus && data.focus.target) ? progress / data.focus.target : 0;
+          focusInfo.textContent = (data.focus && data.focus.done) ? `✅ ${data.focus.label} — Completed for today` : `Today: ${(data.focus && data.focus.label) || '—'}`;
+          focusCount.innerHTML = `${progress}/${(data.focus && data.focus.target) || 0}`;
+          if (focusBar) focusBar.style.width = (pct * 100).toFixed(0) + '%';
         }
       }
-
-      function applyChallengeProgress({ correct, noHint, strand }) {
-        let changed = false;
-        for (const ch of (data.challenges || [])) {
-          if (ch.done) continue;
-          if (ch.type === 'strand' && correct && strand === ch.strand) { ch.progress++; changed = true; }
-          if (ch.type === 'streak' && correct && data.streak > 0) {
-            ch.progress = Math.max(ch.progress, Math.min(data.streak, ch.target)); changed = true;
-          }
-          if (ch.type === 'nohint' && correct && noHint) { ch.progress++; changed = true; }
-          if (ch.progress >= ch.target && !ch.done) {
-            ch.done = true; awardXP(ch.reward); addBadge(ch.id, ch.label + ` (+${ch.reward} XP)`); toast('🎯 Challenge complete!'); celebrate('correct');
-            changed = true;
-          }
-        }
-        if (changed) { updateEngagementUI(); save(); }
-      }
-
-      function nudgeNearMastery(strand) {
-        if (!strand || data.mastered[strand]) return;
-        const attempts = data.hist[strand] || [];
-        const last = attempts.slice(-20);
-        const total = attempts.length;
-        const acc = last.length ? last.reduce((s, a) => s + (a.correct ? 1 : 0), 0) / last.length : 0;
-        if (total >= 18 && last.length < 20) toast(`Almost there in ${strand}! Just ${20 - last.length} more recent attempts counted.`);
-        else if (last.length === 20 && acc >= 0.80 && acc < 0.90) toast(`So close to mastering ${strand}! Push accuracy to 90% over last 20.`);
-        else if (last.length === 20 && acc >= 0.90) toast(`Mastery in reach for ${strand}! Keep the speed and low hints.`);
-      }
-
-      // Stats helpers
-      function msToStr(ms) { if (!ms) return '—'; const s = ms / 1000; return s < 1 ? s.toFixed(2) + 's' : s.toFixed(1) + 's'; }
-      function calcStats(k) {
-        // prefer stats window when in stats mode; otherwise use history
-        const source = (data.statsMode === 'statsWin') ? (data.statsWin[k] || []) : (data.hist[k] || []);
-        const arr = source.slice(-20);
-        const n = arr.length;
-        const acc = n ? arr.reduce((s, a) => s + (a.correct ? 1 : 0), 0) / n : 0;
-        const med = median(arr.map(a => a.ms || 0));
-        const hint = n ? arr.reduce((s, a) => s + (a.hint ? 1 : 0), 0) / n : 0;
-        return { n, acc, med, hint };
-      }
-      function updateStatsUI() {
-        const box = document.getElementById('statsBox'); if (!box) return;
-        const labels = {
-          pemdas: 'Q1 • PEMDAS',
-          integers: 'Q2 • Integers',
-          coords: 'Q3 • Coordinates',
-          words: 'Q4 • Word Problems',
-          puzzles: 'Q5 • Puzzles',
-          logic: 'Q6 • Logic',
-          mod: 'Q7 • Modulus',
-          prob: 'Q8 • Probability'
-        };
-        box.innerHTML = STRANDS.map(k => {
-          const s = calcStats(k);
-          const acc = Math.round((s.acc || 0) * 100);
-          const hints = Math.round((s.hint || 0) * 100);
-          return `
-            <div class="stats-row">
-              <div class="pill">${labels[k]}</div>
-              <div>Accuracy: <b>${acc}%</b></div>
-              <div>Median time: <b>${msToStr(s.med)}</b></div>
-              <div>Hints: <b>${hints}%</b></div>
-              <div class="muted">n=${s.n}</div>
-            </div>
-          `;
-        }).join('');
-      }
-
-      // Wire stats updates into existing flow
-      const _updateProgress = updateProgress;
-      updateProgress = function () {
-        _updateProgress();
-        // Force sidebar pill text consistency
-        STRANDS.forEach(k => {
-          const pill = document.getElementById('p_' + k);
-          if (!pill) return;
-          if (data.mastered[k]) {
-            pill.textContent = 'Mastered';
-            pill.classList.add('mastered');
-          } else {
-            const val = Number.isFinite(data.correct[k]) ? data.correct[k] : 0;
-            pill.textContent = `${Math.max(0, val)}/10`;
-            pill.classList.remove('mastered');
-          }
-        });
-        updateStatsUI();
-      };
-
-      // After check() updates UI, stats will refresh via updateProgress(); ensure an initial render too
-      // Initial render
-      renderMode();
-      updateHUD();
-      updateProgress(); // calls updateStatsUI()
-      paintBadges();
-      updateEngagementUI();
-      nextQuestion();
 
       // --- NEW: THEME CODE ---
       // THEME: map modes -> themes
