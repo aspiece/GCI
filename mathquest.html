@@ -820,7 +820,8 @@
 
         requestAnimationFrame(fxLoop);
       }
-      requestAnimationFrame(fxLoop);
+      // REMOVE duplicate immediate start to avoid double loop
+      // requestAnimationFrame(fxLoop);
 
       const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (!prefersReducedMotion) requestAnimationFrame(fxLoop);
@@ -873,14 +874,6 @@
       // call once after DOM is ready (inside this IIFE after elements exist)
       initNav();
 
-      // Mirror toasts to a live region for screen readers
-      const oldToast = toast;
-      toast = function (msg) {
-        oldToast(msg);
-        const live = document.getElementById('ariaLive');
-        if (live) { live.textContent = ''; setTimeout(() => live.textContent = msg, 0); }
-      };
-
       // --- existing game code starts here ---
 
       const STRANDS = ['pemdas', 'integers', 'coords', 'words', 'puzzles', 'logic', 'mod', 'prob'];
@@ -902,6 +895,29 @@
         statsWin: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [], prob: [] },
         statsMode: 'hist'
       }, state);
+
+      // ADD after data is created:
+      function ensureDataShape() {
+        for (const k of STRANDS) {
+          if (!data.correct || typeof data.correct[k] !== 'number') {
+            if (!data.correct) data.correct = {};
+            if (!Number.isFinite(data.correct[k])) data.correct[k] = 0;
+          }
+          if (!data.hist || !Array.isArray(data.hist[k])) {
+            if (!data.hist) data.hist = {};
+            if (!Array.isArray(data.hist[k])) data.hist[k] = [];
+          }
+          if (!data.mastered || typeof data.mastered[k] !== 'boolean') {
+            if (!data.mastered) data.mastered = {};
+            if (typeof data.mastered[k] !== 'boolean') data.mastered[k] = false;
+          }
+          if (!data.statsWin || !Array.isArray(data.statsWin[k])) {
+            if (!data.statsWin) data.statsWin = {};
+            if (!Array.isArray(data.statsWin[k])) data.statsWin[k] = [];
+          }
+        }
+      }
+      ensureDataShape(); save();
 
       // helpers already here:
       function $(sel) { return document.querySelector(sel); }
@@ -929,6 +945,15 @@
           box.appendChild(el);
         });
       }
+      // REMOVE this wrapper block (we’ll fold it into toast itself):
+      // const oldToast = toast;
+      // toast = function (msg) {
+      //   oldToast(msg);
+      //   const live = document.getElementById('ariaLive');
+      //   if (live) { live.textContent = ''; setTimeout(() => live.textContent = msg, 0); }
+      // };
+
+      // Replace the toast function with this version (keeps visuals + ARIA live)
       function toast(msg) {
         const el = document.createElement('div');
         el.textContent = msg;
@@ -944,6 +969,8 @@
           el.style.opacity = '0'; el.style.transform = 'translateY(-6px)';
           setTimeout(() => el.remove(), 250);
         }, 2000);
+        const live = document.getElementById('ariaLive');
+        if (live) { live.textContent = ''; setTimeout(() => (live.textContent = msg), 0); }
       }
 
       // NEW: mastery helpers + compute function
@@ -997,19 +1024,10 @@
       }
 
       // UI init (single declaration + handles theme auto-switch)
-      const navBtns = [...document.querySelectorAll('.navBtn')];
-      navBtns.forEach(btn => btn.addEventListener('click', () => {
-        navBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        data.mode = btn.dataset.mode;
-        renderMode();
-        nextQuestion();
-        // Apply theme if in Auto mode
-        if (data.themePref === 'auto') {
-          applyTheme(themeForMode(data.mode));
-        }
-        save();
-      }));
+      // const navBtns = [...document.querySelectorAll('.navBtn')];
+      // navBtns.forEach(btn => btn.addEventListener('click', () => { /* duplicate — removed */ }));
+      // Use the guarded initializer defined above:
+      initNav();
 
       $('#resetBtn').addEventListener('click', () => {
         if (!confirm('Reset XP and progress?')) return;
@@ -1504,6 +1522,7 @@
             ? 'Great work! Daily goal complete. 🎉'
             : (goal - solved <= 5 ? 'So close! Just a few more to hit today’s goal.' : 'Tip: Keep a streak going for bonus XP.');
         }
+
         // Challenges list
         const box = document.getElementById('challenges');
         if (!box) return;
@@ -1567,7 +1586,7 @@
       // Stats helpers
       function msToStr(ms) { if (!ms) return '—'; const s = ms / 1000; return s < 1 ? s.toFixed(2) + 's' : s.toFixed(1) + 's'; }
       function calcStats(k) {
-        // NEW: prefer stats window when in stats mode; otherwise use history
+        // prefer stats window when in stats mode; otherwise use history
         const source = (data.statsMode === 'statsWin') ? (data.statsWin[k] || []) : (data.hist[k] || []);
         const arr = source.slice(-20);
         const n = arr.length;
@@ -1608,6 +1627,19 @@
       const _updateProgress = updateProgress;
       updateProgress = function () {
         _updateProgress();
+        // Force sidebar pill text consistency
+        STRANDS.forEach(k => {
+          const pill = document.getElementById('p_' + k);
+          if (!pill) return;
+          if (data.mastered[k]) {
+            pill.textContent = 'Mastered';
+            pill.classList.add('mastered');
+          } else {
+            const val = Number.isFinite(data.correct[k]) ? data.correct[k] : 0;
+            pill.textContent = `${Math.max(0, val)}/10`;
+            pill.classList.remove('mastered');
+          }
+        });
         updateStatsUI();
       };
 
