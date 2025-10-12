@@ -848,7 +848,8 @@
             data.mode = btn.dataset.mode;
             renderMode();
             callIf(window.nextQuestion);
-            if (data.themePref === 'auto') callIf(window.applyTheme, themeForMode(data.mode));
+            // Auto theme switches with quest
+            if (data.themePref === 'auto') applyTheme('auto');
             save();
           });
           btn.dataset.bound = '1';
@@ -932,6 +933,8 @@
         const pct = (STRANDS.length ? total / (STRANDS.length * 10) : 0);
         const overall = document.getElementById('overallBar'); if (overall) overall.style.width = Math.min(100, Math.max(0, pct * 100)) + '%';
         setText('#overallPct', fmtPct(pct));
+        // NEW: refresh stats each progress update
+        updateStatsUI();
       }
       function computeRank(xp) { if (xp >= 300) return 'Architect'; if (xp >= 150) return 'Hacker'; if (xp >= 50) return 'Coder'; return 'Novice'; }
 
@@ -949,6 +952,32 @@
           default: return 'space';
         }
       }
+
+      // NEW: Apply theme + init theme select (supports Auto)
+      function applyTheme(theme) {
+        const root = document.documentElement;
+        let t = theme;
+        if (t === 'auto') t = themeForMode(data.mode);
+        root.setAttribute('data-theme', t);
+        // persist explicit choices (not the resolved value)
+        if (theme === 'auto' || theme === 'space' || theme === 'ice' || theme === 'jungle' || theme === 'dungeon' || theme === 'workshop' || theme === 'portal') {
+          data.themePref = theme;
+          save();
+        }
+      }
+      function initThemeSelect() {
+        const sel = document.getElementById('themeSelect');
+        if (!sel) return;
+        sel.value = data.themePref || 'auto';
+        if (!sel.dataset.bound) {
+          sel.addEventListener('change', () => {
+            const val = sel.value || 'auto';
+            applyTheme(val);
+          });
+          sel.dataset.bound = '1';
+        }
+      }
+
       function renderMode() {
         const titles = {
           pemdas: 'Q1: Temple of PEMDAS', integers: 'Q2: Integer Ice Caves', coords: 'Q3: Quadrant Frontier',
@@ -1222,8 +1251,12 @@
       function initialStart() {
         randomizeStartMode();
         renderMode();
-        if (data.themePref === 'auto') callIf(window.applyTheme, themeForMode(data.mode));
+        // Init theme selector and apply theme (Auto resolves using current mode)
+        initThemeSelect();
+        applyTheme(data.themePref || 'auto');
+
         updateHUD(); updateProgress(); paintBadges(); callIf(window.updateEngagementUI);
+        updateStatsUI();
         save();
         callIf(window.nextQuestion);
         // Optional: validate gens if present
@@ -1237,6 +1270,8 @@
         }
       }
 
+      // Ensure nav click binding is active
+      initNav();
       initialStart();
     })();
   </script>
