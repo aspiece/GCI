@@ -1391,7 +1391,13 @@
           data.daily.solved = Math.max(data.daily.solved || 0, todayStats().correct);
 
           // Challenges
-          applyChallengeProgress({ correct: true, noHint: !current.hinted, strand });
+          applyChallengeProgress({
+            correct: true,
+            noHint: !current.hinted,
+            strand,
+            ms: elapsed,
+            streak: (data.streak || 0) + 1
+          });
         }
 
         if (correct) {
@@ -1535,11 +1541,18 @@
       }
 
       function rollDailyChallenges() {
-        const pick = STRANDS[Math.floor(Math.random() * STRANDS.length)];
+        // tougher, HS-appropriate mix
+        const strands = ['pemdas', 'integers', 'coords', 'words', 'puzzles', 'logic', 'mod', 'prob'];
+        const pick = strands[Math.floor(Math.random() * strands.length)];
         return [
-          { id: 'c_strand', label: `Solve 5 in ${pick.toUpperCase()}`, type: 'strand', strand: pick, progress: 0, target: 5, done: false, reward: 25 },
-          { id: 'c_streak', label: 'Get a 3‑answer streak', type: 'streak', progress: 0, target: 3, done: false, reward: 20 },
-          { id: 'c_nohint', label: 'Answer 5 with no hints', type: 'nohint', progress: 0, target: 5, done: false, reward: 20 },
+          // Solve more in a targeted strand
+          { id: 'c_strand', label: `Solve  8 in ${pick.toUpperCase()}`, type: 'strand', strand: pick, progress: 0, target: 8, done: false, reward: 35 },
+          // Longer streak
+          { id: 'c_streak', label: 'Get a 5‑answer streak', type: 'streak', progress: 0, target: 5, done: false, reward: 30 },
+          // Fewer hints, more items
+          { id: 'c_nohint', label: 'Answer 6 with no hints', type: 'nohint', progress: 0, target: 6, done: false, reward: 30 },
+          // Speed challenge (under 15s each)
+          { id: 'c_speed', label: 'Speedster: 3 correct under 15s', type: 'speed', threshold: 15, progress: 0, target: 3, done: false, reward: 25 },
         ];
       }
 
@@ -1712,6 +1725,44 @@
       // Bind button
       const resetStatsBtn = document.getElementById('resetStatsBtn');
       if (resetStatsBtn) resetStatsBtn.addEventListener('click', resetStatsCard);
+
+      function applyChallengeProgress({ correct, noHint, strand, ms = 0, streak = 0 }) {
+        if (!Array.isArray(data.challenges) || !data.challenges.length) return;
+        let changed = false;
+        for (const ch of data.challenges) {
+          if (ch.done) continue;
+          switch (ch.type) {
+            case 'strand':
+              if (correct && strand === ch.strand) { ch.progress++; changed = true; }
+              break;
+            case 'streak': {
+              // use predicted streak passed from check()
+              const prog = Math.min(streak, ch.target);
+              if (prog > (ch.progress || 0)) { ch.progress = prog; changed = true; }
+              break;
+            }
+            case 'nohint':
+              if (correct && noHint) { ch.progress++; changed = true; }
+              break;
+            case 'speed': {
+              const thrMs = Math.max(1000, (ch.threshold || 15) * 1000);
+              if (correct && ms > 0 && ms <= thrMs) { ch.progress++; changed = true; }
+              break;
+            }
+            default:
+              break;
+          }
+          if (!ch.done && ch.progress >= ch.target) {
+            ch.done = true;
+            awardXP(ch.reward || 20);
+            addBadge(`chal_${ch.id}_${data.daily?.date || ''}`, ch.label + (ch.reward ? ` (+${ch.reward} XP)` : ''));
+            toast('🎯 Challenge complete!');
+            celebrate('correct');
+            changed = true;
+          }
+        }
+        if (changed) { updateEngagementUI(); save(); }
+      }
     })();
   </script>
   <!-- place before closing body -->
