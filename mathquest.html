@@ -706,6 +706,17 @@
           </div>
           <div id="statsBox" class="tiny"></div>
         </section>
+
+        <!-- NEW: Daily Focus -->
+        <section class="card">
+          <h3>Daily Focus</h3>
+          <div id="focusInfo" class="tiny">Loading today’s focus…</div>
+          <div class="flex" style="margin-top:8px">
+            <button class="btn" id="focusSwitchBtn" title="Switch to today’s focus strand">Switch to Focus</button>
+            <div class="right tiny">Progress: <b id="focusCount">0/8</b></div>
+          </div>
+          <div class="meter" style="margin-top:8px"><span id="focusBar"></span></div>
+        </section>
       </div>
     </main>
   </div>
@@ -1365,6 +1376,21 @@
         if (correct) {
           // Daily
           ensureDaily();
+          // Focus
+          ensureFocus();
+          const plan = currentFocusPlan();
+          if (!data.focus.done && plan.accept(strand)) {
+            data.focus.solved += 1;
+            if (data.focus.solved >= data.focus.target) {
+              data.focus.done = true;
+              awardXP(30); // bonus XP for completing focus
+              addBadge('focus_' + data.focus.date, 'Daily Focus Complete');
+              toast('🎯 Daily Focus complete!');
+              celebrate('mastery');
+            }
+            updateFocusUI();
+            save();
+          }
           if (!data.daily.completed) {
             data.daily.solved += 1;
             if (data.daily.solved >= data.daily.goal) {
@@ -1492,6 +1518,22 @@
           `;
           box.appendChild(row);
         });
+
+        // Daily focus info
+        const focusInfo = document.getElementById('focusInfo');
+        const focusCount = document.getElementById('focusCount');
+        const focusBar = document.getElementById('focusBar');
+        if (data.daily.date === todayKey()) {
+          const progress = Math.min(8, data.daily.solved);
+          const pct = progress / 8;
+          focusInfo.textContent = `Stay focused on ${data.mode.toUpperCase()}!`;
+          focusCount.innerHTML = `${progress}/8`;
+          if (focusBar) focusBar.style.width = (pct * 100) + '%';
+        } else {
+          focusInfo.textContent = 'No focus set for today.';
+          focusCount.innerHTML = `0/8`;
+          if (focusBar) focusBar.style.width = '0%';
+        }
       }
 
       function applyChallengeProgress({ correct, noHint, strand }) {
@@ -1576,6 +1618,8 @@
       updateProgress(); // calls updateStatsUI()
       paintBadges();
       updateEngagementUI();
+      ensureFocus();            // NEW
+      updateFocusUI();          // NEW
       nextQuestion();
 
       // --- NEW: THEME CODE ---
