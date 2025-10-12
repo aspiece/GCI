@@ -709,17 +709,6 @@
           </div>
           <div id="statsBox" class="tiny"></div>
         </section>
-
-        <!-- NEW: Daily Focus -->
-        <section class="card">
-          <h3>Daily Focus</h3>
-          <div id="focusInfo" class="tiny">Loading today’s focus…</div>
-          <div class="flex" style="margin-top:8px">
-            <button class="btn" id="focusSwitchBtn" title="Switch to today’s focus strand">Switch to Focus</button>
-            <div class="right tiny">Progress: <b id="focusCount">0/8</b></div>
-          </div>
-          <div class="meter" style="margin-top:8px"><span id="focusBar"></span></div>
-        </section>
       </div>
     </main>
   </div>
@@ -890,9 +879,8 @@
         boss: { done: false },
         themePref: 'auto',
         statsWin: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [], prob: [] },
-        statsMode: 'hist',
-        // NEW: Daily Focus state
-        focus: { date: "", key: "", mode: "", solved: 0, target: 0, done: false, label: "" }
+        statsMode: 'hist'
+        // REMOVED: focus
       }, state);
 
       // ADD after data is created:
@@ -1391,24 +1379,17 @@
 
         // NEW: engagement updates
         if (correct) {
-          // Daily + Focus
+          // Daily
           ensureDaily();
-          ensureFocus();
-          const plan = currentFocusPlan();
-          if (!data.focus.done && plan.accept(strand)) {
-            data.focus.solved += 1;
-            if (data.focus.solved >= data.focus.target) {
-              data.focus.done = true;
-              awardXP(30);
-              addBadge('focus_' + data.focus.date, 'Daily Focus Complete');
-              toast('🎯 Daily Focus complete!');
-              celebrate('mastery');
-            }
-            updateFocusUI();
-            save();
-          }
-          // keep compatibility counter for solved; actual goal uses todayStats
+
+          // REMOVE: Daily Focus progression
+          // ensureFocus();
+          // const plan = currentFocusPlan();
+          // if (!data.focus.done && plan.accept(strand)) { ... }
+
+          // keep compatibility counter; actual goal uses todayStats()
           data.daily.solved = Math.max(data.daily.solved || 0, todayStats().correct);
+
           // Challenges
           applyChallengeProgress({ correct: true, noHint: !current.hinted, strand });
         }
@@ -1631,18 +1612,6 @@
             box.appendChild(row);
           });
         }
-
-        // Daily Focus info (kept)
-        const focusInfo = document.getElementById('focusInfo');
-        const focusCount = document.getElementById('focusCount');
-        const focusBar = document.getElementById('focusBar');
-        if (focusInfo && focusCount) {
-          const progress = Math.min((data.focus && data.focus.solved) || 0, (data.focus && data.focus.target) || 0);
-          const pct = (data.focus && data.focus.target) ? progress / data.focus.target : 0;
-          focusInfo.textContent = (data.focus && data.focus.done) ? `✅ ${data.focus.label} — Completed for today` : `Today: ${(data.focus && data.focus.label) || '—'}`;
-          focusCount.innerHTML = `${progress}/${(data.focus && data.focus.target) || 0}`;
-          if (focusBar) focusBar.style.width = (pct * 100).toFixed(0) + '%';
-        }
       }
 
       // --- NEW: THEME CODE ---
@@ -1743,54 +1712,6 @@
       // Bind button
       const resetStatsBtn = document.getElementById('resetStatsBtn');
       if (resetStatsBtn) resetStatsBtn.addEventListener('click', resetStatsCard);
-
-      // --- Daily Focus (Mon–Fri schedule) ---
-      function dowKey(d = new Date()) { return d.getDay(); } // 0=Sun..6=Sat
-      const DAILY_SCHEDULE = {
-        1: { key: 'logic', mode: 'logic', label: 'Circuit of Logic (Boolean algebra)', target: 8, accept: s => s === 'logic' },
-        2: { key: 'mod', mode: 'mod', label: 'Modulus Monastery (remainders/congruence)', target: 8, accept: s => s === 'mod' },
-        3: { key: 'prob', mode: 'prob', label: 'Probability Pirates (fractions)', target: 8, accept: s => s === 'prob' },
-        4: { key: 'mixed', mode: 'mixed', label: 'Mixed Practice (any strand)', target: 10, accept: _ => true },
-        5: { key: 'mastery', mode: 'mixed', label: 'Mastery Push (any strand)', target: 10, accept: _ => true },
-        0: { key: 'choice', mode: 'mixed', label: 'Choice Day (your pick)', target: 6, accept: _ => true },
-        6: { key: 'choice', mode: 'mixed', label: 'Choice Day (your pick)', target: 6, accept: _ => true }
-      };
-      function todayStr() { return new Date().toISOString().slice(0, 10); }
-      function currentFocusPlan() { return DAILY_SCHEDULE[dowKey()] || DAILY_SCHEDULE[0]; }
-      function ensureFocus() {
-        const today = todayStr();
-        const plan = currentFocusPlan();
-        if (!data.focus || data.focus.date !== today) {
-          data.focus = { date: today, key: plan.key, mode: plan.mode, solved: 0, target: plan.target, done: false, label: plan.label };
-          save();
-        }
-        updateFocusUI();
-      }
-      function updateFocusUI() {
-        const f = data.focus || {};
-        const info = document.getElementById('focusInfo');
-        const cnt = document.getElementById('focusCount');
-        const bar = document.getElementById('focusBar');
-        if (info) info.textContent = f.done ? `✅ ${f.label} — Completed for today` : `Today: ${f.label}`;
-        if (cnt) cnt.textContent = `${Math.min(f.solved || 0, f.target || 0)}/${f.target || 0}`;
-        if (bar) bar.style.width = ((Math.max(0, Math.min(1, (f.solved || 0) / (f.target || 1)))) * 100).toFixed(0) + '%';
-      }
-      function switchToFocus() {
-        const f = data.focus || {};
-        if (f.mode && f.mode !== 'mixed' && STRANDS.includes(f.mode)) {
-          data.mode = f.mode;
-          const btn = document.querySelector(`.navBtn[data-mode="${f.mode}"]`);
-          if (btn && typeof setActiveNav === 'function') setActiveNav(btn);
-          renderMode(); nextQuestion();
-          if (data.themePref === 'auto') applyTheme(themeForMode(data.mode));
-          save();
-        }
-      }
-      const focusBtn = document.getElementById('focusSwitchBtn');
-      if (focusBtn && !focusBtn.dataset.bound) { focusBtn.addEventListener('click', switchToFocus); focusBtn.dataset.bound = '1'; }
-
-      ensureFocus();
-      updateFocusUI();
     })();
   </script>
   <!-- place before closing body -->
