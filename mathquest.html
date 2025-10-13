@@ -5,6 +5,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>CS Math Quest — Catch‑Up Arcade</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <style>
     :root {
       --bg: #0b1020;
@@ -1470,6 +1471,7 @@
             const expr = `${c}^${e} ${pm[0]} ${b} * ${d}`;
             const ans = pm[0] === '+' ? pow + md : pow - md;
             return {
+
               q: `Rune boost: exponents first, then multiply, then ${pm[2]} → ${expr}`,
               ans,
               hint: 'Exponents before ×; then add/subtract.',
