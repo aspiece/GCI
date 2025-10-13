@@ -846,6 +846,8 @@
       window.ensureFocus = window.ensureFocus || function () { };
       window.currentFocusPlan = window.currentFocusPlan || function () { return { accept: () => false }; };
       window.updateFocusUI = window.updateFocusUI || function () { };
+      // If badges painter is not present, keep as no-op to avoid crashes on reset
+      window.paintBadges = window.paintBadges || function () { };
 
       // Utility to safely call optional functions if they exist
       function callIf(fn, ...args) { if (typeof fn === 'function') return fn(...args); }
@@ -1097,15 +1099,26 @@
           box.appendChild(row);
         });
       }
-      // Bind Reset Stats (clears only stats window, not progress)
+      // Bind Reset Stats (reset current strand’s progress + stats only)
       (function bindResetStats() {
         const btn = document.getElementById('resetStatsBtn');
         if (btn && !btn.dataset.bound) {
           btn.addEventListener('click', () => {
-            if (!confirm('Reset the Strand Stats view? (no change to XP or progress)')) return;
-            data.statsWin = STRANDS.reduce((o, k) => (o[k] = [], o), {});
+            const strand = data.mode || 'pemdas';
+            const label = strand.toUpperCase();
+            if (!confirm(`Reset ${label} progress and stats? (does not change XP)`)) return;
+
+            data.correct[strand] = 0;
+            data.hist[strand] = [];
+            data.mastered[strand] = false;
+            if (data.statsWin && Array.isArray(data.statsWin[strand])) data.statsWin[strand] = [];
+            if (typeof _prevBarPct === 'object') _prevBarPct[strand] = 0;
+
             save();
+            updateProgress();
             updateStatsUI();
+            toast(`${label} reset.`);
+            nextQuestion();
           });
           btn.dataset.bound = '1';
         }
@@ -1742,7 +1755,7 @@
         // UI refresh
         updateHUD();
         updateProgress();
-        paintBadges();
+        paintBadges && paintBadges();
         updateStatsUI();
         updateEngagementUI();
 
@@ -1751,6 +1764,8 @@
 
         nextQuestion();
       }
+      // Make available for bindings that call via window.*
+      window.resetAll = resetAll;
 
       // --- Controls ---
       function bindControls() {
@@ -1785,10 +1800,10 @@
           else if (e.key === 'h' || e.key === 'H') showHint();
         });
 
-        // Bind Reset (full app reset)
+        // Bind Reset (full app reset) – call via window to avoid ReferenceError during binding
         const resetEl = document.getElementById('resetBtn');
         if (resetEl && !resetEl.dataset.bound) {
-          resetEl.addEventListener('click', resetAll);
+          resetEl.addEventListener('click', () => window.resetAll && window.resetAll());
           resetEl.dataset.bound = '1';
         }
 
