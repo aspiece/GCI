@@ -1009,7 +1009,7 @@
         requestAnimationFrame(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; });
         setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateY(-6px)'; setTimeout(() => el.remove(), 250); }, 2000);
       }
-      // ADD: HUD updater (fixes ReferenceError)
+      // ADD: HUD updater (fixes ReferenceError) - move this before initialStart
       function updateHUD() {
         setText('#xp', String(data.xp || 0));
         setText('#streak', String(data.streak || 0));
@@ -1017,4 +1017,613 @@
         if (typeof updateHintButton === 'function') updateHintButton();
       }
 
-    // function celebrate(kind = 'correct') { ... } already defined above; remove duplicate/incomplete definition.
+      // --- Generators + answer checking + challenges (required by nextQuestion/checkAnswer) ---
+      const rnd = (a, b) => (Math.random() * (b - a + 1) + a) | 0;
+      const choice = a => a[(Math.random() * a.length) | 0];
+      function reduceFrac(n, d) {
+        const g = (x, y) => y ? g(y, x % y) : Math.abs(x);
+        const gg = g(n, d) || 1;
+        const s = Math.sign(n) * Math.sign(d) || 1;
+        n = Math.abs(n) / gg; d = Math.abs(d) / gg;
+        return { n: s < 0 ? -n : n, d };
+      }
+      const gens = {
+        pemdas() {
+          const a = rnd(2, 12), b = rnd(2, 9), c = rnd(1, 8), d = rnd(1, 6);
+          const pm = choice([['+', (x, y) => x + y], ['-', (x, y) => x - y]]);
+          const pat = choice([1, 2, 3, 4]);
+          if (pat === 1) {
+            const expr = `${a} + ${b} * (${c} ${pm[0]} ${d})`;
+            return { q: `Evaluate: ${expr}`, ans: a + b * pm[1](c, d), hint: 'Parentheses → multiply → add/subtract.' };
+          } else if (pat === 2) {
+            const expr = `(${a} ${pm[0]} ${b}) * ${c} - ${d}`;
+            return { q: `Evaluate: ${expr}`, ans: (pm[1](a, b)) * c - d, hint: 'Work left parentheses first, then mul, then sub.' };
+          } else if (pat === 3) {
+            const e = rnd(2, 5);
+            const expr = `${c}^${e} ${pm[0]} ${b} * ${d}`;
+            return { q: `Evaluate: ${expr}`, ans: (c ** e) + (pm[0] === '+' ? 1 : -1) * b * d, hint: 'Exponents before multiply; then add/subtract.' };
+          } else {
+            const expr = `${a} - (${b} ${pm[0]} ${c}) * ${d}`;
+            return { q: `Evaluate: ${expr}`, ans: a - pm[1](b, c) * d, hint: 'Do parentheses, multiply, then subtract.' };
+          }
+        },
+        integers() {
+          const a = rnd(-20, 20), b = rnd(-20, 20), op = choice(['+', '-', '*']);
+          const ans = op === '+' ? a + b : op === '-' ? a - b : a * b;
+          return { q: `Compute: ${a} ${op} ${b}`, ans, hint: 'Negative × negative = positive.' };
+        },
+        coords() {
+          const x = rnd(-9, 9), y = rnd(-9, 9);
+          return { q: `Point P(${x}, ${y}). What is x + y?`, ans: x + y, hint: 'Add the x and y coordinates.' };
+        },
+        words() {
+          const a = rnd(3, 12), b = rnd(2, 9);
+          return { q: `Translate and compute: "the product of ${a} and ${b}, then add ${a}"`, ans: a * b + a, hint: 'Product means multiply, then add.' };
+        },
+        puzzles() {
+          const a = rnd(2, 6), d = rnd(2, 7), n = rnd(5, 8);
+          const seq = Array.from({ length: n - 1 }, (_, i) => a + i * d).join(', ');
+          return { q: `Sequence: ${seq}, … What is the ${n}th term?`, ans: a + (n - 1) * d, hint: 'aₙ = a₁ + (n−1)d.' };
+        },
+        logic() {
+          const A = Math.random() < 0.5, B = Math.random() < 0.5;
+          const op = choice(['∧', '∨', '→']);
+          let ans; if (op === '∧') ans = A && B; else if (op === '∨') ans = A || B; else ans = (!A) || B;
+          return { q: `Let A=${A ? 'T' : 'F'}, B=${B ? 'T' : 'F'}. Evaluate: A ${op} B`, ans: ans ? 'T' : 'F', hint: 'A→B is false only when A=T, B=F.' };
+        },
+        mod() {
+          const n = rnd(10, 99), m = choice([3, 4, 5, 6, 7, 8, 9]);
+          return { q: `Compute: ${n} Mod ${m}`, ans: n % m, hint: 'Remainder after dividing n by m.' };
+        },
+        mix() {
+          const base = ['pemdas', 'integers', 'coords', 'words', 'puzzles', 'logic', 'mod'];
+          const pick = base[(Math.random() * base.length) | 0];
+          const g = this[pick]();
+          return {
+            q: `[${pick.toUpperCase()}] ${g.q}`,
+            ans: g.ans,
+            hint: g.hint || 'Use the right tool for the strand shown.',
+            exp: g.exp || ''
+          };
+        }
+      };
+      window.gens = gens;
+
+      function norm(input) {
+        if (typeof input === 'number') return { kind: 'num', v: input };
+        const s = String(input).trim();
+        if (/^[tTfF]$/.test(s)) return { kind: 'bool', v: s.toUpperCase() };
+        if (/^-?\d+\/-?\d+$/.test(s)) {
+          const [a, b] = s.split('/').map(Number); if (b === 0) return { kind: 'str', v: s };
+          const { n, d } = reduceFrac(a, b); return { kind: 'frac', v: `${n}/${d}` };
+        }
+        if (/^-?\d+(\.\d+)?$/.test(s)) return { kind: 'num', v: Number(s) };
+        return { kind: 'str', v: s.toLowerCase() };
+      }
+      function eqAns(user, correct) {
+        const u = norm(user), c = norm(correct);
+        if (u.kind === 'bool' || c.kind === 'bool') return u.v === (typeof c.v === 'string' ? c.v.toUpperCase() : c.v);
+        if (u.kind === 'frac' || c.kind === 'frac') return u.v === (c.kind === 'frac' ? c.v : String(c.v));
+        if (u.kind === 'num' && c.kind === 'num') return Math.abs(u.v - c.v) < 1e-9;
+        return String(user).trim().toLowerCase() === String(correct).trim().toLowerCase();
+      }
+
+      // Daily challenge progress
+      function applyChallengeProgress({ correct, noHint, strand, ms = 0, streak = 0 }) {
+        if (!Array.isArray(data.challenges) || !data.challenges.length) return;
+        let changed = false;
+        for (const ch of data.challenges) {
+          if (ch.done) continue;
+          switch (ch.type) {
+            case 'strand':
+              if (correct && strand === ch.strand) { ch.progress++; changed = true; }
+              break;
+            case 'streak': {
+              const prog = Math.min(streak, ch.target);
+              if (prog > (ch.progress || 0)) { ch.progress = prog; changed = true; }
+              break;
+            }
+            case 'nohint':
+              if (correct && noHint) { ch.progress++; changed = true; }
+              break;
+            case 'speed': {
+              const thrMs = Math.max(1000, (ch.threshold || 15) * 1000);
+              if (correct && ms > 0 && ms <= thrMs) { ch.progress++; changed = true; }
+              break;
+            }
+          }
+          if (!ch.done && ch.progress >= ch.target) {
+            ch.done = true;
+            const reward = ch.reward || 20;
+            data.xp += reward; data.rank = computeRank(data.xp);
+            toast(`🎯 Challenge complete! (+${reward} XP)`);
+            changed = true;
+          }
+        }
+        if (changed) { updateHUD(); save(); updateEngagementUI(); }
+      }
+
+      // --- Current question + flow ---
+      let current = null;
+      function nextQuestion() {
+        const strand = data.mode;
+        const gen = gens[strand] || gens.pemdas;
+        const g = gen.call(gens);
+        current = { strand, q: g.q, ans: g.ans, hinted: false, t0: performance.now(), hintText: g.hint || 'Try breaking it into smaller steps.', explain: g.exp || '' };
+        const qEl = document.getElementById('question');
+        const aEl = document.getElementById('answer');
+        const fb = document.getElementById('feedback');
+        const hint = document.getElementById('hint');
+        if (qEl) qEl.textContent = g.q;
+        if (aEl) { aEl.value = ''; aEl.focus(); aEl.select(); }
+        if (fb) { fb.textContent = ''; fb.className = 'feedback'; }
+        if (hint) { hint.textContent = ''; hint.style.display = 'none'; }
+      }
+      function showHint() {
+        if (!current) return;
+        const hint = document.getElementById('hint');
+        if (!hint) return;
+        if (!current.hinted) {
+          current.hinted = true;
+          data.xp = Math.max(0, (data.xp || 0) - 5);
+          data.rank = computeRank(data.xp);
+          fxXP(-5);
+          updateHUD(); save();
+        }
+        hint.textContent = current.hintText;
+        hint.style.display = '';
+      }
+      function checkAnswer() {
+        const aEl = document.getElementById('answer');
+        const fb = document.getElementById('feedback');
+        if (!current || !aEl || !fb) return;
+        const user = aEl.value;
+        const elapsed = performance.now() - current.t0;
+
+        const prevStreak = data.streak || 0;
+
+        const correct = eqAns(user, current.ans);
+        if (correct) {
+          data.xp += 10;
+          data.streak = (data.streak || 0) + 1;
+          data.rank = computeRank(data.xp);
+          data.correct[current.strand] = (data.correct[current.strand] || 0) + 1;
+          data.daily.solved = (data.daily.solved || 0) + 1;
+          fb.textContent = 'Correct! ' + (current.hinted ? '(with hint)' : '');
+          fb.className = 'feedback good';
+          celebrate('correct');
+
+          if (data.streak === 3) toast('🔥 Streak x3! Nice flow.');
+          if (data.streak === 5) { toast('⚡ Streak x5! Keep it going.'); celebrate('mastery'); }
+          if (data.streak === 10) { toast('🏆 Streak x10! You’re on fire!'); celebrate('mastery'); }
+
+          applyChallengeProgress({ correct: true, noHint: !current.hinted, strand: current.strand, ms: elapsed, streak: data.streak });
+        } else {
+          data.streak = 0;
+          fb.textContent = `Not quite. Correct answer was: ${typeof current.ans === 'number' ? current.ans : String(current.ans)}`;
+          fb.className = 'feedback bad';
+          const hint = document.getElementById('hint');
+          if (hint) {
+            hint.textContent = current.explain ? `Explanation: ${current.explain}` : 'Review the hint and try a similar one.';
+            hint.style.display = '';
+          }
+          if (prevStreak >= 3) toast(`Streak of ${prevStreak} ended. You’ve got this!`);
+        }
+        (data.hist[current.strand] = data.hist[current.strand] || []).push({
+          t: Date.now(), correct, hint: current.hinted, ms: Math.round(elapsed)
+        });
+        if (data.hist[current.strand].length > 400) data.hist[current.strand] = data.hist[current.strand].slice(-300);
+
+        (data.statsWin[current.strand] = data.statsWin[current.strand] || []).push({
+          t: Date.now(), correct, hint: current.hinted, ms: Math.round(elapsed)
+        });
+        if (data.statsWin[current.strand].length > 120) {
+          data.statsWin[current.strand] = data.statsWin[current.strand].slice(-100);
+        }
+        updateStatsUI();
+
+        updateHUD();
+        updateProgress();
+        updateEngagementUI();
+        checkDailyCompletion();
+        save();
+      }
+
+      // --- Theme ---
+      function themeForMode(mode) {
+        switch (mode) {
+          case 'pemdas': return 'dungeon';
+          case 'integers': return 'ice';
+          case 'coords': return 'space';
+          case 'words': return 'workshop';
+          case 'puzzles': return 'portal';
+          case 'logic': return 'workshop';
+          case 'mod': return 'dungeon';
+          case 'mix': return 'portal';
+          default: return 'space';
+        }
+      }
+      function applyTheme(theme) {
+        const pref = theme || data.themePref || 'auto';
+        const resolved = pref === 'auto' ? themeForMode(data.mode) : pref;
+        document.documentElement.setAttribute('data-theme', resolved);
+        data.themePref = pref;
+        const sel = document.getElementById('themeSelect');
+        if (sel && sel.value !== pref) sel.value = pref;
+        save();
+      }
+      function initThemeSelect() {
+        const sel = document.getElementById('themeSelect');
+        if (!sel) return;
+        sel.value = data.themePref || 'auto';
+        if (!sel.dataset.bound) {
+          sel.addEventListener('change', () => {
+            applyTheme(sel.value || 'auto');
+          });
+          sel.dataset.bound = '1';
+        }
+      }
+
+      function renderMode() {
+        const titles = {
+          pemdas: 'Q1: Temple of PEMDAS', integers: 'Q2: Integer Ice Caves', coords: 'Q3: Quadrant Frontier',
+          words: 'Q4: Wordsmith Workshop', puzzles: 'Q5: Puzzle Portal', logic: 'Q6: Circuit of Logic',
+          mod: 'Q7: Modulus Monastery', mix: 'Q8: Mixed Gauntlet', boss: 'Boss Battle: Final Gauntlet'
+        };
+        const ICON = { pemdas: '🧮', integers: '➕', coords: '📍', words: '📝', puzzles: '🧩', logic: '🔌', mod: '🧪', mix: '🎯' };
+        setText('#modeTitle', titles[data.mode] || 'Quest');
+        const lbl = document.getElementById('strandLabel');
+        if (lbl) lbl.textContent = `${ICON[data.mode] || ''} ${(data.mode || '').toUpperCase()}`;
+      }
+
+      // --- Rank ---
+      function computeRank(xp) {
+        if (xp >= 10000) return 'Grandmaster';
+        if (xp >= 5000) return 'Master';
+        if (xp >= 2000) return 'Expert';
+        if (xp >= 1000) return 'Advanced';
+        if (xp >= 500) return 'Intermediate';
+        if (xp >= 200) return 'Apprentice';
+        return 'Novice';
+      }
+
+      // --- Mastery ---
+      function computeMasteryFor(strand) {
+        const arr = (data.hist[strand] || []).slice(-20);
+        if (arr.length < 25) return false;
+        const acc = arr.reduce((s, a) => s + (a.correct ? 1 : 0), 0) / arr.length;
+        const hintRate = arr.reduce((s, a) => s + (a.hint ? 1 : 0), 0) / arr.length;
+        const medMs = arr.map(a => a.ms || 0).filter(x => Number.isFinite(x) && x > 0).sort((a, b) => a - b);
+        const med = medMs.length ? (medMs.length % 2 ? medMs[(medMs.length - 1) / 2] : (medMs[medMs.length / 2 - 1] + medMs[medMs.length / 2]) / 2) : 0;
+        const days = new Set(arr.map(a => new Date(a.t).toDateString())).size;
+        return acc >= 0.9 && hintRate <= 0.1 && med <= 25000 && days >= 2;
+      }
+      function recomputeMastery() { STRANDS.forEach(k => { data.mastered[k] = computeMasteryFor(k); }); }
+      const _prevBarPct = {};
+      function updateProgress() {
+        recomputeMastery();
+        STRANDS.forEach(k => {
+          const pill = document.getElementById('p_' + k);
+          const bar = document.getElementById('bar_' + k);
+          if (data.mastered[k]) {
+            if (pill) { pill.textContent = 'Mastered'; pill.classList.add('mastered'); }
+            if (bar) bar.style.width = '100%';
+          } else {
+            if (pill) { pill.textContent = `${data.correct[k]}/10`; pill.classList.remove('mastered'); }
+            const pctNum = Math.min(100, (data.correct[k] || 0) * 10);
+            if (bar) {
+              const prev = _prevBarPct[k] || 0;
+              bar.style.width = pctNum + '%';
+              if (pctNum > prev) { bar.classList.add('bump'); setTimeout(() => bar.classList.remove('bump'), 650); }
+              _prevBarPct[k] = pctNum;
+            }
+          }
+        });
+      }
+
+      // --- Daily ---
+      function ensureDaily() {
+        const today = new Date().toDateString();
+        if (data.daily.date !== today) {
+          data.daily = { date: today, solved: 0, goal: 20, completed: false, rules: { minSolved: 10, minAcc: 0.80, maxHintRate: 0.10 } };
+          data.challenges = [
+            { type: 'strand', strand: 'pemdas', target: 5, progress: 0, reward: 20, done: false },
+            { type: 'streak', target: 5, progress: 0, reward: 15, done: false },
+            { type: 'nohint', target: 3, progress: 0, reward: 10, done: false },
+            { type: 'speed', threshold: 10, target: 2, progress: 0, reward: 25, done: false }
+          ];
+        }
+      }
+      function checkDailyCompletion() {
+        if (data.daily.completed) return;
+        const arr = Object.values(data.hist).flat().filter(a => new Date(a.t).toDateString() === data.daily.date);
+        const solved = arr.length;
+        const correct = arr.reduce((s, a) => s + (a.correct ? 1 : 0), 0);
+        const hints = arr.reduce((s, a) => s + (a.hint ? 1 : 0), 0);
+        const acc = solved ? correct / solved : 0;
+        const hintRate = solved ? hints / solved : 0;
+        const minSolved = data.daily.rules.minSolved || 10;
+        const minAcc = data.daily.rules.minAcc || 0.80;
+        const maxHintRate = data.daily.rules.maxHintRate || 0.10;
+        if (solved >= minSolved && acc >= minAcc && hintRate <= maxHintRate) {
+          data.daily.completed = true;
+          data.xp += 50;
+          data.rank = computeRank(data.xp);
+          toast('🎉 Daily goal complete! (+50 XP)');
+          updateHUD(); save();
+        }
+      }
+      function updateEngagementUI() {
+        const arr = Object.values(data.hist).flat().filter(a => new Date(a.t).toDateString() === data.daily.date);
+        const solved = arr.length;
+        const correct = arr.reduce((s, a) => s + (a.correct ? 1 : 0), 0);
+        const acc = solved ? correct / solved : 0;
+        const hints = arr.reduce((s, a) => s + (a.hint ? 1 : 0), 0);
+        const hintRate = solved ? hints / solved : 0;
+        const minSolved = data.daily.rules.minSolved || 10;
+        const minAcc = data.daily.rules.minAcc || 0.80;
+        const maxHintRate = data.daily.rules.maxHintRate || 0.10;
+        const pct = Math.min(100, (solved / data.daily.goal) * 100);
+        setText('#dailyCount', `${solved}/${data.daily.goal}`);
+        const bar = document.getElementById('dailyBar');
+        if (bar) bar.style.width = pct + '%';
+        const checklist = document.getElementById('dailyChecklist');
+        if (checklist) {
+          checklist.innerHTML = `
+            <div>Solve ${minSolved}+ problems: ${solved >= minSolved ? '✅' : '❌'}</div>
+            <div>Accuracy ≥${Math.round(minAcc * 100)}%: ${acc >= minAcc ? '✅' : '❌'}</div>
+            <div>Hints ≤${Math.round(maxHintRate * 100)}%: ${hintRate <= maxHintRate ? '✅' : '❌'}</div>
+          `;
+        }
+        const hintEl = document.getElementById('dailyHint');
+        if (hintEl) {
+          hintEl.textContent = data.daily.completed ? 'Goal achieved! 🎉' : `Need ${minSolved - solved} more solves, ${Math.round((minAcc - acc) * 100)}% better accuracy, or ${(hintRate - maxHintRate) * 100}% fewer hints.`;
+        }
+        const label = document.getElementById('dailyGoalLabel');
+        if (label) label.textContent = `Goal: ${data.daily.goal} solves with ≥${Math.round(minAcc * 100)}% accuracy and ≤${Math.round(maxHintRate * 100)}% hints.`;
+      }
+
+      // --- Challenges ---
+      function updateEngagementUI() {
+        const challengesEl = document.getElementById('challenges');
+        if (!challengesEl) return;
+        challengesEl.innerHTML = data.challenges.map(ch => {
+          const pct = Math.min(100, (ch.progress / ch.target) * 100);
+          const done = ch.done;
+          const icon = done ? '✅' : '⏳';
+          const desc = ch.type === 'strand' ? `Solve ${ch.target} ${ch.strand} problems` :
+            ch.type === 'streak' ? `Reach a streak of ${ch.target}` :
+              ch.type === 'nohint' ? `Solve ${ch.target} without hints` :
+                `Solve ${ch.target} in under ${ch.threshold}s`;
+          return `<div class="challenge ${done ? 'done' : ''}">
+            <div>${icon} ${desc}</div>
+            <div class="prog">${ch.progress}/${ch.target}</div>
+          </div>`;
+        }).join('');
+      }
+
+      // --- Stats ---
+      function calcStats(strand) {
+        const src = (data.statsWin && Array.isArray(data.statsWin[strand])) ? data.statsWin[strand] : [];
+        const arr = src.slice(-20);
+        const n = arr.length;
+        const acc = n ? arr.reduce((s, a) => s + (a.correct ? 1 : 0), 0) / n : 0;
+        const times = arr.map(a => a.ms || 0).filter(x => Number.isFinite(x) && x > 0).sort((a, b) => a - b);
+        const med = times.length ? (times.length % 2 ? times[(times.length - 1) / 2] : (times[times.length / 2 - 1] + times[times.length / 2]) / 2) : 0;
+        const hint = n ? arr.reduce((s, a) => s + (a.hint ? 1 : 0), 0) / n : 0;
+        return { n, acc, med, hint };
+      }
+      function updateStatsUI() {
+        const box = document.getElementById('statsBox');
+        if (!box) return;
+        const strand = data.mode;
+        const stats = calcStats(strand);
+        const medSec = stats.med ? (stats.med / 1000).toFixed(1) : '—';
+        const accPct = Math.round(stats.acc * 100);
+        const hintPct = Math.round(stats.hint * 100);
+        box.innerHTML = `
+          <div class="stats-row">
+            <div class="pill">Last ${stats.n} attempts</div>
+            <div class="pill">${accPct}% accuracy</div>
+            <div class="pill">${medSec}s median time</div>
+            <div class="pill">${hintPct}% hints</div>
+          </div>
+        `;
+      }
+
+      // --- Badges ---
+      function paintBadges() {
+        const badgesEl = document.getElementById('badges');
+        if (!badgesEl) return;
+        const badges = [
+          { id: 'first_solve', name: 'First Solve', desc: 'Solve your first problem', check: () => Object.values(data.correct).some(c => c > 0) },
+          { id: 'streak_5', name: 'Hot Streak', desc: 'Reach a 5-problem streak', check: () => data.streak >= 5 },
+          { id: 'master_pemdas', name: 'PEMDAS Master', desc: 'Master PEMDAS strand', check: () => data.mastered.pemdas },
+          { id: 'daily_complete', name: 'Daily Champion', desc: 'Complete a daily goal', check: () => data.daily.completed },
+          { id: 'xp_500', name: 'XP Hunter', desc: 'Earn 500 XP', check: () => data.xp >= 500 },
+          { id: 'all_mastered', name: 'Grandmaster', desc: 'Master all strands', check: () => STRANDS.every(k => data.mastered[k]) }
+        ];
+        badgesEl.innerHTML = badges.filter(b => b.check()).map(b => `<div class="badge" title="${b.desc}">🏆 ${b.name}</div>`).join('');
+      }
+
+      // --- Hint button state ---
+      function updateHintButton() {
+        const btn = document.getElementById('hintBtn');
+        if (!btn) return;
+        const can = (data.xp || 0) >= 5;
+        btn.disabled = !can;
+        btn.title = can ? 'Costs 5 XP' : 'Need 5 XP for a hint';
+        btn.style.opacity = can ? '1' : '0.7';
+      }
+
+      // ADD: XP floater helper (used by checkAnswer/showHint)
+      function fxXP(delta = 0) {
+        try {
+          const stat = document.getElementById('xp');
+          if (!stat) return;
+          const r = stat.getBoundingClientRect();
+          const el = document.createElement('div');
+          el.className = 'xp-floater' + (delta < 0 ? ' neg' : '');
+          el.textContent = (delta >= 0 ? `+${delta}` : `${delta}`) + ' XP';
+          el.style.left = (r.left + r.width / 2) + 'px';
+          el.style.top = (r.top - 2) + 'px';
+          document.body.appendChild(el);
+          setTimeout(() => el.remove(), 900);
+        } catch (_) { /* no-op */ }
+      }
+
+      // ADD: full reset handler used by the header Reset button
+      function resetAll() {
+        if (!confirm('Reset XP, progress, history, mastery, daily, challenges, badges, and stats?')) return;
+
+        // Core
+        data.xp = 0;
+        data.streak = 0;
+        data.rank = 'Novice';
+
+        // Per-strand
+        STRANDS.forEach(k => {
+          data.correct[k] = 0;
+          data.hist[k] = [];
+          data.mastered[k] = false;
+          if (data.statsWin && Array.isArray(data.statsWin[k])) data.statsWin[k] = [];
+        });
+        // reset previous bar cache
+        if (typeof _prevBarPct === 'object') STRANDS.forEach(k => _prevBarPct[k] = 0);
+
+        // Meta
+        data.badges = {};
+        data.boss = { done: false };
+        data.challenges = [];
+        data.daily = null;
+        ensureDaily();
+
+        save();
+
+        // UI refresh
+        updateHUD();
+        updateProgress();
+        paintBadges && paintBadges();
+        updateStatsUI();
+        updateEngagementUI();
+
+        // Re-apply theme preference
+        applyTheme(data.themePref || 'auto');
+
+        nextQuestion();
+      }
+      // Make available for bindings that call via window.*
+      window.resetAll = resetAll;
+
+      // Bind Reset Stats (reset current strand’s progress + stats only)
+      (function bindResetStats() {
+        const btn = document.getElementById('resetStatsBtn');
+        if (btn && !btn.dataset.bound) {
+          btn.addEventListener('click', () => {
+            const strand = data.mode || 'pemdas';
+            const label = strand.toUpperCase();
+            if (!confirm(`Reset ${label} progress and stats? (does not change XP)`)) return;
+
+            data.correct[strand] = 0;
+            data.hist[strand] = [];
+            data.mastered[strand] = false;
+            if (data.statsWin && Array.isArray(data.statsWin[strand])) data.statsWin[strand] = [];
+            if (typeof _prevBarPct === 'object') _prevBarPct[strand] = 0;
+
+            save();
+            updateProgress();
+            updateStatsUI();
+            toast(`${label} reset.`);
+            nextQuestion();
+          });
+          btn.dataset.bound = '1';
+        }
+      })();
+
+      // --- Controls ---
+      function bindControls() {
+        const submit = document.getElementById('submit');
+        const newQ = document.getElementById('newQ');
+        const hintBtn = document.getElementById('hintBtn');
+        const ans = document.getElementById('answer');
+        if (submit && !submit.dataset.bound) { submit.addEventListener('click', checkAnswer); submit.dataset.bound = '1'; }
+        if (newQ && !newQ.dataset.bound) { newQ.addEventListener('click', nextQuestion); newQ.dataset.bound = '1'; }
+        if (hintBtn && !hintBtn.dataset.bound) { hintBtn.addEventListener('click', showHint); hintBtn.dataset.bound = '1'; }
+        if (ans && !ans.dataset.bound) {
+          ans.addEventListener('keydown', e => { if (e.key === 'Enter') checkAnswer(); });
+          ans.dataset.bound = '1';
+        }
+        document.querySelectorAll('.kp, .kp-clear').forEach(btn => {
+          if (btn.dataset.bound) return;
+          btn.addEventListener('click', () => {
+            const a = document.getElementById('answer'); if (!a) return;
+            if (btn.classList.contains('kp-clear')) { a.value = ''; a.focus(); return; }
+            const ins = btn.dataset.insert || '';
+            const start = a.selectionStart ?? a.value.length;
+            const end = a.selectionEnd ?? a.value.length;
+            a.value = a.value.slice(0, start) + ins + a.value.slice(end);
+            const pos = start + ins.length;
+            a.setSelectionRange(pos, pos);
+            a.focus();
+          });
+          btn.dataset.bound = '1';
+        });
+        document.addEventListener('keydown', e => {
+          if (e.key === 'n' || e.key === 'N') nextQuestion();
+          else if (e.key === 'h' || e.key === 'H') showHint();
+        });
+
+        // Bind Reset (full app reset) – call via window to avoid ReferenceError during binding
+        const resetEl = document.getElementById('resetBtn');
+        if (resetEl && !resetEl.dataset.bound) {
+          resetEl.addEventListener('click', () => window.resetAll && window.resetAll());
+          resetEl.dataset.bound = '1';
+        }
+
+        // Make Strand Progress rows clickable to switch quests
+        bindProgressNav();
+      }
+
+      // Make Strand Progress rows clickable to switch quests
+      function bindProgressNav() {
+        try {
+          STRANDS.forEach(k => {
+            const bar = document.getElementById('bar_' + k);
+            if (!bar) return;
+            const row = bar.closest('.flex') || bar.parentElement;
+            if (!row || row.dataset.modeBound) return;
+            row.style.cursor = 'pointer';
+            row.title = 'Go to ' + k.toUpperCase();
+            row.addEventListener('click', () => {
+              const btn = document.querySelector('.navBtn[data-mode="' + k + '"]');
+              if (btn) btn.click();
+            });
+            row.dataset.modeBound = '1';
+          });
+        } catch (_) { /* no-op */ }
+      }
+
+      // --- Start ---
+      function initialStart() {
+        ensureDaily();
+        initNav();
+        initThemeSelect();
+        applyTheme(data.themePref || 'auto');
+        renderMode();
+        updateHUD();
+        updateProgress();
+        paintBadges();
+        updateStatsUI();
+        updateEngagementUI();
+        bindControls();
+        nextQuestion();
+      }
+
+      // Ensure nav click binding is active
+      initNav();
+      initialStart();
+    })();
+  </script>
+</body>
+
+</html>
