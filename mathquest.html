@@ -583,6 +583,8 @@
           id="p_logic">0/10</span></button>
       <button class="navBtn" data-mode="mod">Q7) Modulus Monastery <span class="pill mono"
           id="p_mod">0/10</span></button>
+      <!-- ADD: Mixed quest -->
+      <button class="navBtn" data-mode="mix">Q8) Mixed Gauntlet <span class="pill mono" id="p_mix">0/10</span></button>
       <div class="sectionTitle">Progress</div>
       <div class="tiny" title="Mastery is checked on a rolling window of your last 20 attempts in each strand.">
         Mastery = 90%+ over last 20, 25+ attempts total, ≤10% hints, median ≤25s, across ≥2 days.
@@ -646,6 +648,11 @@
             <div class="pill">Modulus</div>
             <div class="progress" style="flex:1"><span id="bar_mod"></span></div>
           </div>
+          <!-- ADD: Mixed progress row -->
+          <div class="flex">
+            <div class="pill">Mixed</div>
+            <div class="progress" style="flex:1"><span id="bar_mix"></span></div>
+          </div>
           <div style="margin-top:10px" class="tiny">
             When mastered, the strand pill shows “Mastered” and the bar fills. Correct = +10 XP (+2/step streak), Hint =
             −5 XP.
@@ -682,9 +689,12 @@
             <div class="legend-item"><span class="legend-sym">¬</span>
               <div>NOT <span class="legend-note">(negation)</span></div>
             </div>
+            <!-- Removed Implies from legend -->
+            <!--
             <div class="legend-item"><span class="legend-sym">→</span>
               <div>Implies <span class="legend-note">(A→B false when A=T, B=F)</span></div>
             </div>
+            -->
             <div class="legend-item"><span class="legend-sym">T / F</span>
               <div>Truth values <span class="legend-note">(type T or F)</span></div>
             </div>
@@ -692,12 +702,6 @@
             <div class="legend-item"><span class="legend-sym">mod</span>
               <div>Remainder <span class="legend-note">(e.g., 17 mod 5 = 2)</span></div>
             </div>
-            <!-- Removed congruent symbol legend -->
-            <!--
-            <div class="legend-item"><span class="legend-sym">≡ (mod n)</span>
-              <div>Congruent mod n <span class="legend-note">(same remainder)</span></div>
-            </div>
-            -->
             <div class="legend-item"><span class="legend-sym">mod n</span>
               <div>Same remainder <span class="legend-note">(e.g., 14 and 20 with mod 3)</span></div>
             </div>
@@ -855,19 +859,19 @@
       }
 
       // --- Core state (single) ---
-      const STRANDS = ['pemdas', 'integers', 'coords', 'words', 'puzzles', 'logic', 'mod']; // removed 'prob'
+      const STRANDS = ['pemdas', 'integers', 'coords', 'words', 'puzzles', 'logic', 'mod', 'mix']; // + mix
       const state = JSON.parse(localStorage.getItem('csMathQuest') || '{}');
       const data = Object.assign({
         xp: 0, streak: 0, rank: 'Novice', mode: 'pemdas',
-        correct: { pemdas: 0, integers: 0, coords: 0, words: 0, puzzles: 0, logic: 0, mod: 0 }, // removed prob
-        hist: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [] }, // removed prob
-        mastered: { pemdas: false, integers: false, coords: false, words: false, puzzles: false, logic: false, mod: false }, // removed prob
+        correct: { pemdas: 0, integers: 0, coords: 0, words: 0, puzzles: 0, logic: 0, mod: 0, mix: 0 },
+        hist: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [], mix: [] },
+        mastered: { pemdas: false, integers: false, coords: false, words: false, puzzles: false, logic: false, mod: false, mix: false },
         daily: { date: '', solved: 0, goal: 20, completed: false, rules: { minSolved: 10, minAcc: 0.80, maxHintRate: 0.10 } },
         challenges: [],
         badges: {},
         boss: { done: false },
         themePref: 'auto',
-        statsWin: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [] }, // removed prob
+        statsWin: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [], mix: [] },
         statsMode: 'hist'
       }, state);
       function ensureDataShape() {
@@ -988,32 +992,8 @@
           case 'puzzles': return 'portal';
           case 'logic': return 'workshop';
           case 'mod': return 'dungeon';
+          case 'mix': return 'portal'; // Mixed quest theme
           default: return 'space';
-        }
-      }
-
-      // ADD: theme application + selector init (enables Auto theme)
-      function applyTheme(theme) {
-        // theme can be 'auto' or a specific theme id
-        const root = document.documentElement;
-        const pref = theme || data.themePref || 'auto';
-        const resolved = (pref === 'auto') ? themeForMode(data.mode) : pref;
-        root.setAttribute('data-theme', resolved);
-        data.themePref = pref;
-        // keep the selector in sync if present
-        const sel = document.getElementById('themeSelect');
-        if (sel && sel.value !== pref) sel.value = pref;
-        save();
-      }
-      function initThemeSelect() {
-        const sel = document.getElementById('themeSelect');
-        if (!sel) return;
-        sel.value = data.themePref || 'auto';
-        if (!sel.dataset.bound) {
-          sel.addEventListener('change', () => {
-            applyTheme(sel.value || 'auto');
-          });
-          sel.dataset.bound = '1';
         }
       }
 
@@ -1021,10 +1001,10 @@
         const titles = {
           pemdas: 'Q1: Temple of PEMDAS', integers: 'Q2: Integer Ice Caves', coords: 'Q3: Quadrant Frontier',
           words: 'Q4: Wordsmith Workshop', puzzles: 'Q5: Puzzle Portal', logic: 'Q6: Circuit of Logic',
-          mod: 'Q7: Modulus Monastery', boss: 'Boss Battle: Final Gauntlet'
+          mod: 'Q7: Modulus Monastery', mix: 'Q8: Mixed Gauntlet', boss: 'Boss Battle: Final Gauntlet'
         };
         setText('#modeTitle', titles[data.mode] || 'Quest');
-        setText('#strandLabel', (data.mode || '').toUpperCase().replace('PUZZLES', 'PUZZLES'));
+        setText('#strandLabel', (data.mode || '').toUpperCase());
       }
 
       // --- Daily (stubs kept minimal; your existing robust logic can sit elsewhere) ---
@@ -1350,6 +1330,19 @@
               hint: 'They match if remainders mod m are equal.'
             };
           }
+        },
+
+        // ADD: Mixed quest pulls from any other strand
+        mix() {
+          const base = ['pemdas', 'integers', 'coords', 'words', 'puzzles', 'logic', 'mod'];
+          const pick = base[(Math.random() * base.length) | 0];
+          // call sibling generator via method dispatch
+          const g = this[pick]();
+          return {
+            q: `[${pick.toUpperCase()}] ${g.q}`,
+            ans: g.ans,
+            hint: g.hint || 'Use the right tool for the strand shown.'
+          };
         }
       };
       window.gens = gens;
