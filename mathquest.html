@@ -959,8 +959,8 @@
             setActiveNav(btn);
             data.mode = btn.dataset.mode;
             renderMode();
-            callIf(window.nextQuestion);
-            // Auto theme switches with quest
+            // FIX: Call nextQuestion directly (it's in scope)
+            nextQuestion();
             if (data.themePref === 'auto') applyTheme('auto');
             save();
           });
@@ -1080,7 +1080,7 @@
           const pick = base[(Math.random() * base.length) | 0];
           const g = this[pick]();
           return {
-            q: `[${pick.toUpperCase()}] ${g.q}`,
+            q: `[${pick.toUpperCASE()}] ${g.q}`,
             ans: g.ans,
             hint: g.hint || 'Use the right tool for the strand shown.',
             exp: g.exp || ''
@@ -1160,18 +1160,21 @@
         if (hint) { hint.textContent = ''; hint.style.display = 'none'; }
       }
       function showHint() {
-        if (!current) return;
+        console.log('Hint button clicked');  // Remove after testing
+        if (!current) { console.log('No current question'); return; }
         const hint = document.getElementById('hint');
-        if (!hint) return;
+        if (!hint) { console.log('Hint element not found'); return; }
         if (!current.hinted) {
           current.hinted = true;
           data.xp = Math.max(0, (data.xp || 0) - 5);
           data.rank = computeRank(data.xp);
           fxXP(-5);
-          updateHUD(); save();
+          updateHUD();  // This calls updateHintButton()
+          save();
         }
         hint.textContent = current.hintText;
         hint.style.display = '';
+        console.log('Hint shown:', current.hintText);  // Remove after testing
       }
       function checkAnswer() {
         const aEl = document.getElementById('answer');
@@ -1220,6 +1223,7 @@
         if (data.statsWin[current.strand].length > 120) {
           data.statsWin[current.strand] = data.statsWin[current.strand].slice(-100);
         }
+        // FIX: Force stats UI update for the current strand
         updateStatsUI();
 
         updateHUD();
@@ -1246,7 +1250,9 @@
       function applyTheme(theme) {
         const pref = theme || data.themePref || 'auto';
         const resolved = pref === 'auto' ? themeForMode(data.mode) : pref;
+        // FIX: Ensure DOM update and log for debugging
         document.documentElement.setAttribute('data-theme', resolved);
+        console.log('Applied theme:', resolved);  // Remove after testing
         data.themePref = pref;
         const sel = document.getElementById('themeSelect');
         if (sel && sel.value !== pref) sel.value = pref;
@@ -1554,36 +1560,36 @@
           ans.addEventListener('keydown', e => { if (e.key === 'Enter') checkAnswer(); });
           ans.dataset.bound = '1';
         }
-        document.querySelectorAll('.kp, .kp-clear').forEach(btn => {
-          if (btn.dataset.bound) return;
-          btn.addEventListener('click', () => {
-            const a = document.getElement('answer'); if (!a) return;
-            if (btn.classList.contains('kp-clear')) { a.value = ''; a.focus(); return; }
-            const ins = btn.dataset.insert || '';
-            const start = a.selectionStart ?? a.value.length;
-            const end = a.selectionEnd ?? a.value.length;
-            a.value = a.value.slice(0, start) + ins + a.value.slice(end);
-            const pos = start + ins.length;
-            a.setSelectionRange(pos, pos);
-            a.focus();
-          });
-          btn.dataset.bound = '1';
-        });
-        document.addEventListener('keydown', e => {
-          if (e.key === 'n' || e.key === 'N') nextQuestion();
-          else if (e.key === 'h' || e.key === 'H') showHint();
-        });
-
-        // Bind Reset (full app reset) – call via window to avoid ReferenceError during binding
-        const resetEl = document.getElementById('resetBtn');
-        if (resetEl && !resetEl.dataset.bound) {
-          resetEl.addEventListener('click', () => window.resetAll && window.resetAll());
-          resetEl.dataset.bound = '1';
-        }
-
-        // Make Strand Progress rows clickable to switch quests
-        bindProgressNav();
       }
+      document.querySelectorAll('.kp, .kp-clear').forEach(btn => {
+        if (btn.dataset.bound) return;
+        btn.addEventListener('click', () => {
+          const a = document.getElement('answer'); if (!a) return;
+          if (btn.classList.contains('kp-clear')) { a.value = ''; a.focus(); return; }
+          const ins = btn.dataset.insert || '';
+          const start = a.selectionStart ?? a.value.length;
+          const end = a.selectionEnd ?? a.value.length;
+          a.value = a.value.slice(0, start) + ins + a.value.slice(end);
+          const pos = start + ins.length;
+          a.setSelectionRange(pos, pos);
+          a.focus();
+        });
+        btn.dataset.bound = '1';
+      });
+      document.addEventListener('keydown', e => {
+        if (e.key === 'n' || e.key === 'N') nextQuestion();
+        else if (e.key === 'h' || e.key === 'H') showHint();
+      });
+
+      // Bind Reset (full app reset) – call via window to avoid ReferenceError during binding
+      const resetEl = document.getElementById('resetBtn');
+      if (resetEl && !resetEl.dataset.bound) {
+        resetEl.addEventListener('click', () => window.resetAll && window.resetAll());
+        resetEl.dataset.bound = '1';
+      }
+
+      // Make Strand Progress rows clickable to switch quests
+      bindProgressNav();
 
       // Make Strand Progress rows clickable to switch quests
       function bindProgressNav() {
