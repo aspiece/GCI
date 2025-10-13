@@ -1472,6 +1472,7 @@
             const ans = pm[0] === '+' ? pow + md : pow - md;
             return {
 
+
               q: `Rune boost: exponents first, then multiply, then ${pm[2]} → ${expr}`,
               ans,
               hint: 'Exponents before ×; then add/subtract.',
@@ -1715,7 +1716,6 @@
           ans.addEventListener('keydown', e => { if (e.key === 'Enter') checkAnswer(); });
           ans.dataset.bound = '1';
         }
-        // Keypad (include Clear)
         document.querySelectorAll('.kp, .kp-clear').forEach(btn => {
           if (btn.dataset.bound) return;
           btn.addEventListener('click', () => {
@@ -1731,14 +1731,11 @@
           });
           btn.dataset.bound = '1';
         });
-
-        // Keyboard shortcuts
         document.addEventListener('keydown', e => {
           if (e.key === 'n' || e.key === 'N') nextQuestion();
           else if (e.key === 'h' || e.key === 'H') showHint();
         });
-
-        // Progress rows clickable → switch quest
+        // Make progress rows clickable
         bindProgressNav();
       }
 
