@@ -1007,10 +1007,20 @@
         requestAnimationFrame(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; });
         setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateY(-6px)'; setTimeout(() => el.remove(), 250); }, 2000);
       }
-      function updateHUD() { setText('#xp', String(data.xp)); setText('#streak', String(data.streak)); setText('#rank', data.rank); updateHintButton(); }
-      function paintBadges() {
-        const box = document.getElementById('badges'); if (!box) return;
-        box.innerHTML = ''; Object.values(data.badges || {}).forEach(label => { const el = document.createElement('div'); el.className = 'badge'; el.innerHTML = `🏅 <span>${label}</span>`; box.appendChild(el); });
+      // ADD: XP floater helper (used by checkAnswer/showHint)
+      function fxXP(delta = 0) {
+        try {
+          const stat = document.getElementById('xp');
+          if (!stat) return;
+          const r = stat.getBoundingClientRect();
+          const el = document.createElement('div');
+          el.className = 'xp-floater' + (delta < 0 ? ' neg' : '');
+          el.textContent = (delta >= 0 ? `+${delta}` : `${delta}`) + ' XP';
+          el.style.left = (r.left + r.width / 2) + 'px';
+          el.style.top = (r.top - 2) + 'px';
+          document.body.appendChild(el);
+          setTimeout(() => el.remove(), 900);
+        } catch (_) { /* no-op */ }
       }
 
       // --- Mastery & Progress (single) ---
@@ -1471,9 +1481,6 @@
             const expr = `${c}^${e} ${pm[0]} ${b} * ${d}`;
             const ans = pm[0] === '+' ? pow + md : pow - md;
             return {
-
-
-
               q: `Rune boost: exponents first, then multiply, then ${pm[2]} → ${expr}`,
               ans,
               hint: 'Exponents before ×; then add/subtract.',
@@ -1702,6 +1709,47 @@
         }
         hint.textContent = current.hintText;
         hint.style.display = '';
+      }
+
+      // ADD: full reset handler used by the header Reset button
+      function resetAll() {
+        if (!confirm('Reset XP, progress, history, mastery, daily, challenges, badges, and stats?')) return;
+
+        // Core
+        data.xp = 0;
+        data.streak = 0;
+        data.rank = 'Novice';
+
+        // Per-strand
+        STRANDS.forEach(k => {
+          data.correct[k] = 0;
+          data.hist[k] = [];
+          data.mastered[k] = false;
+          if (data.statsWin && Array.isArray(data.statsWin[k])) data.statsWin[k] = [];
+        });
+        // reset previous bar cache
+        if (typeof _prevBarPct === 'object') STRANDS.forEach(k => _prevBarPct[k] = 0);
+
+        // Meta
+        data.badges = {};
+        data.boss = { done: false };
+        data.challenges = [];
+        data.daily = null;
+        ensureDaily();
+
+        save();
+
+        // UI refresh
+        updateHUD();
+        updateProgress();
+        paintBadges();
+        updateStatsUI();
+        updateEngagementUI();
+
+        // Re-apply theme preference
+        applyTheme(data.themePref || 'auto');
+
+        nextQuestion();
       }
 
       // --- Controls ---
