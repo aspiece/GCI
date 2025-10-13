@@ -1403,6 +1403,50 @@
       }
       bindControls();
 
+      // ADD: Reset progress button binding (guards against missing/duplicate bindings)
+      const resetEl = document.getElementById('resetBtn');
+      if (resetEl && !resetEl.dataset.bound) {
+        resetEl.addEventListener('click', () => {
+          if (!confirm('Reset XP, progress, daily goals, challenges, and stats view?')) return;
+
+          // Core progress
+          data.xp = 0;
+          data.streak = 0;
+          data.rank = 'Novice';
+
+          // Per-strand progress + history + mastery + stats window
+          STRANDS.forEach(k => {
+            data.correct[k] = 0;
+            data.hist[k] = [];
+            data.mastered[k] = false;
+            if (data.statsWin && Array.isArray(data.statsWin[k])) data.statsWin[k] = [];
+          });
+
+          // Badges and boss state
+          data.badges = {};
+          data.boss = { done: false };
+
+          // Force new Daily + Challenges
+          data.daily = null;
+          data.challenges = [];
+          ensureDaily();
+
+          // Refresh UI
+          updateHUD();
+          updateProgress();
+          paintBadges();
+          updateStatsUI();
+          updateEngagementUI();
+
+          // Keep current theme preference (re-apply if Auto)
+          if (data.themePref === 'auto') applyTheme('auto');
+
+          save();
+          nextQuestion();
+        });
+        resetEl.dataset.bound = '1';
+      }
+
       function randomizeStartMode() {
         const m = STRANDS[(Math.random() * STRANDS.length) | 0];
         data.mode = m;
