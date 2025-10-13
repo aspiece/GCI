@@ -580,6 +580,61 @@
     .qp-btn .tiny {
       color: var(--muted);
     }
+
+    /* Question correct pulse */
+    .qPulse {
+      animation: qpulse .6s ease-out;
+    }
+
+    @keyframes qpulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, .45);
+      }
+
+      100% {
+        box-shadow: 0 0 0 22px rgba(34, 197, 94, 0);
+      }
+    }
+
+    /* XP floaters */
+    .xp-floater {
+      position: fixed;
+      z-index: 9999;
+      pointer-events: none;
+      font-weight: 700;
+      color: #ffd76a;
+      text-shadow: 0 2px 8px #0008;
+      transform: translate(-50%, 0);
+      animation: floatUp .85s ease-out forwards;
+    }
+
+    .xp-floater.neg {
+      color: #f87171;
+    }
+
+    @keyframes floatUp {
+      to {
+        transform: translate(-50%, -28px);
+        opacity: 0;
+      }
+    }
+
+    /* Progress bar bump glow on increase */
+    .progress>span.bump {
+      animation: barBump .6s ease-out;
+    }
+
+    @keyframes barBump {
+      0% {
+        filter: brightness(1.3);
+        box-shadow: 0 0 0 0 var(--acc);
+      }
+
+      100% {
+        filter: none;
+        box-shadow: 0 0 0 16px transparent;
+      }
+    }
   </style>
 </head>
 
@@ -819,8 +874,44 @@
           });
         }
       }
+      // XP floating labels near the XP stat
+      function fxXP(delta = 0) {
+        try {
+          const stat = document.getElementById('xp');
+          if (!stat) return;
+          const r = stat.getBoundingClientRect();
+          const el = document.createElement('div');
+          el.className = 'xp-floater' + (delta < 0 ? ' neg' : '');
+          el.textContent = (delta >= 0 ? `+${delta}` : `${delta}`) + ' XP';
+          el.style.left = (r.left + r.width / 2) + 'px';
+          el.style.top = (r.top - 2) + 'px';
+          document.body.appendChild(el);
+          setTimeout(() => el.remove(), 900);
+        } catch { /* no-op */ }
+      }
+
+      // Light shooting stars layered over starfield
+      let shooting = [];
+      function spawnShootingStar() {
+        const y = Math.random() * H * 0.5 + 10; // upper half
+        shooting.push({
+          x: Math.random() * W * 0.6 + W * 0.2,
+          y,
+          vx: -6 - Math.random() * 3,
+          vy: 1.5 + Math.random(),
+          life: 24 + (Math.random() * 16),
+          alpha: .9
+        });
+      }
+
+      // Patch fxLoop to draw shooting stars (keeps existing stars + confetti)
+      const _fxLoop = fxLoop;
       function fxLoop() {
+        // occasional spawn
+        if (!prefersReducedMotion && Math.random() < 0.02 && shooting.length < 3) spawnShootingStar();
+
         ctx.clearRect(0, 0, W, H);
+
         // stars
         ctx.save();
         for (const st of stars) {
@@ -830,7 +921,26 @@
           st.y += st.s * 0.15; if (st.y > H + 2) { st.y = -2; st.x = Math.random() * W; }
         }
         ctx.restore();
-        // confetti
+
+        // shooting stars
+        if (!prefersReducedMotion && shooting.length) {
+          ctx.save();
+          for (let i = shooting.length - 1; i >= 0; i--) {
+            const s = shooting[i];
+            ctx.globalAlpha = Math.max(0, s.alpha);
+            ctx.strokeStyle = '#cde3ff';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(s.x, s.y);
+            ctx.lineTo(s.x + 16, s.y - 6);
+            ctx.stroke();
+            s.x += s.vx; s.y += s.vy; s.life -= 1; s.alpha -= 0.04;
+            if (s.life <= 0 || s.x < -20 || s.y > H + 20) shooting.splice(i, 1);
+          }
+          ctx.restore();
+        }
+
+        // confetti (unchanged)
         ctx.save();
         for (let i = confetti.length - 1; i >= 0; i--) {
           const p = confetti[i];
@@ -842,10 +952,12 @@
           if (p.life <= 0 || p.y > H + 20) confetti.splice(i, 1);
         }
         ctx.restore();
+
         requestAnimationFrame(fxLoop);
       }
-      const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (!prefersReducedMotion) requestAnimationFrame(fxLoop); else { const fxCanvas = document.getElementById('fx'); if (fxCanvas) fxCanvas.style.display = 'none'; }
+      // replace loop with patched one
+      if (!prefersReducedMotion) requestAnimationFrame(fxLoop);
+
       function celebrate(kind = 'correct') {
         if (prefersReducedMotion) return;
         const anchor = document.getElementById('qWrap');
@@ -949,7 +1061,13 @@
             if (bar) bar.style.width = '100%';
           } else {
             if (pill) { pill.textContent = `${data.correct[k]}/10`; pill.classList.remove('mastered'); }
-            if (bar) bar.style.width = Math.min(100, (data.correct[k] || 0) * 10) + '%';
+            const pctNum = Math.min(100, (data.correct[k] || 0) * 10);
+            if (bar) {
+              const prev = _prevBarPct[k] || 0;
+              bar.style.width = pctNum + '%';
+              if (pctNum > prev) { bar.classList.add('bump'); setTimeout(() => bar.classList.remove('bump'), 650); }
+              _prevBarPct[k] = pctNum;
+            }
           }
         });
         const total = STRANDS.reduce((s, k) => s + (data.correct[k] || 0), 0);
@@ -1047,8 +1165,10 @@
           words: 'Q4: Wordsmith Workshop', puzzles: 'Q5: Puzzle Portal', logic: 'Q6: Circuit of Logic',
           mod: 'Q7: Modulus Monastery', mix: 'Q8: Mixed Gauntlet', boss: 'Boss Battle: Final Gauntlet'
         };
+        const ICON = { pemdas: '🧮', integers: '➕', coords: '📍', words: '📝', puzzles: '🧩', logic: '🔌', mod: '🧪', mix: '🎯' };
         setText('#modeTitle', titles[data.mode] || 'Quest');
-        setText('#strandLabel', (data.mode || '').toUpperCase());
+        const lbl = document.getElementById('strandLabel');
+        if (lbl) lbl.textContent = `${ICON[data.mode] || ''} ${(data.mode || '').toUpperCase()}`;
       }
 
       // --- Daily (stubs kept minimal; your existing robust logic can sit elsewhere) ---
@@ -1538,6 +1658,11 @@
           if (data.streak === 5) { toast('⚡ Streak x5! Keep it going.'); celebrate('mastery'); }
           if (data.streak === 10) { toast('🏆 Streak x10! You’re on fire!'); celebrate('mastery'); }
 
+          // 2) Pulse the question card on correct and show XP floaters on XP changes
+          const wrap = document.getElementById('qWrap');
+          if (wrap) { wrap.classList.add('qPulse'); setTimeout(() => wrap.classList.remove('qPulse'), 600); }
+          fxXP(10);
+
           applyChallengeProgress({ correct: true, noHint: !current.hinted, strand: current.strand, ms: elapsed, streak: data.streak });
         } else {
           data.streak = 0;
@@ -1591,6 +1716,8 @@
           current.hinted = true;
           data.xp = Math.max(0, (data.xp || 0) - 5);
           data.rank = computeRank(data.xp);
+          // 3) Show XP floater when using a hint
+          fxXP(-5);
           updateHUD(); save();
         }
         hint.textContent = current.hintText;
