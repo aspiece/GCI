@@ -692,9 +692,12 @@
             <div class="legend-item"><span class="legend-sym">mod</span>
               <div>Remainder <span class="legend-note">(e.g., 17 mod 5 = 2)</span></div>
             </div>
+            <!-- Removed congruent symbol legend -->
+            <!--
             <div class="legend-item"><span class="legend-sym">≡ (mod n)</span>
               <div>Congruent mod n <span class="legend-note">(same remainder)</span></div>
             </div>
+            -->
             <div class="legend-item"><span class="legend-sym">mod n</span>
               <div>Same remainder <span class="legend-note">(e.g., 14 and 20 with mod 3)</span></div>
             </div>
@@ -1038,7 +1041,7 @@
       function ensureDaily() {
         const today = todayKey();
         if (!data.daily || data.daily.date !== today) {
-          data.daily = { date: today, solved: 0, goal: 10, completed: false, rules: { minSolved: 10, minAcc: 0.80, maxHintRate: 0.10 } };
+          data.daily = { date: today, solved: 0, goal: 20, completed: false, rules: { minSolved: 10, minAcc: 0.80, maxHintRate: 0.10 } };
           data.challenges = rollDailyChallenges();
         } else if (!Array.isArray(data.challenges) || !data.challenges.length) {
           data.challenges = rollDailyChallenges();
