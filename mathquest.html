@@ -1140,7 +1140,7 @@
             changed = true;
           }
         }
-        if (changed) { updateHUD(); save(); updateEngagementUI(); }
+        if (changed) { updateHUD(); save(); updateChallengesUI(); }  // FIX: call renamed function
       }
 
       // --- Current question + flow ---
@@ -1224,7 +1224,7 @@
 
         updateHUD();
         updateProgress();
-        updateEngagementUI();
+        updateEngagementUI();  // FIX: this was calling the overwritten function; now calls daily UI
         checkDailyCompletion();
         save();
       }
@@ -1384,7 +1384,8 @@
       }
 
       // --- Challenges ---
-      function updateEngagementUI() {
+      // RENAME: to avoid overwrite, call this updateChallengesUI
+      function updateChallengesUI() {
         const challengesEl = document.getElementById('challenges');
         if (!challengesEl) return;
         challengesEl.innerHTML = data.challenges.map(ch => {
@@ -1614,7 +1615,8 @@
         updateProgress();
         paintBadges();
         updateStatsUI();
-        updateEngagementUI();
+        updateEngagementUI();  // FIX: calls daily UI
+        updateChallengesUI();  // FIX: add call to challenges UI
         bindControls();
         nextQuestion();
       }
