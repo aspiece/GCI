@@ -1324,7 +1324,7 @@
       // --- Daily ---
       function ensureDaily() {
         const today = new Date().toDateString();
-        if (data.daily.date !== today) {
+        if (!data.daily || data.daily.date !== today) {
           data.daily = { date: today, solved: 0, goal: 20, completed: false, rules: { minSolved: 10, minAcc: 0.80, maxHintRate: 0.10 } };
           data.challenges = [
             { type: 'strand', strand: 'pemdas', target: 5, progress: 0, reward: 20, done: false },
@@ -1557,7 +1557,7 @@
         document.querySelectorAll('.kp, .kp-clear').forEach(btn => {
           if (btn.dataset.bound) return;
           btn.addEventListener('click', () => {
-            const a = document.getElementById('answer'); if (!a) return;
+            const a = document.getElement('answer'); if (!a) return;
             if (btn.classList.contains('kp-clear')) { a.value = ''; a.focus(); return; }
             const ins = btn.dataset.insert || '';
             const start = a.selectionStart ?? a.value.length;
