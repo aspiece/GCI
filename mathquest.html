@@ -986,6 +986,31 @@
         }
       }
 
+      // ADD: theme application + selector init (enables Auto theme)
+      function applyTheme(theme) {
+        // theme can be 'auto' or a specific theme id
+        const root = document.documentElement;
+        const pref = theme || data.themePref || 'auto';
+        const resolved = (pref === 'auto') ? themeForMode(data.mode) : pref;
+        root.setAttribute('data-theme', resolved);
+        data.themePref = pref;
+        // keep the selector in sync if present
+        const sel = document.getElementById('themeSelect');
+        if (sel && sel.value !== pref) sel.value = pref;
+        save();
+      }
+      function initThemeSelect() {
+        const sel = document.getElementById('themeSelect');
+        if (!sel) return;
+        sel.value = data.themePref || 'auto';
+        if (!sel.dataset.bound) {
+          sel.addEventListener('change', () => {
+            applyTheme(sel.value || 'auto');
+          });
+          sel.dataset.bound = '1';
+        }
+      }
+
       function renderMode() {
         const titles = {
           pemdas: 'Q1: Temple of PEMDAS', integers: 'Q2: Integer Ice Caves', coords: 'Q3: Quadrant Frontier',
@@ -1191,9 +1216,33 @@
         // Keep logic as-is or update to AND/OR/NOT per your earlier request
         logic() {
           const A = Math.random() < 0.5, B = Math.random() < 0.5;
-          const op = choice(['∧', '∨', '→']);
-          let ans; if (op === '∧') ans = A && B; else if (op === '∨') ans = A || B; else ans = (!A) || B;
-          return { q: `Let A=${A ? 'T' : 'F'}, B=${B ? 'T' : 'F'}. Evaluate: A ${op} B`, ans: ans ? 'T' : 'F', hint: 'A→B is false only when A=T, B=F.' };
+
+          // 25% chance to ask a unary NOT
+          if (Math.random() < 0.25) {
+            const useA = Math.random() < 0.5;
+            const val = useA ? A : B;
+            return {
+              q: `Let A=${A ? 'T' : 'F'}, B=${B ? 'T' : 'F'}. Evaluate: NOT ${useA ? 'A' : 'B'}`,
+              ans: (!val) ? 'T' : 'F',
+              hint: 'NOT flips a truth value. AND is true only if both are true; OR is true if at least one is true.'
+            };
+          }
+
+          const op = Math.random() < 0.5 ? 'AND' : 'OR';
+          const notL = Math.random() < 0.35;
+          const notR = Math.random() < 0.35;
+
+          const showA = (notL ? 'NOT ' : '') + 'A';
+          const showB = (notR ? 'NOT ' : '') + 'B';
+          const valA = notL ? !A : A;
+          const valB = notR ? !B : B;
+          const value = op === 'AND' ? (valA && valB) : (valA || valB);
+
+          return {
+            q: `Let A=${A ? 'T' : 'F'}, B=${B ? 'T' : 'F'}. Evaluate: ${showA} ${op} ${showB}`,
+            ans: value ? 'T' : 'F',
+            hint: 'AND is true only if both parts are true. OR is true if at least one part is true. NOT flips a value.'
+          };
         },
         mod() {
           const n = rnd(10, 99), m = choice([3, 4, 5, 6, 7, 8, 9]);
