@@ -695,6 +695,9 @@
             <div class="legend-item"><span class="legend-sym">≡ (mod n)</span>
               <div>Congruent mod n <span class="legend-note">(same remainder)</span></div>
             </div>
+            <div class="legend-item"><span class="legend-sym">mod n</span>
+              <div>Same remainder <span class="legend-note">(e.g., 14 and 20 with mod 3)</span></div>
+            </div>
             <div class="legend-item"><span class="legend-sym">even/odd</span>
               <div>Parity <span class="legend-note">(n mod 2)</span></div>
             </div>
@@ -1191,21 +1194,38 @@
         // PEMDAS: several expression patterns emphasizing precedence
         pemdas() {
           const a = rnd(2, 12), b = rnd(2, 9), c = rnd(1, 8), d = rnd(1, 6);
-          const pm = choice([['+', (x, y) => x + y], ['-', (x, y) => x - y]]);
+          const pm = choice([['+', (x, y) => x + y, 'plus'], ['-', (x, y) => x - y, 'minus']]);
           const pat = choice([1, 2, 3, 4]);
+
           if (pat === 1) {
             const expr = `${a} + ${b} * (${c} ${pm[0]} ${d})`;
-            return { q: `Evaluate: ${expr}`, ans: a + b * pm[1](c, d), hint: 'Parentheses → multiply → add/subtract.' };
+            return {
+              q: `Spell power: first the parentheses, then multiply, then add → ${expr}`,
+              ans: a + b * pm[1](c, d),
+              hint: 'Order: parentheses → multiply → add.'
+            };
           } else if (pat === 2) {
             const expr = `(${a} ${pm[0]} ${b}) * ${c} - ${d}`;
-            return { q: `Evaluate: ${expr}`, ans: (pm[1](a, b)) * c - d, hint: 'Work left parentheses first, then mul, then sub.' };
+            return {
+              q: `Crafting recipe: evaluate the group, then multiply, then subtract → ${expr}`,
+              ans: (pm[1](a, b)) * c - d,
+              hint: 'Evaluate () first, then ×, then −.'
+            };
           } else if (pat === 3) {
             const e = rnd(2, 5);
             const expr = `${c}^${e} ${pm[0]} ${b} * ${d}`;
-            return { q: `Evaluate: ${expr}`, ans: (c ** e) + (pm[0] === '+' ? 1 : -1) * b * d, hint: 'Exponents before multiply; then add/subtract.' };
+            return {
+              q: `Rune boost: exponents first, then multiply, then ${pm[2]} → ${expr}`,
+              ans: (c ** e) + (pm[0] === '+' ? 1 : -1) * b * d,
+              hint: 'Exponents before ×; then add/subtract.'
+            };
           } else {
             const expr = `${a} - (${b} ${pm[0]} ${c}) * ${d}`;
-            return { q: `Evaluate: ${expr}`, ans: a - pm[1](b, c) * d, hint: 'Do parentheses, multiply, then subtract.' };
+            return {
+              q: `Trap damage: work inside (), then multiply, then subtract → ${expr}`,
+              ans: a - pm[1](b, c) * d,
+              hint: 'Do () first, then ×, then −.'
+            };
           }
         },
 
@@ -1308,15 +1328,24 @@
 
         // Modulus: compute “Mod” and simple congruence checks
         mod() {
-          const kind = choice(['mod', 'cong']);
+          const kind = choice(['mod', 'sameRem']);
           if (kind === 'mod') {
             const n = rnd(10, 199), m = choice([3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
-            return { q: `Compute: ${n} Mod ${m}`, ans: n % m, hint: 'Remainder after dividing the first number by the second.' };
+            return {
+              q: `Compute: ${n} Mod ${m}`,
+              ans: n % m,
+              hint: 'Mod is the remainder after dividing the first number by the second.'
+            };
           } else {
             const m = choice([4, 5, 6, 7, 8, 9, 10, 11]);
-            const a = rnd(0, 60), b = (a + choice([-2, -1, 0, 1, 2]) * m) + choice([-1, 0, 1]); // usually same remainder, sometimes off by 1
-            const isCong = (a - b) % m === 0;
-            return { q: `Is ${a} ≡ ${b} (Mod ${m})? (answer T/F)`, ans: isCong ? 'T' : 'F', hint: 'Congruent if they have the same remainder mod m.' };
+            const a = rnd(0, 60);
+            const b = (a + choice([-2, -1, 0, 1, 2]) * m) + choice([-1, 0, 1]); // usually same remainder, sometimes off by 1
+            const same = ((a % m) + m) % m === ((b % m) + m) % m;
+            return {
+              q: `Do ${a} and ${b} leave the same remainder when divided by ${m}? (T/F)`,
+              ans: same ? 'T' : 'F',
+              hint: 'They match if remainders mod m are equal.'
+            };
           }
         }
       };
@@ -1365,6 +1394,7 @@
               break;
             }
           }
+
           if (!ch.done && ch.progress >= ch.target) {
             ch.done = true;
             const reward = ch.reward || 20;
