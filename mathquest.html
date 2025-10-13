@@ -1713,8 +1713,8 @@
           ans.addEventListener('keydown', e => { if (e.key === 'Enter') checkAnswer(); });
           ans.dataset.bound = '1';
         }
-        // Keypad
-        document.querySelectorAll('.kp').forEach(btn => {
+        // Keypad (include Clear)
+        document.querySelectorAll('.kp, .kp-clear').forEach(btn => {
           if (btn.dataset.bound) return;
           btn.addEventListener('click', () => {
             const a = document.getElementById('answer'); if (!a) return;
@@ -1738,47 +1738,6 @@
 
         // Progress rows clickable → switch quest
         bindProgressNav();
-
-        // FIX: bind Reset progress button
-        const resetEl = document.getElementById('resetBtn');
-        if (resetEl && !resetEl.dataset.bound) {
-          resetEl.addEventListener('click', () => {
-            if (!confirm('Reset XP, progress, daily goals, challenges, and stats view?')) return;
-
-            // Core
-            data.xp = 0;
-            data.streak = 0;
-            data.rank = 'Novice';
-
-            // Per-strand
-            STRANDS.forEach(k => {
-              data.correct[k] = 0;
-              data.hist[k] = [];
-              data.mastered[k] = false;
-              if (data.statsWin && Array.isArray(data.statsWin[k])) data.statsWin[k] = [];
-            });
-
-            // Meta
-            data.badges = {};
-            data.boss = { done: false };
-            data.daily = null;
-            data.challenges = [];
-            ensureDaily();
-
-            save();
-            updateStatsUI();
-            updateHUD();
-            updateProgress();
-            paintBadges();
-            updateEngagementUI();
-
-            // Re-apply theme
-            applyTheme(data.themePref || 'auto');
-
-            nextQuestion();
-          });
-          resetEl.dataset.bound = '1';
-        }
       }
 
       // --- Initial setup ---
