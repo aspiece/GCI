@@ -1226,40 +1226,53 @@
         return { n: s < 0 ? -n : n, d };
       }
       const gens = {
-        // PEMDAS: several expression patterns emphasizing precedence
+        // PEMDAS with creative prompt + explanation
         pemdas() {
           const a = rnd(2, 12), b = rnd(2, 9), c = rnd(1, 8), d = rnd(1, 6);
           const pm = choice([['+', (x, y) => x + y, 'plus'], ['-', (x, y) => x - y, 'minus']]);
           const pat = choice([1, 2, 3, 4]);
 
           if (pat === 1) {
+            const inside = pm[1](c, d);
+            const mult = b * inside;
             const expr = `${a} + ${b} * (${c} ${pm[0]} ${d})`;
             return {
               q: `Spell power: first the parentheses, then multiply, then add → ${expr}`,
-              ans: a + b * pm[1](c, d),
-              hint: 'Order: parentheses → multiply → add.'
+              ans: a + mult,
+              hint: 'Order: parentheses → multiply → add.',
+              exp: `(${c} ${pm[0]} ${d}) = ${inside}; then ${b} * ${inside} = ${mult}; finally ${a} + ${mult} = ${a + mult}.`
             };
           } else if (pat === 2) {
+            const grp = pm[1](a, b);
+            const prod = grp * c;
             const expr = `(${a} ${pm[0]} ${b}) * ${c} - ${d}`;
             return {
               q: `Crafting recipe: evaluate the group, then multiply, then subtract → ${expr}`,
-              ans: (pm[1](a, b)) * c - d,
-              hint: 'Evaluate () first, then ×, then −.'
+              ans: prod - d,
+              hint: 'Evaluate () first, then ×, then −.',
+              exp: `(${a} ${pm[0]} ${b}) = ${grp}; ${grp} * ${c} = ${prod}; ${prod} - ${d} = ${prod - d}.`
             };
           } else if (pat === 3) {
             const e = rnd(2, 5);
+            const pow = c ** e;
+            const md = b * d;
             const expr = `${c}^${e} ${pm[0]} ${b} * ${d}`;
+            const ans = pm[0] === '+' ? pow + md : pow - md;
             return {
               q: `Rune boost: exponents first, then multiply, then ${pm[2]} → ${expr}`,
-              ans: (c ** e) + (pm[0] === '+' ? 1 : -1) * b * d,
-              hint: 'Exponents before ×; then add/subtract.'
+              ans,
+              hint: 'Exponents before ×; then add/subtract.',
+              exp: `${c}^${e} = ${pow}; ${b} * ${d} = ${md}; ${pow} ${pm[0]} ${md} = ${ans}.`
             };
           } else {
+            const grp = pm[1](b, c);
+            const prod = grp * d;
             const expr = `${a} - (${b} ${pm[0]} ${c}) * ${d}`;
             return {
               q: `Trap damage: work inside (), then multiply, then subtract → ${expr}`,
-              ans: a - pm[1](b, c) * d,
-              hint: 'Do () first, then ×, then −.'
+              ans: a - prod,
+              hint: 'Do () first, then ×, then −.',
+              exp: `(${b} ${pm[0]} ${c}) = ${grp}; ${grp} * ${d} = ${prod}; ${a} - ${prod} = ${a - prod}.`
             };
           }
         },
@@ -1336,21 +1349,86 @@
           return { q: `Sequence: ${t1}, ${t2}, ${t3}, ${t4}, … What is the next term?`, ans: t4 * r, hint: `Geometric: multiply by r = ${r}.` };
         },
 
-        // Logic: AND / OR / NOT with optional negations and grouping
+        // PEMDAS: several expression patterns emphasizing precedence
+        pemdas() {
+          const a = rnd(2, 12), b = rnd(2, 9), c = rnd(1, 8), d = rnd(1, 6);
+          const pm = choice([['+', (x, y) => x + y, 'plus'], ['-', (x, y) => x - y, 'minus']]);
+          const pat = choice([1, 2, 3, 4]);
+
+          if (pat === 1) {
+            const inside = pm[1](c, d);
+            const mult = b * inside;
+            const expr = `${a} + ${b} * (${c} ${pm[0]} ${d})`;
+            return {
+              q: `Spell power: first the parentheses, then multiply, then add → ${expr}`,
+              ans: a + mult,
+              hint: 'Order: parentheses → multiply → add.',
+              exp: `(${c} ${pm[0]} ${d}) = ${inside}; then ${b} * ${inside} = ${mult}; finally ${a} + ${mult} = ${a + mult}.`
+            };
+          } else if (pat === 2) {
+            const grp = pm[1](a, b);
+            const prod = grp * c;
+            const expr = `(${a} ${pm[0]} ${b}) * ${c} - ${d}`;
+            return {
+              q: `Crafting recipe: evaluate the group, then multiply, then subtract → ${expr}`,
+              ans: prod - d,
+              hint: 'Evaluate () first, then ×, then −.',
+              exp: `(${a} ${pm[0]} ${b}) = ${grp}; ${grp} * ${c} = ${prod}; ${prod} - ${d} = ${prod - d}.`
+            };
+          } else if (pat === 3) {
+            const e = rnd(2, 5);
+            const pow = c ** e;
+            const md = b * d;
+            const expr = `${c}^${e} ${pm[0]} ${b} * ${d}`;
+            const ans = pm[0] === '+' ? pow + md : pow - md;
+            return {
+              q: `Rune boost: exponents first, then multiply, then ${pm[2]} → ${expr}`,
+              ans,
+              hint: 'Exponents before ×; then add/subtract.',
+              exp: `${c}^${e} = ${pow}; ${b} * ${d} = ${md}; ${pow} ${pm[0]} ${md} = ${ans}.`
+            };
+          } else {
+            const grp = pm[1](b, c);
+            const prod = grp * d;
+            const expr = `${a} - (${b} ${pm[0]} ${c}) * ${d}`;
+            return {
+              q: `Trap damage: work inside (), then multiply, then subtract → ${expr}`,
+              ans: a - prod,
+              hint: 'Do () first, then ×, then −.',
+              exp: `(${b} ${pm[0]} ${c}) = ${grp}; ${grp} * ${d} = ${prod}; ${a} - ${prod} = ${a - prod}.`
+            };
+          }
+        },
+
+        // Logic: AND / OR / NOT with explanation
         logic() {
           const A = Math.random() < 0.5, B = Math.random() < 0.5;
+
           // 25% unary NOT
           if (Math.random() < 0.25) {
             const useA = Math.random() < 0.5; const val = useA ? A : B;
-            return { q: `Let A=${A ? 'T' : 'F'}, B=${B ? 'T' : 'F'}. Evaluate: NOT ${useA ? 'A' : 'B'}`, ans: (!val) ? 'T' : 'F', hint: 'NOT flips a truth value.' };
+            return {
+              q: `Let A=${A ? 'T' : 'F'}, B=${B ? 'T' : 'F'}. Evaluate: NOT ${useA ? 'A' : 'B'}`,
+              ans: (!val) ? 'T' : 'F',
+              hint: 'NOT flips a truth value.',
+              exp: `${useA ? 'A' : 'B'} is ${val ? 'T' : 'F'} ⇒ NOT ${useA ? 'A' : 'B'} is ${!val ? 'T' : 'F'}.`
+            };
           }
-          // 25% grouped NOT (De Morgan)
+
+          // 25% grouped NOT
           if (Math.random() < 0.25) {
             const op = choice(['AND', 'OR']);
-            const value = !(op === 'AND' ? (A && B) : (A || B));
-            return { q: `Let A=${A ? 'T' : 'F'}, B=${B ? 'T' : 'F'}. Evaluate: NOT (A ${op} B)`, ans: value ? 'T' : 'F', hint: 'NOT applies to the whole group.' };
+            const base = op === 'AND' ? (A && B) : (A || B);
+            const value = !base;
+            return {
+              q: `Let A=${A ? 'T' : 'F'}, B=${B ? 'T' : 'F'}. Evaluate: NOT (A ${op} B)`,
+              ans: value ? 'T' : 'F',
+              hint: 'NOT applies to the whole group.',
+              exp: `A ${op} B is ${(base ? 'T' : 'F')} ⇒ NOT(...) is ${value ? 'T' : 'F'}.`
+            };
           }
-          // Default binary with possible side NOTs
+
+          // Default binary with possible NOTs
           const op = Math.random() < 0.5 ? 'AND' : 'OR';
           const notL = Math.random() < 0.35, notR = Math.random() < 0.35;
           const showA = (notL ? 'NOT ' : '') + 'A';
@@ -1358,28 +1436,37 @@
           const valA = notL ? !A : A;
           const valB = notR ? !B : B;
           const value = op === 'AND' ? (valA && valB) : (valA || valB);
-          return { q: `Let A=${A ? 'T' : 'F'}, B=${B ? 'T' : 'F'}. Evaluate: ${showA} ${op} ${showB}`, ans: value ? 'T' : 'F', hint: 'AND true only if both true; OR true if at least one true.' };
+          return {
+            q: `Let A=${A ? 'T' : 'F'}, B=${B ? 'T' : 'F'}. Evaluate: ${showA} ${op} ${showB}`,
+            ans: value ? 'T' : 'F',
+            hint: 'AND true only if both true; OR true if at least one true.',
+            exp: `${showA}=${valA ? 'T' : 'F'}, ${showB}=${valB ? 'T' : 'F'} ⇒ ${op} gives ${value ? 'T' : 'F'}.`
+          };
         },
 
-        // Modulus: compute “Mod” and simple congruence checks
+        // Modulus: “Mod” and same-remainder check with explanation
         mod() {
           const kind = choice(['mod', 'sameRem']);
           if (kind === 'mod') {
             const n = rnd(10, 199), m = choice([3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+            const r = n % m, q = Math.floor(n / m);
             return {
               q: `Compute: ${n} Mod ${m}`,
-              ans: n % m,
-              hint: 'Mod is the remainder after dividing the first number by the second.'
+              ans: r,
+              hint: 'Remainder after dividing the first number by the second.',
+              exp: `${n} = ${q}×${m} + ${r} ⇒ remainder is ${r}.`
             };
           } else {
             const m = choice([4, 5, 6, 7, 8, 9, 10, 11]);
             const a = rnd(0, 60);
-            const b = (a + choice([-2, -1, 0, 1, 2]) * m) + choice([-1, 0, 1]); // usually same remainder, sometimes off by 1
-            const same = ((a % m) + m) % m === ((b % m) + m) % m;
+            const b = (a + choice([-2, -1, 0, 1, 2]) * m) + choice([-1, 0, 1]);
+            const ra = ((a % m) + m) % m, rb = ((b % m) + m) % m;
+            const same = ra === rb;
             return {
               q: `Do ${a} and ${b} leave the same remainder when divided by ${m}? (T/F)`,
               ans: same ? 'T' : 'F',
-              hint: 'They match if remainders mod m are equal.'
+              hint: 'They match if remainders mod m are equal.',
+              exp: `${a} mod ${m} = ${ra}, ${b} mod ${m} = ${rb} ⇒ ${same ? 'same remainders' : 'different remainders'}.`
             };
           }
         },
@@ -1387,13 +1474,24 @@
         // ADD: Mixed quest pulls from any other strand
         mix() {
           const base = ['pemdas', 'integers', 'coords', 'words', 'puzzles', 'logic', 'mod'];
-          const pick = base[(Math.random() * base.length) | 0];
-          // call sibling generator via method dispatch
+
+          // weight by recent accuracy (lower acc = higher weight)
+          const acc = k => {
+            const arr = (data.hist[k] || []).slice(-20);
+            if (!arr.length) return 0.5;
+            return arr.reduce((s, a) => s + (a.correct ? 1 : 0), 0) / arr.length;
+          };
+          const weights = base.map(k => 1 + (1 - acc(k)) * 4); // 1..5
+          const sum = weights.reduce((s, w) => s + w, 0);
+          let r = Math.random() * sum, pick = base[0];
+          for (let i = 0; i < base.length; i++) { r -= weights[i]; if (r <= 0) { pick = base[i]; break; } }
+
           const g = this[pick]();
           return {
             q: `[${pick.toUpperCase()}] ${g.q}`,
             ans: g.ans,
-            hint: g.hint || 'Use the right tool for the strand shown.'
+            hint: g.hint || 'Use the right tool for the strand shown.',
+            exp: g.exp || ''
           };
         }
       };
@@ -1425,13 +1523,11 @@
         for (const ch of data.challenges) {
           if (ch.done) continue;
 
-
-
           switch (ch.type) {
             case 'strand':
               if (correct && strand === ch.strand) { ch.progress++; changed = true; }
               break;
-
+            case 'nohint':
               if (correct && noHint) { ch.progress++; changed = true; }
               break;
             case 'speed': {
@@ -1457,8 +1553,13 @@
       function nextQuestion() {
         const strand = data.mode;
         const gen = gens[strand] || gens.pemdas;
-        const g = gen.call(gens); // bind context so mix() can call sibling generators
-        current = { strand, q: g.q, ans: g.ans, hinted: false, t0: performance.now(), hintText: g.hint || 'Try breaking it into smaller steps.' };
+        const g = gen.call(gens);
+        current = {
+          strand, q: g.q, ans: g.ans,
+          hinted: false, t0: performance.now(),
+          hintText: g.hint || 'Try breaking it into smaller steps.',
+          explain: g.exp || ''
+        };
         const qEl = document.getElementById('question');
         const aEl = document.getElementById('answer');
         const fb = document.getElementById('feedback');
@@ -1501,8 +1602,12 @@
           data.streak = 0;
           fb.textContent = `Not quite. Correct answer was: ${typeof current.ans === 'number' ? current.ans : String(current.ans)}`;
           fb.className = 'feedback bad';
-
-          // NEW: nudge if a streak just ended
+          // show explanation
+          const hint = document.getElementById('hint');
+          if (hint) {
+            hint.textContent = current.explain ? `Explanation: ${current.explain}` : 'Review the hint and try a similar one.';
+            hint.style.display = '';
+          }
           if (prevStreak >= 3) toast(`Streak of ${prevStreak} ended. You’ve got this!`);
         }
         // record attempt
@@ -1578,61 +1683,30 @@
             data.correct[k] = 0;
             data.hist[k] = [];
             data.mastered[k] = false;
-            if (data.statsWin && Array.isArray(data.statsWin[k])) data.statsWin[k] = [];
           });
-
-          // Badges and boss state
-          data.badges = {};
-          data.boss = { done: false };
-
-          // Force new Daily + Challenges
+          data.statsWin = STRANDS.reduce((o, k) => (o[k] = [], o), {});
           data.daily = null;
           data.challenges = [];
-          ensureDaily();
-
-          // Refresh UI
+          data.boss = { done: false };
+          data.badges = {};
+          save();
+          updateStatsUI();
           updateHUD();
           updateProgress();
           paintBadges();
-          updateStatsUI();
-          updateEngagementUI();
-
-          // Keep current theme preference (re-apply if Auto)
-          if (data.themePref === 'auto') applyTheme('auto');
-
-          save();
-          nextQuestion();
+          callIf(window.updateEngagementUI);
+          applyTheme(data.themePref || 'auto');
+          initThemeSelect(); // Init theme selector and apply theme (Auto resolves using current mode)
+          renderMode();
+          randomizeStartMode();
+          function initialStart() { }
+          if (btn) setActiveNav(btn);
+          const btn = document.querySelector(`.navBtn[data-mode="${m}"]`);
+          data.mode = m;
+          const m = STRANDS[(Math.random() * STRANDS.length) | 0];
+          function randomizeStartMode() { }
+          resetEl.dataset.bound = '1';
         });
-        resetEl.dataset.bound = '1';
-      }
-
-      function randomizeStartMode() {
-        const m = STRANDS[(Math.random() * STRANDS.length) | 0];
-        data.mode = m;
-        const btn = document.querySelector(`.navBtn[data-mode="${m}"]`);
-        if (btn) setActiveNav(btn);
-      }
-
-      function initialStart() {
-        randomizeStartMode();
-        renderMode();
-        // Init theme selector and apply theme (Auto resolves using current mode)
-        initThemeSelect();
-        applyTheme(data.themePref || 'auto');
-
-        updateHUD(); updateProgress(); paintBadges(); callIf(window.updateEngagementUI);
-        updateStatsUI();
-        save();
-        callIf(window.nextQuestion);
-        // Optional: validate gens if present
-        if (window.gens && typeof window.gens === 'object') {
-          try {
-            STRANDS.forEach(k => {
-              const g = window.gens[k] && window.gens[k]();
-              if (!g || typeof g.q !== 'string' || typeof g.ans === 'undefined') console.warn('Quest generator invalid:', k, g);
-            });
-          } catch (e) { console.warn('Quest validation error:', e); }
-        }
       }
 
       // Ensure nav click binding is active
