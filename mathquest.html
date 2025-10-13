@@ -1473,6 +1473,7 @@
             return {
 
 
+
               q: `Rune boost: exponents first, then multiply, then ${pm[2]} → ${expr}`,
               ans,
               hint: 'Exponents before ×; then add/subtract.',
@@ -1735,8 +1736,27 @@
           if (e.key === 'n' || e.key === 'N') nextQuestion();
           else if (e.key === 'h' || e.key === 'H') showHint();
         });
-        // Make progress rows clickable
+        // Make Strand Progress rows clickable to switch quests
         bindProgressNav();
+      }
+
+      // Make Strand Progress rows clickable to switch quests
+      function bindProgressNav() {
+        try {
+          STRANDS.forEach(k => {
+            const bar = document.getElementById('bar_' + k);
+            if (!bar) return;
+            const row = bar.closest('.flex') || bar.parentElement;
+            if (!row || row.dataset.modeBound) return;
+            row.style.cursor = 'pointer';
+            row.title = 'Go to ' + k.toUpperCase();
+            row.addEventListener('click', () => {
+              const btn = document.querySelector('.navBtn[data-mode="' + k + '"]');
+              if (btn) btn.click();
+            });
+            row.dataset.modeBound = '1';
+          });
+        } catch (_) { /* no-op */ }
       }
 
       // --- Initial setup ---
