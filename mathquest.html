@@ -651,6 +651,16 @@
               <button class="btn ghost" id="hintBtn" title="Costs 5 XP">💡 Hint</button>
               <span class="right pill" id="strandLabel">PEMDAS</span>
             </div>
+            <!-- NEW: On-screen keypad -->
+            <div id="keypad" class="flex tiny" style="gap:6px; margin-top:8px">
+              <button type="button" class="btn ghost kp" data-insert="*">×</button>
+              <button type="button" class="btn ghost kp" data-insert="/">÷</button>
+              <button type="button" class="btn ghost kp" data-insert="-">−</button>
+              <button type="button" class="btn ghost kp" data-insert="^">^</button>
+              <button type="button" class="btn ghost kp" data-insert="T">T</button>
+              <button type="button" class="btn ghost kp" data-insert="F">F</button>
+              <button type="button" class="btn ghost kp-clear" title="Clear input">Clear</button>
+            </div>
             <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
             <div class="hint" id="hint" style="display:none"></div>
           </div>
@@ -702,58 +712,40 @@
 
         <!-- NEW: Symbol Legend card -->
         <section class="card">
-          <h3>Symbol Legend</h3>
-          <div class="legend-grid">
-            <!-- Arithmetic -->
-            <div class="legend-item"><span class="legend-sym">×</span>
-              <div>Multiply <span class="legend-note">(keyboard: <span class="kbd">*</span>)</span></div>
+          <!-- Collapsible legend -->
+          <details id="legend" open>
+            <summary style="cursor:pointer; font-weight:600; list-style:none">
+              <h3 style="display:inline; margin:0">Symbol Legend</h3>
+            </summary>
+            <div class="legend-grid" style="margin-top:8px">
+              <!-- Arithmetic -->
+              <div class="legend-item"><span class="legend-sym">×</span>
+                <div>Multiply <span class="legend-note">(keyboard: <span class="kbd">*</span>)</span></div>
+              </div>
+              <div class="legend-item"><span class="legend-sym">÷</span>
+                <div>Divide <span class="legend-note">(keyboard: <span class="kbd">/</span>)</span></div>
+              </div>
+              <div class="legend-item"><span class="legend-sym">−</span>
+                <div>Subtract <span class="legend-note">(keyboard: <span class="kbd">-</span>)</span></div>
+              </div>
+              <div class="legend-item"><span class="legend-sym">^</span>
+                <div>Exponent <span class="legend-note">(e.g., 2^3 = 8)</span></div>
+              </div>
+              <div class="legend-item"><span class="legend-sym">|x|</span>
+                <div>Absolute value</div>
+              </div>
+              <div class="legend-item"><span class="legend-sym">T / F</span>
+                <div>Truth values <span class="legend-note">(type T or F)</span></div>
+              </div>
+              <div class="legend-item"><span class="legend-sym">mod</span>
+                <div>Remainder <span class="legend-note">(e.g., 17 mod 5 = 2)</span></div>
+              </div>
             </div>
-            <div class="legend-item"><span class="legend-sym">÷</span>
-              <div>Divide <span class="legend-note">(keyboard: <span class="kbd">/</span>)</span></div>
+            <div class="tiny" style="margin-top:8px;">
+              Tip: Answers can be numbers, T/F, or simplified fractions (a/b). Use <span class="kbd">*</span>, <span
+                class="kbd">/</span>, <span class="kbd">-</span>, and <span class="kbd">^</span>.
             </div>
-            <div class="legend-item"><span class="legend-sym">−</span>
-              <div>Subtract <span class="legend-note">(keyboard: <span class="kbd">-</span>)</span></div>
-            </div>
-            <div class="legend-item"><span class="legend-sym">^</span>
-              <div>Exponent <span class="legend-note">(e.g., 2^3 = 8)</span></div>
-            </div>
-            <div class="legend-item"><span class="legend-sym">|x|</span>
-              <div>Absolute value</div>
-            </div>
-
-            <!-- Removed unused logic symbols (problems use words AND/OR/NOT) -->
-            <!--
-            <div class="legend-item"><span class="legend-sym">∧</span><div>AND</div></div>
-            <div class="legend-item"><span class="legend-sym">∨</span><div>OR</div></div>
-            <div class="legend-item"><span class="legend-sym">¬</span><div>NOT</div></div>
-            -->
-
-            <div class="legend-item"><span class="legend-sym">T / F</span>
-              <div>Truth values <span class="legend-note">(type T or F)</span></div>
-            </div>
-
-            <!-- Modulus -->
-            <div class="legend-item"><span class="legend-sym">mod</span>
-              <div>Remainder <span class="legend-note">(e.g., 17 mod 5 = 2)</span></div>
-            </div>
-
-            <!-- Removed unused "mod n" and parity entries -->
-            <!--
-            <div class="legend-item"><span class="legend-sym">mod n</span>
-              <div>Same remainder</div>
-            </div>
-            <div class="legend-item"><span class="legend-sym">even/odd</span>
-              <div>Parity</div>
-            </div>
-            -->
-
-            <!-- Probability legend already removed -->
-          </div>
-          <div class="tiny" style="margin-top:8px;">
-            Tip: Answers can be numbers, T/F, or simplified fractions (a/b). Use keyboard symbols like <span
-              class="kbd">*</span>, <span class="kbd">/</span>, <span class="kbd">-</span>, and <span
-              class="kbd">^</span>.
-          </div>
+          </details>
         </section>
 
         <!-- NEW: Daily Goal -->
@@ -928,7 +920,7 @@
         requestAnimationFrame(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; });
         setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateY(-6px)'; setTimeout(() => el.remove(), 250); }, 2000);
       }
-      function updateHUD() { setText('#xp', String(data.xp)); setText('#streak', String(data.streak)); setText('#rank', data.rank); }
+      function updateHUD() { setText('#xp', String(data.xp)); setText('#streak', String(data.streak)); setText('#rank', data.rank); updateHintButton(); }
       function paintBadges() {
         const box = document.getElementById('badges'); if (!box) return;
         box.innerHTML = ''; Object.values(data.badges || {}).forEach(label => { const el = document.createElement('div'); el.className = 'badge'; el.innerHTML = `🏅 <span>${label}</span>`; box.appendChild(el); });
@@ -1442,57 +1434,6 @@
             hint: 'AND true only if both true; OR true if at least one true.',
             exp: `${showA}=${valA ? 'T' : 'F'}, ${showB}=${valB ? 'T' : 'F'} ⇒ ${op} gives ${value ? 'T' : 'F'}.`
           };
-        },
-
-        // Modulus: “Mod” and same-remainder check with explanation
-        mod() {
-          const kind = choice(['mod', 'sameRem']);
-          if (kind === 'mod') {
-            const n = rnd(10, 199), m = choice([3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
-            const r = n % m, q = Math.floor(n / m);
-            return {
-              q: `Compute: ${n} Mod ${m}`,
-              ans: r,
-              hint: 'Remainder after dividing the first number by the second.',
-              exp: `${n} = ${q}×${m} + ${r} ⇒ remainder is ${r}.`
-            };
-          } else {
-            const m = choice([4, 5, 6, 7, 8, 9, 10, 11]);
-            const a = rnd(0, 60);
-            const b = (a + choice([-2, -1, 0, 1, 2]) * m) + choice([-1, 0, 1]);
-            const ra = ((a % m) + m) % m, rb = ((b % m) + m) % m;
-            const same = ra === rb;
-            return {
-              q: `Do ${a} and ${b} leave the same remainder when divided by ${m}? (T/F)`,
-              ans: same ? 'T' : 'F',
-              hint: 'They match if remainders mod m are equal.',
-              exp: `${a} mod ${m} = ${ra}, ${b} mod ${m} = ${rb} ⇒ ${same ? 'same remainders' : 'different remainders'}.`
-            };
-          }
-        },
-
-        // ADD: Mixed quest pulls from any other strand
-        mix() {
-          const base = ['pemdas', 'integers', 'coords', 'words', 'puzzles', 'logic', 'mod'];
-
-          // weight by recent accuracy (lower acc = higher weight)
-          const acc = k => {
-            const arr = (data.hist[k] || []).slice(-20);
-            if (!arr.length) return 0.5;
-            return arr.reduce((s, a) => s + (a.correct ? 1 : 0), 0) / arr.length;
-          };
-          const weights = base.map(k => 1 + (1 - acc(k)) * 4); // 1..5
-          const sum = weights.reduce((s, w) => s + w, 0);
-          let r = Math.random() * sum, pick = base[0];
-          for (let i = 0; i < base.length; i++) { r -= weights[i]; if (r <= 0) { pick = base[i]; break; } }
-
-          const g = this[pick]();
-          return {
-            q: `[${pick.toUpperCase()}] ${g.q}`,
-            ans: g.ans,
-            hint: g.hint || 'Use the right tool for the strand shown.',
-            exp: g.exp || ''
-          };
         }
       };
       window.gens = gens;
@@ -1565,7 +1506,7 @@
         const fb = document.getElementById('feedback');
         const hint = document.getElementById('hint');
         if (qEl) qEl.textContent = g.q;
-        if (aEl) aEl.value = '';
+        if (aEl) { aEl.value = ''; aEl.focus(); aEl.select(); }
         if (fb) { fb.textContent = ''; fb.className = 'feedback'; }
         if (hint) { hint.textContent = ''; hint.style.display = 'none'; }
       }
@@ -1632,6 +1573,16 @@
         save();
       }
 
+      // NEW: keep hint button state synced with XP
+      function updateHintButton() {
+        const btn = document.getElementById('hintBtn');
+        if (!btn) return;
+        const can = (data.xp || 0) >= 5;
+        btn.disabled = !can;
+        btn.title = can ? 'Costs 5 XP' : 'Need 5 XP for a hint';
+        btn.style.opacity = can ? '1' : '0.7';
+      }
+
       function showHint() {
         if (!current) return;
         const hint = document.getElementById('hint');
@@ -1659,54 +1610,117 @@
           ans.addEventListener('keydown', e => { if (e.key === 'Enter') checkAnswer(); });
           ans.dataset.bound = '1';
         }
-        // CHANGE: keep this listener active, not once
+        // Keypad
+        document.querySelectorAll('.kp').forEach(btn => {
+          if (btn.dataset.bound) return;
+          btn.addEventListener('click', () => {
+            const a = document.getElementById('answer'); if (!a) return;
+            if (btn.classList.contains('kp-clear')) { a.value = ''; a.focus(); return; }
+            const ins = btn.dataset.insert || '';
+            const start = a.selectionStart ?? a.value.length;
+            const end = a.selectionEnd ?? a.value.length;
+            a.value = a.value.slice(0, start) + ins + a.value.slice(end);
+            const pos = start + ins.length;
+            a.setSelectionRange(pos, pos);
+            a.focus();
+          });
+          btn.dataset.bound = '1';
+        });
+
+        // Keyboard shortcuts
         document.addEventListener('keydown', e => {
           if (e.key === 'n' || e.key === 'N') nextQuestion();
           else if (e.key === 'h' || e.key === 'H') showHint();
         });
+
+        // Progress rows clickable → switch quest
+        bindProgressNav();
       }
-      bindControls();
 
-      // ADD: Reset progress button binding (guards against missing/duplicate bindings)
-      const resetEl = document.getElementById('resetBtn');
-      if (resetEl && !resetEl.dataset.bound) {
-        resetEl.addEventListener('click', () => {
-          if (!confirm('Reset XP, progress, daily goals, challenges, and stats view?')) return;
-
-          // Core progress
-          data.xp = 0;
-          data.streak = 0;
-          data.rank = 'Novice';
-
-          // Per-strand progress + history + mastery + stats window
-          STRANDS.forEach(k => {
-            data.correct[k] = 0;
-            data.hist[k] = [];
-            data.mastered[k] = false;
+      // NEW: make progress rows clickable
+      function bindProgressNav() {
+        STRANDS.forEach(k => {
+          const bar = document.getElementById('bar_' + k);
+          if (!bar) return;
+          const row = bar.closest('.flex');
+          if (!row || row.dataset.modeBound) return;
+          row.style.cursor = 'pointer';
+          row.title = 'Go to ' + k.toUpperCase();
+          row.addEventListener('click', () => {
+            const btn = document.querySelector('.navBtn[data-mode="' + k + '"]');
+            if (btn) btn.click();
           });
-          data.statsWin = STRANDS.reduce((o, k) => (o[k] = [], o), {});
-          data.daily = null;
-          data.challenges = [];
-          data.boss = { done: false };
-          data.badges = {};
-          save();
-          updateStatsUI();
-          updateHUD();
-          updateProgress();
-          paintBadges();
-          callIf(window.updateEngagementUI);
-          applyTheme(data.themePref || 'auto');
-          initThemeSelect(); // Init theme selector and apply theme (Auto resolves using current mode)
-          renderMode();
-          randomizeStartMode();
-          function initialStart() { }
-          if (btn) setActiveNav(btn);
-          const btn = document.querySelector(`.navBtn[data-mode="${m}"]`);
-          data.mode = m;
-          const m = STRANDS[(Math.random() * STRANDS.length) | 0];
-          function randomizeStartMode() { }
-          resetEl.dataset.bound = '1';
+          row.dataset.modeBound = '1';
         });
+      }
+
+      // --- Initial setup ---
+      function init() {
+        // --- Auto theme switcher (based on time of day) ---
+        function autoTheme() {
+          const hour = new Date().getHours();
+          let theme = 'space';
+          if (hour >= 6 && hour < 12) theme = 'ice'; // morning
+          else if (hour >= 12 && hour < 18) theme = 'space'; // noon
+          else if (hour >= 18 && hour < 21) theme = 'jungle'; // evening
+          else theme = 'dungeon'; // night
+          applyTheme(theme);
+        }
+        // --- On first visit: random quest + theme, else continue previous ---
+        const isFirstVisit = !state || !state.xp;
+        if (isFirstVisit) {
+          // randomize theme + quest
+          const randTheme = () => { const themes = ['space', 'ice', 'jungle', 'dungeon', 'workshop', 'portal']; return themes[Math.floor(Math.random() * themes.length)]; };
+          const randQuest = () => { const quests = STRANDS; return quests[Math.floor(Math.random() * quests.length)]; };
+          data.mode = randQuest();
+          applyTheme(randTheme());
+          // ensure data shape
+          ensureDataShape();
+          save();
+        } else {
+          // continue where you left off
+          data.mode = state.mode || 'pemdas';
+          applyTheme(data.themePref);
+        }
+        updateHUD();
+        renderMode();
+        updateProgress();
+        paintBadges();
+        ensureDaily();
+        updateEngagementUI();
+        // --- Daily goal logic (set up on first visit) ---
+        if (isFirstVisit) {
+          const today = todayKey();
+          data.daily = { date: today, solved: 0, goal: 20, completed: false, rules: { minSolved: 10, minAcc: 0.80, maxHintRate: 0.10 } };
+          data.challenges = rollDailyChallenges();
+          save();
+        }
+        // --- Auto apply theme (if set to auto) ---
+        if (data.themePref === 'auto') autoTheme();
+        // --- Initial nav binding (ensures active quest is selected) ---
+        initNav();
+        const activeBtn = document.querySelector('.navBtn.active');
+        if (activeBtn) setActiveNav(activeBtn);
+        // --- Focus feature removed: initial focus no longer needed ---
+        // const initialFocus = document.getElementById('main');
+        // if (initialFocus) initialFocus.tabIndex = -1;
+        // --- FX: starfield + confetti (single instance) ---
+        const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!prefersReducedMotion) requestAnimationFrame(fxLoop); else { const fxCanvas = document.getElementById('fx'); if (fxCanvas) fxCanvas.style.display = 'none'; }
+      }
+      function initialStart() {
+        ensureDaily();
+        initNav();
+        initThemeSelect();
+        applyTheme(data.themePref || 'auto');
+        renderMode();
+        updateHUD();
+        updateProgress();
+        paintBadges();
+        updateStatsUI();
+        updateEngagementUI();
+        bindControls();
+        nextQuestion();
       }
 
       // Ensure nav click binding is active
