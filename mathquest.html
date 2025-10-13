@@ -997,6 +997,26 @@
         }
       }
 
+      // ADD: theme application + selector init (enables Auto theme)
+      function applyTheme(theme) {
+        const pref = theme || data.themePref || 'auto';
+        const resolved = pref === 'auto' ? themeForMode(data.mode) : pref;
+        document.documentElement.setAttribute('data-theme', resolved);
+        data.themePref = pref;
+        const sel = document.getElementById('themeSelect');
+        if (sel && sel.value !== pref) sel.value = pref;
+        save();
+      }
+      function initThemeSelect() {
+        const sel = document.getElementById('themeSelect');
+        if (!sel) return;
+        sel.value = data.themePref || 'auto';
+        if (!sel.dataset.bound) {
+          sel.addEventListener('change', () => applyTheme(sel.value || 'auto'));
+          sel.dataset.bound = '1';
+        }
+      }
+
       function renderMode() {
         const titles = {
           pemdas: 'Q1: Temple of PEMDAS', integers: 'Q2: Integer Ice Caves', coords: 'Q3: Quadrant Frontier',
@@ -1372,6 +1392,9 @@
         let changed = false;
         for (const ch of data.challenges) {
           if (ch.done) continue;
+
+
+
           switch (ch.type) {
             case 'strand':
               if (correct && strand === ch.strand) { ch.progress++; changed = true; }
@@ -1407,7 +1430,7 @@
       function nextQuestion() {
         const strand = data.mode;
         const gen = gens[strand] || gens.pemdas;
-        const g = gen();
+        const g = gen.call(gens); // bind context so mix() can call sibling generators
         current = { strand, q: g.q, ans: g.ans, hinted: false, t0: performance.now(), hintText: g.hint || 'Try breaking it into smaller steps.' };
         const qEl = document.getElementById('question');
         const aEl = document.getElementById('answer');
