@@ -20,75 +20,121 @@
 
     /* THEMES */
     [data-theme="space"] {
-      --bg: #0b1020;
-      --panel: #121935;
-      --panel2: #0e1530;
-      --acc: #6cf;
-      --acc2: #9f6cff;
-      --good: #2ecc71;
-      --bad: #e74c3c;
-      --text: #e6ecff;
-      --muted: #9fb0d7;
+      --bg: #0a0f1f;
+      --panel: #111936;
+      --panel2: #0c1430;
+      --acc: #60a5fa;
+      /* blue-400 */
+      --acc2: #a78bfa;
+      /* violet-400 */
+      --good: #22c55e;
+      /* green-500 */
+      --bad: #ef4444;
+      /* red-500 */
+      --text: #f8fafc;
+      /* slate-50 */
+      --muted: #cbd5e1;
+      /* slate-300 */
     }
 
     [data-theme="ice"] {
-      --bg: #0a1224;
-      --panel: #0f1a3a;
-      --panel2: #0b1f47;
-      --acc: #77d9ff;
-      --acc2: #b3ecff;
-      --good: #5ce6b8;
-      --bad: #ff6b6b;
-      --text: #eef7ff;
-      --muted: #b7d2ea;
+      --bg: #0a1326;
+      --panel: #0e1a3d;
+      --panel2: #0a1f4a;
+      --acc: #7dd3fc;
+      /* sky-300 */
+      --acc2: #c7d2fe;
+      /* indigo-200 */
+      --good: #34d399;
+      /* emerald-400 */
+      --bad: #f87171;
+      /* red-400 */
+      --text: #f1f5f9;
+      /* slate-100 */
+      --muted: #d1e9ff;
+      /* light cyan */
     }
 
     [data-theme="jungle"] {
-      --bg: #0b140d;
-      --panel: #0f2616;
-      --panel2: #0c331f;
-      --acc: #5de38a;
-      --acc2: #9cff6c;
-      --good: #4de07a;
-      --bad: #ff6b6b;
-      --text: #e8ffe8;
-      --muted: #a7d7b1;
+      --bg: #0a140c;
+      --panel: #0e2616;
+      --panel2: #0a331f;
+      --acc: #86efac;
+      /* green-300 */
+      --acc2: #4ade80;
+      /* green-400 */
+      --good: #16a34a;
+      /* green-600 */
+      --bad: #f97316;
+      /* orange-500 for better CB distinction */
+      --text: #ecfdf5;
+      /* emerald-50 */
+      --muted: #b7e4c7;
+      /* mint */
     }
 
     [data-theme="dungeon"] {
       --bg: #0e0c09;
       --panel: #171208;
       --panel2: #241a0b;
-      --acc: #ffcf67;
-      --acc2: #ffd76a;
-      --good: #8be881;
-      --bad: #ff6b6b;
-      --text: #fff5e2;
-      --muted: #d7c7a0;
+      --acc: #fbbf24;
+      /* amber-400 */
+      --acc2: #f59e0b;
+      /* amber-500 */
+      --good: #22c55e;
+      /* green-500 */
+      --bad: #ef4444;
+      /* red-500 */
+      --text: #fff7ed;
+      /* orange-50 */
+      --muted: #f5deb3;
+      /* warm sand */
     }
 
     [data-theme="workshop"] {
       --bg: #140f0a;
       --panel: #1b140e;
       --panel2: #231a12;
-      --acc: #ffad66;
-      --acc2: #ffd180;
-      --good: #8be881;
-      --bad: #ff7d7d;
-      --text: #fff0e0;
-      --muted: #d7c0a7;
+      --acc: #f59e0b;
+      /* amber-500 */
+      --acc2: #f97316;
+      /* orange-500 */
+      --good: #22c55e;
+      /* green-500 */
+      --bad: #ef4444;
+      /* red-500 */
+      --text: #fff1e6;
+      --muted: #e2c8b5;
     }
 
     [data-theme="portal"] {
-      --bg: #120a18;
-      --panel: #1b0f2a;
-      --panel2: #2a1342;
-      --acc: #9f6cff;
-      --acc2: #ff6cd9;
-      --good: #78f0c8;
-      --bad: #ff6b9e;
-      --text: #f6eaff;
-      --muted: #c9b3e0;
+      --bg: #130a19;
+      --panel: #1b1030;
+      --panel2: #2b1550;
+      --acc: #a78bfa;
+      /* violet-400 */
+      --acc2: #f472b6;
+      /* pink-400 */
+      --good: #10b981;
+      /* emerald-500 */
+      --bad: #f43f5e;
+      /* rose-500 */
+      --text: #f5f3ff;
+      /* violet-50 */
+      --muted: #d6bcfa;
+      /* violet-200 */
+    }
+
+    /* Improve meter contrast */
+    .meter>span {
+      background: linear-gradient(90deg, #16a34a, #2563eb);
+      /* green-600 → blue-600 */
+    }
+
+    /* Stronger focus outline for clarity */
+    :focus-visible {
+      outline: 3px solid var(--acc);
+      outline-offset: 3px;
     }
 
     * {
@@ -485,11 +531,6 @@
 
     .skip-link:focus {
       top: 8px;
-    }
-
-    :focus-visible {
-      outline: 3px solid var(--acc);
-      outline-offset: 2px;
     }
 
     /* Quest Picker modal */
@@ -1390,12 +1431,7 @@
             case 'strand':
               if (correct && strand === ch.strand) { ch.progress++; changed = true; }
               break;
-            case 'streak': {
-              const prog = Math.min(streak, ch.target);
-              if (prog > (ch.progress || 0)) { ch.progress = prog; changed = true; }
-              break;
-            }
-            case 'nohint':
+
               if (correct && noHint) { ch.progress++; changed = true; }
               break;
             case 'speed': {
@@ -1440,6 +1476,10 @@
         if (!current || !aEl || !fb) return;
         const user = aEl.value;
         const elapsed = performance.now() - current.t0;
+
+        // capture streak before updating
+        const prevStreak = data.streak || 0;
+
         const correct = eqAns(user, current.ans);
         if (correct) {
           data.xp += 10;
@@ -1447,14 +1487,23 @@
           data.rank = computeRank(data.xp);
           data.correct[current.strand] = (data.correct[current.strand] || 0) + 1;
           data.daily.solved = (data.daily.solved || 0) + 1;
-          fb.textContent = 'Correct! +' + (current.hinted ? ' (with hint)' : '');
+          fb.textContent = 'Correct! ' + (current.hinted ? '(with hint)' : '');
           fb.className = 'feedback good';
           celebrate('correct');
+
+          // NEW: simple streak encouragement
+          if (data.streak === 3) toast('🔥 Streak x3! Nice flow.');
+          if (data.streak === 5) { toast('⚡ Streak x5! Keep it going.'); celebrate('mastery'); }
+          if (data.streak === 10) { toast('🏆 Streak x10! You’re on fire!'); celebrate('mastery'); }
+
           applyChallengeProgress({ correct: true, noHint: !current.hinted, strand: current.strand, ms: elapsed, streak: data.streak });
         } else {
           data.streak = 0;
           fb.textContent = `Not quite. Correct answer was: ${typeof current.ans === 'number' ? current.ans : String(current.ans)}`;
           fb.className = 'feedback bad';
+
+          // NEW: nudge if a streak just ended
+          if (prevStreak >= 3) toast(`Streak of ${prevStreak} ended. You’ve got this!`);
         }
         // record attempt
         (data.hist[current.strand] = data.hist[current.strand] || []).push({
@@ -1474,7 +1523,7 @@
         updateHUD();
         updateProgress();
         updateEngagementUI();
-        checkDailyCompletion(); // added
+        checkDailyCompletion();
         save();
       }
 
