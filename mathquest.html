@@ -1059,8 +1059,8 @@
       // --- Strand Stats (recent 20 attempts per strand) ---
       function msToStr(ms) { if (!ms) return '—'; const s = ms / 1000; return s < 1 ? s.toFixed(2) + 's' : s.toFixed(1) + 's'; }
       function calcStats(strand) {
-        // prefer statsWin window; fallback to hist
-        const src = (data.statsWin && data.statsWin[strand] && data.statsWin[strand].length ? data.statsWin[strand] : data.hist[strand]) || [];
+        // USE ONLY the rolling stats window so Reset Stats visibly clears the UI
+        const src = (data.statsWin && Array.isArray(data.statsWin[strand])) ? data.statsWin[strand] : [];
         const arr = src.slice(-20);
         const n = arr.length;
         const acc = n ? arr.reduce((s, a) => s + (a.correct ? 1 : 0), 0) / n : 0;
@@ -1736,6 +1736,14 @@
           if (e.key === 'n' || e.key === 'N') nextQuestion();
           else if (e.key === 'h' || e.key === 'H') showHint();
         });
+
+        // Bind Reset (full app reset)
+        const resetEl = document.getElementById('resetBtn');
+        if (resetEl && !resetEl.dataset.bound) {
+          resetEl.addEventListener('click', resetAll);
+          resetEl.dataset.bound = '1';
+        }
+
         // Make Strand Progress rows clickable to switch quests
         bindProgressNav();
       }
