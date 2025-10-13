@@ -1188,67 +1188,137 @@
         return { n: s < 0 ? -n : n, d };
       }
       const gens = {
+        // PEMDAS: several expression patterns emphasizing precedence
         pemdas() {
           const a = rnd(2, 12), b = rnd(2, 9), c = rnd(1, 8), d = rnd(1, 6);
-          const ops = [['+', (x, y) => x + y], ['-', (x, y) => x - y]];
-          const [s, f] = choice(ops);
-          const expr = `${a} + ${b} * (${c} ${s} ${d})`;
-          return { q: `Evaluate: ${expr}`, ans: a + b * f(c, d), hint: 'Parentheses → multiply → add/subtract.' };
+          const pm = choice([['+', (x, y) => x + y], ['-', (x, y) => x - y]]);
+          const pat = choice([1, 2, 3, 4]);
+          if (pat === 1) {
+            const expr = `${a} + ${b} * (${c} ${pm[0]} ${d})`;
+            return { q: `Evaluate: ${expr}`, ans: a + b * pm[1](c, d), hint: 'Parentheses → multiply → add/subtract.' };
+          } else if (pat === 2) {
+            const expr = `(${a} ${pm[0]} ${b}) * ${c} - ${d}`;
+            return { q: `Evaluate: ${expr}`, ans: (pm[1](a, b)) * c - d, hint: 'Work left parentheses first, then mul, then sub.' };
+          } else if (pat === 3) {
+            const e = rnd(2, 5);
+            const expr = `${c}^${e} ${pm[0]} ${b} * ${d}`;
+            return { q: `Evaluate: ${expr}`, ans: (c ** e) + (pm[0] === '+' ? 1 : -1) * b * d, hint: 'Exponents before multiply; then add/subtract.' };
+          } else {
+            const expr = `${a} - (${b} ${pm[0]} ${c}) * ${d}`;
+            return { q: `Evaluate: ${expr}`, ans: a - pm[1](b, c) * d, hint: 'Do parentheses, multiply, then subtract.' };
+          }
         },
-        integers() {
-          const a = rnd(-20, 20), b = rnd(-20, 20), op = choice(['+', '-', '*']);
-          const ans = op === '+' ? a + b : op === '-' ? a - b : a * b;
-          return { q: `Compute: ${a} ${op} ${b}`, ans, hint: 'Negative × negative = positive.' };
-        },
-        coords() {
-          const x = rnd(-9, 9), y = rnd(-9, 9);
-          return { q: `Point P(${x}, ${y}). What is x + y?`, ans: x + y, hint: 'Add the x and y coordinates.' };
-        },
-        words() {
-          const a = rnd(3, 12), b = rnd(2, 9);
-          return { q: `Translate and compute: "the product of ${a} and ${b}, then add ${a}"`, ans: a * b + a, hint: 'Product means multiply, then add.' };
-        },
-        puzzles() {
-          const a = rnd(2, 6), d = rnd(2, 7), n = rnd(5, 8);
-          const seq = Array.from({ length: n - 1 }, (_, i) => a + i * d).join(', ');
-          return { q: `Sequence: ${seq}, … What is the ${n}th term?`, ans: a + (n - 1) * d, hint: 'aₙ = a₁ + (n−1)d.' };
-        },
-        // Keep logic as-is or update to AND/OR/NOT per your earlier request
-        logic() {
-          const A = Math.random() < 0.5, B = Math.random() < 0.5;
 
-          // 25% chance to ask a unary NOT
-          if (Math.random() < 0.25) {
-            const useA = Math.random() < 0.5;
-            const val = useA ? A : B;
+        // Integers: add, subtract, multiply, clean division, absolute value combos
+        integers() {
+          const pat = choice(['add', 'sub', 'mul', 'div', 'abs']);
+          if (pat === 'div') {
+            const q = rnd(2, 12), r = rnd(2, 10); // dividend = q*r, divisor = r → integer q
+            const dividend = q * r, divisor = r;
+            return { q: `Compute: ${dividend} ÷ ${divisor}`, ans: q, hint: 'Choose numbers that divide evenly.' };
+          }
+          if (pat === 'abs') {
+            const x = rnd(-20, 20), y = rnd(-20, 20);
+            return { q: `Compute: |${x}| + |${y}|`, ans: Math.abs(x) + Math.abs(y), hint: 'Absolute value makes numbers non‑negative.' };
+          }
+          const a = rnd(-20, 20), b = rnd(-20, 20);
+          if (pat === 'mul') return { q: `Compute: ${a} × ${b}`, ans: a * b, hint: 'Negative × negative = positive.' };
+          if (pat === 'sub') return { q: `Compute: ${a} − ${b}`, ans: a - b, hint: 'Subtracting a negative adds.' };
+          return { q: `Compute: ${a} + ${b}`, ans: a + b, hint: 'Combine signs carefully.' };
+        },
+
+        // Coordinates: linear expressions in x,y and simple integer slopes
+        coords() {
+          const kind = choice(['sum', 'diff', 'lin', 'manhattan', 'slope']);
+          if (kind === 'slope') {
+            // choose integer slope by construction
+            const x1 = rnd(-6, 4), y1 = rnd(-6, 4);
+            const dx = choice([1, 2, 3, 4, 5]);
+            const m = choice([-3, -2, -1, 1, 2, 3]); // integer slope
+            const x2 = x1 + dx, y2 = y1 + m * dx;
             return {
-              q: `Let A=${A ? 'T' : 'F'}, B=${B ? 'T' : 'F'}. Evaluate: NOT ${useA ? 'A' : 'B'}`,
-              ans: (!val) ? 'T' : 'F',
-              hint: 'NOT flips a truth value. AND is true only if both are true; OR is true if at least one is true.'
+              q: `Slope of the line through (${x1}, ${y1}) and (${x2}, ${y2})?`,
+              ans: m,
+              hint: 'Slope m = Δy/Δx; here it simplifies to an integer.'
             };
           }
+          const x = rnd(-9, 9), y = rnd(-9, 9);
+          if (kind === 'manhattan') return { q: `Manhattan distance from origin: |${x}| + |${y}|`, ans: Math.abs(x) + Math.abs(y), hint: 'Add absolute values.' };
+          if (kind === 'lin') {
+            const A = choice([2, 3, 4]), B = choice([1, 2, 3]);
+            return { q: `Evaluate: ${A}x + ${B}y for x=${x}, y=${y}`, ans: A * x + B * y, hint: 'Plug in then add.' };
+          }
+          if (kind === 'diff') return { q: `Point P(${x}, ${y}). Compute x − y`, ans: x - y, hint: 'Subtract y from x.' };
+          return { q: `Point P(${x}, ${y}). Compute x + y`, ans: x + y, hint: 'Add x and y.' };
+        },
 
+        // Word problems: translate phrases to expressions, result is numeric
+        words() {
+          const a = rnd(2, 12), b = rnd(2, 9), c = rnd(2, 6);
+          const pat = choice([1, 2, 3, 4]);
+          if (pat === 1) return { q: `Compute: double ${a} plus triple ${b}`, ans: 2 * a + 3 * b, hint: 'Double = ×2, triple = ×3.' };
+          if (pat === 2) return { q: `Compute: the product of ${a} and ${b}, then add ${c}`, ans: a * b + c, hint: 'Multiply first, then add.' };
+          if (pat === 3) return { q: `Compute: ${c} more than the square of ${a}`, ans: a * a + c, hint: 'Square then add.' };
+          return { q: `Compute: ${b} less than ${a} times ${c}`, ans: a * c - b, hint: '“Less than” reverses order: (a×c) − b.' };
+        },
+
+        // Puzzles: arithmetic/geometric sequences (next or nth term)
+        puzzles() {
+          const type = choice(['arith_next', 'arith_n', 'geom_next']);
+          if (type === 'arith_next') {
+            const a1 = rnd(2, 10), d = rnd(2, 7);
+            const t1 = a1, t2 = a1 + d, t3 = a1 + 2 * d, t4 = a1 + 3 * d;
+            return { q: `Sequence: ${t1}, ${t2}, ${t3}, ${t4}, … What is the next term?`, ans: a1 + 4 * d, hint: `Arithmetic: add d = ${d}.` };
+          }
+          if (type === 'arith_n') {
+            const a1 = rnd(2, 10), d = rnd(1, 6), n = rnd(6, 10);
+            const shown = Array.from({ length: 4 }, (_, i) => a1 + i * d).join(', ');
+            return { q: `Sequence: ${shown}, … What is the ${n}th term?`, ans: a1 + (n - 1) * d, hint: `aₙ = a₁ + (n−1)d (d=${d}).` };
+          }
+          // geometric (integer ratio)
+          const a1 = rnd(2, 6), r = choice([2, 3, -2]);
+          const t1 = a1, t2 = a1 * r, t3 = t2 * r, t4 = t3 * r;
+          return { q: `Sequence: ${t1}, ${t2}, ${t3}, ${t4}, … What is the next term?`, ans: t4 * r, hint: `Geometric: multiply by r = ${r}.` };
+        },
+
+        // Logic: AND / OR / NOT with optional negations and grouping
+        logic() {
+          const A = Math.random() < 0.5, B = Math.random() < 0.5;
+          // 25% unary NOT
+          if (Math.random() < 0.25) {
+            const useA = Math.random() < 0.5; const val = useA ? A : B;
+            return { q: `Let A=${A ? 'T' : 'F'}, B=${B ? 'T' : 'F'}. Evaluate: NOT ${useA ? 'A' : 'B'}`, ans: (!val) ? 'T' : 'F', hint: 'NOT flips a truth value.' };
+          }
+          // 25% grouped NOT (De Morgan)
+          if (Math.random() < 0.25) {
+            const op = choice(['AND', 'OR']);
+            const value = !(op === 'AND' ? (A && B) : (A || B));
+            return { q: `Let A=${A ? 'T' : 'F'}, B=${B ? 'T' : 'F'}. Evaluate: NOT (A ${op} B)`, ans: value ? 'T' : 'F', hint: 'NOT applies to the whole group.' };
+          }
+          // Default binary with possible side NOTs
           const op = Math.random() < 0.5 ? 'AND' : 'OR';
-          const notL = Math.random() < 0.35;
-          const notR = Math.random() < 0.35;
-
+          const notL = Math.random() < 0.35, notR = Math.random() < 0.35;
           const showA = (notL ? 'NOT ' : '') + 'A';
           const showB = (notR ? 'NOT ' : '') + 'B';
           const valA = notL ? !A : A;
           const valB = notR ? !B : B;
           const value = op === 'AND' ? (valA && valB) : (valA || valB);
-
-          return {
-            q: `Let A=${A ? 'T' : 'F'}, B=${B ? 'T' : 'F'}. Evaluate: ${showA} ${op} ${showB}`,
-            ans: value ? 'T' : 'F',
-            hint: 'AND is true only if both parts are true. OR is true if at least one part is true. NOT flips a value.'
-          };
+          return { q: `Let A=${A ? 'T' : 'F'}, B=${B ? 'T' : 'F'}. Evaluate: ${showA} ${op} ${showB}`, ans: value ? 'T' : 'F', hint: 'AND true only if both true; OR true if at least one true.' };
         },
+
+        // Modulus: compute “Mod” and simple congruence checks
         mod() {
-          const n = rnd(10, 99), m = choice([3, 4, 5, 6, 7, 8, 9]);
-          return { q: `Compute: ${n} Mod ${m}`, ans: n % m, hint: 'Mod is the remainder after dividing the first number by the second.' };
+          const kind = choice(['mod', 'cong']);
+          if (kind === 'mod') {
+            const n = rnd(10, 199), m = choice([3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+            return { q: `Compute: ${n} Mod ${m}`, ans: n % m, hint: 'Remainder after dividing the first number by the second.' };
+          } else {
+            const m = choice([4, 5, 6, 7, 8, 9, 10, 11]);
+            const a = rnd(0, 60), b = (a + choice([-2, -1, 0, 1, 2]) * m) + choice([-1, 0, 1]); // usually same remainder, sometimes off by 1
+            const isCong = (a - b) % m === 0;
+            return { q: `Is ${a} ≡ ${b} (Mod ${m})? (answer T/F)`, ans: isCong ? 'T' : 'F', hint: 'Congruent if they have the same remainder mod m.' };
+          }
         }
-        // REMOVED: prob()
       };
       window.gens = gens;
 
