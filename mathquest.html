@@ -583,8 +583,6 @@
           id="p_logic">0/10</span></button>
       <button class="navBtn" data-mode="mod">Q7) Modulus Monastery <span class="pill mono"
           id="p_mod">0/10</span></button>
-      <button class="navBtn" data-mode="prob">Q8) Probability Pirates <span class="pill mono"
-          id="p_prob">0/10</span></button>
       <div class="sectionTitle">Progress</div>
       <div class="tiny" title="Mastery is checked on a rolling window of your last 20 attempts in each strand.">
         Mastery = 90%+ over last 20, 25+ attempts total, ≤10% hints, median ≤25s, across ≥2 days.
@@ -648,10 +646,6 @@
             <div class="pill">Modulus</div>
             <div class="progress" style="flex:1"><span id="bar_mod"></span></div>
           </div>
-          <div class="flex">
-            <div class="pill">Probability</div>
-            <div class="progress" style="flex:1"><span id="bar_prob"></span></div>
-          </div>
           <div style="margin-top:10px" class="tiny">
             When mastered, the strand pill shows “Mastered” and the bar fills. Correct = +10 XP (+2/step streak), Hint =
             −5 XP.
@@ -705,18 +699,13 @@
               <div>Parity <span class="legend-note">(n mod 2)</span></div>
             </div>
             <!-- Probability -->
-            <div class="legend-item"><span class="legend-sym">P(A)</span>
-              <div>Probability of A</div>
-            </div>
-            <div class="legend-item"><span class="legend-sym">∩ / ∪</span>
-              <div>And / Or of events <span class="legend-note">(intersection/union)</span></div>
-            </div>
-            <div class="legend-item"><span class="legend-sym">A′</span>
-              <div>Complement of A</div>
-            </div>
-            <div class="legend-item"><span class="legend-sym">a/b</span>
-              <div>Simplified fraction <span class="legend-note">(e.g., 2/6 → 1/3)</span></div>
-            </div>
+            <!-- REMOVED Probability legend items -->
+            <!--
+            <div class="legend-item"><span class="legend-sym">P(A)</span><div>Probability of A</div></div>
+            <div class="legend-item"><span class="legend-sym">∩ / ∪</span><div>And / Or of events <span class="legend-note">(intersection/union)</span></div></div>
+            <div class="legend-item"><span class="legend-sym">A′</span><div>Complement of A</div></div>
+            <div class="legend-item"><span class="legend-sym">a/b</span><div>Simplified fraction <span class="legend-note">(e.g., 2/6 → 1/3)</span></div></div>
+            -->
           </div>
           <div class="tiny" style="margin-top:8px;">
             Tip: Answers can be numbers, T/F, or simplified fractions (a/b). Use keyboard symbols like <span
@@ -860,19 +849,19 @@
       }
 
       // --- Core state (single) ---
-      const STRANDS = ['pemdas', 'integers', 'coords', 'words', 'puzzles', 'logic', 'mod', 'prob'];
+      const STRANDS = ['pemdas', 'integers', 'coords', 'words', 'puzzles', 'logic', 'mod']; // removed 'prob'
       const state = JSON.parse(localStorage.getItem('csMathQuest') || '{}');
       const data = Object.assign({
         xp: 0, streak: 0, rank: 'Novice', mode: 'pemdas',
-        correct: { pemdas: 0, integers: 0, coords: 0, words: 0, puzzles: 0, logic: 0, mod: 0, prob: 0 },
-        hist: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [], prob: [] },
-        mastered: { pemdas: false, integers: false, coords: false, words: false, puzzles: false, logic: false, mod: false, prob: false },
+        correct: { pemdas: 0, integers: 0, coords: 0, words: 0, puzzles: 0, logic: 0, mod: 0 }, // removed prob
+        hist: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [] }, // removed prob
+        mastered: { pemdas: false, integers: false, coords: false, words: false, puzzles: false, logic: false, mod: false }, // removed prob
         daily: { date: '', solved: 0, goal: 20, completed: false, rules: { minSolved: 10, minAcc: 0.80, maxHintRate: 0.10 } },
         challenges: [],
         badges: {},
         boss: { done: false },
         themePref: 'auto',
-        statsWin: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [], prob: [] },
+        statsWin: { pemdas: [], integers: [], coords: [], words: [], puzzles: [], logic: [], mod: [] }, // removed prob
         statsMode: 'hist'
       }, state);
       function ensureDataShape() {
@@ -993,33 +982,7 @@
           case 'puzzles': return 'portal';
           case 'logic': return 'workshop';
           case 'mod': return 'dungeon';
-          case 'prob': return 'jungle';
           default: return 'space';
-        }
-      }
-
-      // NEW: Apply theme + init theme select (supports Auto)
-      function applyTheme(theme) {
-        const root = document.documentElement;
-        let t = theme;
-        if (t === 'auto') t = themeForMode(data.mode);
-        root.setAttribute('data-theme', t);
-        // persist explicit choices (not the resolved value)
-        if (theme === 'auto' || theme === 'space' || theme === 'ice' || theme === 'jungle' || theme === 'dungeon' || theme === 'workshop' || theme === 'portal') {
-          data.themePref = theme;
-          save();
-        }
-      }
-      function initThemeSelect() {
-        const sel = document.getElementById('themeSelect');
-        if (!sel) return;
-        sel.value = data.themePref || 'auto';
-        if (!sel.dataset.bound) {
-          sel.addEventListener('change', () => {
-            const val = sel.value || 'auto';
-            applyTheme(val);
-          });
-          sel.dataset.bound = '1';
         }
       }
 
@@ -1027,7 +990,7 @@
         const titles = {
           pemdas: 'Q1: Temple of PEMDAS', integers: 'Q2: Integer Ice Caves', coords: 'Q3: Quadrant Frontier',
           words: 'Q4: Wordsmith Workshop', puzzles: 'Q5: Puzzle Portal', logic: 'Q6: Circuit of Logic',
-          mod: 'Q7: Modulus Monastery', prob: 'Q8: Probability Pirates', boss: 'Boss Battle: Final Gauntlet'
+          mod: 'Q7: Modulus Monastery', boss: 'Boss Battle: Final Gauntlet'
         };
         setText('#modeTitle', titles[data.mode] || 'Quest');
         setText('#strandLabel', (data.mode || '').toUpperCase().replace('PUZZLES', 'PUZZLES'));
@@ -1225,6 +1188,7 @@
           const seq = Array.from({ length: n - 1 }, (_, i) => a + i * d).join(', ');
           return { q: `Sequence: ${seq}, … What is the ${n}th term?`, ans: a + (n - 1) * d, hint: 'aₙ = a₁ + (n−1)d.' };
         },
+        // Keep logic as-is or update to AND/OR/NOT per your earlier request
         logic() {
           const A = Math.random() < 0.5, B = Math.random() < 0.5;
           const op = choice(['∧', '∨', '→']);
@@ -1233,12 +1197,9 @@
         },
         mod() {
           const n = rnd(10, 99), m = choice([3, 4, 5, 6, 7, 8, 9]);
-          return { q: `Compute: ${n} mod ${m}`, ans: n % m, hint: 'Remainder after dividing n by m.' };
-        },
-        prob() {
-          const k = choice([2, 3, 4, 5]); const n = k, d = 6; const rf = reduceFrac(n, d);
-          return { q: `Roll a fair die. P(value ≤ ${k}) = ? (simplify as a/b)`, ans: `${rf.n}/${rf.d}`, hint: `Favorable outcomes: ${n} of 6.` };
+          return { q: `Compute: ${n} Mod ${m}`, ans: n % m, hint: 'Mod is the remainder after dividing the first number by the second.' };
         }
+        // REMOVED: prob()
       };
       window.gens = gens;
 
