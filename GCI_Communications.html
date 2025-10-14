@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Communication Brainbreaks – Full Week Activities and Reflections</title>
+  <style>
+    html, body { height: 100%; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; background-color: #f4f6fa; color: #222; font-size: 22px; overflow: hidden; }
+    section { padding: 40px; text-align: center; display: none; opacity: 0; transition: opacity 0.7s ease; height: 100%; box-sizing: border-box; overflow-y: auto; }
+    section.active { display: block; opacity: 1; }
+
+    h1, h2 { color: #2c3e50; margin-bottom: 20px; }
+    .activity, .reflect { background: white; border-radius: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin: 0 auto; max-width: 900px; padding: 30px; }
+    .reflect { background: #eaf4ff; }
+
+    .emoji-grid { display: flex; justify-content: center; align-items: center; gap: 40px; flex-wrap: nowrap; margin-top: 20px; font-size: 2.5rem; }
+    .emoji-item { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .emoji-item span { font-size: 1rem; color: #555; margin-top: 8px; text-align: center; }
+
+    .icon-row { display: flex; justify-content: center; align-items: center; gap: 30px; margin-top: 20px; font-size: 4rem; }
+
+    .nav-buttons { position: fixed; bottom: 20px; left: 0; right: 0; display: flex; justify-content: center; gap: 60px; align-items: center; }
+    .nav-buttons button { background-color: #16a085; color: white; border: none; border-radius: 10px; padding: 12px 30px; font-size: 18px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+    .nav-buttons button:hover { background-color: #1abc9c; transform: scale(1.05); }
+
+    .timer { font-size: 1.8rem; font-weight: bold; color: #e67e22; margin-top: 15px; }
+    .timer-controls button { background-color: #3498db; color: white; border: none; border-radius: 6px; padding: 8px 16px; margin: 5px; font-size: 16px; cursor: pointer; }
+    .timer-controls button:hover { background-color: #2980b9; }
+  </style>
+  <script>
+    let currentSlide = 0;
+    let timers = {};
+
+    function showSlide(index) {
+      const slides = document.querySelectorAll('section');
+      if (slides.length === 0) return;
+      if (index < 0) index = slides.length - 1;
+      if (index >= slides.length) index = 0;
+      slides.forEach((slide, i) => {
+        slide.classList.remove('active');
+        if (i === index) slide.classList.add('active');
+      });
+      currentSlide = index;
+    }
+
+    function nextSlide() { showSlide(currentSlide + 1); }
+    function prevSlide() { showSlide(currentSlide - 1); }
+
+    function startTimer(duration, display, id) {
+      clearInterval(timers[id]);
+      let timer = duration;
+      timers[id] = setInterval(function () {
+        const minutes = parseInt(timer / 60, 10);
+        const seconds = parseInt(timer % 60, 10);
+        display.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        if (--timer < 0) {
+          clearInterval(timers[id]);
+          new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg').play();
+        }
+      }, 1000);
+    }
+
+    function stopTimer(id) { clearInterval(timers[id]); }
+    function resetTimer(duration, display, id) {
+      clearInterval(timers[id]);
+      const minutes = parseInt(duration / 60, 10);
+      const seconds = parseInt(duration % 60, 10);
+      display.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    }
+
+    window.onload = () => showSlide(0);
+  </script>
+</head>
+<body>
+  <!-- Tuesday Activity -->
+  <section class="activity">
+    <h2>🎭 Tuesday – Emoji Emotions</h2>
+    <p>Work with a partner. Take turns expressing each emotion using your voice and body language.</p>
+    <div class="emoji-grid">
+      <div class="emoji-item">😀<span>Happy</span></div>
+      <div class="emoji-item">😡<span>Angry</span></div>
+      <div class="emoji-item">😱<span>Surprised</span></div>
+      <div class="emoji-item">😐<span>Neutral</span></div>
+      <div class="emoji-item">😂<span>Amused</span></div>
+      <div class="emoji-item">😰<span>Nervous</span></div>
+      <div class="emoji-item">😍<span>Excited</span></div>
+    </div>
+    <div class="timer-section">
+      <h3>⏱️ 3-Minute Timer</h3>
+      <div class="timer" id="timer_tuesday">3:00</div>
+      <div class="timer-controls">
+        <button onclick="startTimer(180, document.getElementById('timer_tuesday'), 'tuesday')">Start</button>
+        <button onclick="stopTimer('tuesday')">Stop</button>
+        <button onclick="resetTimer(180, document.getElementById('timer_tuesday'), 'tuesday')">Reset</button>
+      </div>
+    </div>
+  </section>
+  <section class="reflect">
+    <h2>🪞 Tuesday Reflection – Emoji Emotions</h2>
+    <p>Discuss with your partner what emotions were easiest or hardest to express. After two minutes, your group should be ready to share with the class.</p>
+    <div class="timer-section">
+      <h3>⏱️ 2-Minute Timer</h3>
+      <div class="timer" id="timer_reflect_tuesday">2:00</div>
+      <div class="timer-controls">
+        <button onclick="startTimer(120, document.getElementById('timer_reflect_tuesday'), 'reflect_tuesday')">Start</button>
+        <button onclick="stopTimer('reflect_tuesday')">Stop</button>
+        <button onclick="resetTimer(120, document.getElementById('timer_reflect_tuesday'), 'reflect_tuesday')">Reset</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wednesday Activity -->
+  <section class="activity">
+    <h2>📖 Wednesday – Story Sprint</h2>
+    <p>Tell a story to a partner in 60 seconds, then retell it in 30 seconds. Focus on clarity and key details.</p>
+    <p><strong>Example Story:</strong> One time, I accidentally sent a text meant for my friend to my teacher. It said, “Can’t wait to talk about our secret plan!” My teacher replied, “Should I be worried?” I had to quickly explain it was about planning a surprise birthday for a classmate. Everyone laughed about it later, but it reminded me how quickly communication can go wrong if we aren’t careful.</p>
+    <div class="timer-section">
+      <h3>⏱️ 1-Minute Timer</h3>
+      <div class="timer" id="timer_wed1">1:00</div>
+      <div class="timer-controls">
+        <button onclick="startTimer(60, document.getElementById('timer_wed1'), 'wed1')">Start</button>
+        <button onclick="stopTimer('wed1')">Stop</button>
+        <button onclick="resetTimer(60, document.getElementById('timer_wed1'), 'wed1')">Reset</button>
+      </div>
+      <h3>⏱️ 30-Second Timer</h3>
+      <div class="timer" id="timer_wed2">0:30</div>
+      <div class="timer-controls">
+        <button onclick="startTimer(30, document.getElementById('timer_wed2'), 'wed2')">Start</button>
+        <button onclick="stopTimer('wed2')">Stop</button>
+        <button onclick="resetTimer(30, document.getElementById('timer_wed2'), 'wed2')">Reset</button>
+      </div>
+    </div>
+  </section>
+  <section class="reflect">
+    <h2>🪞 Wednesday Reflection – Story Sprint</h2>
+    <p>Discuss what made your story clear or unclear. After two minutes, your group should be ready to share examples of how communication can break down.</p>
+    <div class="timer-section">
+      <h3>⏱️ 2-Minute Timer</h3>
+      <div class="timer" id="timer_reflect_wednesday">2:00</div>
+      <div class="timer-controls">
+        <button onclick="startTimer(120, document.getElementById('timer_reflect_wednesday'), 'reflect_wednesday')">Start</button>
+        <button onclick="stopTimer('reflect_wednesday')">Stop</button>
+        <button onclick="resetTimer(120, document.getElementById('timer_reflect_wednesday'), 'reflect_wednesday')">Reset</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Thursday Activity -->
+  <section class="activity">
+    <h2>💬 Thursday – Say It Another Way</h2>
+    <p>Work as a group to rewrite the following phrases on the whiteboard to make them more positive or collaborative. Each person in the group will share, and the class will discuss the best versions together.</p>
+    <ul style="text-align:left; display:inline-block;">
+      <li>“You never listen to me.”</li>
+      <li>“This idea won’t work.”</li>
+      <li>“I already know how to do this.”</li>
+      <li>“That’s not my job.”</li>
+      <li>“This is too hard.”</li>
+    </ul>
+    <div class="timer-section">
+      <h3>⏱️ 5-Minute Timer</h3>
+      <div class="timer" id="timer_thurs">5:00</div>
+      <div class="timer-controls">
+        <button onclick="startTimer(300, document.getElementById('timer_thurs'), 'thurs')">Start</button>
+        <button onclick="stopTimer('thurs')">Stop</button>
+        <button onclick="resetTimer(300, document.getElementById('timer_thurs'), 'thurs')">Reset</button>
+      </div>
+    </div>
+  </section>
+  <section class="reflect">
+    <h2>🪞 Thursday Reflection – Say It Another Way</h2>
+    <p>Reflect on how rephrasing changed the tone of your sentences. After two minutes, your group should be ready to share how your changes improved communication.</p>
+    <div class="timer-section">
+      <h3>⏱️ 2-Minute Timer</h3>
+      <div class="timer" id="timer_reflect_thursday">2:00</div>
+      <div class="timer-controls">
+        <button onclick="startTimer(120, document.getElementById('timer_reflect_thursday'), 'reflect_thursday')">Start</button>
+        <button onclick="stopTimer('reflect_thursday')">Stop</button>
+        <button onclick="resetTimer(120, document.getElementById('timer_reflect_thursday'), 'reflect_thursday')">Reset</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Friday Activity -->
+  <section class="activity">
+    <h2>🎨 Friday – Communication Pictionary</h2>
+    <p>Work in small groups. One student draws a communication concept without speaking. The rest guess the term! Each round will last 1 minute.</p>
+    <div class="timer-section">
+      <h3>⏱️ 1-Minute Timer</h3>
+      <div class="timer" id="timer_fri">1:00</div>
+      <div class="timer-controls">
+        <button onclick="startTimer(60, document.getElementById('timer_fri'), 'fri')">Start</button>
+        <button onclick="stopTimer('fri')">Stop</button>
+        <button onclick="resetTimer(60, document.getElementById('timer_fri'), 'fri')">Reset</button>
+      </div>
+    </div>
+  </section>
+  <section class="reflect">
+    <h2>🪞 Friday Reflection – Communication Pictionary</h2>
+    <p>Discuss what strategies helped your group guess correctly. After two minutes, your group should be ready to share with the class.</p>
+    <div class="timer-section">
+      <h3>⏱️ 2-Minute Timer</h3>
+      <div class="timer" id="timer_reflect_friday">2:00</div>
+      <div class="timer-controls">
+        <button onclick="startTimer(120, document.getElementById('timer_reflect_friday'), 'reflect_friday')">Start</button>
+        <button onclick="stopTimer('reflect_friday')">Stop</button>
+        <button onclick="resetTimer(120, document.getElementById('timer_reflect_friday'), 'reflect_friday')">Reset</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="nav-buttons">
+    <button onclick="prevSlide()">⬅️ Previous</button>
+    <button onclick="nextSlide()">Next ➡️</button>
+  </div>
+</body>
+</html>
