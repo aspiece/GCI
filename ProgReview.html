@@ -692,206 +692,23 @@ except ZeroDivisionError as e:
         }
         $('#newRound').addEventListener('click', initMatch);
 
-        // Quiz
-        function mkQuestions(n) {
-            const pool = shuffle(filtered().slice()).slice(0, n);
-            return pool.map(item => {
-                // Randomize between def question and output question (if output exists and not placeholder)
-                const canOut = item.out && !item.out.startsWith('(');
-                const type = canOut && Math.random() < 0.5 ? 'out' : 'def';
-                if (type === 'def') {
-                    const correct = item.t;
-                    const wrongs = shuffle(ITEMS.filter(x => x.t !== correct)).slice(0, 3).map(x => x.t);
-                    return { type, prompt: `Which term fits this definition?`, detail: item.d, correct, opts: shuffle([correct, ...wrongs]) };
-                } else {
-                    const correct = item.out.replace(/\n/g, '\\n');
-                    // Construct distractors by slight variations
-                    const d1 = correct + ' '; // spacing
-                    const d2 = correct.replace(/True|False/g, m => m === 'True' ? 'False' : 'True');
-                    const d3 = correct.includes('\\n') ? correct.split('\\n').slice(0, -1).join('\\n') : (correct + '\\n');
-                    const opts = shuffle([correct, d1, d2, d3]).map(s => s.replace(/\\n/g, '\n'));
-                    return { type, prompt: `What is the output of this code?`, detail: `\n${item.code}`, correct: correct.replace(/\\n/g, '\n'), opts, code: item.code };
-                }
-            });
+        // Helpers to guarantee unique options
+        function pickWrongTerms(correct, count) {
+            const pool = ITEMS.map(x => x.t).filter(t => t !== correct);
+            return shuffle(pool).slice(0, count);
         }
-        function renderQuiz(n = 10) {
-            const qs = mkQuestions(n);
-            const wrap = $('#quizWrap');
-            wrap.innerHTML = qs.map((q, qi) => `
-        <div class="q card" style="padding:12px; margin-top:8px" data-qi="${qi}">
-          <div><strong>Q${qi + 1}.</strong> ${q.prompt}</div>
-          ${q.type === 'def' ? `<div class="muted" style="margin:6px 0 10px">${q.detail}</div>` :
-                    `<pre style="margin:6px 0 10px"><code>${escapeHtml(q.detail)}</code></pre>
-                     <div class="row" style="margin:6px 0">
-                       <button class="run-inline" data-code="${encodeURIComponent(q.code || '')}" data-qi="${qi}">Run code</button>
-                       <button class="ghost open-runner" data-code="${encodeURIComponent(q.code || '')}">Open in Runner</button>
-                       <span class="pill">Inline runner</span>
-                     </div>
-                     <pre class="qOut" id="qOut-${qi}" aria-live="polite"></pre>`}
-          ${q.opts.map((opt, oi) => `
-            <label class="opt"><input type="radio" name="q${qi}" value="${escapeHtml(opt)}"/> <pre style="margin:0"><code>${escapeHtml(opt)}</code></pre></label>
-          `).join('')}
-        </div>
-      `).join('');
-            $('#startQuiz').disabled = true;
-            $('#retake').disabled = true;
-            $('#scorePill').textContent = 'Score: —';
-
-            const submit = document.createElement('button');
-            submit.textContent = 'Submit';
-            submit.id = 'submitQuiz';
-            submit.style.marginTop = '10px';
-            submit.addEventListener('click', () => {
-                let score = 0;
-                qs.forEach((q, qi) => {
-                    const sel = wrap.querySelector(`input[name="q${qi}"]:checked`);
-                    const val = sel ? sel.value.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&') : null;
-                    const options = Array.from(wrap.querySelectorAll(`input[name="q${qi}"]`));
-                    options.forEach(r => {
-                        const rv = r.value.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
-                        if (rv === q.correct) r.closest('.opt').classList.add('good');
-                        if (sel && r === sel && rv !== q.correct) r.closest('.opt').classList.add('bad');
-                        r.disabled = true;
-                    });
-                    if (val === q.correct) score++;
-                });
-                $('#scorePill').textContent = `Score: ${score}/${qs.length}`;
-                $('#retake').disabled = false;
-                submit.disabled = true;
-            });
-            wrap.appendChild(submit);
+        function pickWrongOutputs(correct, count) {
+            const pool = ITEMS
+                .map(x => x.out)
+                .filter(s => s && !s.startsWith('('))
+                .map(s => String(s).replace(/\r\n/g, '\n'));
+            const uniq = Array.from(new Set(pool.filter(s => s !== correct)));
+            return shuffle(uniq).slice(0, count);
         }
-        $('#startQuiz').addEventListener('click', () => {
-            const n = Number($('#quizCount').value || '10');
-            renderQuiz(n);
-        });
-        $('#retake').addEventListener('click', () => {
-            $('#startQuiz').disabled = false;
-            $('#quizWrap').innerHTML = '';
-            $('#scorePill').textContent = 'Score: —';
-        });
-
-        // --- Inline quiz runner integration ---
-        function indentPy(code, spaces = 4) {
-            const pad = ' '.repeat(spaces);
-            return (code || '').split('\n').map(l => pad + l).join('\n');
-        }
-        async function runPythonInline(code) {
-            const py = await ensurePyodide();
-            const wrapped = `
-import sys, io, traceback
-_buf = io.StringIO()
-_old_out, _old_err = sys.stdout, sys.stderr
-sys.stdout = _buf
-sys.stderr = _buf
-try:
-${indentPy(code)}
-except Exception:
-    traceback.print_exc()
-finally:
-    sys.stdout = _old_out
-    sys.stderr = _old_err
-_buf.getvalue()
-`;
-            try {
-                const out = await py.runPythonAsync(wrapped);
-                return String(out || '');
-            } catch (e) {
-                return String(e || 'Error');
-            }
-        }
-
-        // Finish delegated clicks for Run/Open buttons inside quiz
-        document.addEventListener('click', async (e) => {
-            const runBtn = e.target.closest('.run-inline');
-            if (runBtn) {
-                const qi = runBtn.dataset.qi;
-                const code = decodeURIComponent(runBtn.dataset.code || '');
-                const outEl = document.getElementById(`qOut-${qi}`);
-                if (outEl) {
-                    outEl.textContent = 'Running...';
-                    const out = await runPythonInline(code);
-                    outEl.textContent = out;
-                }
-            }
-            const openBtn = e.target.closest('.open-runner');
-            if (openBtn) {
-                const code = decodeURIComponent(openBtn.dataset.code || '');
-                const ta = document.getElementById('pyCode');
-                if (ta) {
-                    ta.value = code;
-                    document.getElementById('runner')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            }
-        });
-
-        // ===== Python Runner (Pyodide) =====
-        let pyodide = null;
-        const pyStatus = document.getElementById('pyStatus');
-        const pyOut = document.getElementById('pyOut');
-        const pyCode = document.getElementById('pyCode');
-
-        function appendOut(text) {
-            pyOut.textContent += text;
-            pyOut.scrollTop = pyOut.scrollHeight;
-        }
-
-        async function ensurePyodide() {
-            if (pyodide) return pyodide;
-            if (typeof loadPyodide !== 'function') {
-                if (pyStatus) pyStatus.textContent = 'Failed to load';
-                throw new Error('Pyodide script not loaded');
-            }
-            try {
-                if (pyStatus) pyStatus.textContent = 'Downloading…';
-                pyodide = await loadPyodide({
-                    indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/',
-                    stdout: (t) => appendOut(t + '\n'),
-                    stderr: (t) => appendOut(t + '\n'),
-                });
-
-                // Add stdin so Python input() works (uses a browser prompt per line)
-                pyodide.setStdin({
-                    stdin: () => {
-                        const ans = window.prompt('Python input() — enter a line:') ?? '';
-                        return ans + '\n';
-                    }
-                });
-
-                if (pyStatus) pyStatus.textContent = 'Ready';
-            } catch (e) {
-                console.error(e);
-                if (pyStatus) pyStatus.textContent = 'Failed to load';
-                appendOut(String(e) + '\n');
-                throw e;
-            }
-            return pyodide;
-        }
-
-        async function runPython() {
-            const code = pyCode.value;
-            const py = await ensurePyodide();
-            try {
-                await py.runPythonAsync(code);
-            } catch (e) {
-                appendOut(String(e) + '\n');
-            }
-        }
-
-        document.getElementById('runPy').addEventListener('click', runPython);
-        document.getElementById('clearOut').addEventListener('click', () => { pyOut.textContent = ''; });
-        pyCode.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); runPython(); }
-        });
-
-        // Kick off load in background
-        ensurePyodide();
-
-        // ===== end Python Runner =====
-
-        // Init
-        initFlash(true);
-    </script>
-</body>
-
-</html>
+        function buildOptions(correct, candidates, count, fallbackFn) {
+            const wrongs = [];
+            const seen = new Set();
+            for (const c of candidates) {
+                const s = String(c);
+                if (!s || s === correct) continue;
+                if
