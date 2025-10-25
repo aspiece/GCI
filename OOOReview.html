@@ -1224,7 +1224,8 @@
                 askedEl.textContent = index + 1;
                 // move to next
                 // update mastery UI for this problem's level
-                updateMasteryUI(p.level || difficulty.value);
+                const p = problems[index];
+                updateMasteryUI(p && p.level ? p.level : difficulty.value);
                 showProblem(index + 1);
             });
 
