@@ -168,6 +168,22 @@
             </div>
         </section>
 
+        <section class="card" aria-labelledby="legend-heading">
+            <h2 id="legend-heading" style="margin:0 0 8px 0;font-size:15px">Operator legend</h2>
+            <div style="font-size:14px;color:var(--muted);">
+                <div
+                    style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace; display:flex; gap:16px; flex-wrap:wrap">
+                    <div><strong>+</strong> addition</div>
+                    <div><strong>-</strong> subtraction</div>
+                    <div><strong>*</strong> multiplication</div>
+                    <div><strong>/</strong> division</div>
+                    <div><strong>**</strong> exponent (power)</div>
+                </div>
+                <div style="margin-top:8px;color:var(--muted);font-size:13px">Tip: Problems use Python-style operators;
+                    exponents use <code>**</code>. Order follows PEMDAS.</div>
+            </div>
+        </section>
+
         <section class="card" aria-live="polite">
             <div class="meta">
                 <div class="score">Score: <strong id="score">0</strong>/<span id="asked">0</span></div>
@@ -193,6 +209,30 @@
 
                 <div id="feedback" class="feedback" aria-live="polite"></div>
                 <pre id="steps" class="steps" style="display:none"></pre>
+            </div>
+        </section>
+
+        <section class="card" aria-labelledby="resources-heading">
+            <h2 id="resources-heading" style="margin:0 0 8px 0;font-size:15px">Resources</h2>
+            <div style="color:var(--muted);font-size:14px">
+                <ul style="margin:0 0 8px 18px">
+                    <li><a href="https://www.w3schools.com/python/python_operators_precedence.asp" target="_blank"
+                            rel="noopener">Python operator precedence — W3Schools</a></li>
+                    <li><a href="https://runestone.academy/ns/books/published/fopp/Conditionals/PrecedenceofOperators.html"
+                            target="_blank" rel="noopener">Precedence of Operators — Runestone</a></li>
+                </ul>
+
+                <div style="margin-top:8px">
+                    <div
+                        style="max-width:720px;margin:0 auto;position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:8px">
+                        <iframe src="https://www.youtube.com/embed/nD1xTpJo4jU?si=trz2yNi4ohEjsO_V"
+                            title="Order of Operations video" frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe>
+                    </div>
+                    <div style="font-size:13px;color:var(--muted);margin-top:6px">Video: brief overview of order of
+                        operations.</div>
+                </div>
             </div>
         </section>
 
@@ -236,7 +276,7 @@
             function generateExpression(level, maxAbs) {
                 // build tokens with numbers and operators, possibly parentheses and exponents
                 const opsBasic = ['+', '-', '*', '/'];
-                const opsWithExp = ['+', '-', '*', '/', '^'];
+                const opsWithExp = ['+', '-', '*', '/', '**'];
                 const useExp = level === 'hard';
                 const ops = useExp ? opsWithExp : opsBasic;
 
@@ -281,7 +321,7 @@
             }
 
             // Evaluate an expression string safely for our generated expressions.
-            // Supports ^ as exponent token and normal arithmetic. Returns Number.
+            // Supports ** (Python) or ^ as exponent token and normal arithmetic. Returns Number.
             function evaluateExpr(expr) {
                 // sanitize: only allow digits, spaces, operators, parentheses, decimal point and minus
                 if (!/^[0-9+\-*/^().\s]+$/.test(expr)) throw new Error('Invalid expression characters');
