@@ -724,22 +724,28 @@ except ZeroDivisionError as e:
             const uniq = Array.from(new Set(pool.filter(s => s !== correct)));
             return shuffle(uniq).slice(0, count);
         }
+        // Ensure exactly 1 correct + N unique wrongs
         function buildOptions(correct, candidates, count, fallbackFn) {
             const wrongs = [];
-            const seen = new Set();
+            const seen = new Set([String(correct)]);
             for (const c of candidates) {
                 const s = String(c);
-                if (!s || s === correct) continue;
-                if (seen.has(s)) continue;
+                if (!s || seen.has(s)) continue;
                 seen.add(s);
-                wrongs.push(c);
+                wrongs.push(s);
                 if (wrongs.length === count) break;
             }
-            if (wrongs.length < count) {
-                const more = fallbackFn(correct, count - wrongs.length);
-                wrongs.push(...more);
+            if (wrongs.length < count && typeof fallbackFn === 'function') {
+                const more = fallbackFn(String(correct), count - wrongs.length);
+                for (const m of more) {
+                    const s = String(m);
+                    if (!s || seen.has(s)) continue;
+                    seen.add(s);
+                    wrongs.push(s);
+                    if (wrongs.length === count) break;
+                }
             }
-            return shuffle(wrongs);
+            return shuffle([String(correct), ...wrongs.slice(0, count)]);
         }
 
         // Quiz
@@ -776,22 +782,44 @@ except ZeroDivisionError as e:
         </div>
       `;
             document.getElementById('opt0').checked = true;
+            bindQuizControls();
         }
-        function checkQuiz(answer) {
-            const it = quizOrder[quizIdx];
-            if (!it) return;
-            const correct = it.out.trim();
-            const userAns = answer.trim();
-            if (correct === userAns) {
-                quizScore++;
-                return true;
+        function onNextQuiz() {
+            const selected = $('#quizWrap input[type="radio"]:checked');
+            if (!selected) return;
+            const answer = selected.value;
+            const correct = checkQuiz(answer);
+            quizIdx++;
+            if (quizIdx < quizOrder.length) {
+                renderQuiz();
+            } else {
+                $('#scorePill').textContent = `Score: ${quizScore} / ${quizOrder.length}`;
+                // Disable buttons at end
+                const btn = document.getElementById('nextQuiz');
+                if (btn) btn.disabled = true;
             }
-            return false;
         }
+        function onHint() {
+            const it = quizOrder[quizIdx];
+            if (!it || !it.out) return;
+            const hint = it.out.split('\n').map((line, i) => i === 0 ? line : `...`).join('\n');
+            const ta = document.getElementById('pyCode');
+            if (ta) {
+                ta.value = `# Hint (first line of expected output):\n# ${hint}\n`;
+                document.getElementById('runner')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+        function bindQuizControls() {
+            const nextBtn = document.getElementById('nextQuiz');
+            const hintBtn = document.getElementById('hintBtn');
+            if (nextBtn) nextBtn.addEventListener('click', onNextQuiz);
+            if (hintBtn) hintBtn.addEventListener('click', onHint);
+        }
+
         $('#startQuiz').addEventListener('click', () => {
             $('#retake').disabled = false;
+            document.querySelector('.tab[data-mode="quiz"]')?.click();
             initQuiz();
-            $('.tab.active').click(); // switch to quiz tab
         });
         $('#nextQuiz').addEventListener('click', () => {
             const selected = $('#quizWrap input[type="radio"]:checked');
