@@ -834,6 +834,15 @@ _buf.getvalue()
                     stdout: (t) => appendOut(t + '\n'),
                     stderr: (t) => appendOut(t + '\n'),
                 });
+
+                // Add stdin so Python input() works (uses a browser prompt per line)
+                pyodide.setStdin({
+                    stdin: () => {
+                        const ans = window.prompt('Python input() — enter a line:') ?? '';
+                        return ans + '\n';
+                    }
+                });
+
                 if (pyStatus) pyStatus.textContent = 'Ready';
             } catch (e) {
                 console.error(e);
