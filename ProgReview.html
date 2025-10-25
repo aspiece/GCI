@@ -265,6 +265,44 @@
             accent-color: var(--acc)
         }
 
+        /* Do not rely on color alone for correctness cues */
+        .opt.good {
+            border-color: var(--ok);
+            box-shadow: inset 0 0 0 2px var(--ok);
+            position: relative;
+        }
+
+        .opt.good::before {
+            content: "✓";
+            color: var(--ok);
+            font-weight: 800;
+            margin-right: 6px;
+        }
+
+        .opt.bad {
+            border-color: var(--bad);
+            box-shadow: inset 0 0 0 2px var(--bad);
+            position: relative;
+        }
+
+        .opt.bad::before {
+            content: "✗";
+            color: var(--bad);
+            font-weight: 800;
+            margin-right: 6px;
+        }
+
+        .chip.bad {
+            outline: 2px solid var(--bad);
+        }
+
+        .chip.ok::after {
+            content: "✓";
+            float: right;
+            color: var(--ok);
+            font-weight: 800;
+        }
+
         /* Runner */
         textarea.runner {
             width: 100%;
@@ -279,49 +317,6 @@
             font-size: 13px;
             resize: vertical;
             /* user can resize if needed */
-        }
-
-        #pyOut {
-            background: #0b1224;
-            border: 1px solid rgba(255, 255, 255, .1);
-            border-radius: 10px;
-            padding: 10px;
-            min-height: 100px;
-            max-height: clamp(120px, 28vh, 280px);
-            /* fit on screen */
-            overflow: auto;
-            white-space: pre-wrap;
-        }
-
-        /* Print */
-        @media print {
-
-            .bar,
-            .controls,
-            button,
-            input,
-            select {
-                display: none !important
-            }
-
-            body {
-                background: #fff;
-                color: #000
-            }
-
-            .card {
-                box-shadow: none;
-                border-color: #0002
-            }
-
-            .item {
-                background: #fff;
-                border-color: #0002
-            }
-
-            pre {
-                background: #fff
-            }
         }
 
         /* Right sidebar layout: runner on the right (desktop), stacked on mobile */
@@ -357,6 +352,88 @@
                 /* let inner areas scroll */
             }
         }
+
+        /* Theme overrides (placed after base styles for precedence) */
+        /* Explicit Dark */
+        body[data-theme="dark"] {
+            --bg: #0f172a;
+            --panel: #111827;
+            --panel2: #0b1224;
+            --text: #f8fafc;
+            --muted: #cbd5e1;
+            --acc: #60a5fa;
+            --ok: #22c55e;
+            --warn: #f59e0b;
+            --bad: #ef4444;
+            --ink: #0b1224;
+        }
+
+        /* Explicit Light */
+        body[data-theme="light"] {
+            --bg: #ffffff;
+            --panel: #f8fafc;
+            --panel2: #eef2ff;
+            --text: #0b1224;
+            --muted: #475569;
+            --acc: #2563eb;
+            --ok: #16a34a;
+            --warn: #d97706;
+            --bad: #dc2626;
+            --ink: #ffffff;
+        }
+
+        /* Colorblind-safe (uses blue/orange pair; avoids red/green reliance) */
+        body[data-theme="cb"] {
+            --bg: #101418;
+            --panel: #141b22;
+            --panel2: #0e1522;
+            --text: #f5f7fa;
+            --muted: #c7d0db;
+            --acc: #3aa3ff;
+            --ok: #1f77b4;
+            /* blue */
+            --warn: #ffbf50;
+            /* amber */
+            --bad: #ff7f0e;
+            /* orange */
+            --ink: #0b1224;
+        }
+
+        /* High contrast (dark) */
+        body[data-theme="hc"] {
+            --bg: #000;
+            --panel: #0a0a0a;
+            --panel2: #000;
+            --text: #fff;
+            --muted: #ddd;
+            --acc: #ff0;
+            --ok: #0ff;
+            --warn: #ff0;
+            --bad: #f0f;
+            --ink: #000;
+        }
+
+        /* Ensure adequate contrast for option blocks in all themes */
+        .opt {
+            background: color-mix(in oklab, var(--panel) 92%, black 8%);
+        }
+
+        body[data-theme="light"] .opt {
+            background: color-mix(in oklab, var(--panel) 92%, white 8%);
+        }
+
+        body[data-theme="hc"] .opt {
+            background: #000;
+            border-color: #fff;
+        }
+
+        body[data-theme="hc"] .opt.good {
+            box-shadow: inset 0 0 0 3px var(--ok);
+        }
+
+        body[data-theme="hc"] .opt.bad {
+            box-shadow: inset 0 0 0 3px var(--bad);
+        }
     </style>
     <!-- Pyodide runtime for in-browser Python -->
     <script defer src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
@@ -379,6 +456,13 @@
                 <option value="conds">Conditionals</option>
                 <option value="loops">Looping</option>
                 <option value="funcs">Functions & Exceptions</option>
+            </select>
+            <select id="themeSelect" title="Theme">
+                <option value="system" selected>Theme: System</option>
+                <option value="light">Theme: Light</option>
+                <option value="dark">Theme: Dark</option>
+                <option value="cb">Theme: Colorblind Safe</option>
+                <option value="hc">Theme: High Contrast</option>
             </select>
             <span class="pill" id="countPill">0 items</span>
         </div>
@@ -520,13 +604,31 @@ except ZeroDivisionError as e:
             { u: 'funcs', t: 'raise', d: 'Create an error on purpose when input is invalid.', code: `def half(n):\n  if n%2: raise ValueError("odd")\n  return n//2\nprint(half(4))`, out: `2` },
             { u: 'funcs', t: 'Multiple except', d: 'Catch specific exceptions first.', code: `try:\n  x=int("3.2")\nexcept ValueError:\n  print("value error")\nexcept Exception:\n  print("other")`, out: `value error` },
         ];
-
         // Utils
         const $ = s => document.querySelector(s);
         const $$ = s => Array.from(document.querySelectorAll(s));
         const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0;[a[i], a[j]] = [a[j], a[i]]; } return a; };
         const unitNames = { basics: 'Basics & Console', conds: 'Conditionals', loops: 'Looping', funcs: 'Functions & Exceptions' };
         function escapeHtml(s) { return String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])); }
+
+        // Theme handling
+        function applyTheme(theme) {
+            if (!theme || theme === 'system') {
+                document.body.removeAttribute('data-theme');
+            } else {
+                document.body.setAttribute('data-theme', theme);
+            }
+            try { localStorage.setItem('gciTheme', theme || 'system'); } catch (_) { }
+        }
+        (function initTheme() {
+            const saved = (function () { try { return localStorage.getItem('gciTheme'); } catch (_) { return null; } })() || 'system';
+            const sel = document.getElementById('themeSelect');
+            if (sel) {
+                sel.value = saved;
+                sel.addEventListener('change', function () { applyTheme(this.value); });
+            }
+            applyTheme(saved);
+        })();
 
         // Tabs
         $$('.tab').forEach(btn => {
