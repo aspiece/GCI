@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Agile Brain Breaks — Weekly Set</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            /* slate-900 */
+            --panel: #111827;
+            /* gray-900 */
+            --panel2: #0b1224;
+            /* deep */
+            --text: #f8fafc;
+            /* slate-50 */
+            --muted: #cbd5e1;
+            /* slate-300 */
+            --acc: #60a5fa;
+            /* blue-400 */
+            --good: #22c55e;
+            /* green-500 */
+            --warn: #f59e0b;
+            /* amber-500 */
+            --bad: #ef4444;
+            /* red-500 */
+            --pill: #1f2937;
+            /* gray-800 */
+            --pillText: #e5e7eb;
+            --focus: #93c5fd;
+            /* blue-300 */
+        }
+
+        @media (prefers-color-scheme: light) {
+            :root {
+                --bg: #ffffff;
+                --panel: #f8fafc;
+                --panel2: #eef2ff;
+                --text: #0b1224;
+                --muted: #475569;
+                --acc: #2563eb;
+                --good: #16a34a;
+                --warn: #d97706;
+                --bad: #dc2626;
+                --pill: #e5e7eb;
+                --pillText: #111827;
+                --focus: #60a5fa;
+            }
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Inter, system-ui, Arial, sans-serif;
+            background: radial-gradient(1200px 800px at 20% -10%, var(--panel2), transparent), var(--bg);
+            color: var(--text);
+        }
+
+        .wrap {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 24px 16px 64px;
+        }
+
+        h1 {
+            margin: 0 0 6px;
+            font-size: 28px;
+        }
+
+        .sub {
+            color: var(--muted);
+            margin-bottom: 18px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        @media (min-width: 900px) {
+            .grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        .card {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.08)), var(--panel);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 16px 16px 14px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, .25);
+        }
+
+        .day {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 2px 0 12px;
+        }
+
+        .pill {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: var(--pill);
+            color: var(--pillText);
+            font-size: 12px;
+            letter-spacing: .3px;
+        }
+
+        .title {
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .muted {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .act {
+            margin-top: 10px;
+            border-top: 1px dashed rgba(255, 255, 255, 0.15);
+            padding-top: 10px;
+        }
+
+        .steps {
+            margin: 8px 0 0 0;
+            padding-left: 18px;
+        }
+
+        .steps li {
+            margin-bottom: 6px;
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        button.btn {
+            background: var(--acc);
+            border: 0;
+            color: #081225;
+            font-weight: 700;
+            padding: 8px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        button.ghost {
+            background: transparent;
+            color: var(--acc);
+            border: 1px solid var(--acc);
+        }
+
+        button:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+        }
+
+        .timer {
+            min-width: 78px;
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+            padding: 6px 10px;
+            border-radius: 10px;
+            background: #0b1224;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .meta {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 6px;
+        }
+
+        .good {
+            color: var(--good);
+        }
+
+        .warn {
+            color: var(--warn);
+        }
+
+        .bad {
+            color: var(--bad);
+        }
+
+        .altTag {
+            font-size: 12px;
+            color: var(--muted);
+            margin-left: 4px;
+        }
+
+        :focus-visible {
+            outline: 3px solid var(--focus);
+            outline-offset: 3px;
+            border-radius: 8px;
+        }
+
+        a {
+            color: var(--acc);
+        }
+    </style>
+</head>
+
+<body>
+    <main class="wrap">
+        <h1>Agile Brain Breaks</h1>
+        <div class="sub">Five short, hands‑on activities (5–8 minutes each) to apply Agile this week. Use during
+            transitions to reinforce habits.</div>
+
+        <section class="grid">
+
+            <!-- Monday -->
+            <article class="card activity" data-min="6">
+                <div class="day">
+                    <span class="pill">Mon</span>
+                    <div class="title">Daily Scrum Micro</div>
+                </div>
+                <div class="muted">Practice concise status, surface impediments, and re‑plan.</div>
+                <div class="act" data-slot="primary">
+                    <div><strong>Do:</strong> Round‑robin: Yesterday / Today / Blockers.</div>
+                    <ol class="steps">
+                        <li>Each person has 30–45s to answer: What did I finish? What will I do next? Any blockers?</li>
+                        <li>Convert blockers into concrete impediments. Assign an owner to remove each.</li>
+                        <li>Re‑order the top 3 tasks on your team board if priorities shifted.</li>
+                    </ol>
+                    <div class="meta">
+                        <span class="pill">5–6 min</span>
+                        <span class="pill">Applies: Scrum, Transparency</span>
+                    </div>
+                </div>
+                <div class="act hidden" data-slot="alternate">
+                    <div><strong>Alternate:</strong> Stand‑up Remix</div>
+                    <ol class="steps">
+                        <li>Use only outcomes: “A thing that is now done is…”, “A thing that will be done is…”.</li>
+                        <li>If something appears twice in a row, mark it as a potential risk and swarm briefly.</li>
+                    </ol>
+                    <div class="meta"><span class="pill">5 min</span><span class="pill">Focus: Outcomes</span></div>
+                </div>
+                <div class="controls">
+                    <button class="btn start">Start Timer</button>
+                    <span class="timer" aria-live="polite">06:00</span>
+                    <button class="btn ghost swap">Swap Activity <span class="altTag">(toggle)</span></button>
+                </div>
+            </article>
+
+            <!-- Tuesday -->
+            <article class="card activity" data-min="8">
+                <div class="day">
+                    <span class="pill">Tue</span>
+                    <div class="title">User Story Slicing Drill</div>
+                </div>
+                <div class="muted">Split a large story into vertical slices with clear acceptance criteria.</div>
+                <div class="act" data-slot="primary">
+                    <div><strong>Do:</strong> Take the big story “Enable account login” and slice.</div>
+                    <ol class="steps">
+                        <li>Write 3–5 thin slices that each deliver user‑visible value (e.g., “Login with code only”,
+                            “Show errors”).</li>
+                        <li>For one slice, add 2–3 acceptance criteria (Given/When/Then).</li>
+                        <li>Order slices by value/risk and pick the first one to implement next.</li>
+                    </ol>
+                    <div class="meta">
+                        <span class="pill">7–8 min</span>
+                        <span class="pill">Applies: Story Mapping, DoR</span>
+                    </div>
+                </div>
+                <div class="act hidden" data-slot="alternate">
+                    <div><strong>Alternate:</strong> INVEST Check</div>
+                    <ol class="steps">
+                        <li>Take any current story and rate it on INVEST (Independent, Negotiable, Valuable, Estimable,
+                            Small, Testable).</li>
+                        <li>Fix the weakest letter with a quick edit to the story.</li>
+                    </ol>
+                    <div class="meta"><span class="pill">6–7 min</span><span class="pill">Focus: Story Quality</span>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="btn start">Start Timer</button>
+                    <span class="timer" aria-live="polite">08:00</span>
+                    <button class="btn ghost swap">Swap Activity</button>
+                </div>
+            </article>
+
+            <!-- Wednesday -->
+            <article class="card activity" data-min="7">
+                <div class="day">
+                    <span class="pill">Wed</span>
+                    <div class="title">Estimation Lightning (Planning Poker)</div>
+                </div>
+                <div class="muted">Estimate quickly to spot uncertainty and risk.</div>
+                <div class="act" data-slot="primary">
+                    <div><strong>Do:</strong> Pick 3 backlog items and estimate with T‑shirt sizes (XS/S/M/L/XL).</div>
+                    <ol class="steps">
+                        <li>Silent pick → reveal together. If mismatch, one sentence from high/low to explain.</li>
+                        <li>Re‑estimate once. If still split, mark as “needs spike” or split the story.</li>
+                    </ol>
+                    <div class="meta">
+                        <span class="pill">6–7 min</span><span class="pill">Applies: Relative Estimation</span>
+                    </div>
+                </div>
+                <div class="act hidden" data-slot="alternate">
+                    <div><strong>Alternate:</strong> Risk Radar</div>
+                    <ol class="steps">
+                        <li>For one story, list top 3 risks. Tag each as Unknowns, Dependencies, or Complexity.</li>
+                        <li>Pick 1 risk and define a 1‑hour spike to reduce it.</li>
+                    </ol>
+                    <div class="meta"><span class="pill">5–6 min</span><span class="pill">Focus: Risk First</span></div>
+                </div>
+                <div class="controls">
+                    <button class="btn start">Start Timer</button>
+                    <span class="timer" aria-live="polite">07:00</span>
+                    <button class="btn ghost swap">Swap Activity</button>
+                </div>
+            </article>
+
+            <!-- Thursday -->
+            <article class="card activity" data-min="7">
+                <div class="day">
+                    <span class="pill">Thu</span>
+                    <div class="title">Kanban Flow Game (WIP 2)</div>
+                </div>
+                <div class="muted">Limit work‑in‑progress and expose bottlenecks.</div>
+                <div class="act" data-slot="primary">
+                    <div><strong>Do:</strong> On your board (To Do → Doing → Review → Done), set WIP=2 for “Doing”.
+                    </div>
+                    <ol class="steps">
+                        <li>Move cards respecting WIP. If blocked, add a “⛔ Impediment” tag with cause.</li>
+                        <li>Identify the bottleneck column; agree on one change to speed flow (e.g., pair on Review).
+                        </li>
+                    </ol>
+                    <div class="meta">
+                        <span class="pill">6–7 min</span><span class="pill">Applies: Flow, WIP Limits</span>
+                    </div>
+                </div>
+                <div class="act hidden" data-slot="alternate">
+                    <div><strong>Alternate:</strong> Definition of Done (DoD) Sprint</div>
+                    <ol class="steps">
+                        <li>Draft a 5‑item DoD for your current story (e.g., tests, review, docs, demoable).</li>
+                        <li>Apply it now to the top in‑progress item.</li>
+                    </ol>
+                    <div class="meta"><span class="pill">5–6 min</span><span class="pill">Focus: Quality</span></div>
+                </div>
+                <div class="controls">
+                    <button class="btn start">Start Timer</button>
+                    <span class="timer" aria-live="polite">07:00</span>
+                    <button class="btn ghost swap">Swap Activity</button>
+                </div>
+            </article>
+
+            <!-- Friday -->
+            <article class="card activity" data-min="8">
+                <div class="day">
+                    <span class="pill">Fri</span>
+                    <div class="title">Retro Snap + 1 Experiment</div>
+                </div>
+                <div class="muted">Reflect quickly and commit to one improvement.</div>
+                <div class="act" data-slot="primary">
+                    <div><strong>Do:</strong> Start / Stop / Continue with dot‑vote.</div>
+                    <ol class="steps">
+                        <li>Each person adds 1 sticky under Start, Stop, Continue.</li>
+                        <li>Each gets 2 votes. Highest wins → define a small experiment for next week (owner + success
+                            criteria).</li>
+                    </ol>
+                    <div class="meta">
+                        <span class="pill">7–8 min</span><span class="pill">Applies: Kaizen</span>
+                    </div>
+                </div>
+                <div class="act hidden" data-slot="alternate">
+                    <div><strong>Alternate:</strong> MoSCoW Prioritization</div>
+                    <ol class="steps">
+                        <li>Take 6–8 current tasks and sort into Must, Should, Could, Won’t.</li>
+                        <li>Move top “Must” to the very next sprint/iteration.</li>
+                    </ol>
+                    <div class="meta"><span class="pill">6–7 min</span><span class="pill">Focus: Value First</span>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="btn start">Start Timer</button>
+                    <span class="timer" aria-live="polite">08:00</span>
+                    <button class="btn ghost swap">Swap Activity</button>
+                </div>
+            </article>
+
+        </section>
+
+        <section class="card" style="margin-top:16px">
+            <div class="title">How to Use</div>
+            <ul class="steps">
+                <li>Pick today’s card. Click “Swap Activity” if the alternate fits better.</li>
+                <li>Press “Start Timer”. Keep it short and outcome‑focused.</li>
+                <li>Capture one tangible change (e.g., updated order, DoD, owner on impediment).</li>
+            </ul>
+            <div class="muted" style="margin-top:8px">Tip: Repeat any favorite on future weeks; consistency builds
+                habits.</div>
+        </section>
+    </main>
+
+    <script>
+        (function () {
+            function pad(n) { return String(n).padStart(2, '0'); }
+            function setTimerText(el, s) { el.textContent = pad(Math.floor(s / 60)) + ':' + pad(Math.floor(s % 60)); }
+
+            // Initialize timers to card data-min
+            document.querySelectorAll('.activity').forEach(card => {
+                const min = Number(card.dataset.min || '6');
+                const timer = card.querySelector('.timer');
+                if (timer) setTimerText(timer, min * 60);
+            });
+
+            // Start/Stop timer per activity
+            const timers = new WeakMap();
+            document.querySelectorAll('.activity .start').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const card = btn.closest('.activity');
+                    const timer = card.querySelector('.timer');
+                    const min = Number(card.dataset.min || '6');
+                    // Stop existing
+                    if (timers.has(card)) {
+                        clearInterval(timers.get(card).id);
+                        timers.delete(card);
+                        btn.textContent = 'Start Timer';
+                        setTimerText(timer, min * 60);
+                        return;
+                    }
+                    // Start new
+                    let remaining = min * 60;
+                    btn.textContent = 'Stop';
+                    setTimerText(timer, remaining);
+                    const id = setInterval(() => {
+                        remaining -= 1;
+                        if (remaining <= 0) {
+                            clearInterval(id);
+                            timers.delete(card);
+                            btn.textContent = 'Start Timer';
+                            setTimerText(timer, min * 60);
+                            // Beep
+                            try {
+                                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                                const o = ctx.createOscillator(); const g = ctx.createGain();
+                                o.type = 'sine'; o.frequency.value = 880; g.gain.value = 0.001;
+                                o.connect(g); g.connect(ctx.destination);
+                                o.start(); g.gain.exponentialRampToValueAtTime(0.3, ctx.currentTime + 0.01);
+                                g.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.35);
+                                o.stop(ctx.currentTime + 0.36);
+                            } catch { }
+                        } else {
+                            setTimerText(timer, remaining);
+                        }
+                    }, 1000);
+                    timers.set(card, { id });
+                });
+            });
+
+            // Swap primary/alternate
+            document.querySelectorAll('.activity .swap').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const card = btn.closest('.activity');
+                    const prim = card.querySelector('[data-slot="primary"]');
+                    const alt = card.querySelector('[data-slot="alternate"]');
+                    if (!prim || !alt) return;
+                    prim.classList.toggle('hidden');
+                    alt.classList.toggle('hidden');
+                });
+            });
+        })();
+    </script>
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
+</body>
+
+</html>
