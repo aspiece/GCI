@@ -73,6 +73,31 @@
             margin-bottom: 12px
         }
 
+        /* Badges shown next to problems to indicate features */
+        .badges {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap
+        }
+
+        .badge {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: var(--accent);
+            color: var(--button-text);
+            font-weight: 600;
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+        }
+
+        .badge.secondary {
+            background: var(--secondary-bg);
+            color: var(--text);
+            border: 1px solid rgba(11, 99, 179, 0.08);
+            font-weight: 500;
+        }
+
         .controls {
             display: flex;
             gap: 8px;
@@ -220,6 +245,16 @@
                 </div>
                 <div style="margin-top:8px;color:var(--muted);font-size:13px">Tip: Problems use Python-style operators;
                     exponents use <code>**</code>. Order follows PEMDAS.</div>
+                <div style="margin-top:10px;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, monospace">
+                    <div style="font-size:13px;color:var(--muted);margin-bottom:6px">Examples by difficulty:</div>
+                    <div style="display:flex;gap:12px;flex-wrap:wrap">
+                        <div><strong>Very Easy:</strong> <code>3 + 4</code></div>
+                        <div><strong>Easy:</strong> <code>(5 + 2) * 3</code></div>
+                        <div><strong>Medium:</strong> <code>(2 + 3) ** 2 - 4</code></div>
+                        <div><strong>Hard:</strong> <code>(3 + (2 * 5)) ** 2 / 4</code></div>
+                        <div><strong>Expert:</strong> <code>((2 + 3) ** (1 + 1)) * (4 - 1)</code></div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -230,7 +265,12 @@
             </div>
 
             <div id="exercise" style="margin-top:12px">
-                <div class="problem" id="problem">Click Start to begin a set of problems.</div>
+                <div style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap">
+                    <div style="flex:1;min-width:220px">
+                        <div class="problem" id="problem">Click Start to begin a set of problems.</div>
+                    </div>
+                    <div id="badges" class="badges" aria-hidden="false"></div>
+                </div>
 
                 <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
                     <label style="margin:0">
@@ -291,6 +331,7 @@
             const generateBtn = el('generate');
             const countInput = el('count');
             const problemEl = el('problem');
+            const badgesEl = el('badges');
             const answerInput = el('answer');
             const checkBtn = el('check');
             const nextBtn = el('next');
@@ -317,8 +358,8 @@
                 // build tokens with numbers and operators, possibly parentheses and exponents
                 const opsBasic = ['+', '-', '*', '/'];
                 const opsWithExp = ['+', '-', '*', '/', '**'];
-                const useExp = level === 'hard' || level === 'expert';
-                const ops = useExp ? opsWithExp : opsBasic;
+                // Enable exponents for all levels; presence controlled by random operator picks
+                const ops = opsWithExp; // include '**' in all difficulty sets
 
                 // determine number of operations
                 let opsCount;
@@ -331,19 +372,31 @@
 
                 // produce a flat expression first
                 let tokens = [];
+                // chance to include exponent operator varies by difficulty (rarer for easier levels)
+                const includeExpChance = level === 'very-easy' ? 0.10 : level === 'easy' ? 0.25 : level === 'medium' ? 0.5 : level === 'hard' ? 0.75 : 0.9;
                 for (let i = 0; i <= opsCount; i++) {
                     let n = randInt(-maxAbs, maxAbs);
                     // avoid zero in denominators later by ensuring possibility
                     tokens.push(String(n));
-                    if (i < opsCount) tokens.push(pick(ops));
+                    if (i < opsCount) {
+                        // pick operator: prefer basic operators, include '**' probabilistically
+                        let op;
+                        if (Math.random() < includeExpChance) op = '**';
+                        else op = pick(opsBasic);
+                        tokens.push(op);
+                    }
                 }
 
-                // optionally insert parentheses pairs (for medium/hard/expert)
-                if (level !== 'very-easy' && level !== 'easy') {
+                // optionally insert parentheses pairs (allow at every level; easier levels get fewer pairs)
+                {
                     let pairs = 0;
-                    if (level === 'medium') pairs = randInt(0, 1);
+                    if (level === 'very-easy') pairs = randInt(0, 1);
+                    else if (level === 'easy') pairs = randInt(0, 1);
+                    else if (level === 'medium') pairs = randInt(0, 1);
                     else if (level === 'hard') pairs = randInt(1, 2);
                     else if (level === 'expert') pairs = randInt(2, 3);
+                    // do not add parentheses if expression is a single operation
+                    if (opsCount < 2) pairs = 0;
                     for (let p = 0; p < pairs; p++) {
                         // choose positions that encompass at least one operator
                         const len = tokens.length;
@@ -521,7 +574,7 @@
                         attempt++;
                         if (attempt > 50) break;
                     } while (val === null || !isFinite(val) || Math.abs(val) > 1e6);
-                    problems.push({ expr: ex, answer: val });
+                    problems.push({ expr: ex, answer: val, level });
                 }
                 scoreEl.textContent = '0';
                 askedEl.textContent = '0';
@@ -563,6 +616,28 @@
                 index = i;
                 const p = problems[i];
                 problemEl.textContent = p.expr;
+                // render badges indicating difficulty and contained features
+                if (badgesEl) {
+                    badgesEl.innerHTML = '';
+                    const level = p.level || difficulty.value;
+                    const make = (text, cls) => {
+                        const s = document.createElement('span');
+                        s.className = 'badge' + (cls ? ' ' + cls : '');
+                        s.textContent = text;
+                        s.setAttribute('aria-hidden', 'true');
+                        return s;
+                    };
+                    // Difficulty badge
+                    badgesEl.appendChild(make(level.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' '), 'secondary'));
+                    // Feature badges
+                    try {
+                        const expr = p.expr || '';
+                        if (/\*\*/.test(expr) || /\^/.test(expr)) badgesEl.appendChild(make('Exponent'));
+                        if (/[()]/.test(expr)) badgesEl.appendChild(make('Parentheses'));
+                        if (/\//.test(expr)) badgesEl.appendChild(make('Division', 'secondary'));
+                        if (/\*/.test(expr) && !/\*\*/.test(expr)) badgesEl.appendChild(make('Multiplication', 'secondary'));
+                    } catch (e) { }
+                }
                 answerInput.value = '';
                 feedbackEl.textContent = '';
                 stepsEl.textContent = '';
