@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Order of Operations Practice</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <style>
+        :root {
+            --bg: #f7fbff;
+            --card: #ffffff;
+            --accent: #0b63b3;
+            --muted: #4b5563;
+        }
+
+        body {
+            font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial;
+            margin: 0;
+            background: linear-gradient(180deg, #eaf4ff 0%, var(--bg) 60%);
+            color: #0f1724
+        }
+
+        .wrap {
+            max-width: 880px;
+            margin: 36px auto;
+            padding: 18px
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px
+        }
+
+        h1 {
+            font-size: 20px;
+            margin: 0
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 10px;
+            box-shadow: 0 6px 18px rgba(10, 20, 40, 0.06);
+            padding: 18px;
+            margin-bottom: 12px
+        }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap
+        }
+
+        label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--muted);
+            font-size: 13px
+        }
+
+        select,
+        input[type=number] {
+            padding: 6px 8px;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            background: #fff
+        }
+
+        button {
+            background: var(--accent);
+            color: #fff;
+            border: 0;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer
+        }
+
+        button.secondary {
+            background: #e6eef9;
+            color: var(--accent);
+            border: 1px solid rgba(11, 99, 179, 0.12)
+        }
+
+        .problem {
+            font-size: 28px;
+            font-weight: 600;
+            margin: 8px 0
+        }
+
+        .feedback {
+            margin-top: 10px;
+            font-weight: 600
+        }
+
+        .steps {
+            background: #f1f5f9;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace
+        }
+
+        .meta {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 13px
+        }
+
+        .score {
+            background: #f8fafc;
+            padding: 8px;
+            border-radius: 8px
+        }
+
+        footer {
+            margin-top: 18px;
+            color: var(--muted);
+            font-size: 13px;
+            text-align: center
+        }
+
+        @media (max-width:520px) {
+            .controls {
+                flex-direction: column;
+                align-items: stretch
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <header>
+            <h1>Order of Operations — Practice Trainer</h1>
+            <div style="color:var(--muted);font-size:13px">Mnemonic: PEMDAS (Parentheses, Exponents, MD, AS)</div>
+        </header>
+
+        <section class="card" aria-labelledby="options-heading">
+            <h2 id="options-heading" style="margin:0 0 8px 0;font-size:15px">Options</h2>
+            <div class="controls">
+                <label>
+                    Difficulty:
+                    <select id="difficulty" title="Choose difficulty">
+                        <option value="easy">Easy — 2 ops, no exponents</option>
+                        <option value="medium">Medium — 3-4 ops, may include parentheses</option>
+                        <option value="hard">Hard — 4-6 ops, exponents & nested parentheses</option>
+                    </select>
+                </label>
+                <label>
+                    Number range:
+                    <select id="range">
+                        <option value="9">0–9</option>
+                        <option value="19">-10–19</option>
+                        <option value="49">-20–49</option>
+                    </select>
+                </label>
+                <label>
+                    Problems:
+                    <input id="count" type="number" min="1" max="20" value="10" style="width:76px" />
+                </label>
+                <button id="generate">Start</button>
+                <button class="secondary" id="show-mnemonic" title="Quick help">Show PEMDAS</button>
+            </div>
+        </section>
+
+        <section class="card" aria-live="polite">
+            <div class="meta">
+                <div class="score">Score: <strong id="score">0</strong>/<span id="asked">0</span></div>
+                <div id="progress" style="color:var(--muted)">Ready</div>
+            </div>
+
+            <div id="exercise" style="margin-top:12px">
+                <div class="problem" id="problem">Click Start to begin a set of problems.</div>
+
+                <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+                    <label style="margin:0">
+                        Your answer:
+                        <input id="answer" inputmode="numeric"
+                            style="padding:8px;border-radius:8px;border:1px solid #d1d5db;width:160px;margin-left:8px" />
+                    </label>
+                    <button id="check">Check</button>
+                    <button class="secondary" id="next">Skip / Next</button>
+                    <label style="margin-left:auto;color:var(--muted)">
+                        Show steps:
+                        <input id="steps-toggle" type="checkbox" style="margin-left:6px" />
+                    </label>
+                </div>
+
+                <div id="feedback" class="feedback" aria-live="polite"></div>
+                <pre id="steps" class="steps" style="display:none"></pre>
+            </div>
+        </section>
+
+        <footer class="card" style="text-align:left">
+            Tips: Work inside parentheses first, then exponents, then multiplication/division left-to-right, then
+            addition/subtraction left-to-right. Use the "Show steps" checkbox to see a step-by-step breakdown.
+        </footer>
+    </div>
+
+    <script>
+        // GitHub Copilot
+        (function () {
+            const el = id => document.getElementById(id);
+            const difficulty = el('difficulty');
+            const rngSelect = el('range');
+            const generateBtn = el('generate');
+            const countInput = el('count');
+            const problemEl = el('problem');
+            const answerInput = el('answer');
+            const checkBtn = el('check');
+            const nextBtn = el('next');
+            const scoreEl = el('score');
+            const askedEl = el('asked');
+            const progressEl = el('progress');
+            const stepsEl = el('steps');
+            const stepsToggle = el('steps-toggle');
+            const feedbackEl = el('feedback');
+            const showMn = el('show-mnemonic');
+
+            let problems = [];
+            let index = 0;
+            let score = 0;
+            let total = 0;
+
+            function randInt(min, max) {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            }
+
+            function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+            function generateExpression(level, maxAbs) {
+                // build tokens with numbers and operators, possibly parentheses and exponents
+                const opsBasic = ['+', '-', '*', '/'];
+                const opsWithExp = ['+', '-', '*', '/', '^'];
+                const useExp = level === 'hard';
+                const ops = useExp ? opsWithExp : opsBasic;
+
+                // determine number of operations
+                let opsCount = level === 'easy' ? 2 : level === 'medium' ? randInt(3, 4) : randInt(4, 6);
+
+                // produce a flat expression first
+                let tokens = [];
+                for (let i = 0; i <= opsCount; i++) {
+                    let n = randInt(-maxAbs, maxAbs);
+                    // avoid zero in denominators later by ensuring possibility
+                    tokens.push(String(n));
+                    if (i < opsCount) tokens.push(pick(ops));
+                }
+
+                // optionally insert parentheses pairs (for medium/hard)
+                if (level !== 'easy') {
+                    const pairs = level === 'medium' ? randInt(0, 1) : randInt(1, 2);
+                    for (let p = 0; p < pairs; p++) {
+                        // choose positions that encompass at least one operator
+                        const len = tokens.length;
+                        if (len < 3) break;
+                        let i = randInt(0, Math.max(0, len - 3));
+                        // ensure i is number position (even index), start at even index
+                        if (i % 2 === 1) i++;
+                        let j = randInt(i + 2, Math.min(len - 1, i + 6));
+                        if (j % 2 === 1) j++;
+                        // wrap tokens i..j inclusive in parentheses
+                        tokens.splice(i, 0, '(');
+                        // j shifts by +1 due to insertion
+                        tokens.splice(j + 1, 0, ')');
+                    }
+                }
+
+                // replace some multiplies by implicit? Keep explicit.
+                // Clean up: avoid sequences like (/ 0) - later evaluator handles divide by zero by regenerating
+                const expr = tokens.join(' ');
+                if (/\/\s*0(?!\d|\.|\))/g.test(expr)) {
+                    return generateExpression(level, maxAbs); // regenerate to avoid immediate division by zero
+                }
+                return expr;
+            }
+
+            // Evaluate an expression string safely for our generated expressions.
+            // Supports ^ as exponent token and normal arithmetic. Returns Number.
+            function evaluateExpr(expr) {
+                // sanitize: only allow digits, spaces, operators, parentheses, decimal point and minus
+                if (!/^[0-9+\-*/^().\s]+$/.test(expr)) throw new Error('Invalid expression characters');
+                const jsExpr = expr.replace(/\^/g, '**');
+                // use Function for speed; surrounded to avoid eval scope issues
+                // handle potential division by zero -> throw
+                try {
+                    const val = Function('"use strict"; return (' + jsExpr + ')')();
+                    if (!isFinite(val)) throw new Error('Non-finite result');
+                    // round to reasonable precision to avoid floating noise
+                    return Math.round((val + Number.EPSILON) * 100000) / 100000;
+                } catch (e) {
+                    throw e;
+                }
+            }
+
+            // Produce step-by-step reduction following PEMDAS-like stages.
+            function stepsFor(expr) {
+                let s = expr.replace(/\s+/g, ' ').trim();
+                const steps = [s];
+                // helper to compute one-level (no parentheses) step using precedence
+                function computeFlat(str) {
+                    str = str.trim();
+                    // convert ^ to ** in this internal process; we'll use JS eval for paired numbers in simple matches
+                    // Evaluate exponent first (right associative). We'll choose right-most ** for correctness.
+                    // Step function finds next operation by precedence and computes one operation, returning new string.
+                    // Remove outer + unary issues by ensuring tokens separated by spaces.
+                    // Normalize spaces
+                    str = str.replace(/\s+/g, ' ');
+                    // convert unary pluses to explicit (we use patterns that find binary ops)
+                    // Evaluate exponent (right-most)
+                    const exponentRegex = /(-?\d+(\.\d+)?|\)\s*)(\s*\^\s*)(-?\d+(\.\d+)?|\()/;
+                    // Simpler approach: replace ^ by ** for eval and use a regex to find one operation pair for **, then */ then +-.
+                    const js = str.replace(/\^/g, '**');
+
+                    // helper to apply regex and replace first match
+                    const applyOpRegex = (regex) => {
+                        const m = regex.exec(js);
+                        if (!m) return null;
+                        // compute match range in original str by matching using the same subpattern adapted to original
+                        return null;
+                    };
+
+                    // Simpler safer approach: use a small parser loop:
+                    // 1) Tokenize numbers, operators, parentheses (we assume no parentheses here)
+                    const tok = [];
+                    const pattern = /(-?\d+(\.\d+)?|\*\*|[+\-*/^()])/g;
+                    let match;
+                    while ((match = pattern.exec(str)) !== null) {
+                        tok.push(match[0]);
+                    }
+                    // handle exponent '**' which we don't have in tokens (we used ^), so convert ^ to '**' in tokens:
+                    for (let i = 0; i < tok.length; i++) if (tok[i] === '^') tok[i] = '**';
+
+                    // precedence order arrays
+                    const precedence = [['**'], ['*', '/'], ['+', '-']];
+                    // find next operation index by scanning precedence
+                    for (const ops of precedence) {
+                        // for exponent, right-to-left
+                        if (ops.includes('**')) {
+                            for (let i = tok.length - 1; i >= 0; i--) {
+                                if (ops.includes(tok[i])) {
+                                    // compute tok[i-1] op tok[i+1]
+                                    const a = parseFloat(tok[i - 1]);
+                                    const b = parseFloat(tok[i + 1]);
+                                    let res = 0;
+                                    if (tok[i] === '**') res = Math.pow(a, b);
+                                    else if (tok[i] === '*') res = a * b;
+                                    else if (tok[i] === '/') res = a / b;
+                                    else if (tok[i] === '+') res = a + b;
+                                    else if (tok[i] === '-') res = a - b;
+                                    // replace three tokens
+                                    tok.splice(i - 1, 3, String(Math.round((res + Number.EPSILON) * 100000) / 100000));
+                                    const out = tok.join(' ');
+                                    return out;
+                                }
+                            }
+                        } else {
+                            for (let i = 0; i < tok.length; i++) {
+                                if (ops.includes(tok[i])) {
+                                    const a = parseFloat(tok[i - 1]);
+                                    const b = parseFloat(tok[i + 1]);
+                                    let res;
+                                    if (tok[i] === '*') res = a * b;
+                                    else if (tok[i] === '/') res = a / b;
+                                    else if (tok[i] === '+') res = a + b;
+                                    else if (tok[i] === '-') res = a - b;
+                                    tok.splice(i - 1, 3, String(Math.round((res + Number.EPSILON) * 100000) / 100000));
+                                    return tok.join(' ');
+                                }
+                            }
+                        }
+                    }
+                    return str;
+                }
+
+                try {
+                    // Handle parentheses iteratively
+                    while (/\(/.test(s)) {
+                        // find innermost parenthetical group
+                        const inner = s.match(/\([^()]*\)/);
+                        if (!inner) break;
+                        const group = inner[0];
+                        const innerContent = group.slice(1, -1);
+                        // compute inner stepwise until it's a single number
+                        let cur = innerContent;
+                        while (!/^[-]?\d+(\.\d+)?$/.test(cur)) {
+                            const next = computeFlat(cur);
+                            if (!next || next === cur) break;
+                            cur = next;
+                            steps.push(s.replace(group, '(' + cur + ')'));
+                        }
+                        // replace the entire parenthesis with computed value
+                        s = s.replace(group, cur);
+                        steps.push(s);
+                    }
+                    // Now no parentheses: reduce flat
+                    while (!/^[-]?\d+(\.\d+)?$/.test(s)) {
+                        const next = computeFlat(s);
+                        if (!next || next === s) break;
+                        s = next;
+                        steps.push(s);
+                    }
+                } catch (e) {
+                    // fallback: single evaluation step if something unexpected
+                    steps.push('= ' + evaluateExpr(expr));
+                }
+                return steps;
+            }
+
+            function newSet() {
+                const level = difficulty.value;
+                const maxAbs = parseInt(rngSelect.value, 10);
+                const count = Math.min(20, Math.max(1, parseInt(countInput.value, 10) || 10));
+                problems = [];
+                index = 0;
+                score = 0;
+                total = count;
+                for (let i = 0; i < count; i++) {
+                    // ensure valid evaluated numbers and avoid division by zero artifacts
+                    let ex;
+                    let val;
+                    let attempt = 0;
+                    do {
+                        ex = generateExpression(level, maxAbs);
+                        try { val = evaluateExpr(ex); }
+                        catch (err) { val = null; }
+                        attempt++;
+                        if (attempt > 50) break;
+                    } while (val === null || !isFinite(val) || Math.abs(val) > 1e6);
+                    problems.push({ expr: ex, answer: val });
+                }
+                scoreEl.textContent = '0';
+                askedEl.textContent = '0';
+                progressEl.textContent = `Set: ${count} problems (${level})`;
+                showProblem(0);
+            }
+
+            function showProblem(i) {
+                if (i >= problems.length) {
+                    problemEl.textContent = 'All done! Click Start to begin a new set.';
+                    feedbackEl.textContent = `Final score: ${score} / ${total}`;
+                    stepsEl.style.display = 'none';
+                    progressEl.textContent = 'Finished';
+                    return;
+                }
+                index = i;
+                const p = problems[i];
+                problemEl.textContent = p.expr;
+                answerInput.value = '';
+                feedbackEl.textContent = '';
+                stepsEl.textContent = '';
+                stepsEl.style.display = stepsToggle.checked ? 'block' : 'none';
+                askedEl.textContent = i;
+            }
+
+            checkBtn.addEventListener('click', () => {
+                if (!problems.length) return;
+                const p = problems[index];
+                const user = answerInput.value.trim();
+                if (user === '') { feedbackEl.textContent = 'Enter a numeric answer or press Skip/Next.'; return; }
+                const userNum = Number(user);
+                if (Number.isNaN(userNum)) { feedbackEl.textContent = 'Please enter a valid number.'; return; }
+                let correct = false;
+                // allow small tolerance
+                const tol = 1e-4;
+                if (Math.abs(userNum - p.answer) <= tol) correct = true;
+                if (correct) {
+                    score++;
+                    feedbackEl.textContent = 'Correct! ✅ ' + p.expr + ' = ' + p.answer;
+                } else {
+                    feedbackEl.textContent = 'Not quite. ✖ Correct: ' + p.answer;
+                }
+                scoreEl.textContent = score;
+                askedEl.textContent = index + 1;
+                // show steps if requested
+                if (stepsToggle.checked) {
+                    try {
+                        const st = stepsFor(p.expr);
+                        stepsEl.style.display = 'block';
+                        stepsEl.textContent = st.join('\n→ ');
+                    } catch (e) {
+                        stepsEl.style.display = 'none';
+                    }
+                }
+            });
+
+            nextBtn.addEventListener('click', () => {
+                if (!problems.length) return;
+                // mark as attempted
+                askedEl.textContent = index + 1;
+                // move to next
+                showProblem(index + 1);
+            });
+
+            generateBtn.addEventListener('click', newSet);
+            stepsToggle.addEventListener('change', () => {
+                stepsEl.style.display = stepsToggle.checked ? 'block' : 'none';
+                // if showing, precompute steps for current problem
+                if (stepsToggle.checked && problems.length && problems[index]) {
+                    try {
+                        stepsEl.textContent = stepsFor(problems[index].expr).join('\n→ ');
+                    } catch (e) { stepsEl.textContent = 'Cannot show steps for this expression.'; }
+                }
+            });
+
+            showMn.addEventListener('click', () => {
+                alert('PEMDAS: Parentheses, Exponents, Multiplication and Division (left-to-right), Addition and Subtraction (left-to-right).');
+            });
+
+            // keyboard: Enter on answer to check
+            answerInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') checkBtn.click();
+            });
+
+            // initialize small sample
+            problemEl.textContent = 'Choose options then click Start to generate problems.';
+        })();
+    </script>
+</body>
+
+</html>
