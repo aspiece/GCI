@@ -112,6 +112,149 @@
             font-size: 13px
         }
 
+        /* Badge cabinet styles */
+        .cabinet {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .badge.trophy {
+            width: 44px;
+            height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-size: 11px;
+            padding: 6px;
+            box-shadow: 0 4px 12px rgba(2, 6, 23, 0.12);
+            cursor: default;
+        }
+
+        .badge.trophy.earned {
+            background: linear-gradient(180deg, var(--accent), #0060a8);
+            color: var(--button-text);
+            font-weight: 700;
+        }
+
+        /* focus and icon styles for keyboard navigation */
+        .badge.trophy:focus {
+            outline: 3px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 6px 18px rgba(2, 6, 23, 0.18), 0 0 0 3px rgba(11, 99, 179, 0.18);
+        }
+
+        .badge.trophy .icon {
+            width: 16px;
+            height: 16px;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+
+        /* small retro pixel colors for earned vs locked */
+        .badge.trophy.earned {
+            background-image: linear-gradient(180deg, #ffde59, #f29f05);
+            color: #111
+        }
+
+        .badge.trophy.locked {
+            background-image: linear-gradient(180deg, #e6e6e6, #cfcfcf);
+            color: #6b6b6b
+        }
+
+        /* visually-hidden helper for ARIA live region */
+        .sr-only {
+            position: absolute !important;
+            width: 1px !important;
+            height: 1px !important;
+            padding: 0 !important;
+            margin: -1px !important;
+            overflow: hidden !important;
+            clip: rect(0, 0, 0, 0) !important;
+            white-space: nowrap !important;
+            border: 0 !important;
+        }
+
+        /* Toast stack */
+        #toast-stack {
+            position: fixed;
+            right: 18px;
+            bottom: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 9999;
+            align-items: flex-end;
+        }
+
+        .toast {
+            background: var(--card);
+            color: var(--text);
+            padding: 10px 14px;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(2, 6, 23, 0.12);
+            max-width: 320px;
+            opacity: 1;
+        }
+
+        /* Modal styles */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 6, 23, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+
+        .modal {
+            background: var(--card);
+            color: var(--text);
+            border-radius: 12px;
+            padding: 18px;
+            width: 92%;
+            max-width: 520px;
+            box-shadow: 0 12px 40px rgba(2, 6, 23, 0.2);
+        }
+
+        .modal h3 {
+            margin: 0 0 8px 0
+        }
+
+        .modal .modal-row {
+            display: flex;
+            gap: 12px;
+            align-items: center
+        }
+
+        .modal .pixel-art {
+            width: 64px;
+            height: 64px;
+            flex: 0 0 64px
+        }
+
+        .modal .meta {
+            color: var(--muted);
+            font-size: 13px
+        }
+
+        .modal .close {
+            margin-left: auto;
+            background: transparent;
+            border: 0;
+            font-size: 16px;
+            cursor: pointer
+        }
+
+        .badge.trophy.locked {
+            background: rgba(0, 0, 0, 0.06);
+            color: var(--muted);
+            border: 1px dashed rgba(0, 0, 0, 0.06);
+        }
+
         select,
         input[type=number] {
             padding: 6px 8px;
@@ -227,6 +370,19 @@
                         <option value="high-contrast">High Contrast</option>
                     </select>
                 </label>
+                <label>
+                    <button class="secondary" id="reset-mastery" title="Reset mastery">Reset mastery</button>
+                </label>
+                <label>
+                    <button class="secondary" id="reset-badges" title="Reset earned badges">Reset badges</button>
+                </label>
+                <label>
+                    <button class="secondary" id="export-badges" title="Export badges">Export badges</button>
+                </label>
+                <label>
+                    <button class="secondary" id="import-badges" title="Import badges">Import badges</button>
+                    <input id="import-file" type="file" accept="application/json" style="display:none" />
+                </label>
                 <button id="generate">Start</button>
                 <button class="secondary" id="show-mnemonic" title="Quick help">Show PEMDAS</button>
             </div>
@@ -247,13 +403,14 @@
                     exponents use <code>**</code>. Order follows PEMDAS.</div>
                 <div style="margin-top:10px;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, monospace">
                     <div style="font-size:13px;color:var(--muted);margin-bottom:6px">Examples by difficulty:</div>
-                    <div style="display:flex;gap:12px;flex-wrap:wrap">
-                        <div><strong>Very Easy:</strong> <code>3 + 4</code></div>
-                        <div><strong>Easy:</strong> <code>(5 + 2) * 3</code></div>
-                        <div><strong>Medium:</strong> <code>(2 + 3) ** 2 - 4</code></div>
-                        <div><strong>Hard:</strong> <code>(3 + (2 * 5)) ** 2 / 4</code></div>
-                        <div><strong>Expert:</strong> <code>((2 + 3) ** (1 + 1)) * (4 - 1)</code></div>
-                    </div>
+                    <ul
+                        style="margin:0;padding-left:18px;color:var(--muted);font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, monospace">
+                        <li><strong>Very Easy:</strong> <code>3 + 4</code></li>
+                        <li><strong>Easy:</strong> <code>(5 + 2) * 3</code></li>
+                        <li><strong>Medium:</strong> <code>(2 + 3) ** 2 - 4</code></li>
+                        <li><strong>Hard:</strong> <code>(3 + (2 * 5)) ** 2 / 4</code></li>
+                        <li><strong>Expert:</strong> <code>((2 + 3) ** (1 + 1)) * (4 - 1)</code></li>
+                    </ul>
                 </div>
             </div>
         </section>
@@ -261,6 +418,7 @@
         <section class="card" aria-live="polite">
             <div class="meta">
                 <div class="score">Score: <strong id="score">0</strong>/<span id="asked">0</span></div>
+                <div id="mastery" class="score" style="margin-left:12px">Mastery: <span id="mastery-val">—</span></div>
                 <div id="progress" style="color:var(--muted)">Ready</div>
             </div>
 
@@ -315,6 +473,35 @@
             </div>
         </section>
 
+        <section class="card" aria-labelledby="badges-heading">
+            <h2 id="badges-heading" style="margin:0 0 8px 0;font-size:15px">Badge cabinet</h2>
+            <div style="color:var(--muted);font-size:14px">
+                <div style="margin-bottom:8px">Earn badges by achieving mastery in each difficulty. Badges persist in
+                    your browser.</div>
+                <div id="badge-cabinet" class="cabinet" aria-live="polite"></div>
+                <!-- Hidden ARIA-live summary for programmatic announcements -->
+                <div id="badge-aria-live" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+                <!-- Modal for badge details -->
+                <div id="badge-modal" class="modal-backdrop" style="display:none" aria-hidden="true">
+                    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="badge-modal-title">
+                        <div style="display:flex;align-items:center;gap:12px">
+                            <div class="pixel-art" id="modal-art" aria-hidden="true"></div>
+                            <div style="flex:1">
+                                <h3 id="badge-modal-title">Badge</h3>
+                                <div id="badge-modal-desc" class="meta">Details about this badge.</div>
+                            </div>
+                            <button id="badge-modal-close" class="close" aria-label="Close">✖</button>
+                        </div>
+                        <div style="margin-top:12px">
+                            <div id="badge-modal-tips" style="font-size:13px;color:var(--muted)"></div>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top:8px;font-size:13px;color:var(--muted)">Tip: Reach 80% correct over the last 10
+                    attempts to earn a badge.</div>
+            </div>
+        </section>
+
         <footer class="card" style="text-align:left">
             Tips: Work inside parentheses first, then exponents, then multiplication/division left-to-right, then
             addition/subtraction left-to-right. Use the "Show steps" checkbox to see a step-by-step breakdown.
@@ -342,6 +529,8 @@
             const stepsToggle = el('steps-toggle');
             const feedbackEl = el('feedback');
             const showMn = el('show-mnemonic');
+            const masteryValEl = el('mastery-val');
+            const resetMasteryBtn = el('reset-mastery');
 
             let problems = [];
             let index = 0;
@@ -582,6 +771,300 @@
                 showProblem(0);
             }
 
+            // Mastery tracking: rolling window per difficulty (last N attempts)
+            const MASTERY_WINDOW = 10;
+            const MASTERY_THRESHOLD = 0.8; // 80% correct to gain mastery
+
+            // Badge storage (earned trophies per difficulty)
+            const BADGE_KEY = 'ooo_badges';
+
+            // Retro arcade-themed names for levels
+            const ARCADE_NAMES = {
+                'very-easy': '1-UP Rookie',
+                'easy': 'Pixel Player',
+                'medium': 'Combo Champ',
+                'hard': 'Boss Brawler',
+                'expert': 'High Score Legend'
+            };
+            const ARCADE_ABBR = {
+                'very-easy': '1UP',
+                'easy': 'PX',
+                'medium': 'CC',
+                'hard': 'BB',
+                'expert': 'HS'
+            };
+
+            function loadBadges() {
+                try {
+                    const raw = localStorage.getItem(BADGE_KEY);
+                    return raw ? JSON.parse(raw) : {};
+                } catch (e) { return {}; }
+            }
+
+            function saveBadges(b) {
+                try { localStorage.setItem(BADGE_KEY, JSON.stringify(b)); } catch (e) { }
+            }
+
+            function awardBadge(level) {
+                const b = loadBadges();
+                if (!b[level] || !b[level].earned) {
+                    b[level] = { earned: true, earnedAt: new Date().toISOString() };
+                    saveBadges(b);
+                    // toast and update UI
+                    showBadgeToast(level);
+                    updateBadgeCabinet();
+                }
+            }
+
+            function clearBadges() { try { localStorage.removeItem(BADGE_KEY); } catch (e) { } updateBadgeCabinet(); }
+
+            function getBadgeInfo(level) {
+                const b = loadBadges();
+                return b[level] || { earned: false };
+            }
+
+            function updateBadgeCabinet() {
+                const cabinet = document.getElementById('badge-cabinet');
+                if (!cabinet) return;
+                cabinet.innerHTML = '';
+                const levels = ['very-easy', 'easy', 'medium', 'hard', 'expert'];
+                levels.forEach(lv => {
+                    const info = getBadgeInfo(lv);
+                    const el = document.createElement('div');
+                    el.className = 'badge trophy ' + (info.earned ? 'earned' : 'locked');
+                    const arcadeName = ARCADE_NAMES[lv] || lv.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ');
+                    const abbr = ARCADE_ABBR[lv] || lv.split('-').map(w => w[0].toUpperCase()).join('');
+                    el.title = arcadeName;
+                    el.setAttribute('data-level', lv);
+                    el.setAttribute('tabindex', '0');
+                    el.setAttribute('role', 'button');
+                    // build inner content: icon + abbrev
+                    const icon = document.createElement('span');
+                    icon.className = 'icon';
+                    // inline pixel-style SVG
+                    icon.innerHTML = info.earned ? `
+                        <svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                          <rect x="3" y="1" width="10" height="2" fill="#222" />
+                          <rect x="4" y="3" width="2" height="2" fill="#ffde59" />
+                          <rect x="10" y="3" width="2" height="2" fill="#ffde59" />
+                          <rect x="6" y="3" width="4" height="2" fill="#f29f05" />
+                          <rect x="5" y="5" width="6" height="2" fill="#cc7a00" />
+                        </svg>` : `
+                        <svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                          <rect x="4" y="3" width="8" height="2" fill="#999" />
+                          <rect x="5" y="5" width="6" height="2" fill="#ccc" />
+                        </svg>`;
+                    el.appendChild(icon);
+                    const text = document.createElement('span');
+                    text.textContent = abbr;
+                    el.appendChild(text);
+                    if (info.earned && info.earnedAt) {
+                        const d = new Date(info.earnedAt);
+                        const ts = d.toLocaleString();
+                        el.setAttribute('aria-label', `${arcadeName} badge earned ${ts}`);
+                        el.setAttribute('title', `${arcadeName} — earned ${ts}`);
+                    } else {
+                        el.setAttribute('aria-label', `${arcadeName} badge locked`);
+                        el.setAttribute('title', `${arcadeName} — locked`);
+                    }
+                    cabinet.appendChild(el);
+                });
+                // announce summary
+                const live = document.getElementById('badge-aria-live');
+                if (live) {
+                    const earned = levels.filter(l => getBadgeInfo(l).earned).length;
+                    live.textContent = `${earned} badge${earned === 1 ? '' : 's'} earned.`;
+                }
+                // update modal art if open
+                const modal = document.getElementById('badge-modal');
+                if (modal && modal.style.display !== 'none') {
+                    const openLvl = modal._openLevel;
+                    if (openLvl) populateModal(openLvl);
+                }
+            }
+
+            // Populate and show badge detail modal
+            function populateModal(level) {
+                const modal = document.getElementById('badge-modal');
+                const art = document.getElementById('modal-art');
+                const title = document.getElementById('badge-modal-title');
+                const desc = document.getElementById('badge-modal-desc');
+                const tips = document.getElementById('badge-modal-tips');
+                if (!modal || !art || !title || !desc || !tips) return;
+                const info = getBadgeInfo(level);
+                const name = ARCADE_NAMES[level] || level;
+                title.textContent = name;
+                if (info.earned && info.earnedAt) {
+                    const d = new Date(info.earnedAt);
+                    desc.textContent = `Earned: ${d.toLocaleString()}`;
+                } else {
+                    desc.textContent = 'Not yet earned.';
+                }
+                // tips and encouragement
+                const tipMap = {
+                    'very-easy': 'Practice basics: add and subtract mentally to build speed.',
+                    'easy': 'Watch for order: parentheses change the evaluation order.',
+                    'medium': 'Exponents appear more often; compute powers carefully.',
+                    'hard': 'Work inner parentheses first and simplify step-by-step.',
+                    'expert': 'Mix of nested parentheses and exponents — take it slow.'
+                };
+                tips.textContent = tipMap[level] || 'Good work — keep practicing!';
+
+                // pixel art (larger) per badge
+                const artSVG = {
+                    'very-easy': `<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="64" height="64" fill="#111"/><rect x="8" y="8" width="48" height="48" fill="#ffd24a"/><rect x="20" y="20" width="24" height="24" fill="#ff8c00"/></svg>`,
+                    'easy': `<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="64" height="64" fill="#0b1630"/><rect x="10" y="12" width="44" height="40" fill="#6be3ff"/><rect x="18" y="20" width="28" height="24" fill="#00bcd4"/></svg>`,
+                    'medium': `<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="64" height="64" fill="#07112a"/><rect x="8" y="8" width="48" height="48" fill="#c0ffc8"/><rect x="18" y="18" width="28" height="28" fill="#4caf50"/></svg>`,
+                    'hard': `<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="64" height="64" fill="#2a0014"/><rect x="6" y="10" width="52" height="44" fill="#ff99cc"/><rect x="14" y="18" width="36" height="28" fill="#ff4081"/></svg>`,
+                    'expert': `<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="64" height="64" fill="#001a1a"/><rect x="8" y="8" width="48" height="48" fill="#ffd6a5"/><rect x="16" y="16" width="32" height="32" fill="#ff6b00"/></svg>`
+                };
+                art.innerHTML = artSVG[level] || artSVG['medium'];
+
+                // store open level and show modal
+                modal._openLevel = level;
+                modal.style.display = 'flex';
+                modal.setAttribute('aria-hidden', 'false');
+                // focus management: move focus to close button
+                const close = document.getElementById('badge-modal-close');
+                if (close) setTimeout(() => close.focus(), 10);
+            }
+
+            function closeModal() {
+                const modal = document.getElementById('badge-modal');
+                if (!modal) return;
+                modal.style.display = 'none';
+                modal.setAttribute('aria-hidden', 'true');
+                modal._openLevel = null;
+            }
+
+            // Toast stack + ARIA-live announcement
+            function _appendToastElement(message) {
+                const stack = document.getElementById('toast-stack') || (() => {
+                    const el = document.createElement('div'); el.id = 'toast-stack'; document.body.appendChild(el); return el;
+                })();
+                const t = document.createElement('div');
+                t.className = 'toast';
+                t.setAttribute('role', 'status');
+                t.textContent = message;
+                stack.appendChild(t);
+                // auto-remove after timeout, fade out
+                setTimeout(() => { t.style.transition = 'opacity 300ms'; t.style.opacity = '0'; }, 2200);
+                setTimeout(() => { try { stack.removeChild(t); } catch (e) { } }, 2600);
+            }
+
+            function showLiveToast(message) {
+                try {
+                    const live = document.getElementById('badge-aria-live');
+                    if (live) live.textContent = message;
+                    _appendToastElement(message);
+                } catch (e) { /* ignore */ }
+            }
+
+            function showBadgeToast(level) {
+                const name = ARCADE_NAMES[level] || level.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ');
+                showLiveToast(`Badge earned: ${name} 🎖 — view in the Badge cabinet`);
+            }
+
+            function loadMastery() {
+                try {
+                    const raw = localStorage.getItem('ooo_mastery');
+                    return raw ? JSON.parse(raw) : {};
+                } catch (e) { return {}; }
+            }
+            function saveMastery(m) {
+                try { localStorage.setItem('ooo_mastery', JSON.stringify(m)); } catch (e) { }
+            }
+
+            function recordAttempt(level, correct) {
+                const m = loadMastery();
+                if (!m[level]) m[level] = { recent: [], achieved: false, achievedAt: null };
+                const arr = m[level].recent;
+                arr.push(correct ? 1 : 0);
+                if (arr.length > MASTERY_WINDOW) arr.shift();
+                const sum = arr.reduce((a, b) => a + b, 0);
+                const pct = arr.length ? (sum / arr.length) : 0;
+                if (!m[level].achieved && arr.length >= MASTERY_WINDOW && pct >= MASTERY_THRESHOLD) {
+                    m[level].achieved = true;
+                    m[level].achievedAt = new Date().toISOString();
+                    // award a persistent badge and notify user (non-blocking) using arcade-themed name
+                    try { awardBadge(level); } catch (e) { }
+                    try { const arcade = ARCADE_NAMES[level] || level.replace('-', ' '); showLiveToast(`Mastery achieved — ${arcade}! 🎉 A badge was awarded.`); } catch (e) { }
+                }
+                saveMastery(m);
+                return { pct: Math.round(pct * 100), count: arr.length, achieved: m[level].achieved };
+            }
+
+            function getMasteryDisplay(level) {
+                const m = loadMastery();
+                const data = m[level] || { recent: [], achieved: false };
+                const arr = data.recent || [];
+                const sum = arr.reduce((a, b) => a + b, 0);
+                const pct = arr.length ? Math.round((sum / arr.length) * 100) : 0;
+                return { pct, count: arr.length, achieved: !!data.achieved };
+            }
+
+            function updateMasteryUI(level, precomputed) {
+                if (!masteryValEl) return;
+                const info = precomputed || getMasteryDisplay(level);
+                if (!info || !info.count) {
+                    masteryValEl.textContent = `0% (0/${MASTERY_WINDOW})`;
+                } else {
+                    masteryValEl.textContent = `${info.pct}% (${info.count}/${MASTERY_WINDOW})`;
+                }
+                if (info && info.achieved) masteryValEl.textContent += ' ✓';
+            }
+
+            if (resetMasteryBtn) resetMasteryBtn.addEventListener('click', () => {
+                try { localStorage.removeItem('ooo_mastery'); } catch (e) { }
+                updateMasteryUI(difficulty.value);
+            });
+
+            const resetBadgesBtn = document.getElementById('reset-badges');
+            if (resetBadgesBtn) resetBadgesBtn.addEventListener('click', () => {
+                if (!confirm('Clear all earned badges from this browser?')) return;
+                clearBadges();
+                showLiveToast('All badges cleared.');
+            });
+
+            // Export / Import badges
+            const exportBadgesBtn = document.getElementById('export-badges');
+            const importBadgesBtn = document.getElementById('import-badges');
+            const importFile = document.getElementById('import-file');
+            if (exportBadgesBtn) exportBadgesBtn.addEventListener('click', () => {
+                try {
+                    const data = loadBadges();
+                    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'ooo_badges.json';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    showLiveToast('Badges exported.');
+                } catch (e) { showLiveToast('Export failed.'); }
+            });
+            if (importBadgesBtn && importFile) importBadgesBtn.addEventListener('click', () => importFile.click());
+            if (importFile) importFile.addEventListener('change', (ev) => {
+                const f = ev.target.files && ev.target.files[0];
+                if (!f) return;
+                const r = new FileReader();
+                r.onload = (e) => {
+                    try {
+                        const parsed = JSON.parse(e.target.result);
+                        // basic validation: object with keys mapped to {earned, earnedAt}
+                        if (typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error('Invalid format');
+                        saveBadges(parsed);
+                        updateBadgeCabinet();
+                        showLiveToast('Badges imported.');
+                    } catch (err) { showLiveToast('Import failed: invalid file.'); }
+                };
+                r.readAsText(f);
+                // clear input so the same file can be picked again later
+                importFile.value = '';
+            });
+
             // Theme handling: apply class to body and persist selection
             function applyTheme(theme) {
                 document.body.classList.remove('theme-dark', 'theme-high-contrast');
@@ -605,6 +1088,10 @@
                 applyTheme(saved);
             } catch (err) { applyTheme('light'); }
 
+            // initialize mastery display
+            try { updateMasteryUI(difficulty.value); } catch (e) { }
+            try { updateBadgeCabinet(); } catch (e) { }
+
             function showProblem(i) {
                 if (i >= problems.length) {
                     problemEl.textContent = 'All done! Click Start to begin a new set.';
@@ -627,8 +1114,9 @@
                         s.setAttribute('aria-hidden', 'true');
                         return s;
                     };
-                    // Difficulty badge
-                    badgesEl.appendChild(make(level.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' '), 'secondary'));
+                    // Difficulty badge (arcade-themed name)
+                    const arcadeLabel = ARCADE_NAMES[level] || level.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ');
+                    badgesEl.appendChild(make(arcadeLabel, 'secondary'));
                     // Feature badges
                     try {
                         const expr = p.expr || '';
@@ -643,6 +1131,34 @@
                 stepsEl.textContent = '';
                 stepsEl.style.display = stepsToggle.checked ? 'block' : 'none';
                 askedEl.textContent = i;
+                // update mastery UI for this problem's level
+                updateMasteryUI(p.level || difficulty.value);
+                // ensure keyboard activation handlers on cabinet (event delegation)
+                const cabinet = document.getElementById('badge-cabinet');
+                if (cabinet && !cabinet._wired) {
+                    cabinet._wired = true;
+                    cabinet.addEventListener('click', (ev) => {
+                        const tgt = ev.target.closest('.badge.trophy');
+                        if (!tgt) return;
+                        const lvl = tgt.getAttribute('data-level');
+                        const info = getBadgeInfo(lvl);
+                        const name = ARCADE_NAMES[lvl] || lvl;
+                        if (info.earned) {
+                            const d = new Date(info.earnedAt);
+                            showLiveToast(`${name} badge earned ${d.toLocaleString()}`);
+                        } else {
+                            showLiveToast(`${name} badge locked`);
+                        }
+                    });
+                    cabinet.addEventListener('keydown', (ev) => {
+                        if (ev.key === 'Enter' || ev.key === ' ') {
+                            const tgt = ev.target.closest('.badge.trophy');
+                            if (!tgt) return;
+                            ev.preventDefault();
+                            tgt.click();
+                        }
+                    });
+                }
             }
 
             checkBtn.addEventListener('click', () => {
@@ -662,6 +1178,8 @@
                 } else {
                     feedbackEl.textContent = 'Not quite. ✖ Correct: ' + p.answer;
                 }
+                // record mastery attempt
+                try { const res = recordAttempt(p.level || difficulty.value, correct); updateMasteryUI(p.level || difficulty.value, res); } catch (e) { }
                 scoreEl.textContent = score;
                 askedEl.textContent = index + 1;
                 // show steps if requested
@@ -681,6 +1199,8 @@
                 // mark as attempted
                 askedEl.textContent = index + 1;
                 // move to next
+                // update mastery UI for this problem's level
+                updateMasteryUI(p.level || difficulty.value);
                 showProblem(index + 1);
             });
 
@@ -696,7 +1216,7 @@
             });
 
             showMn.addEventListener('click', () => {
-                alert('PEMDAS: Parentheses, Exponents, Multiplication and Division (left-to-right), Addition and Subtraction (left-to-right).');
+                showLiveToast('PEMDAS: Parentheses, Exponents, Multiplication and Division (left-to-right), Addition and Subtraction (left-to-right).');
             });
 
             // keyboard: Enter on answer to check
