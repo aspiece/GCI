@@ -671,7 +671,7 @@ except ZeroDivisionError as e:
                     const d2 = correct.replace(/True|False/g, m => m === 'True' ? 'False' : 'True');
                     const d3 = correct.includes('\\n') ? correct.split('\\n').slice(0, -1).join('\\n') : (correct + '\\n');
                     const opts = shuffle([correct, d1, d2, d3]).map(s => s.replace(/\\n/g, '\n'));
-                    return { type, prompt: `What is the output of this code?`, detail: `\n${item.code}`, correct: correct.replace(/\\n/g, '\n'), opts };
+                    return { type, prompt: `What is the output of this code?`, detail: `\n${item.code}`, correct: correct.replace(/\\n/g, '\n'), opts, code: item.code };
                 }
             });
         }
@@ -679,10 +679,16 @@ except ZeroDivisionError as e:
             const qs = mkQuestions(n);
             const wrap = $('#quizWrap');
             wrap.innerHTML = qs.map((q, qi) => `
-        <div class="q card" style="padding:12px; margin-top:8px">
+        <div class="q card" style="padding:12px; margin-top:8px" data-qi="${qi}">
           <div><strong>Q${qi + 1}.</strong> ${q.prompt}</div>
           ${q.type === 'def' ? `<div class="muted" style="margin:6px 0 10px">${q.detail}</div>` :
-                    `<pre style="margin:6px 0 10px"><code>${escapeHtml(q.detail)}</code></pre>`}
+                    `<pre style="margin:6px 0 10px"><code>${escapeHtml(q.detail)}</code></pre>
+                     <div class="row" style="margin:6px 0">
+                       <button class="run-inline" data-code="${encodeURIComponent(q.code || '')}" data-qi="${qi}">Run code</button>
+                       <button class="ghost open-runner" data-code="${encodeURIComponent(q.code || '')}">Open in Runner</button>
+                       <span class="pill">Inline runner</span>
+                     </div>
+                     <pre class="qOut" id="qOut-${qi}" aria-live="polite"></pre>`}
           ${q.opts.map((opt, oi) => `
             <label class="opt"><input type="radio" name="q${qi}" value="${escapeHtml(opt)}"/> <pre style="margin:0"><code>${escapeHtml(opt)}</code></pre></label>
           `).join('')}
@@ -726,65 +732,40 @@ except ZeroDivisionError as e:
             $('#scorePill').textContent = 'Score: —';
         });
 
-        // ===== Python Runner (Pyodide) =====
-        let pyodide = null;
-        const pyStatus = document.getElementById('pyStatus');
-        const pyOut = document.getElementById('pyOut');
-        const pyCode = document.getElementById('pyCode');
-
-        function appendOut(text) {
-            pyOut.textContent += text;
-            pyOut.scrollTop = pyOut.scrollHeight;
+        // --- Inline quiz runner integration ---
+        function indentPy(code, spaces = 4) {
+            const pad = ' '.repeat(spaces);
+            return (code || '').split('\n').map(l => pad + l).join('\n');
         }
-
-        async function ensurePyodide() {
-            if (pyodide) return pyodide;
-            if (typeof loadPyodide !== 'function') {
-                pyStatus.textContent = 'Failed to load';
-                throw new Error('Pyodide script not loaded');
-            }
-            try {
-                pyStatus.textContent = 'Downloading…';
-                pyodide = await loadPyodide({
-                    indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/',
-                    stdout: (t) => appendOut(t + '\n'),
-                    stderr: (t) => appendOut(t + '\n'),
-                });
-                pyStatus.textContent = 'Ready';
-            } catch (e) {
-                console.error(e);
-                pyStatus.textContent = 'Failed to load';
-                appendOut(String(e) + '\n');
-                throw e;
-            }
-            return pyodide;
-        }
-
-        async function runPython() {
-            const code = pyCode.value;
+        async function runPythonInline(code) {
             const py = await ensurePyodide();
+            const wrapped = `
+import sys, io, traceback
+_buf = io.StringIO()
+_old_out, _old_err = sys.stdout, sys.stderr
+sys.stdout = _buf
+sys.stderr = _buf
+try:
+${indentPy(code)}
+except Exception:
+    traceback.print_exc()
+finally:
+    sys.stdout = _old_out
+    sys.stderr = _old_err
+_buf.getvalue()
+`;
             try {
-                // Clear previous buffered output in Python (optional)
-                await py.runPythonAsync(code);
+                const out = await py.runPythonAsync(wrapped);
+                return String(out || '');
             } catch (e) {
-                appendOut(String(e) + '\n');
+                return String(e || 'Error');
             }
         }
-
-        document.getElementById('runPy').addEventListener('click', runPython);
-        document.getElementById('clearOut').addEventListener('click', () => { pyOut.textContent = ''; });
-        pyCode.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); runPython(); }
-        });
-
-        // Kick off load in background
-        ensurePyodide();
-
-        // ===== end Python Runner =====
-
-        // Init
-        initFlash(true);
-    </script>
-</body>
-
-</html>
+        // Delegate clicks for Run/Open buttons inside quiz
+        document.addEventListener('click', async (e) => {
+            const runBtn = e.target.closest('.run-inline');
+            if (runBtn) {
+                const qi = runBtn.dataset.qi;
+                const code = decodeURIComponent(runBtn.dataset.code || '');
+                const outEl = document.getElementById(`qOut-${qi}`);
+                if
