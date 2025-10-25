@@ -603,6 +603,38 @@
                     }
                 }
 
+                // Clamp exponents to small magnitudes to avoid huge numeric results.
+                // Find any '**' operators and ensure the exponent is a small non-negative integer (0..4)
+                const findNextNumber = (arr, start) => {
+                    for (let i = start + 1; i < arr.length; i++) {
+                        if (/^-?\d+$/.test(arr[i])) return i;
+                    }
+                    return -1;
+                };
+                const findPrevNumber = (arr, start) => {
+                    for (let i = start - 1; i >= 0; i--) {
+                        if (/^-?\d+$/.test(arr[i])) return i;
+                    }
+                    return -1;
+                };
+                for (let i = 0; i < tokens.length; i++) {
+                    if (tokens[i] === '**') {
+                        const expIdx = findNextNumber(tokens, i);
+                        const baseIdx = findPrevNumber(tokens, i);
+                        if (expIdx !== -1) {
+                            // force small non-negative exponent
+                            tokens[expIdx] = String(randInt(0, 4));
+                        }
+                        if (baseIdx !== -1) {
+                            // keep base modest to avoid huge powers
+                            let base = parseInt(tokens[baseIdx], 10) || 1;
+                            if (base > 6) base = 6;
+                            if (base < -6) base = -6;
+                            tokens[baseIdx] = String(base);
+                        }
+                    }
+                }
+
                 // replace some multiplies by implicit? Keep explicit.
                 // Clean up: avoid sequences like (/ 0) - later evaluator handles divide by zero by regenerating
                 const expr = tokens.join(' ');
@@ -783,6 +815,11 @@
                         attempt++;
                         if (attempt > 50) break;
                     } while (val === null || !isFinite(val) || Math.abs(val) > 1e6);
+                    // if we failed to produce a valid value after many attempts, try again without counting this iteration
+                    if (val === null || !isFinite(val) || Math.abs(val) > 1e6) {
+                        i--; // retry this index
+                        continue;
+                    }
                     problems.push({ expr: ex, answer: val, level });
                 }
                 scoreEl.textContent = '0';
@@ -866,18 +903,16 @@
                     const icon = document.createElement('span');
                     icon.className = 'icon';
                     // inline pixel-style SVG
+                    // use currentColor so SVG icons tint to the badge's color
                     icon.innerHTML = info.earned ? `
-                        <svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                          <rect x="3" y="1" width="10" height="2" fill="#222" />
-                          <rect x="4" y="3" width="2" height="2" fill="#ffde59" />
-                          <rect x="10" y="3" width="2" height="2" fill="#ffde59" />
-                          <rect x="6" y="3" width="4" height="2" fill="#f29f05" />
-                          <rect x="5" y="5" width="6" height="2" fill="#cc7a00" />
-                        </svg>` : `
-                        <svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                          <rect x="4" y="3" width="8" height="2" fill="#999" />
-                          <rect x="5" y="5" width="6" height="2" fill="#ccc" />
-                        </svg>`;
+                                                <svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                                    <circle cx="8" cy="6" r="3" fill="currentColor" />
+                                                    <rect x="4" y="11" width="8" height="2" fill="currentColor" />
+                                                </svg>` : `
+                                                <svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                                    <rect x="4" y="4" width="8" height="2" fill="currentColor" />
+                                                    <rect x="4" y="8" width="8" height="2" fill="currentColor" />
+                                                </svg>`;
                     el.appendChild(icon);
                     const text = document.createElement('span');
                     text.textContent = abbr;
@@ -1201,11 +1236,21 @@
                 if (badgesEl) {
                     badgesEl.innerHTML = '';
                     const level = p.level || difficulty.value;
-                    const make = (text, cls) => {
+                    const make = (text, cls, iconSVG) => {
                         const s = document.createElement('span');
                         s.className = 'badge' + (cls ? ' ' + cls : '');
-                        s.textContent = text;
                         s.setAttribute('aria-hidden', 'true');
+                        // icon (small inline SVG) then text
+                        if (iconSVG) {
+                            const wrap = document.createElement('span');
+                            wrap.style.display = 'inline-flex';
+                            wrap.style.alignItems = 'center';
+                            wrap.style.gap = '6px';
+                            wrap.innerHTML = iconSVG + `<span style="font-weight:600">${text}</span>`;
+                            s.appendChild(wrap);
+                        } else {
+                            s.textContent = text;
+                        }
                         return s;
                     };
                     // Difficulty badge (arcade-themed name)
@@ -1214,10 +1259,22 @@
                     // Feature badges
                     try {
                         const expr = p.expr || '';
-                        if (/\*\*/.test(expr) || /\^/.test(expr)) badgesEl.appendChild(make('Exponent'));
-                        if (/[()]/.test(expr)) badgesEl.appendChild(make('Parentheses'));
-                        if (/\//.test(expr)) badgesEl.appendChild(make('Division', 'secondary'));
-                        if (/\*/.test(expr) && !/\*\*/.test(expr)) badgesEl.appendChild(make('Multiplication', 'secondary'));
+                        if (/\*\*/.test(expr) || /\^/.test(expr)) badgesEl.appendChild(make('Exponent', '', `
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                                            <path fill="currentColor" d="M5 20v-2h14v2H5zm7-18l3 5h-2v6h-2V7H9l3-5z"/>
+                                                        </svg>`));
+                        if (/[()]/.test(expr)) badgesEl.appendChild(make('Parentheses', '', `
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                                            <path fill="currentColor" d="M9 4a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h.5v6H9a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h.5V4H9zm6 0v16h-.5a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1h.5V8H15a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h.5z"/>
+                                                        </svg>`));
+                        if (/\//.test(expr)) badgesEl.appendChild(make('Division', 'secondary', `
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                                            <path fill="currentColor" d="M7 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm0 13a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM7 12h10v2H7z"/>
+                                                        </svg>`));
+                        if (/\*/.test(expr) && !/\*\*/.test(expr)) badgesEl.appendChild(make('Multiplication', 'secondary', `
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                                            <path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                                                        </svg>`));
                     } catch (e) { }
                 }
                 answerInput.value = '';
