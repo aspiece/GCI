@@ -224,172 +224,168 @@
         <section class="grid">
 
             <!-- Monday -->
-            <article class="card activity" data-min="6">
+            <article class="card activity" data-min="5">
                 <div class="day">
                     <span class="pill">Mon</span>
-                    <div class="title">Daily Scrum Micro</div>
+                    <div class="title">Stand‑up Lite</div>
                 </div>
-                <div class="muted">Practice concise status, surface impediments, and re‑plan.</div>
+                <div class="muted">One sentence each: Done / Next / Blocked.</div>
                 <div class="act" data-slot="primary">
-                    <div><strong>Do:</strong> Round‑robin: Yesterday / Today / Blockers.</div>
+                    <div><strong>Do:</strong> Go around quickly.</div>
                     <ol class="steps">
-                        <li>Each person has 30–45s to answer: What did I finish? What will I do next? Any blockers?</li>
-                        <li>Convert blockers into concrete impediments. Assign an owner to remove each.</li>
-                        <li>Re‑order the top 3 tasks on your team board if priorities shifted.</li>
+                        <li>Say one thing you finished.</li>
+                        <li>Say one thing you will do next.</li>
+                        <li>If blocked, name it and one person to help.</li>
                     </ol>
                     <div class="meta">
-                        <span class="pill">5–6 min</span>
-                        <span class="pill">Applies: Scrum, Transparency</span>
+                        <span class="pill">4–5 min</span>
+                        <span class="pill">Applies: Scrum</span>
                     </div>
                 </div>
                 <div class="act hidden" data-slot="alternate">
-                    <div><strong>Alternate:</strong> Stand‑up Remix</div>
+                    <div><strong>Alternate:</strong> High/Low + Blocker</div>
                     <ol class="steps">
-                        <li>Use only outcomes: “A thing that is now done is…”, “A thing that will be done is…”.</li>
-                        <li>If something appears twice in a row, mark it as a potential risk and swarm briefly.</li>
+                        <li>Share your top win (High) and top challenge (Low).</li>
+                        <li>If challenge blocks progress, write it on the board.</li>
                     </ol>
-                    <div class="meta"><span class="pill">5 min</span><span class="pill">Focus: Outcomes</span></div>
+                    <div class="meta"><span class="pill">4 min</span><span class="pill">Focus: Transparency</span></div>
                 </div>
                 <div class="controls">
                     <button class="btn start">Start Timer</button>
-                    <span class="timer" aria-live="polite">06:00</span>
+                    <span class="timer" aria-live="polite">05:00</span>
                     <button class="btn ghost swap">Swap Activity <span class="altTag">(toggle)</span></button>
                 </div>
             </article>
 
             <!-- Tuesday -->
-            <article class="card activity" data-min="8">
+            <article class="card activity" data-min="6">
                 <div class="day">
                     <span class="pill">Tue</span>
-                    <div class="title">User Story Slicing Drill</div>
+                    <div class="title">Tiny User Story</div>
                 </div>
-                <div class="muted">Split a large story into vertical slices with clear acceptance criteria.</div>
+                <div class="muted">Write one small, testable story.</div>
                 <div class="act" data-slot="primary">
-                    <div><strong>Do:</strong> Take the big story “Enable account login” and slice.</div>
+                    <div><strong>Do:</strong> Use the simple template.</div>
                     <ol class="steps">
-                        <li>Write 3–5 thin slices that each deliver user‑visible value (e.g., “Login with code only”,
-                            “Show errors”).</li>
-                        <li>For one slice, add 2–3 acceptance criteria (Given/When/Then).</li>
-                        <li>Order slices by value/risk and pick the first one to implement next.</li>
+                        <li>Write: “As a [user], I want [one action] so that [one benefit].”</li>
+                        <li>Add 2 acceptance criteria with Given/When/Then.</li>
+                        <li>Circle one story to do next.</li>
                     </ol>
                     <div class="meta">
-                        <span class="pill">7–8 min</span>
-                        <span class="pill">Applies: Story Mapping, DoR</span>
+                        <span class="pill">5–6 min</span>
+                        <span class="pill">Applies: Stories</span>
                     </div>
                 </div>
                 <div class="act hidden" data-slot="alternate">
-                    <div><strong>Alternate:</strong> INVEST Check</div>
+                    <div><strong>Alternate:</strong> INVEST Quick Fix</div>
                     <ol class="steps">
-                        <li>Take any current story and rate it on INVEST (Independent, Negotiable, Valuable, Estimable,
-                            Small, Testable).</li>
-                        <li>Fix the weakest letter with a quick edit to the story.</li>
+                        <li>Pick any current story.</li>
+                        <li>Make it Smaller or more Testable with one edit.</li>
                     </ol>
-                    <div class="meta"><span class="pill">6–7 min</span><span class="pill">Focus: Story Quality</span>
-                    </div>
+                    <div class="meta"><span class="pill">4–5 min</span><span class="pill">Focus: Quality</span></div>
                 </div>
                 <div class="controls">
                     <button class="btn start">Start Timer</button>
-                    <span class="timer" aria-live="polite">08:00</span>
+                    <span class="timer" aria-live="polite">06:00</span>
                     <button class="btn ghost swap">Swap Activity</button>
                 </div>
             </article>
 
             <!-- Wednesday -->
-            <article class="card activity" data-min="7">
+            <article class="card activity" data-min="5">
                 <div class="day">
                     <span class="pill">Wed</span>
-                    <div class="title">Estimation Lightning (Planning Poker)</div>
+                    <div class="title">Quick Estimate (S/M/L)</div>
                 </div>
-                <div class="muted">Estimate quickly to spot uncertainty and risk.</div>
+                <div class="muted">Vote fast to spot uncertainty.</div>
                 <div class="act" data-slot="primary">
-                    <div><strong>Do:</strong> Pick 3 backlog items and estimate with T‑shirt sizes (XS/S/M/L/XL).</div>
+                    <div><strong>Do:</strong> Pick one item and estimate.</div>
                     <ol class="steps">
-                        <li>Silent pick → reveal together. If mismatch, one sentence from high/low to explain.</li>
-                        <li>Re‑estimate once. If still split, mark as “needs spike” or split the story.</li>
+                        <li>Everyone silently picks S / M / L.</li>
+                        <li>Reveal together; if split, one sentence from high/low.</li>
+                        <li>Agree on a size or mark “needs spike”.</li>
                     </ol>
                     <div class="meta">
-                        <span class="pill">6–7 min</span><span class="pill">Applies: Relative Estimation</span>
+                        <span class="pill">4–5 min</span><span class="pill">Applies: Estimation</span>
                     </div>
                 </div>
                 <div class="act hidden" data-slot="alternate">
-                    <div><strong>Alternate:</strong> Risk Radar</div>
+                    <div><strong>Alternate:</strong> One Risk Tag</div>
                     <ol class="steps">
-                        <li>For one story, list top 3 risks. Tag each as Unknowns, Dependencies, or Complexity.</li>
-                        <li>Pick 1 risk and define a 1‑hour spike to reduce it.</li>
+                        <li>Pick one item; add a Risk tag: Unknown / Dependency / Complex.</li>
+                        <li>If Risk, write one small step to reduce it.</li>
                     </ol>
-                    <div class="meta"><span class="pill">5–6 min</span><span class="pill">Focus: Risk First</span></div>
+                    <div class="meta"><span class="pill">4 min</span><span class="pill">Focus: Risk First</span></div>
                 </div>
                 <div class="controls">
                     <button class="btn start">Start Timer</button>
-                    <span class="timer" aria-live="polite">07:00</span>
+                    <span class="timer" aria-live="polite">05:00</span>
                     <button class="btn ghost swap">Swap Activity</button>
                 </div>
             </article>
 
             <!-- Thursday -->
-            <article class="card activity" data-min="7">
+            <article class="card activity" data-min="5">
                 <div class="day">
                     <span class="pill">Thu</span>
-                    <div class="title">Kanban Flow Game (WIP 2)</div>
+                    <div class="title">WIP Limit Mini</div>
                 </div>
-                <div class="muted">Limit work‑in‑progress and expose bottlenecks.</div>
+                <div class="muted">Finish one thing; reduce multitasking.</div>
                 <div class="act" data-slot="primary">
-                    <div><strong>Do:</strong> On your board (To Do → Doing → Review → Done), set WIP=2 for “Doing”.
-                    </div>
+                    <div><strong>Do:</strong> Set WIP=1 for “Doing” just for now.</div>
                     <ol class="steps">
-                        <li>Move cards respecting WIP. If blocked, add a “⛔ Impediment” tag with cause.</li>
-                        <li>Identify the bottleneck column; agree on one change to speed flow (e.g., pair on Review).
-                        </li>
+                        <li>Move one in‑progress item to Done.</li>
+                        <li>If blocked, add a ⛔ tag and a name to help.</li>
+                        <li>Do not start new work until one item finishes.</li>
                     </ol>
                     <div class="meta">
-                        <span class="pill">6–7 min</span><span class="pill">Applies: Flow, WIP Limits</span>
+                        <span class="pill">4–5 min</span><span class="pill">Applies: Flow</span>
                     </div>
                 </div>
                 <div class="act hidden" data-slot="alternate">
-                    <div><strong>Alternate:</strong> Definition of Done (DoD) Sprint</div>
+                    <div><strong>Alternate:</strong> DoD 3‑Point Check</div>
                     <ol class="steps">
-                        <li>Draft a 5‑item DoD for your current story (e.g., tests, review, docs, demoable).</li>
-                        <li>Apply it now to the top in‑progress item.</li>
+                        <li>Pick one item and define 3 checks (e.g., tests, review, demo).</li>
+                        <li>Apply them now before moving to Done.</li>
                     </ol>
-                    <div class="meta"><span class="pill">5–6 min</span><span class="pill">Focus: Quality</span></div>
+                    <div class="meta"><span class="pill">4–5 min</span><span class="pill">Focus: Quality</span></div>
                 </div>
                 <div class="controls">
                     <button class="btn start">Start Timer</button>
-                    <span class="timer" aria-live="polite">07:00</span>
+                    <span class="timer" aria-live="polite">05:00</span>
                     <button class="btn ghost swap">Swap Activity</button>
                 </div>
             </article>
 
             <!-- Friday -->
-            <article class="card activity" data-min="8">
+            <article class="card activity" data-min="6">
                 <div class="day">
                     <span class="pill">Fri</span>
-                    <div class="title">Retro Snap + 1 Experiment</div>
+                    <div class="title">Retro Lite</div>
                 </div>
-                <div class="muted">Reflect quickly and commit to one improvement.</div>
+                <div class="muted">Pick one small improvement.</div>
                 <div class="act" data-slot="primary">
-                    <div><strong>Do:</strong> Start / Stop / Continue with dot‑vote.</div>
+                    <div><strong>Do:</strong> Keep / Change.</div>
                     <ol class="steps">
-                        <li>Each person adds 1 sticky under Start, Stop, Continue.</li>
-                        <li>Each gets 2 votes. Highest wins → define a small experiment for next week (owner + success
-                            criteria).</li>
+                        <li>Each person names one thing to Keep and one to Change.</li>
+                        <li>Vote by hands; pick one Change.</li>
+                        <li>Assign one owner and define “done” in one line.</li>
                     </ol>
                     <div class="meta">
-                        <span class="pill">7–8 min</span><span class="pill">Applies: Kaizen</span>
+                        <span class="pill">5–6 min</span><span class="pill">Applies: Kaizen</span>
                     </div>
                 </div>
                 <div class="act hidden" data-slot="alternate">
-                    <div><strong>Alternate:</strong> MoSCoW Prioritization</div>
+                    <div><strong>Alternate:</strong> Fast MoSCoW</div>
                     <ol class="steps">
-                        <li>Take 6–8 current tasks and sort into Must, Should, Could, Won’t.</li>
-                        <li>Move top “Must” to the very next sprint/iteration.</li>
+                        <li>Take 5–6 tasks; sort into Must / Should / Could / Won’t.</li>
+                        <li>Start the top Must next.</li>
                     </ol>
-                    <div class="meta"><span class="pill">6–7 min</span><span class="pill">Focus: Value First</span>
-                    </div>
+                    <div class="meta"><span class="pill">5 min</span><span class="pill">Focus: Value</span></div>
                 </div>
                 <div class="controls">
                     <button class="btn start">Start Timer</button>
-                    <span class="timer" aria-live="polite">08:00</span>
+                    <span class="timer" aria-live="polite">06:00</span>
                     <button class="btn ghost swap">Swap Activity</button>
                 </div>
             </article>
