@@ -261,6 +261,27 @@
             accent-color: var(--acc)
         }
 
+        textarea.runner {
+            width: 100%;
+            min-height: 200px;
+            background: #0b1224;
+            border: 1px solid rgba(255, 255, 255, .1);
+            color: #e5e7eb;
+            border-radius: 10px;
+            padding: 10px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+            font-size: 13px;
+        }
+
+        #pyOut {
+            background: #0b1224;
+            border: 1px solid rgba(255, 255, 255, .1);
+            border-radius: 10px;
+            padding: 10px;
+            min-height: 120px;
+            white-space: pre-wrap;
+        }
+
         @media print {
 
             .bar,
@@ -291,6 +312,8 @@
             }
         }
     </style>
+    <!-- Pyodide runtime for in-browser Python -->
+    <script defer src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
 </head>
 
 <body>
@@ -372,6 +395,48 @@
             </div>
             <div id="quizWrap"></div>
         </section>
+
+        <!-- Python Runner -->
+        <section id="runner" class="card">
+            <div class="row">
+                <h3 style="margin:0">Run Python in your Browser</h3>
+                <span class="pill" id="pyStatus">Loading Python…</span>
+            </div>
+            <div class="muted" style="margin:6px 0 10px">Powered by Pyodide. Press Ctrl+Enter to run.</div>
+            <textarea id="pyCode" class="runner" spellcheck="false"># Python runs in your browser using Pyodide!
+print("Hello from Python 👋")
+
+# Basics, conditionals, loops, functions, exceptions demo
+def fizzbuzz(n):
+    out = []
+    for i in range(1, n+1):
+        if i % 15 == 0:
+            out.append("FizzBuzz")
+        elif i % 3 == 0:
+            out.append("Fizz")
+        elif i % 5 == 0:
+            out.append("Buzz")
+        else:
+            out.append(str(i))
+    return out
+
+print(", ".join(fizzbuzz(15)))
+
+def safe_div(a, b):
+    return a / b
+
+try:
+    print("9 / 3 =", safe_div(9, 3))
+    print("1 / 0 =", safe_div(1, 0))  # raises ZeroDivisionError
+except ZeroDivisionError as e:
+    print("Caught:", e)</textarea>
+            <div class="row" style="margin-top:8px">
+                <button id="runPy">Run (Ctrl+Enter)</button>
+                <button class="ghost" id="clearOut">Clear Output</button>
+            </div>
+            <pre id="pyOut" aria-live="polite"></pre>
+        </section>
+
     </main>
 
     <script>
@@ -660,6 +725,62 @@
             $('#quizWrap').innerHTML = '';
             $('#scorePill').textContent = 'Score: —';
         });
+
+        // ===== Python Runner (Pyodide) =====
+        let pyodide = null;
+        const pyStatus = document.getElementById('pyStatus');
+        const pyOut = document.getElementById('pyOut');
+        const pyCode = document.getElementById('pyCode');
+
+        function appendOut(text) {
+            pyOut.textContent += text;
+            pyOut.scrollTop = pyOut.scrollHeight;
+        }
+
+        async function ensurePyodide() {
+            if (pyodide) return pyodide;
+            if (typeof loadPyodide !== 'function') {
+                pyStatus.textContent = 'Failed to load';
+                throw new Error('Pyodide script not loaded');
+            }
+            try {
+                pyStatus.textContent = 'Downloading…';
+                pyodide = await loadPyodide({
+                    indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/',
+                    stdout: (t) => appendOut(t + '\n'),
+                    stderr: (t) => appendOut(t + '\n'),
+                });
+                pyStatus.textContent = 'Ready';
+            } catch (e) {
+                console.error(e);
+                pyStatus.textContent = 'Failed to load';
+                appendOut(String(e) + '\n');
+                throw e;
+            }
+            return pyodide;
+        }
+
+        async function runPython() {
+            const code = pyCode.value;
+            const py = await ensurePyodide();
+            try {
+                // Clear previous buffered output in Python (optional)
+                await py.runPythonAsync(code);
+            } catch (e) {
+                appendOut(String(e) + '\n');
+            }
+        }
+
+        document.getElementById('runPy').addEventListener('click', runPython);
+        document.getElementById('clearOut').addEventListener('click', () => { pyOut.textContent = ''; });
+        pyCode.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); runPython(); }
+        });
+
+        // Kick off load in background
+        ensurePyodide();
+
+        // ===== end Python Runner =====
 
         // Init
         initFlash(true);
