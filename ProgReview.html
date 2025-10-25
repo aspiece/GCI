@@ -17,6 +17,9 @@
             --warn: #f59e0b;
             --bad: #ef4444;
             --ink: #0b1224;
+            /* Runner sizing */
+            --runner-min: 280px;
+            --runner-max: 440px;
         }
 
         @media (prefers-color-scheme: light) {
@@ -263,7 +266,8 @@
 
         textarea.runner {
             width: 100%;
-            min-height: 200px;
+            height: clamp(160px, 32vh, 320px);
+            /* fit on screen */
             background: #0b1224;
             border: 1px solid rgba(255, 255, 255, .1);
             color: #e5e7eb;
@@ -271,6 +275,8 @@
             padding: 10px;
             font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
             font-size: 13px;
+            resize: vertical;
+            /* user can resize if needed */
         }
 
         #pyOut {
@@ -278,7 +284,10 @@
             border: 1px solid rgba(255, 255, 255, .1);
             border-radius: 10px;
             padding: 10px;
-            min-height: 120px;
+            min-height: 100px;
+            max-height: clamp(120px, 28vh, 280px);
+            /* fit on screen */
+            overflow: auto;
             white-space: pre-wrap;
         }
 
@@ -316,7 +325,7 @@
         @media (min-width: 1024px) {
             main.wrap {
                 display: grid;
-                grid-template-columns: 1fr 380px;
+                grid-template-columns: 1fr clamp(var(--runner-min), 34vw, var(--runner-max));
                 gap: 16px;
                 align-items: start;
             }
@@ -333,6 +342,16 @@
                 top: 12px;
                 max-height: calc(100vh - 24px);
                 overflow: auto;
+            }
+        }
+
+        /* Improve stacked behavior on tablets/phones */
+        @media (max-width: 1023px) {
+            #runner {
+                position: static;
+                /* avoid sticky jumps on mobile */
+                max-height: none;
+                /* let inner areas scroll */
             }
         }
     </style>
@@ -711,4 +730,149 @@ except ZeroDivisionError as e:
             for (const c of candidates) {
                 const s = String(c);
                 if (!s || s === correct) continue;
-                if
+                if (seen.has(s)) continue;
+                seen.add(s);
+                wrongs.push(c);
+                if (wrongs.length === count) break;
+            }
+            if (wrongs.length < count) {
+                const more = fallbackFn(correct, count - wrongs.length);
+                wrongs.push(...more);
+            }
+            return shuffle(wrongs);
+        }
+
+        // Quiz
+        let quizOrder = [], quizIdx = 0, quizScore = 0;
+        function initQuiz() {
+            const src = filtered();
+            quizOrder = shuffle(src).slice(0, Number($('#quizCount').value));
+            quizIdx = 0;
+            quizScore = 0;
+            $('#scorePill').textContent = 'Score: —';
+            renderQuiz();
+        }
+        function renderQuiz() {
+            const src = filtered();
+            const it = quizOrder[quizIdx];
+            if (!it) return;
+            const isLast = quizIdx === quizOrder.length - 1;
+            const opts = buildOptions(it.out, filtered().map(x => x.out), 3, pickWrongOutputs);
+            $('#quizWrap').innerHTML = `
+        <div class="q">
+          <div class="term">${it.t}</div>
+          <div class="row" style="margin-top:10px">
+            ${opts.map((o, i) => `
+              <div class="opt">
+                <input type="radio" name="opt" id="opt${i}" value="${escapeHtml(o)}">
+                <label for="opt${i}" style="cursor:pointer">${escapeHtml(o)}</label>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        <div class="row" style="margin-top:12px">
+          <button id="nextQuiz">${isLast ? 'Finish' : 'Next'}</button>
+          <button class="ghost" id="hintBtn">Hint</button>
+        </div>
+      `;
+            document.getElementById('opt0').checked = true;
+        }
+        function checkQuiz(answer) {
+            const it = quizOrder[quizIdx];
+            if (!it) return;
+            const correct = it.out.trim();
+            const userAns = answer.trim();
+            if (correct === userAns) {
+                quizScore++;
+                return true;
+            }
+            return false;
+        }
+        $('#startQuiz').addEventListener('click', () => {
+            $('#retake').disabled = false;
+            initQuiz();
+            $('.tab.active').click(); // switch to quiz tab
+        });
+        $('#nextQuiz').addEventListener('click', () => {
+            const selected = $('#quizWrap input[type="radio"]:checked');
+            if (!selected) return;
+            const answer = selected.value;
+            const correct = checkQuiz(answer);
+            const it = quizOrder[quizIdx];
+            if (correct) {
+                selected.parentElement.parentElement.classList.add('ok');
+                quizIdx++;
+                if (quizIdx < quizOrder.length) {
+                    renderQuiz();
+                } else {
+                    $('#scorePill').textContent = `Score: ${quizScore} / ${quizOrder.length}`;
+                    $('#nextQuiz').disabled = true;
+                }
+            } else {
+                selected.parentElement.parentElement.classList.add('bad');
+            }
+        });
+        $('#hintBtn').addEventListener('click', () => {
+            const it = quizOrder[quizIdx];
+            if (!it || !it.out) return;
+            const hint = it.out.split('\n').map((line, i) => i === 0 ? line : `...`).join('\n');
+            $('#pyCode').value = `# Hint: ${hint}`;
+            $('#runPy').click();
+        });
+        $('#retake').addEventListener('click', initQuiz);
+
+        // Runner: execute Python code and show output
+        const pyodideReady = new Promise(resolve => {
+            window.languagePluginUrl = 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/';
+            globalThis.loadPyodide({ indexURL: languagePluginUrl }).then(pyodide => {
+                window.pyodide = pyodide;
+                pyodide.loadPackage("micropip").then(() => {
+                    micropip.install('https://github.com/viphalang/pyodide-vscode/raw/main/pyodide_vscode-0.1.0-py3-none-any.whl').then(() => {
+                        resolve(pyodide);
+                    });
+                });
+            });
+        });
+
+        // Run Python code in the Pyodide environment
+        async function runPython(code) {
+            const pyodide = await pyodideReady;
+            try {
+                // Clear previous output
+                $('#pyOut').textContent = '';
+                // Run the user code in the Pyodide environment
+                let result = pyodide.runPython(code);
+                // Display the result, if any
+                if (result !== undefined) {
+                    $('#pyOut').textContent = String(result);
+                }
+            } catch (err) {
+                // Display any errors that occur during execution
+                $('#pyOut').textContent = `Error: ${err}`;
+            }
+        }
+
+        // Event: run Python code when the button is clicked or Ctrl+Enter is pressed
+        $('#runPy').addEventListener('click', async () => {
+            const code = $('#pyCode').value;
+            runPython(code);
+        });
+        document.getElementById('pyCode').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                e.preventDefault();
+                const code = $('#pyCode').value;
+                runPython(code);
+            }
+        });
+
+        // Init: render study items and set up interactivity
+        renderStudy();
+        initFlash();
+        initMatch();
+
+        // Debug: show all items in console
+        window.ITEMS = ITEMS;
+    </script>
+</body>
+
+</html>
