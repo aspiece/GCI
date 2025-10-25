@@ -1,0 +1,669 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Programming Review — Python Basics</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --panel: #111827;
+            --panel2: #0b1224;
+            --text: #f8fafc;
+            --muted: #cbd5e1;
+            --acc: #60a5fa;
+            --ok: #22c55e;
+            --warn: #f59e0b;
+            --bad: #ef4444;
+            --ink: #0b1224;
+        }
+
+        @media (prefers-color-scheme: light) {
+            :root {
+                --bg: #ffffff;
+                --panel: #f8fafc;
+                --panel2: #eef2ff;
+                --text: #0b1224;
+                --muted: #475569;
+                --acc: #2563eb;
+                --ok: #16a34a;
+                --warn: #d97706;
+                --bad: #dc2626;
+                --ink: #ffffff;
+            }
+        }
+
+        html,
+        body {
+            height: 100%
+        }
+
+        body {
+            margin: 0;
+            font-family: Segoe UI, Inter, system-ui, Arial, sans-serif;
+            background:
+                radial-gradient(1000px 700px at 15% -10%, var(--panel2), transparent), var(--bg);
+            color: var(--text)
+        }
+
+        .wrap {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 20px 14px 60px
+        }
+
+        h1 {
+            margin: 0 0 4px;
+            font-size: 28px
+        }
+
+        .sub {
+            color: var(--muted);
+            margin: 0 0 12px
+        }
+
+        .bar {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin: 10px 0 14px
+        }
+
+        .tab {
+            border: 1px solid rgba(255, 255, 255, .15);
+            background: var(--panel);
+            color: var(--text);
+            padding: 8px 12px;
+            border-radius: 10px;
+            cursor: pointer
+        }
+
+        .tab.active {
+            background: var(--acc);
+            color: #081225;
+            border-color: transparent;
+            font-weight: 700
+        }
+
+        select,
+        input,
+        button {
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, .15);
+            padding: 8px 10px;
+            background: #0b1224;
+            color: #e5e7eb
+        }
+
+        button {
+            background: var(--acc);
+            color: #081225;
+            border: 0;
+            cursor: pointer;
+            font-weight: 700
+        }
+
+        button.ghost {
+            background: transparent;
+            color: var(--acc);
+            border: 1px solid var(--acc)
+        }
+
+        .pill {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: #0b1224;
+            border: 1px solid rgba(255, 255, 255, .12);
+            color: #cbd5e1;
+            font-size: 12px
+        }
+
+        .card {
+            background: linear-gradient(180deg, rgba(255, 255, 255, .02), rgba(0, 0, 0, .08)), var(--panel);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 14px;
+            padding: 14px 14px 12px;
+            box-shadow: 0 10px 26px rgba(0, 0, 0, .25);
+            margin-top: 12px
+        }
+
+        .row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap
+        }
+
+        .list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-top: 8px
+        }
+
+        .item {
+            background: #0b1224;
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 12px;
+            padding: 10px
+        }
+
+        .item h3 {
+            margin: 0;
+            font-size: 16px
+        }
+
+        .muted {
+            color: var(--muted);
+            font-size: 13px
+        }
+
+        .hide {
+            display: none
+        }
+
+        pre {
+            background: #0b1224;
+            border: 1px solid rgba(255, 255, 255, .1);
+            padding: 10px;
+            border-radius: 10px;
+            overflow: auto
+        }
+
+        code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+            font-size: 13px
+        }
+
+        .good {
+            color: var(--ok)
+        }
+
+        .bad {
+            color: var(--bad)
+        }
+
+        /* Flashcards */
+        .fcBox {
+            background: #0b1224;
+            border: 1px dashed rgba(255, 255, 255, .18);
+            border-radius: 14px;
+            padding: 24px;
+            min-height: 160px;
+            cursor: pointer
+        }
+
+        .center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center
+        }
+
+        .term {
+            font-size: 22px;
+            font-weight: 800
+        }
+
+        .defBig {
+            font-size: 15px
+        }
+
+        /* Matching */
+        .cols {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px
+        }
+
+        .col {
+            display: grid;
+            gap: 8px
+        }
+
+        .chip {
+            background: #0b1224;
+            border: 1px solid rgba(255, 255, 255, .1);
+            border-radius: 10px;
+            padding: 10px;
+            cursor: pointer
+        }
+
+        .chip.sel {
+            outline: 2px solid var(--acc)
+        }
+
+        .chip.ok {
+            background: rgba(34, 197, 94, .15);
+            border-color: rgba(34, 197, 94, .5)
+        }
+
+        /* Quiz */
+        .q {
+            margin-top: 8px
+        }
+
+        .opt {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            background: #0b1224;
+            border: 1px solid rgba(255, 255, 255, .1);
+            padding: 8px 10px;
+            border-radius: 10px;
+            cursor: pointer
+        }
+
+        .opt input {
+            accent-color: var(--acc)
+        }
+
+        @media print {
+
+            .bar,
+            .controls,
+            button,
+            input,
+            select {
+                display: none !important
+            }
+
+            body {
+                background: #fff;
+                color: #000
+            }
+
+            .card {
+                box-shadow: none;
+                border-color: #0002
+            }
+
+            .item {
+                background: #fff;
+                border-color: #0002
+            }
+
+            pre {
+                background: #fff
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="wrap">
+        <h1>Programming Review — Python Basics</h1>
+        <div class="sub">Study key concepts with examples, flashcards, matching, and a quick quiz. Units: Basics &
+            Console, Conditionals, Looping, Functions & Exceptions.</div>
+
+        <div class="bar">
+            <button class="tab active" data-mode="study">Study</button>
+            <button class="tab" data-mode="flash">Flashcards</button>
+            <button class="tab" data-mode="match">Matching</button>
+            <button class="tab" data-mode="quiz">Quiz</button>
+            <select id="unitFilter" title="Filter by unit">
+                <option value="all" selected>All Units</option>
+                <option value="basics">Basics & Console</option>
+                <option value="conds">Conditionals</option>
+                <option value="loops">Looping</option>
+                <option value="funcs">Functions & Exceptions</option>
+            </select>
+            <span class="pill" id="countPill">0 items</span>
+        </div>
+
+        <!-- Study -->
+        <section id="study" class="card">
+            <div class="row">
+                <input id="search" type="search" placeholder="Search terms, definitions, or code..."
+                    aria-label="Search" />
+                <button class="ghost" id="expandAll">Expand All</button>
+                <button class="ghost" id="collapseAll">Collapse All</button>
+            </div>
+            <div class="list" id="studyList"></div>
+        </section>
+
+        <!-- Flashcards -->
+        <section id="flash" class="card hide">
+            <div class="row">
+                <button id="prev">Prev</button>
+                <button id="flip">Flip (F)</button>
+                <button id="next">Next</button>
+                <button class="ghost" id="shuffle">Shuffle</button>
+                <span class="pill" id="fcProg">1 / 1</span>
+                <span class="pill" id="gotPill">Got it: 0</span>
+            </div>
+            <div class="fcBox center" id="fcBox" tabindex="0" aria-live="polite">
+                <div id="front" class="term"></div>
+                <div id="back" class="defBig hide"></div>
+            </div>
+            <div class="row">
+                <button id="gotIt" title="Mark this card as learned">I got this ✅</button>
+                <button class="ghost" id="resetGot">Reset learned</button>
+            </div>
+        </section>
+
+        <!-- Matching -->
+        <section id="match" class="card hide">
+            <div class="row">
+                <button id="newRound">New Round</button>
+                <span class="pill" id="matchLeft">Pairs left: 0</span>
+            </div>
+            <div class="cols">
+                <div class="col" id="leftCol"></div>
+                <div class="col" id="rightCol"></div>
+            </div>
+            <div class="muted" style="margin-top:8px">Click one term and the matching definition.</div>
+        </section>
+
+        <!-- Quiz -->
+        <section id="quiz" class="card hide">
+            <div class="row">
+                <select id="quizCount">
+                    <option>5</option>
+                    <option selected>10</option>
+                    <option>15</option>
+                </select>
+                <button id="startQuiz">Start</button>
+                <button class="ghost" id="retake" disabled>Retake</button>
+                <span class="pill" id="scorePill">Score: —</span>
+            </div>
+            <div id="quizWrap"></div>
+        </section>
+    </main>
+
+    <script>
+        // Data: units, terms, definitions, and optional code/output
+        const ITEMS = [
+            // Basics & Console
+            { u: 'basics', t: 'print()', d: 'Outputs text or values to the console.', code: `print("Hello", 3+2)`, out: `Hello 5` },
+            { u: 'basics', t: 'Variables', d: 'Names that store values. Python is dynamically typed.', code: `name = "Kai"\nage = 16`, out: `(stores values)` },
+            { u: 'basics', t: 'input()', d: 'Reads a line of text from the user as a string.', code: `x = input("Enter a number: ")\nprint(type(x))`, out: `<class 'str'>` },
+            { u: 'basics', t: 'Type Conversion', d: 'Convert strings to numbers with int() or float().', code: `n = int("42")\nx = float("3.5")\nprint(n + x)`, out: `45.5` },
+            { u: 'basics', t: 'String Formatting (f-strings)', d: 'Embed values inside strings using f"...".', code: `name="Ari"; score=9\nprint(f"{name} scored {score}/10")`, out: `Ari scored 9/10` },
+            { u: 'basics', t: 'Operators', d: 'Math: + - * / // % **  Comparison: == != < <= > >=', code: `print(7//3, 7%3, 2**3)`, out: `2 1 8` },
+            { u: 'basics', t: 'Comments', d: 'Anything after # on a line is ignored by Python.', code: `# todo: refactor\nprint("ok")`, out: `ok` },
+
+            // Conditionals
+            { u: 'conds', t: 'if / elif / else', d: 'Run code based on conditions; first true branch runs.', code: `x=5\nif x>5:\n  print("A")\nelif x==5:\n  print("B")\nelse:\n  print("C")`, out: `B` },
+            { u: 'conds', t: 'Comparison Operators', d: '== != < > <= >= compare values.', code: `print(3!=4, 2<=2)`, out: `True True` },
+            { u: 'conds', t: 'Logical Operators', d: 'and, or, not combine conditions.', code: `rain=True; busy=False\nprint(rain and busy, rain or busy, not busy)`, out: `False True True` },
+            { u: 'conds', t: 'Truthy / Falsy', d: 'Values like 0, "", [], None are falsy; most others are truthy.', code: `if "":\n  print("yes")\nelse:\n  print("no")`, out: `no` },
+            { u: 'conds', t: 'Nested Conditionals', d: 'if inside another if for multi-step checks.', code: `age=17\nif age>=16:\n  if age>=18: print("adult")\n  else: print("teen")`, out: `teen` },
+            { u: 'conds', t: 'Chained Comparisons', d: 'Math-style chaining like 1 < x <= 10.', code: `x=7\nprint(1<x<=10)`, out: `True` },
+
+            // Looping
+            { u: 'loops', t: 'for with range()', d: 'Repeat a fixed number of times.', code: `for i in range(3):\n  print(i)`, out: `0\n1\n2` },
+            { u: 'loops', t: 'Iterating a List', d: 'Loop through each element in an iterable.', code: `nums=[3,5,2]\nfor n in nums:\n  print(n*2)`, out: `6\n10\n4` },
+            { u: 'loops', t: 'while Loop', d: 'Repeat while a condition is true.', code: `n=3\nwhile n>0:\n  print(n)\n  n-=1`, out: `3\n2\n1` },
+            { u: 'loops', t: 'break', d: 'Exit the nearest loop early.', code: `for c in "python":\n  if c=="h": break\n  print(c)`, out: `p\ny\nt` },
+            { u: 'loops', t: 'continue', d: 'Skip to next iteration.', code: `for i in range(5):\n  if i%2==0: continue\n  print(i)`, out: `1\n3` },
+            { u: 'loops', t: 'Accumulator', d: 'Add up or combine values while looping.', code: `total=0\nfor x in [2,4,6]:\n  total+=x\nprint(total)`, out: `12` },
+
+            // Functions & Exceptions
+            { u: 'funcs', t: 'def and return', d: 'Define a function; return gives a result.', code: `def add(a,b):\n  return a+b\nprint(add(2,3))`, out: `5` },
+            { u: 'funcs', t: 'Parameters & Arguments', d: 'Inputs a function takes (positional or keyword).', code: `def greet(name,msg=\"Hi\"):\n  print(msg, name)\ngreet(\"Kai\"); greet(\"Zoe\", msg=\"Hey\")`, out: `Hi Kai\nHey Zoe` },
+            { u: 'funcs', t: 'Scope (local vs global)', d: 'Variables in functions are local unless declared global.', code: `x=5\ndef f():\n  x=9\n  print(x)\nf(); print(x)`, out: `9\n5` },
+            { u: 'funcs', t: 'Docstring', d: 'Triple-quoted string under def describing the function.', code: `def area(r):\n  \"\"\"Returns circle area.\"\"\"\n  return 3.14*r*r`, out: `(docstring example)` },
+            { u: 'funcs', t: 'try / except', d: 'Handle errors to keep program running.', code: `try:\n  n=int(\"hi\")\nexcept ValueError:\n  print(\"bad number\")`, out: `bad number` },
+            { u: 'funcs', t: 'raise', d: 'Create an error on purpose when input is invalid.', code: `def half(n):\n  if n%2: raise ValueError(\"odd\")\n  return n//2\nprint(half(4))`, out: `2` },
+            { u: 'funcs', t: 'Multiple except', d: 'Catch specific exceptions first.', code: `try:\n  x=int(\"3.2\")\nexcept ValueError:\n  print(\"value error\")\nexcept Exception:\n  print(\"other\")`, out: `value error` },
+        ];
+
+        // Utilities
+        const $ = s => document.querySelector(s);
+        const $$ = s => Array.from(document.querySelectorAll(s));
+        const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0;[a[i], a[j]] = [a[j], a[i]]; } return a; };
+        const unitNames = { basics: 'Basics & Console', conds: 'Conditionals', loops: 'Looping', funcs: 'Functions & Exceptions' };
+
+        // State
+        let unitFilter = 'all';
+
+        // Tabs
+        $$('.tab').forEach(btn => {
+            btn.addEventListener('click', () => {
+                $$('.tab').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const mode = btn.dataset.mode;
+                ['study', 'flash', 'match', 'quiz'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.classList.toggle('hide', id !== mode);
+                });
+                if (mode === 'flash') initFlash();
+                if (mode === 'match') initMatch();
+            });
+        });
+
+        // Filter
+        $('#unitFilter').addEventListener('change', (e) => {
+            unitFilter = e.target.value || 'all';
+            renderStudy($('#search').value || '');
+            initFlash(true);
+        });
+
+        // Study
+        const studyList = $('#studyList');
+        function filtered() {
+            return ITEMS.filter(it => unitFilter === 'all' || it.u === unitFilter);
+        }
+        function renderStudy(filter = '') {
+            const q = (filter || '').toLowerCase();
+            const src = filtered().filter(x =>
+                !q ||
+                x.t.toLowerCase().includes(q) ||
+                x.d.toLowerCase().includes(q) ||
+                (x.code || '').toLowerCase().includes(q) ||
+                (x.out || '').toLowerCase().includes(q)
+            );
+            $('#countPill').textContent = `${src.length} items`;
+            studyList.innerHTML = src.map(x => `
+        <div class="item">
+          <h3>${x.t} <span class="pill" style="margin-left:6px">${unitNames[x.u] || ''}</span></h3>
+          <div class="muted">${x.d}</div>
+          ${x.code ? `<pre><code class="lang-py">${escapeHtml(x.code)}</code></pre>` : ''}
+          ${x.out && x.out !== '(stores values)' && x.out !== '(docstring example)' ? `<div><strong>Output:</strong><pre><code>${escapeHtml(x.out)}</code></pre></div>` : ''}
+        </div>
+      `).join('');
+        }
+        function escapeHtml(s) { return String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])); }
+        renderStudy();
+
+        $('#search').addEventListener('input', e => renderStudy(e.target.value));
+        $('#expandAll').addEventListener('click', () => renderStudy($('#search').value));
+        $('#collapseAll').addEventListener('click', () => {
+            const q = ($('#search').value || '').toLowerCase();
+            const src = filtered().filter(x => !q || x.t.toLowerCase().includes(q));
+            $('#countPill').textContent = `${src.length} items`;
+            studyList.innerHTML = src.map(x => `
+        <div class="item toggle">
+          <h3>${x.t} <span class="pill" style="margin-left:6px">${unitNames[x.u] || ''}</span></h3>
+          <div class="muted hide">${x.d}</div>
+          ${x.code ? `<pre class="hide"><code class="lang-py">${escapeHtml(x.code)}</code></pre>` : ''}
+          ${x.out && x.out !== '(stores values)' && x.out !== '(docstring example)' ? `<div class="hide"><strong>Output:</strong><pre><code>${escapeHtml(x.out)}</code></pre></div>` : ''}
+        </div>
+      `).join('');
+            $$('#study .toggle').forEach(it => {
+                it.addEventListener('click', () => {
+                    it.querySelectorAll('.muted, pre, div .hide, .hide').forEach(n => n.classList.toggle('hide'));
+                });
+            });
+        });
+
+        // Flashcards
+        let order = [];
+        let idx = 0;
+        let flipped = false;
+        let learned = new Set();
+
+        function initFlash(reset = false) {
+            const src = filtered();
+            order = src.map((_, i) => i);
+            if (reset) { idx = 0; flipped = false; }
+            updateCard();
+        }
+        function updateCard() {
+            const src = filtered();
+            if (!src.length) { $('#front').textContent = 'No items'; $('#back').classList.add('hide'); return; }
+            const it = src[order[idx]];
+            $('#front').innerHTML = `<div class="term">${it.t}</div><div class="muted" style="margin-top:6px">${unitNames[it.u] || ''}</div>`;
+            const back = `
+        <div class="defBig">${it.d}</div>
+        ${it.code ? `<pre style="margin-top:10px"><code>${escapeHtml(it.code)}</code></pre>` : ''}
+        ${it.out && it.out !== '(stores values)' && it.out !== '(docstring example)' ? `<div style="margin-top:6px"><strong>Output:</strong><pre><code>${escapeHtml(it.out)}</code></pre></div>` : ''}
+      `;
+            $('#back').innerHTML = back;
+            $('#front').classList.toggle('hide', flipped);
+            $('#back').classList.toggle('hide', !flipped);
+            $('#fcProg').textContent = `${idx + 1} / ${order.length}`;
+            $('#gotPill').textContent = `Got it: ${learned.size}`;
+        }
+        $('#flip').addEventListener('click', () => { flipped = !flipped; updateCard(); });
+        $('#fcBox').addEventListener('click', () => { flipped = !flipped; updateCard(); });
+        document.addEventListener('keydown', (e) => {
+            if ($('#flash').classList.contains('hide')) return;
+            if (e.key === 'f' || e.key === 'F') { flipped = !flipped; updateCard(); }
+            if (e.key === 'n' || e.key === 'ArrowRight') { idx = (idx + 1) % order.length; flipped = false; updateCard(); }
+            if (e.key === 'p' || e.key === 'ArrowLeft') { idx = (idx - 1 + order.length) % order.length; flipped = false; updateCard(); }
+        });
+        $('#next').addEventListener('click', () => { idx = (idx + 1) % order.length; flipped = false; updateCard(); });
+        $('#prev').addEventListener('click', () => { idx = (idx - 1 + order.length) % order.length; flipped = false; updateCard(); });
+        $('#shuffle').addEventListener('click', () => { order = shuffle(order); idx = 0; flipped = false; updateCard(); });
+        $('#gotIt').addEventListener('click', () => {
+            const key = `${unitFilter}:${order[idx]}`;
+            learned.add(key);
+            $('#gotPill').textContent = `Got it: ${learned.size}`;
+            idx = (idx + 1) % order.length; flipped = false; updateCard();
+        });
+        $('#resetGot').addEventListener('click', () => { learned.clear(); $('#gotPill').textContent = 'Got it: 0'; });
+
+        // Matching
+        let selL = null, selR = null, pairs = new Set();
+        function initMatch() {
+            const srcAll = filtered();
+            const pick = shuffle(srcAll.map((t, i) => ({ i, t }))).slice(0, Math.min(6, srcAll.length));
+            const left = pick.map(p => ({ i: p.i, text: p.t }));
+            const right = shuffle(pick.map(p => ({ i: p.i, text: p.t.d })));
+
+            $('#leftCol').innerHTML = left.map(l => `<div class="chip" data-i="${l.i}">${srcAll[l.i].t}</div>`).join('');
+            $('#rightCol').innerHTML = right.map(r => `<div class="chip" data-i="${r.i}">${srcAll[r.i].d}</div>`).join('');
+            $('#matchLeft').textContent = `Pairs left: ${left.length}`;
+            pairs = new Set(pick.map(p => p.i));
+            selL = selR = null;
+
+            $$('#leftCol .chip').forEach(c => c.addEventListener('click', () => {
+                if (c.classList.contains('ok')) return;
+                $$('#leftCol .chip').forEach(x => x.classList.remove('sel'));
+                selL = Number(c.dataset.i);
+                c.classList.add('sel');
+                tryPair();
+            }));
+            $$('#rightCol .chip').forEach(c => c.addEventListener('click', () => {
+                if (c.classList.contains('ok')) return;
+                $$('#rightCol .chip').forEach(x => x.classList.remove('sel'));
+                selR = Number(c.dataset.i);
+                c.classList.add('sel');
+                tryPair();
+            }));
+
+            function tryPair() {
+                if (selL === null || selR === null) return;
+                const leftEl = $(`#leftCol .chip.sel`);
+                const rightEl = $(`#rightCol .chip.sel`);
+                if (!leftEl || !rightEl) return;
+                if (selL === selR) {
+                    leftEl.classList.remove('sel'); rightEl.classList.remove('sel');
+                    leftEl.classList.add('ok'); rightEl.classList.add('ok');
+                    pairs.delete(selL);
+                    $('#matchLeft').textContent = `Pairs left: ${pairs.size}`;
+                    if (pairs.size === 0) $('#matchLeft').textContent = 'All matched! 🎉';
+                } else {
+                    rightEl.classList.add('bad');
+                    setTimeout(() => rightEl.classList.remove('bad'), 350);
+                    $$('#leftCol .chip.sel, #rightCol .chip.sel').forEach(x => x.classList.remove('sel'));
+                }
+                selL = selR = null;
+            }
+        }
+        $('#newRound').addEventListener('click', initMatch);
+
+        // Quiz
+        function mkQuestions(n) {
+            const pool = shuffle(filtered().slice()).slice(0, n);
+            return pool.map(item => {
+                // Randomize between def question and output question (if output exists and not placeholder)
+                const canOut = item.out && !item.out.startsWith('(');
+                const type = canOut && Math.random() < 0.5 ? 'out' : 'def';
+                if (type === 'def') {
+                    const correct = item.t;
+                    const wrongs = shuffle(ITEMS.filter(x => x.t !== correct)).slice(0, 3).map(x => x.t);
+                    return { type, prompt: `Which term fits this definition?`, detail: item.d, correct, opts: shuffle([correct, ...wrongs]) };
+                } else {
+                    const correct = item.out.replace(/\n/g, '\\n');
+                    // Construct distractors by slight variations
+                    const d1 = correct + ' '; // spacing
+                    const d2 = correct.replace(/True|False/g, m => m === 'True' ? 'False' : 'True');
+                    const d3 = correct.includes('\\n') ? correct.split('\\n').slice(0, -1).join('\\n') : (correct + '\\n');
+                    const opts = shuffle([correct, d1, d2, d3]).map(s => s.replace(/\\n/g, '\n'));
+                    return { type, prompt: `What is the output of this code?`, detail: `\n${item.code}`, correct: correct.replace(/\\n/g, '\n'), opts };
+                }
+            });
+        }
+        function renderQuiz(n = 10) {
+            const qs = mkQuestions(n);
+            const wrap = $('#quizWrap');
+            wrap.innerHTML = qs.map((q, qi) => `
+        <div class="q card" style="padding:12px; margin-top:8px">
+          <div><strong>Q${qi + 1}.</strong> ${q.prompt}</div>
+          ${q.type === 'def' ? `<div class="muted" style="margin:6px 0 10px">${q.detail}</div>` :
+                    `<pre style="margin:6px 0 10px"><code>${escapeHtml(q.detail)}</code></pre>`}
+          ${q.opts.map((opt, oi) => `
+            <label class="opt"><input type="radio" name="q${qi}" value="${escapeHtml(opt)}"/> <pre style="margin:0"><code>${escapeHtml(opt)}</code></pre></label>
+          `).join('')}
+        </div>
+      `).join('');
+            $('#startQuiz').disabled = true;
+            $('#retake').disabled = true;
+            $('#scorePill').textContent = 'Score: —';
+
+            const submit = document.createElement('button');
+            submit.textContent = 'Submit';
+            submit.id = 'submitQuiz';
+            submit.style.marginTop = '10px';
+            submit.addEventListener('click', () => {
+                let score = 0;
+                qs.forEach((q, qi) => {
+                    const sel = wrap.querySelector(`input[name="q${qi}"]:checked`);
+                    const val = sel ? sel.value.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&') : null;
+                    const options = Array.from(wrap.querySelectorAll(`input[name="q${qi}"]`));
+                    options.forEach(r => {
+                        const rv = r.value.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+                        if (rv === q.correct) r.closest('.opt').classList.add('good');
+                        if (sel && r === sel && rv !== q.correct) r.closest('.opt').classList.add('bad');
+                        r.disabled = true;
+                    });
+                    if (val === q.correct) score++;
+                });
+                $('#scorePill').textContent = `Score: ${score}/${qs.length}`;
+                $('#retake').disabled = false;
+                submit.disabled = true;
+            });
+            wrap.appendChild(submit);
+        }
+        $('#startQuiz').addEventListener('click', () => {
+            const n = Number($('#quizCount').value || '10');
+            renderQuiz(n);
+        });
+        $('#retake').addEventListener('click', () => {
+            $('#startQuiz').disabled = false;
+            $('#quizWrap').innerHTML = '';
+            $('#scorePill').textContent = 'Score: —';
+        });
+
+        // Init
+        initFlash(true);
+    </script>
+</body>
+
+</html>
