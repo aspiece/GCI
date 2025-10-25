@@ -710,6 +710,25 @@
                 }
 
                 try {
+
+                    // Close modal on backdrop click or Escape key, restore focus
+                    (function () {
+                        const modal = document.getElementById('badge-modal');
+                        if (!modal) return;
+                        // backdrop click closes when clicking outside inner dialog
+                        modal.addEventListener('click', (ev) => {
+                            if (ev.target === modal) closeModal();
+                        });
+                        const closeBtn = document.getElementById('badge-modal-close');
+                        if (closeBtn) closeBtn.addEventListener('click', closeModal);
+                        document.addEventListener('keydown', (ev) => {
+                            if (ev.key === 'Escape') {
+                                if (modal.style.display !== 'none') {
+                                    closeModal();
+                                }
+                            }
+                        });
+                    })();
                     // Handle parentheses iteratively
                     while (/\(/.test(s)) {
                         // find innermost parenthetical group
@@ -922,6 +941,8 @@
 
                 // store open level and show modal
                 modal._openLevel = level;
+                // remember last focused element to restore later
+                modal._lastFocus = document.activeElement;
                 modal.style.display = 'flex';
                 modal.setAttribute('aria-hidden', 'false');
                 // focus management: move focus to close button
@@ -935,6 +956,7 @@
                 modal.style.display = 'none';
                 modal.setAttribute('aria-hidden', 'true');
                 modal._openLevel = null;
+                try { if (modal._lastFocus && typeof modal._lastFocus.focus === 'function') modal._lastFocus.focus(); } catch (e) { }
             }
 
             // Toast stack + ARIA-live announcement
@@ -1149,6 +1171,8 @@
                         } else {
                             showLiveToast(`${name} badge locked`);
                         }
+                        // open detail modal for this badge (accessible)
+                        try { populateModal(lvl); } catch (e) { }
                     });
                     cabinet.addEventListener('keydown', (ev) => {
                         if (ev.key === 'Enter' || ev.key === ' ') {
