@@ -787,7 +787,8 @@ except ZeroDivisionError as e:
         function onNextQuiz() {
             const selected = $('#quizWrap input[type="radio"]:checked');
             if (!selected) return;
-            const answer = selected.value;
+            const decode = s => String(s).replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+            const answer = decode(selected.value);
             const correct = checkQuiz(answer);
             quizIdx++;
             if (quizIdx < quizOrder.length) {
@@ -798,6 +799,14 @@ except ZeroDivisionError as e:
                 const btn = document.getElementById('nextQuiz');
                 if (btn) btn.disabled = true;
             }
+        }
+        function checkQuiz(answer) {
+            const it = quizOrder[quizIdx];
+            if (!it) return false;
+            const norm = s => String(s || '').replace(/\r\n/g, '\n');
+            const isCorrect = norm(answer) === norm(it.out || '');
+            if (isCorrect) quizScore++;
+            return isCorrect;
         }
         function onHint() {
             const it = quizOrder[quizIdx];
@@ -821,33 +830,19 @@ except ZeroDivisionError as e:
             document.querySelector('.tab[data-mode="quiz"]')?.click();
             initQuiz();
         });
-        $('#nextQuiz').addEventListener('click', () => {
-            const selected = $('#quizWrap input[type="radio"]:checked');
-            if (!selected) return;
-            const answer = selected.value;
-            const correct = checkQuiz(answer);
-            const it = quizOrder[quizIdx];
-            if (correct) {
-                selected.parentElement.parentElement.classList.add('ok');
-                quizIdx++;
-                if (quizIdx < quizOrder.length) {
-                    renderQuiz();
-                } else {
-                    $('#scorePill').textContent = `Score: ${quizScore} / ${quizOrder.length}`;
-                    $('#nextQuiz').disabled = true;
-                }
-            } else {
-                selected.parentElement.parentElement.classList.add('bad');
+        $('#retake').addEventListener('click', initQuiz);
+
+        // Delegated: Open example code in runner (Study/Flashcards buttons)
+        document.addEventListener('click', (e) => {
+            const btn = e.target.closest('.open-runner');
+            if (!btn) return;
+            const code = decodeURIComponent(btn.dataset.code || '');
+            const ta = document.getElementById('pyCode');
+            if (ta) {
+                ta.value = code;
+                document.getElementById('runner')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         });
-        $('#hintBtn').addEventListener('click', () => {
-            const it = quizOrder[quizIdx];
-            if (!it || !it.out) return;
-            const hint = it.out.split('\n').map((line, i) => i === 0 ? line : `...`).join('\n');
-            $('#pyCode').value = `# Hint: ${hint}`;
-            $('#runPy').click();
-        });
-        $('#retake').addEventListener('click', initQuiz);
 
         // Runner: execute Python code and show output
         const pyodideReady = new Promise(resolve => {
@@ -856,11 +851,17 @@ except ZeroDivisionError as e:
                 window.pyodide = pyodide;
                 pyodide.loadPackage("micropip").then(() => {
                     micropip.install('https://github.com/viphalang/pyodide-vscode/raw/main/pyodide_vscode-0.1.0-py3-none-any.whl').then(() => {
-                        resolve(pyodide);
-                    });
-                });
+                        +                        // Enable input() via browser prompt
+                            +                        if (pyodide.setStdin) {
+                                +                            pyodide.setStdin({
++ stdin: () => (window.prompt('Python input() — enter a line:') ?? '') + '\n'
+                                    +                            });
+                    +                        }
+                         resolve(pyodide);
             });
         });
+             });
+         });
 
         // Run Python code in the Pyodide environment
         async function runPython(code) {
