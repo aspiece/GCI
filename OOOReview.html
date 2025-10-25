@@ -511,6 +511,7 @@
     <script>
         // GitHub Copilot
         (function () {
+            'use strict';
             const el = id => document.getElementById(id);
             const difficulty = el('difficulty');
             const rngSelect = el('range');
@@ -787,6 +788,10 @@
                 scoreEl.textContent = '0';
                 askedEl.textContent = '0';
                 progressEl.textContent = `Set: ${count} problems (${level})`;
+                // Enable inputs for a fresh set
+                try { if (nextBtn) nextBtn.disabled = false; } catch (e) { }
+                try { if (checkBtn) checkBtn.disabled = false; } catch (e) { }
+                try { if (answerInput) answerInput.disabled = false; } catch (e) { }
                 showProblem(0);
             }
 
@@ -1059,7 +1064,15 @@
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = 'ooo_badges.json';
+                    // timestamped filename: ooo_badges-YYYYMMDD-HHMMSS.json
+                    const now = new Date();
+                    const y = now.getFullYear();
+                    const m = String(now.getMonth() + 1).padStart(2, '0');
+                    const d = String(now.getDate()).padStart(2, '0');
+                    const hh = String(now.getHours()).padStart(2, '0');
+                    const mm = String(now.getMinutes()).padStart(2, '0');
+                    const ss = String(now.getSeconds()).padStart(2, '0');
+                    a.download = `ooo_badges-${y}${m}${d}-${hh}${mm}${ss}.json`;
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);
@@ -1075,9 +1088,24 @@
                 r.onload = (e) => {
                     try {
                         const parsed = JSON.parse(e.target.result);
-                        // basic validation: object with keys mapped to {earned, earnedAt}
-                        if (typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error('Invalid format');
-                        saveBadges(parsed);
+                        // strict validation: object with known difficulty keys mapping to { earned: boolean, earnedAt?: ISO }
+                        if (typeof parsed !== 'object' || Array.isArray(parsed) || parsed === null) throw new Error('Invalid format');
+                        const levels = ['very-easy', 'easy', 'medium', 'hard', 'expert'];
+                        const out = {};
+                        Object.keys(parsed).forEach(k => {
+                            if (!levels.includes(k)) return; // ignore unknown keys
+                            const v = parsed[k];
+                            if (typeof v !== 'object' || v === null) return;
+                            const earned = !!v.earned;
+                            let earnedAt = null;
+                            if (v.earnedAt) {
+                                const dt = new Date(v.earnedAt);
+                                if (!isNaN(dt.getTime())) earnedAt = dt.toISOString();
+                            }
+                            if (earned) out[k] = earnedAt ? { earned: true, earnedAt } : { earned: true };
+                        });
+                        if (Object.keys(out).length === 0) throw new Error('No valid badge entries');
+                        saveBadges(out);
                         updateBadgeCabinet();
                         showLiveToast('Badges imported.');
                     } catch (err) { showLiveToast('Import failed: invalid file.'); }
@@ -1120,11 +1148,19 @@
                     feedbackEl.textContent = `Final score: ${score} / ${total}`;
                     stepsEl.style.display = 'none';
                     progressEl.textContent = 'Finished';
+                    // disable controls when finished
+                    try { if (nextBtn) nextBtn.disabled = true; } catch (e) { }
+                    try { if (checkBtn) checkBtn.disabled = true; } catch (e) { }
+                    try { if (answerInput) answerInput.disabled = true; } catch (e) { }
                     return;
                 }
                 index = i;
                 const p = problems[i];
                 problemEl.textContent = p.expr;
+                // ensure controls enabled for active problems
+                try { if (nextBtn) nextBtn.disabled = false; } catch (e) { }
+                try { if (checkBtn) checkBtn.disabled = false; } catch (e) { }
+                try { if (answerInput) answerInput.disabled = false; } catch (e) { }
                 // render badges indicating difficulty and contained features
                 if (badgesEl) {
                     badgesEl.innerHTML = '';
