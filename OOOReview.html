@@ -953,6 +953,30 @@
                 // focus management: move focus to close button
                 const close = document.getElementById('badge-modal-close');
                 if (close) setTimeout(() => close.focus(), 10);
+
+                // install a small focus-trap: keep Tab/Shift+Tab cycling inside the modal
+                try {
+                    // remove any existing handler first
+                    if (modal._trapHandler) document.removeEventListener('keydown', modal._trapHandler);
+                    modal._trapHandler = function (ev) {
+                        if (ev.key !== 'Tab') return;
+                        // find focusable elements within the modal dialog
+                        const focusable = Array.from(modal.querySelectorAll('.modal button, .modal [href], .modal input, .modal select, .modal textarea, .modal [tabindex]:not([tabindex="-1"])'))
+                            .filter(el => !el.hasAttribute('disabled') && el.offsetParent !== null);
+                        if (!focusable.length) return;
+                        const first = focusable[0];
+                        const last = focusable[focusable.length - 1];
+                        const active = document.activeElement;
+                        if (!ev.shiftKey && active === last) {
+                            ev.preventDefault();
+                            first.focus();
+                        } else if (ev.shiftKey && active === first) {
+                            ev.preventDefault();
+                            last.focus();
+                        }
+                    };
+                    document.addEventListener('keydown', modal._trapHandler);
+                } catch (e) { /* ignore */ }
             }
 
             function closeModal() {
@@ -962,6 +986,8 @@
                 modal.setAttribute('aria-hidden', 'true');
                 modal._openLevel = null;
                 try { if (modal._lastFocus && typeof modal._lastFocus.focus === 'function') modal._lastFocus.focus(); } catch (e) { }
+                // remove focus trap handler if installed
+                try { if (modal._trapHandler) { document.removeEventListener('keydown', modal._trapHandler); modal._trapHandler = null; } } catch (e) { }
             }
 
             // Toast stack + ARIA-live announcement
@@ -1059,25 +1085,27 @@
             const importFile = document.getElementById('import-file');
             if (exportBadgesBtn) exportBadgesBtn.addEventListener('click', () => {
                 try {
-                    const data = loadBadges();
-                    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                    const badges = loadBadges();
+                    const mastery = loadMastery();
+                    const payload = { badges: badges, mastery: mastery };
+                    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
                     // timestamped filename: ooo_badges-YYYYMMDD-HHMMSS.json
                     const now = new Date();
                     const y = now.getFullYear();
-                    const m = String(now.getMonth() + 1).padStart(2, '0');
+                    const mm = String(now.getMonth() + 1).padStart(2, '0');
                     const d = String(now.getDate()).padStart(2, '0');
                     const hh = String(now.getHours()).padStart(2, '0');
-                    const mm = String(now.getMinutes()).padStart(2, '0');
+                    const min = String(now.getMinutes()).padStart(2, '0');
                     const ss = String(now.getSeconds()).padStart(2, '0');
-                    a.download = `ooo_badges-${y}${m}${d}-${hh}${mm}${ss}.json`;
+                    a.download = `ooo_export-${y}${mm}${d}-${hh}${min}${ss}.json`;
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);
                     URL.revokeObjectURL(url);
-                    showLiveToast('Badges exported.');
+                    showLiveToast('Badges and mastery exported.');
                 } catch (e) { showLiveToast('Export failed.'); }
             });
             if (importBadgesBtn && importFile) importBadgesBtn.addEventListener('click', () => importFile.click());
@@ -1088,13 +1116,17 @@
                 r.onload = (e) => {
                     try {
                         const parsed = JSON.parse(e.target.result);
-                        // strict validation: object with known difficulty keys mapping to { earned: boolean, earnedAt?: ISO }
+                        // support two shapes:
+                        // 1) legacy: { 'very-easy': { earned: true, earnedAt: ... }, ... }
+                        // 2) export shape: { badges: { ... }, mastery: { ... } }
                         if (typeof parsed !== 'object' || Array.isArray(parsed) || parsed === null) throw new Error('Invalid format');
                         const levels = ['very-easy', 'easy', 'medium', 'hard', 'expert'];
+                        // determine badge source
+                        const badgeSource = (parsed.badges && typeof parsed.badges === 'object') ? parsed.badges : parsed;
                         const out = {};
-                        Object.keys(parsed).forEach(k => {
+                        Object.keys(badgeSource).forEach(k => {
                             if (!levels.includes(k)) return; // ignore unknown keys
-                            const v = parsed[k];
+                            const v = badgeSource[k];
                             if (typeof v !== 'object' || v === null) return;
                             const earned = !!v.earned;
                             let earnedAt = null;
@@ -1106,8 +1138,12 @@
                         });
                         if (Object.keys(out).length === 0) throw new Error('No valid badge entries');
                         saveBadges(out);
+                        // optional: import mastery if present and looks like an object
+                        if (parsed.mastery && typeof parsed.mastery === 'object' && !Array.isArray(parsed.mastery)) {
+                            try { saveMastery(parsed.mastery); } catch (e) { /* ignore malformed mastery */ }
+                        }
                         updateBadgeCabinet();
-                        showLiveToast('Badges imported.');
+                        showLiveToast('Badges (and mastery) imported.');
                     } catch (err) { showLiveToast('Import failed: invalid file.'); }
                 };
                 r.readAsText(f);
