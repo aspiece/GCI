@@ -375,15 +375,61 @@
         /* Light (blue accents, teal success, orange errors) */
         body[data-theme="light"] {
             --bg: #ffffff;
-            --panel: #f6fbff;
-            --panel2: #eef6ff;
-            --text: #071126;
-            --muted: #4b6576;
+            /* remove decorative panel backgrounds in light mode (transparent) */
+            --panel: transparent;
+            --panel2: transparent;
+            /* all primary text should be black for readability */
+            --text: #000000;
+            --muted: #222222;
+            /* keep accessible accent / status colors (non red/green) */
             --acc: #1f6fe3;
             --ok: #117a72;
             --warn: #ffb14e;
             --bad: #ff7f0e;
-            --ink: #ffffff;
+            /* ink (used for inverted controls) also black per request */
+            --ink: #000000;
+        }
+
+        /* Light-theme overrides: remove heavy dark backgrounds and ensure text is black */
+        body[data-theme="light"] .card,
+        body[data-theme="light"] .item,
+        body[data-theme="light"] pre,
+        body[data-theme="light"] .fcBox,
+        body[data-theme="light"] .opt,
+        body[data-theme="light"] textarea.runner,
+        body[data-theme="light"] #pyOut,
+        body[data-theme="light"] .pill {
+            background: transparent !important;
+            /* keep subtle borders so elements remain distinct */
+            border-color: rgba(0, 0, 0, 0.08) !important;
+            color: var(--text) !important;
+        }
+
+        /* Inputs / buttons in light mode: transparent background, black text, visible border */
+        body[data-theme="light"] select,
+        body[data-theme="light"] input,
+        body[data-theme="light"] button {
+            background: transparent !important;
+            color: var(--text) !important;
+            border-color: rgba(0, 0, 0, 0.12) !important;
+        }
+
+        /* Ensure code blocks are readable with black text */
+        body[data-theme="light"] code,
+        body[data-theme="light"] pre {
+            color: #000000 !important;
+            background: transparent !important;
+        }
+
+        /* Make theme buttons legible on white background */
+        body[data-theme="light"] .themeBtn {
+            border-color: rgba(0, 0, 0, 0.12);
+            color: var(--text);
+        }
+
+        body[data-theme="light"] .themeBtn.active {
+            background: color-mix(in srgb, var(--acc) 86%, white 14%);
+            color: var(--ink);
         }
 
         /* High contrast (black/white with strong blue/amber markers) */
