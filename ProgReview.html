@@ -458,10 +458,8 @@
                 <option value="funcs">Functions & Exceptions</option>
             </select>
             <select id="themeSelect" title="Theme">
-                <option value="system" selected>Theme: System</option>
+                <option value="dark" selected>Theme: Dark</option>
                 <option value="light">Theme: Light</option>
-                <option value="dark">Theme: Dark</option>
-                <option value="cb">Theme: Colorblind Safe</option>
                 <option value="hc">Theme: High Contrast</option>
             </select>
             <span class="pill" id="countPill">0 items</span>
@@ -621,13 +619,14 @@ except ZeroDivisionError as e:
             try { localStorage.setItem('gciTheme', theme || 'system'); } catch (_) { }
         }
         (function initTheme() {
-            const saved = (function () { try { return localStorage.getItem('gciTheme'); } catch (_) { return null; } })() || 'system';
+            const saved = (function () { try { return localStorage.getItem('gciTheme'); } catch (_) { return null; } })() || 'dark';
             const sel = document.getElementById('themeSelect');
             if (sel) {
-                sel.value = saved;
+                // if saved is missing or invalid, fall back to 'dark'
+                sel.value = ['dark', 'light', 'hc'].includes(saved) ? saved : 'dark';
                 sel.addEventListener('change', function () { applyTheme(this.value); });
             }
-            applyTheme(saved);
+            applyTheme(sel ? sel.value : saved);
         })();
 
         // Tabs
