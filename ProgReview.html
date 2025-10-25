@@ -311,6 +311,30 @@
                 background: #fff
             }
         }
+
+        /* Right sidebar layout: runner on the right (desktop), stacked on mobile */
+        @media (min-width: 1024px) {
+            main.wrap {
+                display: grid;
+                grid-template-columns: 1fr 380px;
+                gap: 16px;
+                align-items: start;
+            }
+
+            /* Put everything except #runner in the left column */
+            .wrap> :not(#runner):not(style) {
+                grid-column: 1;
+            }
+
+            /* Runner sticks on the right */
+            #runner {
+                grid-column: 2;
+                position: sticky;
+                top: 12px;
+                max-height: calc(100vh - 24px);
+                overflow: auto;
+            }
+        }
     </style>
     <!-- Pyodide runtime for in-browser Python -->
     <script defer src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
@@ -761,11 +785,89 @@ _buf.getvalue()
                 return String(e || 'Error');
             }
         }
-        // Delegate clicks for Run/Open buttons inside quiz
+
+        // Finish delegated clicks for Run/Open buttons inside quiz
         document.addEventListener('click', async (e) => {
             const runBtn = e.target.closest('.run-inline');
             if (runBtn) {
                 const qi = runBtn.dataset.qi;
                 const code = decodeURIComponent(runBtn.dataset.code || '');
                 const outEl = document.getElementById(`qOut-${qi}`);
-                if
+                if (outEl) {
+                    outEl.textContent = 'Running...';
+                    const out = await runPythonInline(code);
+                    outEl.textContent = out;
+                }
+            }
+            const openBtn = e.target.closest('.open-runner');
+            if (openBtn) {
+                const code = decodeURIComponent(openBtn.dataset.code || '');
+                const ta = document.getElementById('pyCode');
+                if (ta) {
+                    ta.value = code;
+                    document.getElementById('runner')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+        });
+
+        // ===== Python Runner (Pyodide) =====
+        let pyodide = null;
+        const pyStatus = document.getElementById('pyStatus');
+        const pyOut = document.getElementById('pyOut');
+        const pyCode = document.getElementById('pyCode');
+
+        function appendOut(text) {
+            pyOut.textContent += text;
+            pyOut.scrollTop = pyOut.scrollHeight;
+        }
+
+        async function ensurePyodide() {
+            if (pyodide) return pyodide;
+            if (typeof loadPyodide !== 'function') {
+                if (pyStatus) pyStatus.textContent = 'Failed to load';
+                throw new Error('Pyodide script not loaded');
+            }
+            try {
+                if (pyStatus) pyStatus.textContent = 'Downloading…';
+                pyodide = await loadPyodide({
+                    indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/',
+                    stdout: (t) => appendOut(t + '\n'),
+                    stderr: (t) => appendOut(t + '\n'),
+                });
+                if (pyStatus) pyStatus.textContent = 'Ready';
+            } catch (e) {
+                console.error(e);
+                if (pyStatus) pyStatus.textContent = 'Failed to load';
+                appendOut(String(e) + '\n');
+                throw e;
+            }
+            return pyodide;
+        }
+
+        async function runPython() {
+            const code = pyCode.value;
+            const py = await ensurePyodide();
+            try {
+                await py.runPythonAsync(code);
+            } catch (e) {
+                appendOut(String(e) + '\n');
+            }
+        }
+
+        document.getElementById('runPy').addEventListener('click', runPython);
+        document.getElementById('clearOut').addEventListener('click', () => { pyOut.textContent = ''; });
+        pyCode.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); runPython(); }
+        });
+
+        // Kick off load in background
+        ensurePyodide();
+
+        // ===== end Python Runner =====
+
+        // Init
+        initFlash(true);
+    </script>
+</body>
+
+</html>
