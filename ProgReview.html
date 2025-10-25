@@ -551,7 +551,12 @@ except ZeroDivisionError as e:
         <div class="item">
           <h3>${x.t} <span class="pill" style="margin-left:6px">${unitNames[x.u] || ''}</span></h3>
           <div class="muted">${x.d}</div>
-          ${x.code ? `<pre><code class="lang-py">${escapeHtml(x.code)}</code></pre>` : ''}
+          ${x.code ? `
+            <pre><code class="lang-py">${escapeHtml(x.code)}</code></pre>
+            <div class="row" style="margin-top:6px">
+              <button class="open-runner" data-code="${encodeURIComponent(x.code)}">Open in Runner</button>
+            </div>
+          ` : ''}
           ${x.out && x.out !== '(stores values)' && x.out !== '(docstring example)' ? `<div><strong>Output:</strong><pre><code>${escapeHtml(x.out)}</code></pre></div>` : ''}
         </div>
       `).join('');
@@ -569,7 +574,12 @@ except ZeroDivisionError as e:
         <div class="item toggle">
           <h3>${x.t} <span class="pill" style="margin-left:6px">${unitNames[x.u] || ''}</span></h3>
           <div class="muted hide">${x.d}</div>
-          ${x.code ? `<pre class="hide"><code class="lang-py">${escapeHtml(x.code)}</code></pre>` : ''}
+          ${x.code ? `
+            <pre class="hide"><code class="lang-py">${escapeHtml(x.code)}</code></pre>
+            <div class="row hide" style="margin-top:6px">
+              <button class="open-runner" data-code="${encodeURIComponent(x.code)}">Open in Runner</button>
+            </div>
+          ` : ''}
           ${x.out && x.out !== '(stores values)' && x.out !== '(docstring example)' ? `<div class="hide"><strong>Output:</strong><pre><code>${escapeHtml(x.out)}</code></pre></div>` : ''}
         </div>
       `).join('');
@@ -599,7 +609,12 @@ except ZeroDivisionError as e:
             $('#front').innerHTML = `<div class="term">${it.t}</div><div class="muted" style="margin-top:6px">${unitNames[it.u] || ''}</div>`;
             const back = `
         <div class="defBig">${it.d}</div>
-        ${it.code ? `<pre style="margin-top:10px"><code>${escapeHtml(it.code)}</code></pre>` : ''}
+        ${it.code ? `
+          <pre style="margin-top:10px"><code>${escapeHtml(it.code)}</code></pre>
+          <div class="row" style="margin-top:6px">
+            <button class="open-runner" data-code="${encodeURIComponent(it.code)}">Open in Runner</button>
+          </div>
+        ` : ''}
         ${it.out && it.out !== '(stores values)' && it.out !== '(docstring example)' ? `<div style="margin-top:6px"><strong>Output:</strong><pre><code>${escapeHtml(it.out)}</code></pre></div>` : ''}
       `;
             $('#back').innerHTML = back;
