@@ -845,55 +845,61 @@ except ZeroDivisionError as e:
             }
         });
 
-        // Runner: execute Python code and show output
-        const pyodideReady = new Promise(resolve => {
-            window.languagePluginUrl = 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/';
-            globalThis.loadPyodide({ indexURL: languagePluginUrl }).then(pyodide => {
-                window.pyodide = pyodide;
-                pyodide.loadPackage("micropip").then(() => {
-                    micropip.install('https://github.com/viphalang/pyodide-vscode/raw/main/pyodide_vscode-0.1.0-py3-none-any.whl').then(() => {
-                        +                        // Enable input() via browser prompt
-                            +                        if (pyodide.setStdin) {
-                                +                            pyodide.setStdin({
-+ stdin: () => (window.prompt('Python input() — enter a line:') ?? '') + '\n'
-                                    +                            });
-                    +                        }
-                         resolve(pyodide);
-            });
-        });
-             });
-         });
+        // ===== Python Runner (Pyodide) — clean init & stdin support =====
+        let pyodide = null;
+        const pyStatus = document.getElementById('pyStatus');
+        const pyOut = document.getElementById('pyOut');
+        const pyCodeEl = document.getElementById('pyCode');
 
-        // Run Python code in the Pyodide environment
-        async function runPython(code) {
-            const pyodide = await pyodideReady;
-            try {
-                // Clear previous output
-                $('#pyOut').textContent = '';
-                // Run the user code in the Pyodide environment
-                let result = pyodide.runPython(code);
-                // Display the result, if any
-                if (result !== undefined) {
-                    $('#pyOut').textContent = String(result);
-                }
-            } catch (err) {
-                // Display any errors that occur during execution
-                $('#pyOut').textContent = `Error: ${err}`;
+        function appendOut(text) {
+            if (pyOut) {
+                pyOut.textContent += text;
+                pyOut.scrollTop = pyOut.scrollHeight;
             }
         }
 
-        // Event: run Python code when the button is clicked or Ctrl+Enter is pressed
-        $('#runPy').addEventListener('click', async () => {
-            const code = $('#pyCode').value;
-            runPython(code);
+        async function ensurePyodide() {
+            if (pyodide) return pyodide;
+            if (pyStatus) pyStatus.textContent = 'Downloading…';
+            if (typeof loadPyodide !== 'function') throw new Error('Pyodide not loaded');
+            pyodide = await loadPyodide({
+                indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/',
+                stdout: (t) => appendOut(t + '\n'),
+                stderr: (t) => appendOut(t + '\n'),
+            });
+            // Enable input()
+            if (pyodide.setStdin) {
+                pyodide.setStdin({
+                    stdin: () => (window.prompt('Python input() — enter a line:') ?? '') + '\n'
+                });
+            }
+            if (pyStatus) pyStatus.textContent = 'Ready';
+            return pyodide;
+        }
+
+        async function runPython(code) {
+            const py = await ensurePyodide();
+            pyOut.textContent = '';
+            try {
+                await py.runPythonAsync(code);
+            } catch (err) {
+                appendOut(String(err) + '\n');
+            }
+        }
+
+        document.getElementById('runPy').addEventListener('click', () => {
+            runPython(pyCodeEl.value);
         });
-        document.getElementById('pyCode').addEventListener('keydown', (e) => {
+        pyCodeEl.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
                 e.preventDefault();
-                const code = $('#pyCode').value;
-                runPython(code);
+                runPython(pyCodeEl.value);
             }
         });
+
+        // Warm‑load Pyodide
+        ensurePyodide().catch(() => { });
+        // ===== end Python Runner =====
 
         // Init: render study items and set up interactivity
         renderStudy();
