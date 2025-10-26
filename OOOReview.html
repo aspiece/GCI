@@ -12,6 +12,7 @@
             --accent: #0b63b3;
             --muted: #4b5563;
             --text: #0f1724;
+            --header-text: var(--text);
             --button-text: #ffffff;
             --secondary-bg: #e6eef9;
             --secondary-color: var(--accent);
@@ -24,6 +25,7 @@
             --accent: #0b63b3;
             --muted: #9fb6d9;
             --text: #e6eef9;
+            --header-text: var(--text);
             --button-text: #e6eef9;
             --secondary-bg: #112233;
             --secondary-color: var(--button-text);
@@ -36,6 +38,8 @@
             --muted: #ffffff;
             --text: #ffffff;
             --button-text: #000000;
+            /* Use the bright accent for header in high-contrast so it stands out on black */
+            --header-text: var(--accent);
             --secondary-bg: transparent;
             --secondary-color: #ffff00;
         }
@@ -62,7 +66,8 @@
 
         h1 {
             font-size: 20px;
-            margin: 0
+            margin: 0;
+            color: var(--header-text);
         }
 
         .card {
