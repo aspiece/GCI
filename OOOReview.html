@@ -340,30 +340,39 @@
 
         <!-- Duplicate badge cabinet removed (kept the primary instance near the top) -->
 
-        <section class="card" aria-labelledby="legend-heading">
-            <h2 id="legend-heading" style="margin:0 0 8px 0;font-size:15px">Operator legend</h2>
-            <div style="font-size:14px;color:var(--muted);">
-                <div
-                    style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace; display:flex; gap:16px; flex-wrap:wrap">
-                    <div><strong>+</strong> addition</div>
-                    <div><strong>-</strong> subtraction</div>
-                    <div><strong>*</strong> multiplication</div>
-                    <div><strong>/</strong> division</div>
-                    <div><strong>**</strong> exponent (power)</div>
+        <section class="card" aria-labelledby="badges-heading">
+            <h2 id="badges-heading" style="margin:0 0 8px 0;font-size:15px">Badge cabinet</h2>
+            <div style="color:var(--muted);font-size:14px">
+                <div style="margin-bottom:8px">Earn badges by achieving mastery in each difficulty. Badges persist in
+                    your browser.</div>
+                <div id="badge-cabinet" class="cabinet" aria-live="polite"></div>
+                <!-- Hidden ARIA-live summary for programmatic announcements -->
+                <div id="badge-aria-live" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+                <!-- Modal for badge details -->
+                <div id="badge-modal" class="modal-backdrop" style="display:none" aria-hidden="true">
+                    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="badge-modal-title">
+                        <div style="display:flex;align-items:center;gap:12px">
+                            <div class="pixel-art" id="modal-art" aria-hidden="true"></div>
+                            <div style="flex:1">
+                                <h3 id="badge-modal-title">Badge</h3>
+                                <div id="badge-modal-desc" class="meta">Details about this badge.</div>
+                            </div>
+                            <button id="badge-modal-close" class="close" aria-label="Close">✖</button>
+                        </div>
+                        <div style="margin-top:12px">
+                            <div id="badge-modal-tips" style="font-size:13px;color:var(--muted)"></div>
+                            <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+                                <button id="badge-modal-export" class="secondary"
+                                    title="Export badges and mastery">Export badges</button>
+                                <button id="badge-modal-close-text" class="close" aria-label="Close">Close</button>
+                                <div style="margin-left:auto;color:var(--muted);font-size:12px">Tip: Press Esc to close
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div style="margin-top:8px;color:var(--muted);font-size:13px">Tip: Problems use Python-style operators;
-                    exponents use <code>**</code>. Order follows PEMDAS.</div>
-                <div style="margin-top:10px;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, monospace">
-                    <div style="font-size:13px;color:var(--muted);margin-bottom:6px">Examples by difficulty:</div>
-                    <ul
-                        style="margin:0;padding-left:18px;color:var(--muted);font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, monospace">
-                        <li><strong>Very Easy:</strong> <code>3 + 4</code></li>
-                        <li><strong>Easy:</strong> <code>(5 + 2) * 3</code></li>
-                        <li><strong>Medium:</strong> <code>(2 + 3) ** 2 - 4</code></li>
-                        <li><strong>Hard:</strong> <code>(3 + (2 * 5)) ** 2 / 4</code></li>
-                        <li><strong>Expert:</strong> <code>((2 + 3) ** (1 + 1)) * (4 - 1)</code></li>
-                    </ul>
-                </div>
+                <div style="margin-top:8px;font-size:13px;color:var(--muted)">Tip: Reach 80% correct over the last 10
+                    attempts to earn a badge.</div>
             </div>
         </section>
 
@@ -500,41 +509,7 @@
             </div>
         </section>
 
-        <section class="card" aria-labelledby="badges-heading">
-            <h2 id="badges-heading" style="margin:0 0 8px 0;font-size:15px">Badge cabinet</h2>
-            <div style="color:var(--muted);font-size:14px">
-                <div style="margin-bottom:8px">Earn badges by achieving mastery in each difficulty. Badges persist in
-                    your browser.</div>
-                <div id="badge-cabinet" class="cabinet" aria-live="polite"></div>
-                <!-- Hidden ARIA-live summary for programmatic announcements -->
-                <div id="badge-aria-live" class="sr-only" aria-live="polite" aria-atomic="true"></div>
-                <!-- Modal for badge details -->
-                <div id="badge-modal" class="modal-backdrop" style="display:none" aria-hidden="true">
-                    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="badge-modal-title">
-                        <div style="display:flex;align-items:center;gap:12px">
-                            <div class="pixel-art" id="modal-art" aria-hidden="true"></div>
-                            <div style="flex:1">
-                                <h3 id="badge-modal-title">Badge</h3>
-                                <div id="badge-modal-desc" class="meta">Details about this badge.</div>
-                            </div>
-                            <button id="badge-modal-close" class="close" aria-label="Close">✖</button>
-                        </div>
-                        <div style="margin-top:12px">
-                            <div id="badge-modal-tips" style="font-size:13px;color:var(--muted)"></div>
-                            <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
-                                <button id="badge-modal-export" class="secondary"
-                                    title="Export badges and mastery">Export badges</button>
-                                <button id="badge-modal-close-text" class="close" aria-label="Close">Close</button>
-                                <div style="margin-left:auto;color:var(--muted);font-size:12px">Tip: Press Esc to close
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div style="margin-top:8px;font-size:13px;color:var(--muted)">Tip: Reach 80% correct over the last 10
-                    attempts to earn a badge.</div>
-            </div>
-        </section>
+
 
         <footer class="card" style="text-align:left">
             Tips: Work inside parentheses first, then exponents, then multiplication/division left-to-right, then
