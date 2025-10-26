@@ -133,9 +133,10 @@
             cursor: default;
         }
 
+        /* earned badges use CSS vars so we can tint per-level in JS */
         .badge.trophy.earned {
-            background: linear-gradient(180deg, var(--accent), #0060a8);
-            color: var(--button-text);
+            background-image: linear-gradient(180deg, var(--badge-bg1, #ffde59), var(--badge-bg2, #f29f05));
+            color: var(--badge-text, #111);
             font-weight: 700;
         }
 
@@ -153,15 +154,15 @@
             margin-right: 6px;
         }
 
-        /* small retro pixel colors for earned vs locked */
+        /* small retro pixel colors for earned vs locked (defaults) */
         .badge.trophy.earned {
-            background-image: linear-gradient(180deg, #ffde59, #f29f05);
-            color: #111
+            background-image: linear-gradient(180deg, var(--badge-bg1, #ffde59), var(--badge-bg2, #f29f05));
+            color: var(--badge-text, #111);
         }
 
         .badge.trophy.locked {
-            background-image: linear-gradient(180deg, #e6e6e6, #cfcfcf);
-            color: #6b6b6b
+            background-image: linear-gradient(180deg, var(--badge-locked-1, #e6e6e6), var(--badge-locked-2, #cfcfcf));
+            color: var(--badge-locked-text, #6b6b6b);
         }
 
         /* visually-hidden helper for ARIA live region */
@@ -336,6 +337,8 @@
             <h1>Order of Operations — Practice Trainer</h1>
             <div style="color:var(--muted);font-size:13px">Mnemonic: PEMDAS (Parentheses, Exponents, MD, AS)</div>
         </header>
+
+        <!-- badge cabinet moved to top of page -->
 
         <section class="card" aria-labelledby="options-heading">
             <h2 id="options-heading" style="margin:0 0 8px 0;font-size:15px">Options</h2>
@@ -875,6 +878,15 @@
                 'expert': 'HS'
             };
 
+            // Per-level badge color palette: [bg1, bg2, text]
+            const BADGE_COLORS = {
+                'very-easy': ['#ffde59', '#f29f05', '#111'],
+                'easy': ['#6be3ff', '#00bcd4', '#001a30'],
+                'medium': ['#c0ffc8', '#4caf50', '#001a30'],
+                'hard': ['#ff99cc', '#ff4081', '#001a30'],
+                'expert': ['#ffd6a5', '#ff6b00', '#001a30']
+            };
+
             function loadBadges() {
                 try {
                     const raw = localStorage.getItem(BADGE_KEY);
@@ -946,6 +958,20 @@
                         el.setAttribute('aria-label', `${arcadeName} badge locked`);
                         el.setAttribute('title', `${arcadeName} — locked`);
                     }
+                    // apply per-level color variables for earned badges
+                    try {
+                        const pal = BADGE_COLORS[lv];
+                        if (info.earned && pal) {
+                            el.style.setProperty('--badge-bg1', pal[0]);
+                            el.style.setProperty('--badge-bg2', pal[1]);
+                            el.style.setProperty('--badge-text', pal[2] || '#111');
+                        } else {
+                            // ensure locked look (use default locked vars)
+                            el.style.setProperty('--badge-locked-1', '#e6e6e6');
+                            el.style.setProperty('--badge-locked-2', '#cfcfcf');
+                            el.style.setProperty('--badge-locked-text', '#6b6b6b');
+                        }
+                    } catch (e) { }
                     cabinet.appendChild(el);
                 });
                 // announce summary
