@@ -409,13 +409,39 @@
             font-size: 12px;
         }
 
+        /* Close icon button: high-contrast background that follows current theme variables */
         .modal .close {
             margin-left: auto;
-            background: transparent;
+            background: var(--accent);
+            color: var(--button-text);
             border: 0;
-            font-size: 18px;
+            font-size: 16px;
             cursor: pointer;
             padding: 6px;
+            width: 36px;
+            height: 36px;
+            display: inline-grid;
+            place-items: center;
+            border-radius: 8px;
+            box-shadow: 0 6px 18px rgba(2, 6, 23, 0.12);
+            transition: transform 120ms ease, box-shadow 120ms ease, opacity 120ms ease;
+        }
+
+        .modal .close:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 36px rgba(2, 6, 23, 0.18);
+        }
+
+        .modal .close:active {
+            transform: translateY(0);
+        }
+
+        /* keyboard focus state for the close button: high contrast outline that adapts to theme */
+        .modal .close:focus-visible,
+        .modal .close:focus {
+            outline: 3px solid var(--button-text);
+            outline-offset: 2px;
+            box-shadow: 0 0 0 4px rgba(11, 99, 179, 0.12);
         }
 
         .modal .close:focus,
