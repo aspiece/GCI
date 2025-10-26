@@ -120,25 +120,28 @@
             align-items: stretch;
         }
 
-        /* make each badge look more like a badge: circular emblem + label */
+        /* make each badge look more like a badge: compact square button with emblem */
         .badge.trophy {
-            display: flex;
+            display: inline-flex;
+            flex-direction: column;
             align-items: center;
-            gap: 12px;
-            width: 100%;
-            padding: 10px 12px;
+            gap: 4px;
+            width: 66px;
+            min-width: 54px;
+            padding: 6px;
             border-radius: 12px;
             font-size: 13px;
             box-shadow: 0 6px 18px rgba(2, 6, 23, 0.06);
             cursor: pointer;
-            justify-content: flex-start;
+            justify-content: center;
+            text-align: center;
             background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(2, 6, 23, 0.01));
             transition: transform 150ms ease, box-shadow 150ms ease;
         }
 
         .badge.trophy:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(2, 6, 23, 0.12);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 36px rgba(2, 6, 23, 0.14);
         }
 
         /* earned badges use CSS vars so we can tint per-level in JS (subtle row tint)
@@ -154,15 +157,14 @@
             box-shadow: 0 10px 28px rgba(2, 6, 23, 0.18), 0 0 0 4px rgba(11, 99, 179, 0.10);
         }
 
-        /* circular emblem on the left */
+        /* emblem container (square for shield/ribbon, circle for medallion) */
         .badge.trophy .icon {
-            width: 44px;
-            height: 44px;
+            width: 42px;
+            height: 42px;
             display: inline-block;
             vertical-align: middle;
-            margin-right: 8px;
-            flex: 0 0 44px;
-            border-radius: 50%;
+            flex: 0 0 42px;
+            border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 6px 18px rgba(2, 6, 23, 0.12), inset 0 -6px 12px rgba(255, 255, 255, 0.06);
             background: linear-gradient(180deg, var(--badge-bg1, #ffde59), var(--badge-bg2, #f29f05));
@@ -170,24 +172,46 @@
             place-items: center;
         }
 
+        /* Alternate badge shapes */
+        /* Medallion (default): circular — already handled by border-radius:50% above */
+        .badge.trophy.shape-medallion .icon {
+            border-radius: 50%;
+        }
+
+        /* Shield and ribbon shapes are rendered via SVG templates for higher-fidelity exports.
+           Keep lightweight sizing tweaks here only; visual shape details come from the SVG. */
+        .badge.trophy.shape-shield .icon {
+            border-radius: 8px;
+            overflow: visible;
+            width: 38px;
+            height: 33px;
+        }
+
+        .badge.trophy.shape-ribbon .icon {
+            width: 42px;
+            height: 33px;
+            border-radius: 8px;
+            position: relative;
+            overflow: visible;
+        }
+
         .badge.trophy .icon svg {
-            width: 70%;
-            height: 70%;
+            width: 80%;
+            height: 80%;
             display: block;
         }
 
         .badge.trophy .label {
-            font-weight: 600;
+            font-weight: 700;
             color: inherit;
+            font-size: 12px;
+            display: block;
+            line-height: 1;
         }
 
-        /* small right chevron to hint interactivity */
+        /* Remove chevron for compact square badges (visual clutter) */
         .badge.trophy::after {
-            content: '›';
-            margin-left: auto;
-            color: rgba(0, 0, 0, 0.2);
-            font-size: 18px;
-            transform: translateY(-1px);
+            content: '';
         }
 
         .badge.trophy.locked .icon {
@@ -465,24 +489,35 @@
         .legend-list li {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 6px;
-            border-radius: 6px;
+            gap: 12px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), rgba(2, 6, 23, 0.01));
+            border: 1px solid rgba(11, 99, 179, 0.04);
         }
 
         .legend-op {
             font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
-            background: rgba(0, 0, 0, 0.04);
-            padding: 4px 8px;
+            background: rgba(11, 99, 179, 0.08);
+            color: #05385f;
+            padding: 6px 10px;
             border-radius: 6px;
-            min-width: 44px;
+            min-width: 48px;
             text-align: center;
-            font-weight: 700;
+            font-weight: 800;
+            box-shadow: 0 4px 10px rgba(2, 6, 23, 0.06);
+            font-size: 13px;
         }
 
         .legend-desc {
             color: var(--muted);
             font-size: 13px;
+            line-height: 1.15;
+        }
+
+        .legend-list a {
+            color: var(--muted);
+            text-decoration: underline dotted;
         }
     </style>
 </head>
@@ -539,6 +574,12 @@
                         <label>
                             <button class="secondary" id="export-badges" title="Export badges">Export badges</button>
                         </label>
+                        <label>
+                            Badge sound:
+                            <input id="enable-sound" type="checkbox" title="Enable badge sound"
+                                style="margin-left:8px" />
+                        </label>
+                        <!-- Badge shape fixed to shield; selector removed to simplify UI -->
                         <!-- Import removed to simplify teacher workflow; use Export to save a copy -->
                         <button id="generate">Start</button>
                         <button class="secondary" id="show-mnemonic" title="Quick help">Show PEMDAS</button>
@@ -1055,6 +1096,15 @@
                 'expert': 'HS'
             };
 
+            // Human-friendly labels aligned with the difficulty select options
+            const DIFFICULTY_LABELS = {
+                'very-easy': 'Very Easy — 1 op',
+                'easy': 'Easy — 2 ops, no exponents',
+                'medium': 'Medium — 3–4 ops, may include parentheses',
+                'hard': 'Hard — 4–6 ops, exponents & nested parentheses',
+                'expert': 'Expert — 6–8 ops, heavy nesting & exponents'
+            };
+
             // Per-level badge color palette: [bg1, bg2, text]
             const BADGE_COLORS = {
                 'very-easy': ['#ffde59', '#f29f05', '#111'],
@@ -1063,6 +1113,127 @@
                 'hard': ['#ff99cc', '#ff4081', '#001a30'],
                 'expert': ['#ffd6a5', '#ff6b00', '#001a30']
             };
+
+            // sound preference key
+            const SOUND_KEY = 'ooo_sound_enabled';
+
+            function loadSoundPref() {
+                try { return localStorage.getItem(SOUND_KEY) === '1'; } catch (e) { return false; }
+            }
+
+            function saveSoundPref(v) {
+                try { localStorage.setItem(SOUND_KEY, v ? '1' : '0'); } catch (e) { }
+            }
+
+            // Badge shape preference key (medallion | shield | ribbon)
+            const BADGE_SHAPE_KEY = 'ooo_badge_shape';
+
+            function loadBadgeShape() {
+                try { return localStorage.getItem(BADGE_SHAPE_KEY) || 'shield'; } catch (e) { return 'shield'; }
+            }
+
+            function saveBadgeShape(v) {
+                try { localStorage.setItem(BADGE_SHAPE_KEY, v); } catch (e) { }
+            }
+
+            // Return an SVG string for a badge using the selected shape and level colors.
+            // Used to render the modal preview and to provide a high-fidelity PNG export.
+            function getBadgeSVG(level, shape = 'medallion', size = 200) {
+                try {
+                    const pal = BADGE_COLORS[level] || ['#ddd', '#bbb', '#111'];
+                    const gId = `g-${level}`;
+                    // small pixel-art mapping (reuse the same simple art used previously)
+                    const inner = {
+                        'very-easy': '<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="64" height="64" fill="#111"/><rect x="8" y="8" width="48" height="48" fill="#ffd24a"/><rect x="20" y="20" width="24" height="24" fill="#ff8c00"/></svg>',
+                        'easy': '<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="64" height="64" fill="#0b1630"/><rect x="10" y="12" width="44" height="40" fill="#6be3ff"/><rect x="18" y="20" width="28" height="24" fill="#00bcd4"/></svg>',
+                        'medium': '<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="64" height="64" fill="#07112a"/><rect x="8" y="8" width="48" height="48" fill="#c0ffc8"/><rect x="18" y="18" width="28" height="28" fill="#4caf50"/></svg>',
+                        'hard': '<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="64" height="64" fill="#2a0014"/><rect x="6" y="10" width="52" height="44" fill="#ff99cc"/><rect x="14" y="18" width="36" height="28" fill="#ff4081"/></svg>',
+                        'expert': '<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="64" height="64" fill="#001a1a"/><rect x="8" y="8" width="48" height="48" fill="#ffd6a5"/><rect x="16" y="16" width="32" height="32" fill="#ff6b00"/></svg>'
+                    }[level] || inner['medium'];
+
+                    // normalized viewBox and sizes
+                    const vb = '0 0 200 200';
+                    // shape path snippets
+                    const shieldPath = '<path d="M100 12 L170 44 L150 136 L100 180 L50 136 L30 44 Z" fill="url(#' + gId + ')" stroke="#00000022" stroke-width="2"/>';
+                    const medallion = '<circle cx="100" cy="90" r="64" fill="url(#' + gId + ')" stroke="#00000022" stroke-width="2"/>';
+                    const ribbonBase = '<rect x="32" y="24" width="136" height="132" rx="12" ry="12" fill="url(#' + gId + ')" stroke="#00000022" stroke-width="2"/>';
+                    const ribbonTails = '<g fill="url(#' + gId + ')"><path d="M52 156 L32 192 L72 172 Z"/><path d="M148 156 L168 192 L128 172 Z"/></g>';
+
+                    const shapeSVG = (shape === 'shield') ? shieldPath : (shape === 'ribbon') ? (ribbonBase + ribbonTails) : medallion;
+
+                    const svg = `
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="${vb}" role="img" aria-label="${DIFFICULTY_LABELS[level] || level} badge">
+                                                    <defs>
+                                                        <linearGradient id="${gId}" x1="0" x2="1" y1="0" y2="1">
+                                                            <stop offset="0%" stop-color="${pal[0]}" />
+                                                            <stop offset="100%" stop-color="${pal[1]}" />
+                                                        </linearGradient>
+                                                        <filter id="f1" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000" flood-opacity="0.12"/></filter>
+                                                    </defs>
+                                                    <g filter="url(#f1)">
+                                                        ${shapeSVG}
+                                                    </g>
+                                                    <!-- place inner pixel art centered inside the badge -->
+                                                    <g transform="translate(68,56) scale(1.6)">
+                                                        ${inner}
+                                                    </g>
+                                                </svg>
+                                        `;
+                    return svg;
+                } catch (e) { return '' + (e && e.message ? e.message : ''); }
+            }
+
+            // Small, simplified SVG optimized for cabinet icons (clear at small sizes)
+            function getSmallBadgeSVG(level, shape = 'shield') {
+                try {
+                    const pal = BADGE_COLORS[level] || ['#ddd', '#bbb', '#111'];
+                    // use CSS variables where possible so colors follow per-badge CSS vars
+                    const a = 'var(--badge-bg1,' + pal[0] + ')';
+                    const b = 'var(--badge-bg2,' + pal[1] + ')';
+                    const t = 'var(--badge-text,' + (pal[2] || '#111') + ')';
+                    if (shape === 'medallion') {
+                        return `
+                                                    <svg width="44" height="44" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                                        <circle cx="32" cy="28" r="22" fill="${a}" stroke="${b}" stroke-width="2" />
+                                                        <circle cx="32" cy="28" r="8" fill="${t}" />
+                                                    </svg>`;
+                    } else if (shape === 'ribbon') {
+                        return `
+                                                    <svg width="44" height="44" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                                        <rect x="12" y="8" width="40" height="36" rx="6" ry="6" fill="${a}" stroke="${b}" stroke-width="2"/>
+                                                        <path d="M20 44 L12 60 L28 50 Z M44 44 L52 60 L36 50 Z" fill="${b}"/>
+                                                    </svg>`;
+                    } else {
+                        // shield
+                        return `
+                                                    <svg width="44" height="44" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                                        <path d="M32 6 L54 18 L50 44 L32 58 L14 44 L10 18 Z" fill="${a}" stroke="${b}" stroke-width="2"/>
+                                                        <circle cx="32" cy="30" r="6" fill="${t}" />
+                                                    </svg>`;
+                    }
+                } catch (e) { return ''; }
+            }
+
+            // play a short chime using WebAudio (created lazily). Respects user preference.
+            function playBadgeSound() {
+                try {
+                    if (!loadSoundPref()) return;
+                    const Ctx = window.AudioContext || window.webkitAudioContext;
+                    if (!Ctx) return;
+                    const ctx = new Ctx();
+                    // small two-tone arpeggio
+                    const o1 = ctx.createOscillator();
+                    const g1 = ctx.createGain();
+                    o1.type = 'sine';
+                    o1.frequency.setValueAtTime(880, ctx.currentTime);
+                    g1.gain.setValueAtTime(0.0001, ctx.currentTime);
+                    o1.connect(g1); g1.connect(ctx.destination);
+                    o1.start();
+                    g1.gain.exponentialRampToValueAtTime(0.12, ctx.currentTime + 0.02);
+                    g1.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.5);
+                    o1.stop(ctx.currentTime + 0.5);
+                } catch (e) { /* ignore */ }
+            }
 
             function loadBadges() {
                 try {
@@ -1096,13 +1267,18 @@
                             }
                         } catch (e) { }
                     }, 80);
-                    // also trigger a small confetti burst
-                    try { createConfettiBurst(); } catch (e) { }
+                    // also trigger a small confetti burst and sound from the badge location
+                    try {
+                        const el2 = document.querySelector(`#badge-cabinet .badge.trophy[data-level="${level}"]`);
+                        const rect = el2 ? el2.getBoundingClientRect() : null;
+                        createConfettiBurst(26, rect);
+                        playBadgeSound();
+                    } catch (e) { }
                 }
             }
 
             // create a small confetti burst at top-center; lightweight and dependency-free
-            function createConfettiBurst(count = 22) {
+            function createConfettiBurst(count = 22, originRect = null) {
                 try {
                     const rootId = '__confetti_root__';
                     let root = document.getElementById(rootId);
@@ -1112,12 +1288,23 @@
                         root.className = 'confetti-root';
                         document.body.appendChild(root);
                     }
+                    // position root near origin if provided
+                    if (originRect && originRect.left !== undefined) {
+                        root.style.left = (originRect.left + originRect.width / 2) + 'px';
+                        // place slightly above the element so pieces fall down
+                        const top = Math.max(8, originRect.top - 24);
+                        root.style.top = (top) + 'px';
+                    } else {
+                        root.style.left = '50%';
+                        root.style.top = '8%';
+                    }
                     const colors = ['#ffd24a', '#ff8c00', '#6be3ff', '#00bcd4', '#4caf50', '#ff99cc', '#ff6b00'];
                     for (let i = 0; i < count; i++) {
                         const p = document.createElement('div');
                         p.className = 'confetti-piece';
                         p.style.background = colors[Math.floor(Math.random() * colors.length)];
-                        const left = (Math.random() * 240) - 120; // spread across horizontal region
+                        // spread locally around root center
+                        const left = Math.floor((Math.random() * 260) - 130);
                         p.style.left = left + 'px';
                         p.style.transform = `translateY(0) rotate(${Math.floor(Math.random() * 360)}deg)`;
                         const dur = 1100 + Math.floor(Math.random() * 600);
@@ -1125,10 +1312,25 @@
                         p.style.animationDuration = dur + 'ms';
                         p.style.animationDelay = delay + 'ms';
                         root.appendChild(p);
-                        setTimeout(() => { try { root.removeChild(p); } catch (e) { } }, dur + delay + 120);
+                        setTimeout(() => { try { root.removeChild(p); } catch (e) { } }, dur + delay + 140);
                     }
-                    setTimeout(() => { try { if (root && root.childElementCount === 0) root.remove(); } catch (e) { } }, 2400);
+                    setTimeout(() => { try { if (root && root.childElementCount === 0) root.remove(); } catch (e) { } }, 2600);
                 } catch (e) { /* ignore */ }
+            }
+
+            // animate earned badges on first load (staggered, subtle)
+            function animateEarnedOnLoad() {
+                try {
+                    const items = document.querySelectorAll('#badge-cabinet .badge.trophy.earned');
+                    Array.from(items).forEach((el, i) => {
+                        setTimeout(() => {
+                            try {
+                                el.classList.add('earned-animate');
+                                setTimeout(() => { try { el.classList.remove('earned-animate'); } catch (e) { } }, 700);
+                            } catch (e) { }
+                        }, i * 120 + 80);
+                    });
+                } catch (e) { }
             }
 
             function clearBadges() { try { localStorage.removeItem(BADGE_KEY); } catch (e) { } updateBadgeCabinet(); }
@@ -1146,27 +1348,29 @@
                 levels.forEach(lv => {
                     const info = getBadgeInfo(lv);
                     const el = document.createElement('div');
-                    el.className = 'badge trophy ' + (info.earned ? 'earned' : 'locked');
+                    // apply user's selected badge shape
+                    const shape = (typeof loadBadgeShape === 'function') ? loadBadgeShape() : 'shield';
+                    // fixed to shield shape; compact cabinet buttons
+                    el.className = 'badge trophy shape-shield compact ' + (info.earned ? 'earned' : 'locked');
                     const arcadeName = ARCADE_NAMES[lv] || lv.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ');
                     const abbr = ARCADE_ABBR[lv] || lv.split('-').map(w => w[0].toUpperCase()).join('');
                     el.title = arcadeName;
                     el.setAttribute('data-level', lv);
                     el.setAttribute('tabindex', '0');
                     el.setAttribute('role', 'button');
-                    // build inner content: icon + abbrev
+                    // build inner content: icon + abbrev. For cabinet icons we render a small SVG
                     const icon = document.createElement('span');
                     icon.className = 'icon';
-                    // inline pixel-style SVG
-                    // use currentColor so SVG icons tint to the badge's color
-                    icon.innerHTML = info.earned ? `
-                                                <svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                                    <circle cx="8" cy="6" r="3" fill="currentColor" />
-                                                    <rect x="4" y="11" width="8" height="2" fill="currentColor" />
-                                                </svg>` : `
-                                                <svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                                    <rect x="4" y="4" width="8" height="2" fill="currentColor" />
-                                                    <rect x="4" y="8" width="8" height="2" fill="currentColor" />
-                                                </svg>`;
+                    // small badge SVG for cabinet: shape outline + inner emblem
+                    try {
+                        const sh = (typeof loadBadgeShape === 'function') ? loadBadgeShape() : 'shield';
+                        const smallSvg = getSmallBadgeSVG(lv, sh);
+                        // use the simplified SVG optimized for small display
+                        icon.innerHTML = smallSvg;
+                    } catch (e) {
+                        // fallback to tiny icon
+                        icon.innerHTML = info.earned ? `<svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="8" cy="6" r="3" fill="currentColor" /><rect x="4" y="11" width="8" height="2" fill="currentColor" /></svg>` : `<svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="4" y="4" width="8" height="2" fill="currentColor" /><rect x="4" y="8" width="8" height="2" fill="currentColor" /></svg>`;
+                    }
                     el.appendChild(icon);
                     const text = document.createElement('span');
                     text.textContent = abbr;
@@ -1234,6 +1438,13 @@
                     const openLvl = modal._openLevel;
                     if (openLvl) populateModal(openLvl);
                 }
+                // animate previously-earned badges the first time the cabinet renders
+                try {
+                    if (!window._cabinetInitialAnimated) {
+                        window._cabinetInitialAnimated = true;
+                        animateEarnedOnLoad();
+                    }
+                } catch (e) { }
             }
 
             // Populate and show badge detail modal
@@ -1269,14 +1480,9 @@
                 }
 
                 // pixel art (larger) per badge
-                const artSVG = {
-                    'very-easy': `<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="64" height="64" fill="#111"/><rect x="8" y="8" width="48" height="48" fill="#ffd24a"/><rect x="20" y="20" width="24" height="24" fill="#ff8c00"/></svg>`,
-                    'easy': `<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="64" height="64" fill="#0b1630"/><rect x="10" y="12" width="44" height="40" fill="#6be3ff"/><rect x="18" y="20" width="28" height="24" fill="#00bcd4"/></svg>`,
-                    'medium': `<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="64" height="64" fill="#07112a"/><rect x="8" y="8" width="48" height="48" fill="#c0ffc8"/><rect x="18" y="18" width="28" height="28" fill="#4caf50"/></svg>`,
-                    'hard': `<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="64" height="64" fill="#2a0014"/><rect x="6" y="10" width="52" height="44" fill="#ff99cc"/><rect x="14" y="18" width="36" height="28" fill="#ff4081"/></svg>`,
-                    'expert': `<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="64" height="64" fill="#001a1a"/><rect x="8" y="8" width="48" height="48" fill="#ffd6a5"/><rect x="16" y="16" width="32" height="32" fill="#ff6b00"/></svg>`
-                };
-                art.innerHTML = artSVG[level] || artSVG['medium'];
+                // Render rich SVG badge (shape + inner art) for modal preview and export
+                const shape = (typeof loadBadgeShape === 'function') ? loadBadgeShape() : 'shield';
+                art.innerHTML = getBadgeSVG(level, shape, 260);
 
                 // store open level and show modal
                 modal._openLevel = level;
@@ -1516,6 +1722,23 @@
             // initialize mastery display
             try { updateMasteryUI(difficulty.value); } catch (e) { }
             try { updateBadgeCabinet(); } catch (e) { }
+
+            // Initialize sound toggle based on saved preference
+            try {
+                const soundChk = document.getElementById('enable-sound');
+                if (soundChk) {
+                    soundChk.checked = loadSoundPref();
+                    soundChk.addEventListener('change', (ev) => {
+                        const on = !!ev.target.checked;
+                        saveSoundPref(on);
+                        if (on) {
+                            // resume AudioContext on user gesture if required by browser
+                            try { const Ctx = window.AudioContext || window.webkitAudioContext; if (Ctx) { const ac = new Ctx(); if (ac && ac.state === 'suspended' && typeof ac.resume === 'function') ac.resume(); } } catch (e) { }
+                        }
+                    });
+                }
+                // badge shape selector removed; badges are fixed to shield shape
+            } catch (e) { }
 
             function showProblem(i) {
                 if (i >= problems.length) {
