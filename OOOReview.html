@@ -379,10 +379,7 @@
                 <label>
                     <button class="secondary" id="export-badges" title="Export badges">Export badges</button>
                 </label>
-                <label>
-                    <button class="secondary" id="import-badges" title="Import badges">Import badges</button>
-                    <input id="import-file" type="file" accept="application/json" style="display:none" />
-                </label>
+                <!-- Import removed to simplify teacher workflow; use Export to save a copy -->
                 <button id="generate">Start</button>
                 <button class="secondary" id="show-mnemonic" title="Quick help">Show PEMDAS</button>
             </div>
@@ -494,6 +491,13 @@
                         </div>
                         <div style="margin-top:12px">
                             <div id="badge-modal-tips" style="font-size:13px;color:var(--muted)"></div>
+                            <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+                                <button id="badge-modal-export" class="secondary"
+                                    title="Export badges and mastery">Export badges</button>
+                                <button id="badge-modal-close-text" class="close" aria-label="Close">Close</button>
+                                <div style="margin-left:auto;color:var(--muted);font-size:12px">Tip: Press Esc to close
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -754,6 +758,15 @@
                         });
                         const closeBtn = document.getElementById('badge-modal-close');
                         if (closeBtn) closeBtn.addEventListener('click', closeModal);
+                        // text-style close button in modal (added for clarity)
+                        const closeTextBtn = document.getElementById('badge-modal-close-text');
+                        if (closeTextBtn) closeTextBtn.addEventListener('click', closeModal);
+                        // modal export connects to the main export button if present
+                        const modalExport = document.getElementById('badge-modal-export');
+                        if (modalExport) modalExport.addEventListener('click', () => {
+                            const primary = document.getElementById('export-badges');
+                            if (primary) primary.click();
+                        });
                         document.addEventListener('keydown', (ev) => {
                             if (ev.key === 'Escape') {
                                 if (modal.style.display !== 'none') {
@@ -1114,10 +1127,8 @@
                 showLiveToast('All badges cleared.');
             });
 
-            // Export / Import badges
+            // Export badges (import UI removed)
             const exportBadgesBtn = document.getElementById('export-badges');
-            const importBadgesBtn = document.getElementById('import-badges');
-            const importFile = document.getElementById('import-file');
             if (exportBadgesBtn) exportBadgesBtn.addEventListener('click', () => {
                 try {
                     const badges = loadBadges();
@@ -1143,48 +1154,7 @@
                     showLiveToast('Badges and mastery exported.');
                 } catch (e) { showLiveToast('Export failed.'); }
             });
-            if (importBadgesBtn && importFile) importBadgesBtn.addEventListener('click', () => importFile.click());
-            if (importFile) importFile.addEventListener('change', (ev) => {
-                const f = ev.target.files && ev.target.files[0];
-                if (!f) return;
-                const r = new FileReader();
-                r.onload = (e) => {
-                    try {
-                        const parsed = JSON.parse(e.target.result);
-                        // support two shapes:
-                        // 1) legacy: { 'very-easy': { earned: true, earnedAt: ... }, ... }
-                        // 2) export shape: { badges: { ... }, mastery: { ... } }
-                        if (typeof parsed !== 'object' || Array.isArray(parsed) || parsed === null) throw new Error('Invalid format');
-                        const levels = ['very-easy', 'easy', 'medium', 'hard', 'expert'];
-                        // determine badge source
-                        const badgeSource = (parsed.badges && typeof parsed.badges === 'object') ? parsed.badges : parsed;
-                        const out = {};
-                        Object.keys(badgeSource).forEach(k => {
-                            if (!levels.includes(k)) return; // ignore unknown keys
-                            const v = badgeSource[k];
-                            if (typeof v !== 'object' || v === null) return;
-                            const earned = !!v.earned;
-                            let earnedAt = null;
-                            if (v.earnedAt) {
-                                const dt = new Date(v.earnedAt);
-                                if (!isNaN(dt.getTime())) earnedAt = dt.toISOString();
-                            }
-                            if (earned) out[k] = earnedAt ? { earned: true, earnedAt } : { earned: true };
-                        });
-                        if (Object.keys(out).length === 0) throw new Error('No valid badge entries');
-                        saveBadges(out);
-                        // optional: import mastery if present and looks like an object
-                        if (parsed.mastery && typeof parsed.mastery === 'object' && !Array.isArray(parsed.mastery)) {
-                            try { saveMastery(parsed.mastery); } catch (e) { /* ignore malformed mastery */ }
-                        }
-                        updateBadgeCabinet();
-                        showLiveToast('Badges (and mastery) imported.');
-                    } catch (err) { showLiveToast('Import failed: invalid file.'); }
-                };
-                r.readAsText(f);
-                // clear input so the same file can be picked again later
-                importFile.value = '';
-            });
+            // Import functionality removed from UI — import code intentionally omitted to avoid accidental overwrites.
 
             // Theme handling: apply class to body and persist selection
             function applyTheme(theme) {
