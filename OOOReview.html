@@ -124,6 +124,9 @@
             gap: 6px;
             align-items: stretch;
             padding: 6px 0;
+            list-style: none;
+            margin: 0;
+            padding-left: 0;
         }
 
         /* make each badge look more like a badge: compact square button with emblem (reduced ~75%) */
@@ -245,9 +248,37 @@
             display: block;
         }
 
+        /* visible focus for lock button to aid keyboard users */
+        .badge.trophy .lock-overlay .lock-trigger:focus {
+            outline: 3px solid rgba(255, 255, 255, 0.12);
+            outline-offset: 2px;
+            box-shadow: 0 6px 18px rgba(2, 6, 23, 0.18), 0 0 0 4px rgba(11, 99, 179, 0.12);
+        }
+
         /* Ensure the emblem (icon) is positioned relative to allow overlay placement */
         .badge.trophy .icon {
             position: relative;
+        }
+
+        /* Anchored tooltip for lock hints (appears on hover / focus of lock button) */
+        .ooo-tooltip {
+            position: fixed;
+            z-index: 10001;
+            background: var(--card);
+            color: var(--text);
+            padding: 8px 10px;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(2, 6, 23, 0.12);
+            font-size: 13px;
+            line-height: 1.2;
+            max-width: 280px;
+            display: none;
+            pointer-events: none;
+            /* let hover pass through to underlying elements */
+        }
+
+        .ooo-tooltip[data-visible="true"] {
+            display: block;
         }
 
         /* keep existing earned background variables available for emblem and elsewhere */
@@ -713,12 +744,12 @@
 <body>
     <div class="wrap">
         <header>
-            <h1>Python Order of operations</h1>
+            <h1 id="page-title">Python Order of operations</h1>
             <div style="color:var(--muted);font-size:13px">Mnemonic: PEMDAS (Parentheses, Exponents, MD, AS)</div>
         </header>
 
         <div class="cols">
-            <main class="main">
+            <main class="main" role="main" aria-labelledby="page-title">
                 <section class="card" aria-labelledby="options-heading">
                     <h2 id="options-heading" style="margin:0 0 8px 0;font-size:15px">Options</h2>
                     <div class="controls">
@@ -840,14 +871,14 @@
                 </footer>
             </main>
 
-            <aside class="sidebar">
+            <aside class="sidebar" role="complementary" aria-label="Badges and resources">
                 <section class="card" aria-labelledby="badges-heading">
                     <h2 id="badges-heading" style="margin:0 0 8px 0;font-size:15px">Badge cabinet</h2>
                     <div style="color:var(--muted);font-size:14px">
                         <div style="margin-bottom:8px">Earn badges by achieving mastery in each difficulty. Badges
                             persist in
                             your browser.</div>
-                        <div id="badge-cabinet" class="cabinet" aria-live="polite"></div>
+                        <ul id="badge-cabinet" class="cabinet" aria-live="polite" role="list"></ul>
                         <!-- Hidden ARIA-live summary for programmatic announcements -->
                         <div id="badge-aria-live" class="sr-only" aria-live="polite" aria-atomic="true"></div>
                         <!-- Modal for badge details -->
@@ -1528,55 +1559,53 @@
                 const levels = ['very-easy', 'easy', 'medium', 'hard', 'expert'];
                 levels.forEach(lv => {
                     const info = getBadgeInfo(lv);
-                    const el = document.createElement('div');
-                    // apply user's selected badge shape
-                    const shape = 'shield';
-                    // fixed to shield shape; compact cabinet buttons
-                    el.className = 'badge trophy shape-shield compact ' + (info.earned ? 'earned' : 'locked');
+                    // list item wrapper
+                    const li = document.createElement('li');
+                    li.setAttribute('role', 'listitem');
+                    // create a real button for the badge so it's natively focusable and semantic
+                    const btnEl = document.createElement('button');
+                    btnEl.type = 'button';
+                    // apply user's selected badge shape and state classes on the button
+                    btnEl.className = 'badge trophy shape-shield compact ' + (info.earned ? 'earned' : 'locked');
                     const arcadeName = ARCADE_NAMES[lv] || lv.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ');
                     const abbr = ARCADE_ABBR[lv] || lv.split('-').map(w => w[0].toUpperCase()).join('');
-                    el.title = arcadeName;
-                    el.setAttribute('data-level', lv);
-                    el.setAttribute('tabindex', '0');
-                    el.setAttribute('role', 'button');
+                    btnEl.title = arcadeName;
+                    btnEl.setAttribute('data-level', lv);
+                    btnEl.setAttribute('aria-pressed', 'false');
                     // build inner content: icon + abbrev. For cabinet icons we render a small SVG
                     const icon = document.createElement('span');
                     icon.className = 'icon';
-                    // small badge SVG for cabinet: shape outline + inner emblem
                     try {
                         const sh = 'shield';
                         const smallSvg = getSmallBadgeSVG(lv, sh);
-                        // use the simplified SVG optimized for small display
                         icon.innerHTML = smallSvg;
                     } catch (e) {
-                        // fallback to tiny icon
                         icon.innerHTML = info.earned ? `<svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="8" cy="6" r="3" fill="currentColor" /><rect x="4" y="11" width="8" height="2" fill="currentColor" /></svg>` : `<svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="4" y="4" width="8" height="2" fill="currentColor" /><rect x="4" y="8" width="8" height="2" fill="currentColor" /></svg>`;
                     }
-                    el.appendChild(icon);
+                    btnEl.appendChild(icon);
                     const text = document.createElement('span');
                     text.textContent = abbr;
-                    el.appendChild(text);
+                    btnEl.appendChild(text);
                     if (info.earned && info.earnedAt) {
                         const d = new Date(info.earnedAt);
                         const ts = d.toLocaleString();
-                        el.setAttribute('aria-label', `${arcadeName} badge earned ${ts}`);
-                        el.setAttribute('title', `${arcadeName} — earned ${ts}`);
+                        btnEl.setAttribute('aria-label', `${arcadeName} badge earned ${ts}`);
+                        btnEl.setAttribute('title', `${arcadeName} — earned ${ts}`);
                     } else {
-                        el.setAttribute('aria-label', `${arcadeName} badge locked`);
-                        el.setAttribute('title', `${arcadeName} — locked`);
+                        btnEl.setAttribute('aria-label', `${arcadeName} badge locked`);
+                        btnEl.setAttribute('title', `${arcadeName} — locked`);
                     }
-                    // apply per-level color variables for earned badges
+                    // apply per-level color variables to the button
                     try {
                         const pal = BADGE_COLORS[lv];
                         if (info.earned && pal) {
-                            el.style.setProperty('--badge-bg1', pal[0]);
-                            el.style.setProperty('--badge-bg2', pal[1]);
-                            el.style.setProperty('--badge-text', pal[2] || '#111');
+                            btnEl.style.setProperty('--badge-bg1', pal[0]);
+                            btnEl.style.setProperty('--badge-bg2', pal[1]);
+                            btnEl.style.setProperty('--badge-text', pal[2] || '#111');
                         } else {
-                            // ensure locked look (use default locked vars)
-                            el.style.setProperty('--badge-locked-1', '#e6e6e6');
-                            el.style.setProperty('--badge-locked-2', '#cfcfcf');
-                            el.style.setProperty('--badge-locked-text', '#6b6b6b');
+                            btnEl.style.setProperty('--badge-locked-1', '#e6e6e6');
+                            btnEl.style.setProperty('--badge-locked-2', '#cfcfcf');
+                            btnEl.style.setProperty('--badge-locked-text', '#6b6b6b');
                         }
                     } catch (e) { }
                     // If locked, add a small clickable lock button inside the emblem for clarity
@@ -1584,28 +1613,29 @@
                         if (!info.earned) {
                             const lockWrap = document.createElement('span');
                             lockWrap.className = 'lock-overlay';
-                            // create a focusable button so keyboard users can access the hint
-                            const btn = document.createElement('button');
-                            btn.type = 'button';
-                            btn.className = 'lock-trigger';
-                            btn.setAttribute('aria-label', `How to earn the ${arcadeName} badge`);
-                            btn.innerHTML = `
+                            const lockBtn = document.createElement('button');
+                            lockBtn.type = 'button';
+                            lockBtn.className = 'lock-trigger';
+                            lockBtn.setAttribute('aria-label', `How to earn the ${arcadeName} badge`);
+                            const hint = `How to earn: Reach 80% correct over the last ${MASTERY_WINDOW} attempts in the ${arcadeName} set.`;
+                            lockBtn.setAttribute('data-tooltip', hint);
+                            lockBtn.setAttribute('aria-describedby', 'ooo-lock-tooltip');
+                            lockBtn.innerHTML = `
                                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                     <path fill="currentColor" d="M17 8h-1V6a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2zm-6 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zM9 8V6a3 3 0 0 1 6 0v2H9z" />
                                 </svg>`;
-                            // show a short help tooltip via the toast system
-                            btn.addEventListener('click', function (ev) {
+                            lockBtn.addEventListener('click', function (ev) {
                                 try {
                                     ev.stopPropagation();
-                                    const msg = `How to earn: Reach 80% correct over the last ${MASTERY_WINDOW} attempts in the ${arcadeName} set.`;
-                                    showLiveToast(msg);
+                                    showLiveToast(hint);
                                 } catch (e) { }
                             });
-                            lockWrap.appendChild(btn);
+                            lockWrap.appendChild(lockBtn);
                             icon.appendChild(lockWrap);
                         }
                     } catch (e) { }
-                    cabinet.appendChild(el);
+                    li.appendChild(btnEl);
+                    cabinet.appendChild(li);
                 });
                 // ensure keyboard activation handlers on cabinet (event delegation)
                 if (cabinet && !cabinet._wired) {
@@ -1625,6 +1655,9 @@
                         try { populateModal(lvl); } catch (e) { }
                     });
                     cabinet.addEventListener('keydown', (ev) => {
+                        // ignore key events originating from the lock button so activating the helper
+                        // doesn't also trigger opening the badge modal
+                        if (ev.target && ev.target.closest && ev.target.closest('.lock-trigger')) return;
                         if (ev.key === 'Enter' || ev.key === ' ') {
                             const tgt = ev.target.closest('.badge.trophy');
                             if (!tgt) return;
@@ -1694,6 +1727,11 @@
                 modal._openLevel = level;
                 // remember last focused element to restore later
                 modal._lastFocus = document.activeElement;
+                // mark main content as inert for assistive tech while modal is open
+                try {
+                    const wrap = document.querySelector('.wrap');
+                    if (wrap) wrap.setAttribute('aria-hidden', 'true');
+                } catch (e) { }
                 modal.style.display = 'flex';
                 modal.setAttribute('aria-hidden', 'false');
                 // focus management: move focus to close button
@@ -1762,12 +1800,24 @@
                     const exportBtn = document.getElementById('badge-modal-export');
                     if (exportBtn) exportBtn.disabled = false;
                 } catch (e) { /* ignore */ }
+                // restore main content to assistive tech
+                try {
+                    const wrap = document.querySelector('.wrap');
+                    if (wrap) wrap.removeAttribute('aria-hidden');
+                    try { showLiveToast('Closed badge dialog'); } catch (e) { }
+                } catch (e) { }
             }
 
             // Toast stack + ARIA-live announcement
             function _appendToastElement(message) {
                 const stack = document.getElementById('toast-stack') || (() => {
-                    const el = document.createElement('div'); el.id = 'toast-stack'; document.body.appendChild(el); return el;
+                    const el = document.createElement('div'); el.id = 'toast-stack';
+                    // ARIA: announce toast messages to screen readers
+                    el.setAttribute('aria-live', 'polite');
+                    el.setAttribute('aria-atomic', 'true');
+                    el.style.pointerEvents = 'none';
+                    document.body.appendChild(el);
+                    return el;
                 })();
                 const t = document.createElement('div');
                 t.className = 'toast';
@@ -2110,6 +2160,8 @@
                 if (cabinet && !cabinet._wired) {
                     cabinet._wired = true;
                     cabinet.addEventListener('click', (ev) => {
+                        // if click originated from a lock helper, let its handler manage the event
+                        if (ev.target && ev.target.closest && ev.target.closest('.lock-trigger')) return;
                         const tgt = ev.target.closest('.badge.trophy');
                         if (!tgt) return;
                         const lvl = tgt.getAttribute('data-level');
@@ -2125,6 +2177,9 @@
                         try { populateModal(lvl); } catch (e) { }
                     });
                     cabinet.addEventListener('keydown', (ev) => {
+                        // ignore key events originating from the lock button so activating the helper
+                        // doesn't also trigger opening the badge modal
+                        if (ev.target && ev.target.closest && ev.target.closest('.lock-trigger')) return;
                         if (ev.key === 'Enter' || ev.key === ' ') {
                             const tgt = ev.target.closest('.badge.trophy');
                             if (!tgt) return;
@@ -2198,6 +2253,80 @@
             answerInput.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') checkBtn.click();
             });
+
+            // create a shared anchored tooltip used for lock button hints (appears on hover/focus)
+            (function () {
+                const tooltipId = 'ooo-lock-tooltip';
+                let tooltip = document.getElementById(tooltipId);
+                if (!tooltip) {
+                    tooltip = document.createElement('div');
+                    tooltip.id = tooltipId;
+                    tooltip.className = 'ooo-tooltip';
+                    tooltip.setAttribute('role', 'tooltip');
+                    tooltip.setAttribute('data-visible', 'false');
+                    tooltip.setAttribute('aria-hidden', 'true');
+                    document.body.appendChild(tooltip);
+                }
+
+                function showTooltipFor(target) {
+                    try {
+                        if (!target || !target.dataset || !target.dataset.tooltip) return;
+                        tooltip.textContent = target.dataset.tooltip;
+                        tooltip.setAttribute('data-visible', 'true');
+                        tooltip.setAttribute('aria-hidden', 'false');
+                        // ensure aria-describedby references the shared tooltip
+                        target.setAttribute('aria-describedby', tooltipId);
+                        // position tooltip near the target (prefer above, fall back below)
+                        const rect = target.getBoundingClientRect();
+                        const pad = 8;
+                        tooltip.style.display = 'block';
+                        // measure after display
+                        const tW = tooltip.offsetWidth;
+                        const tH = tooltip.offsetHeight;
+                        let left = Math.round(rect.left + rect.width / 2 - tW / 2);
+                        left = Math.max(8, Math.min(window.innerWidth - tW - 8, left));
+                        let top = Math.round(rect.top - tH - pad);
+                        if (top < 8) top = Math.round(rect.bottom + pad);
+                        tooltip.style.left = left + 'px';
+                        tooltip.style.top = top + 'px';
+                    } catch (e) { /* ignore positioning errors */ }
+                }
+
+                function hideTooltip() {
+                    try {
+                        tooltip.setAttribute('data-visible', 'false');
+                        tooltip.setAttribute('aria-hidden', 'true');
+                        tooltip.style.display = 'none';
+                    } catch (e) { }
+                }
+
+                // delegated show/hide handlers for lock buttons
+                document.addEventListener('mouseover', function (ev) {
+                    const t = ev.target.closest && ev.target.closest('.lock-trigger');
+                    if (t) showTooltipFor(t);
+                });
+                document.addEventListener('mouseout', function (ev) {
+                    const t = ev.target.closest && ev.target.closest('.lock-trigger');
+                    if (t) hideTooltip();
+                });
+                document.addEventListener('focusin', function (ev) {
+                    const t = ev.target.closest && ev.target.closest('.lock-trigger');
+                    if (t) showTooltipFor(t);
+                });
+                document.addEventListener('focusout', function (ev) {
+                    const t = ev.target.closest && ev.target.closest('.lock-trigger');
+                    if (t) hideTooltip();
+                });
+                // hide tooltip on Escape or click outside
+                document.addEventListener('keydown', function (ev) {
+                    const isEsc = ev.key === 'Escape' || ev.key === 'Esc' || ev.keyCode === 27;
+                    if (isEsc) hideTooltip();
+                });
+                document.addEventListener('click', function (ev) {
+                    const t = ev.target.closest && ev.target.closest('.lock-trigger');
+                    if (!t) hideTooltip();
+                });
+            })();
 
             // initialize small sample: show an empty placeholder box until the user starts a set
             problemEl.innerHTML = '<div class="empty-label" aria-hidden="true">&nbsp;</div>';
