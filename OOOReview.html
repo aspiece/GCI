@@ -201,6 +201,58 @@
             color: var(--badge-text, #111);
         }
 
+        /* badge earned animation: pop and icon shine */
+        @keyframes badgePop {
+            0% {
+                transform: scale(0.6);
+                opacity: 0;
+            }
+
+            60% {
+                transform: scale(1.06);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes badgeShine {
+            0% {
+                left: -120%;
+            }
+
+            100% {
+                left: 120%;
+            }
+        }
+
+        .badge.trophy.earned.earned-animate {
+            animation: badgePop 640ms cubic-bezier(.2, .9, .3, 1);
+        }
+
+        .badge.trophy.earned.earned-animate .icon {
+            animation: iconPulse 760ms ease;
+            box-shadow: 0 12px 36px rgba(2, 6, 23, 0.18), inset 0 -8px 18px rgba(255, 255, 255, 0.06);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .badge.trophy.earned.earned-animate .icon::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -120%;
+            width: 220%;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.0) 0%, rgba(255, 255, 255, 0.65) 50%, rgba(255, 255, 255, 0.0) 100%);
+            transform: skewX(-18deg);
+            animation: badgeShine 820ms ease;
+            pointer-events: none;
+        }
+
         /* visually-hidden helper for ARIA live region */
         .sr-only {
             position: absolute !important;
@@ -899,10 +951,14 @@
                             }
                         });
                         document.addEventListener('keydown', (ev) => {
-                            if (ev.key === 'Escape') {
-                                if (modal.style.display !== 'none') {
-                                    closeModal();
-                                }
+                            // support multiple ways to detect Escape across browsers
+                            const isEsc = ev.key === 'Escape' || ev.key === 'Esc' || ev.keyCode === 27;
+                            if (isEsc) {
+                                try {
+                                    if (modal && modal.style && modal.style.display && modal.style.display !== 'none') {
+                                        closeModal();
+                                    }
+                                } catch (e) { /* ignore */ }
                             }
                         });
                     })();
@@ -1027,7 +1083,52 @@
                     // toast and update UI
                     showBadgeToast(level);
                     updateBadgeCabinet();
+                    // after cabinet re-renders, play a short earned animation on the new badge
+                    setTimeout(() => {
+                        try {
+                            const el = document.querySelector(`#badge-cabinet .badge.trophy[data-level="${level}"]`);
+                            if (el) {
+                                // add temporary animate class that triggers CSS keyframes
+                                el.classList.add('earned-animate');
+                                el.addEventListener('animationend', () => {
+                                    try { el.classList.remove('earned-animate'); } catch (e) { }
+                                }, { once: true });
+                            }
+                        } catch (e) { }
+                    }, 80);
+                    // also trigger a small confetti burst
+                    try { createConfettiBurst(); } catch (e) { }
                 }
+            }
+
+            // create a small confetti burst at top-center; lightweight and dependency-free
+            function createConfettiBurst(count = 22) {
+                try {
+                    const rootId = '__confetti_root__';
+                    let root = document.getElementById(rootId);
+                    if (!root) {
+                        root = document.createElement('div');
+                        root.id = rootId;
+                        root.className = 'confetti-root';
+                        document.body.appendChild(root);
+                    }
+                    const colors = ['#ffd24a', '#ff8c00', '#6be3ff', '#00bcd4', '#4caf50', '#ff99cc', '#ff6b00'];
+                    for (let i = 0; i < count; i++) {
+                        const p = document.createElement('div');
+                        p.className = 'confetti-piece';
+                        p.style.background = colors[Math.floor(Math.random() * colors.length)];
+                        const left = (Math.random() * 240) - 120; // spread across horizontal region
+                        p.style.left = left + 'px';
+                        p.style.transform = `translateY(0) rotate(${Math.floor(Math.random() * 360)}deg)`;
+                        const dur = 1100 + Math.floor(Math.random() * 600);
+                        const delay = Math.floor(Math.random() * 220);
+                        p.style.animationDuration = dur + 'ms';
+                        p.style.animationDelay = delay + 'ms';
+                        root.appendChild(p);
+                        setTimeout(() => { try { root.removeChild(p); } catch (e) { } }, dur + delay + 120);
+                    }
+                    setTimeout(() => { try { if (root && root.childElementCount === 0) root.remove(); } catch (e) { } }, 2400);
+                } catch (e) { /* ignore */ }
             }
 
             function clearBadges() { try { localStorage.removeItem(BADGE_KEY); } catch (e) { } updateBadgeCabinet(); }
