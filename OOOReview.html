@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>PEMDAS Playground — Order of Operations Adventure</title>
+    <title>Python Order of operations</title>
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <style>
         :root {
@@ -377,6 +377,32 @@
             align-items: center;
         }
 
+        /* modal progress indicator (spinner + text) */
+        .modal .modal-progress {
+            margin-left: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .modal .modal-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(0, 0, 0, 0.08);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 800ms linear infinite;
+            flex: 0 0 16px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
         .modal .modal-tip {
             margin-left: auto;
             color: var(--muted);
@@ -571,7 +597,7 @@
 <body>
     <div class="wrap">
         <header>
-            <h1>PEMDAS Playground — Order of Operations Adventure</h1>
+            <h1>Python Order of operations</h1>
             <div style="color:var(--muted);font-size:13px">Mnemonic: PEMDAS (Parentheses, Exponents, MD, AS)</div>
         </header>
 
@@ -617,9 +643,7 @@
                             <button class="secondary" id="reset-badges" title="Reset earned badges">Reset
                                 badges</button>
                         </label>
-                        <label>
-                            <button class="secondary" id="export-badges" title="Export badges">Export badges</button>
-                        </label>
+                        <!-- Export removed from options UI; use modal Export or automatic export flows instead -->
                         <label>
                             Badge sound:
                             <input id="enable-sound" type="checkbox" title="Enable badge sound"
@@ -720,17 +744,23 @@
                                         <h3 id="badge-modal-title">Badge</h3>
                                         <div id="badge-modal-desc" class="meta">Details about this badge.</div>
                                     </div>
-                                    <button id="badge-modal-close" class="close" aria-label="Close">✖</button>
+                                    <button id="badge-modal-close" type="button" class="close"
+                                        aria-label="Close">✖</button>
                                 </div>
                                 <div class="modal-body">
                                     <div id="badge-modal-tips" class="meta modal-tips"></div>
                                     <div id="badge-modal-earn" class="meta modal-earn"></div>
                                     <div class="modal-actions">
-                                        <button id="badge-modal-export" class="secondary"
+                                        <button id="badge-modal-export" type="button" class="secondary"
                                             title="Export this badge as PNG">Download image</button>
-                                        <button id="badge-modal-close-text" class="close-text"
+                                        <button id="badge-modal-close-text" type="button" class="close-text"
                                             aria-label="Close dialog">Close</button>
-                                        <div class="modal-tip">Tip: Press Esc to close</div>
+                                        <!-- progress indicator shown while PNG is being prepared -->
+                                        <div id="badge-modal-progress" class="modal-progress" role="status"
+                                            aria-live="polite" style="display:none" aria-hidden="true">
+                                            <span class="modal-spinner" aria-hidden="true"></span>
+                                            <span id="badge-modal-progress-text">Preparing image…</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1045,6 +1075,28 @@
                                     }
                                 } catch (e) { /* ignore */ }
                             }
+                        });
+                        // Delegated click handler: robustly handle modal action clicks even if element wiring fails
+                        document.addEventListener('click', function (ev) {
+                            try {
+                                const tgt = ev.target;
+                                // close buttons
+                                if (tgt.closest && tgt.closest('#badge-modal-close, #badge-modal-close-text')) {
+                                    closeModal();
+                                    return;
+                                }
+                                // export button
+                                if (tgt.closest && tgt.closest('#badge-modal-export')) {
+                                    const m = document.getElementById('badge-modal');
+                                    const lvl = m && m._openLevel;
+                                    if (lvl) {
+                                        downloadBadgeImage(lvl);
+                                    } else {
+                                        const primary = document.getElementById('export-badges');
+                                        if (primary) primary.click();
+                                    }
+                                }
+                            } catch (e) { /* ignore */ }
                         });
                     })();
                     // Handle parentheses iteratively
@@ -1545,6 +1597,15 @@
                 try { if (modal._lastFocus && typeof modal._lastFocus.focus === 'function') modal._lastFocus.focus(); } catch (e) { }
                 // remove focus trap handler if installed
                 try { if (modal._trapHandler) { document.removeEventListener('keydown', modal._trapHandler); modal._trapHandler = null; } } catch (e) { }
+                // If an export was in progress, clear the visual progress and mark not busy
+                try {
+                    const prog = document.getElementById('badge-modal-progress');
+                    if (prog) { prog.style.display = 'none'; prog.setAttribute('aria-hidden', 'true'); }
+                    modal.removeAttribute('aria-busy');
+                    if (modal._exportInProgress) modal._exportInProgress = false;
+                    const exportBtn = document.getElementById('badge-modal-export');
+                    if (exportBtn) exportBtn.disabled = false;
+                } catch (e) { /* ignore */ }
             }
 
             // Toast stack + ARIA-live announcement
@@ -1636,78 +1697,79 @@
                 showLiveToast('All badges cleared.');
             });
 
-            // Export badges (import UI removed)
-            const exportBadgesBtn = document.getElementById('export-badges');
-            if (exportBadgesBtn) exportBadgesBtn.addEventListener('click', () => {
-                try {
-                    const badges = loadBadges();
-                    const mastery = loadMastery();
-                    const payload = { badges: badges, mastery: mastery };
-                    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    // timestamped filename: ooo_badges-YYYYMMDD-HHMMSS.json
-                    const now = new Date();
-                    const y = now.getFullYear();
-                    const mm = String(now.getMonth() + 1).padStart(2, '0');
-                    const d = String(now.getDate()).padStart(2, '0');
-                    const hh = String(now.getHours()).padStart(2, '0');
-                    const min = String(now.getMinutes()).padStart(2, '0');
-                    const ss = String(now.getSeconds()).padStart(2, '0');
-                    a.download = `ooo_export-${y}${mm}${d}-${hh}${min}${ss}.json`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                    showLiveToast('Badges and mastery exported.');
-                } catch (e) { showLiveToast('Export failed.'); }
-            });
+            // Export button removed from Options UI; use the modal export or programmatic APIs.
             // Convert the inline SVG shown in the badge modal into a PNG and download it.
             function downloadBadgeImage(level) {
                 try {
+                    const modal = document.getElementById('badge-modal');
                     const artEl = document.getElementById('modal-art');
                     if (!artEl) return showLiveToast('Badge image not available.');
                     const svgEl = artEl.querySelector('svg');
                     if (!svgEl) return showLiveToast('Badge image not available.');
+
+                    // UI: show progress indicator and mark modal busy
+                    const prog = document.getElementById('badge-modal-progress');
+                    const progText = document.getElementById('badge-modal-progress-text');
+                    const exportBtn = document.getElementById('badge-modal-export');
+                    if (modal) modal.setAttribute('aria-busy', 'true');
+                    if (prog) { prog.style.display = 'inline-flex'; prog.setAttribute('aria-hidden', 'false'); }
+                    if (exportBtn) exportBtn.disabled = true;
+                    if (modal) modal._exportInProgress = true;
+
+                    const hideProgress = (msg) => {
+                        try {
+                            if (prog) { prog.style.display = 'none'; prog.setAttribute('aria-hidden', 'true'); }
+                            if (modal) modal.removeAttribute('aria-busy');
+                            if (exportBtn) exportBtn.disabled = false;
+                            if (modal) modal._exportInProgress = false;
+                            if (msg) showLiveToast(msg);
+                        } catch (e) { /* ignore */ }
+                    };
+
                     // Serialize SVG
                     const svgText = svgEl.outerHTML;
                     const svgData = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgText);
                     const img = new Image();
                     img.onload = function () {
-                        // scale up for a nicer PNG
-                        const scale = 4;
-                        const w = img.width * scale;
-                        const h = img.height * scale;
-                        const canvas = document.createElement('canvas');
-                        canvas.width = w;
-                        canvas.height = h;
-                        const ctx = canvas.getContext('2d');
-                        // Fill transparent background (keeps SVG colors)
-                        ctx.clearRect(0, 0, w, h);
-                        ctx.drawImage(img, 0, 0, w, h);
-                        canvas.toBlob(function (blob) {
-                            if (!blob) { showLiveToast('Failed to create image.'); return; }
-                            const a = document.createElement('a');
-                            const now = new Date();
-                            const y = now.getFullYear();
-                            const mm = String(now.getMonth() + 1).padStart(2, '0');
-                            const d = String(now.getDate()).padStart(2, '0');
-                            const hh = String(now.getHours()).padStart(2, '0');
-                            const min = String(now.getMinutes()).padStart(2, '0');
-                            const ss = String(now.getSeconds()).padStart(2, '0');
-                            a.href = URL.createObjectURL(blob);
-                            a.download = `ooo_badge-${level}-${y}${mm}${d}-${hh}${min}${ss}.png`;
-                            document.body.appendChild(a);
-                            a.click();
-                            document.body.removeChild(a);
-                            URL.revokeObjectURL(a.href);
-                            showLiveToast('Badge image downloaded.');
-                        }, 'image/png');
+                        try {
+                            // scale up for a nicer PNG
+                            const scale = 4;
+                            const w = img.width * scale;
+                            const h = img.height * scale;
+                            const canvas = document.createElement('canvas');
+                            canvas.width = w;
+                            canvas.height = h;
+                            const ctx = canvas.getContext('2d');
+                            // Fill transparent background (keeps SVG colors)
+                            ctx.clearRect(0, 0, w, h);
+                            ctx.drawImage(img, 0, 0, w, h);
+                            canvas.toBlob(function (blob) {
+                                try {
+                                    if (!blob) { hideProgress('Failed to create image.'); return; }
+                                    const a = document.createElement('a');
+                                    const now = new Date();
+                                    const y = now.getFullYear();
+                                    const mm = String(now.getMonth() + 1).padStart(2, '0');
+                                    const d = String(now.getDate()).padStart(2, '0');
+                                    const hh = String(now.getHours()).padStart(2, '0');
+                                    const min = String(now.getMinutes()).padStart(2, '0');
+                                    const ss = String(now.getSeconds()).padStart(2, '0');
+                                    const url = URL.createObjectURL(blob);
+                                    a.href = url;
+                                    a.download = `ooo_badge-${level}-${y}${mm}${d}-${hh}${min}${ss}.png`;
+                                    document.body.appendChild(a);
+                                    a.click();
+                                    document.body.removeChild(a);
+                                    URL.revokeObjectURL(url);
+                                    hideProgress('Badge image downloaded.');
+                                } catch (e) { hideProgress('Failed to save image.'); }
+                            }, 'image/png');
+                        } catch (e) { hideProgress('Failed to export badge image.'); }
                     };
-                    img.onerror = function () { showLiveToast('Failed to render badge image.'); };
+                    img.onerror = function () { hideProgress('Failed to render badge image.'); };
                     img.src = svgData;
                 } catch (e) {
+                    try { const prog = document.getElementById('badge-modal-progress'); if (prog) { prog.style.display = 'none'; prog.setAttribute('aria-hidden', 'true'); } } catch (er) { }
                     showLiveToast('Failed to export badge image.');
                 }
             }
@@ -1739,6 +1801,48 @@
             // initialize mastery display
             try { updateMasteryUI(difficulty.value); } catch (e) { }
             try { updateBadgeCabinet(); } catch (e) { }
+
+            // Ensure badge modal close/export controls are reliably wired.
+            // Some handlers are installed elsewhere; add robust direct handlers here.
+            try {
+                const modal = document.getElementById('badge-modal');
+                const closeBtn = document.getElementById('badge-modal-close');
+                const closeTextBtn = document.getElementById('badge-modal-close-text');
+                const exportBtn = document.getElementById('badge-modal-export');
+                if (modal) {
+                    // backdrop click: close when clicking outside the inner dialog
+                    modal.addEventListener('click', function (ev) {
+                        if (ev.target === modal) {
+                            try { closeModal(); } catch (e) { }
+                        }
+                    });
+                }
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', function (ev) { ev.preventDefault(); ev.stopPropagation(); try { closeModal(); } catch (e) { } });
+                }
+                if (closeTextBtn) {
+                    closeTextBtn.addEventListener('click', function (ev) { ev.preventDefault(); ev.stopPropagation(); try { closeModal(); } catch (e) { } });
+                }
+                if (exportBtn) {
+                    exportBtn.addEventListener('click', function (ev) {
+                        ev.preventDefault(); ev.stopPropagation();
+                        try {
+                            const m = document.getElementById('badge-modal');
+                            const lvl = m && m._openLevel;
+                            if (lvl) downloadBadgeImage(lvl);
+                        } catch (e) { /* ignore */ }
+                    });
+                }
+                // global Escape handler to close modal if visible
+                document.addEventListener('keydown', function (ev) {
+                    const isEsc = ev.key === 'Escape' || ev.key === 'Esc' || ev.keyCode === 27;
+                    if (!isEsc) return;
+                    try {
+                        const m = document.getElementById('badge-modal');
+                        if (m && m.style && m.style.display && m.style.display !== 'none') closeModal();
+                    } catch (e) { }
+                });
+            } catch (e) { /* ignore wiring errors */ }
 
             // Initialize sound toggle based on saved preference
             try {
