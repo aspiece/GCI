@@ -143,6 +143,7 @@
             text-align: center;
             background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(2, 6, 23, 0.01));
             transition: transform 150ms ease, box-shadow 150ms ease;
+            position: relative;
         }
 
         .badge.trophy:hover {
@@ -208,6 +209,45 @@
         .badge.trophy.locked .icon {
             background-image: linear-gradient(180deg, var(--badge-locked-1, #e6e6e6), var(--badge-locked-2, #cfcfcf));
             color: var(--badge-locked-text, #6b6b6b);
+        }
+
+        /* Lock overlay for locked cabinet badges (small clickable helper inside emblem) */
+        .badge.trophy .lock-overlay {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 20px;
+            height: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: auto;
+            /* clickable */
+            z-index: 6;
+        }
+
+        .badge.trophy .lock-overlay .lock-trigger {
+            width: 20px;
+            height: 20px;
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.56);
+            border: 0;
+            display: inline-grid;
+            place-items: center;
+            cursor: pointer;
+            color: #fff;
+            padding: 0;
+        }
+
+        .badge.trophy .lock-overlay .lock-trigger svg {
+            width: 14px;
+            height: 14px;
+            display: block;
+        }
+
+        /* Ensure the emblem (icon) is positioned relative to allow overlay placement */
+        .badge.trophy .icon {
+            position: relative;
         }
 
         /* keep existing earned background variables available for emblem and elsewhere */
@@ -868,11 +908,11 @@
                         <div style="margin-top:10px;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, monospace">
                             <div style="font-size:13px;margin-bottom:6px">Examples by difficulty:</div>
                             <ul class="legend-list" style="margin:0;padding-left:18px">
-                                <li><strong>Very Easy:</strong> <code>3 + 4</code></li>
-                                <li><strong>Easy:</strong> <code>(5 + 2) * 3</code></li>
-                                <li><strong>Medium:</strong> <code>(2 + 3) ** 2 - 4</code></li>
-                                <li><strong>Hard:</strong> <code>(3 + (2 * 5)) ** 2 / 4</code></li>
-                                <li><strong>Expert:</strong> <code>((2 + 3) ** (1 + 1)) * (4 - 1)</code></li>
+                                <li><strong>1-UP Rookie:</strong> <code>3 + 4</code></li>
+                                <li><strong>Pixel Player:</strong> <code>(5 + 2) * 3</code></li>
+                                <li><strong>Combo Champ:</strong> <code>(2 + 3) ** 2 - 4</code></li>
+                                <li><strong>Boss Brawler:</strong> <code>(3 + (2 * 5)) ** 2 / 4</code></li>
+                                <li><strong>High Score Legend:</strong> <code>((2 + 3) ** (1 + 1)) * (4 - 1)</code></li>
                             </ul>
                         </div>
                     </div>
@@ -1539,6 +1579,32 @@
                             el.style.setProperty('--badge-locked-text', '#6b6b6b');
                         }
                     } catch (e) { }
+                    // If locked, add a small clickable lock button inside the emblem for clarity
+                    try {
+                        if (!info.earned) {
+                            const lockWrap = document.createElement('span');
+                            lockWrap.className = 'lock-overlay';
+                            // create a focusable button so keyboard users can access the hint
+                            const btn = document.createElement('button');
+                            btn.type = 'button';
+                            btn.className = 'lock-trigger';
+                            btn.setAttribute('aria-label', `How to earn the ${arcadeName} badge`);
+                            btn.innerHTML = `
+                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                    <path fill="currentColor" d="M17 8h-1V6a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2zm-6 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zM9 8V6a3 3 0 0 1 6 0v2H9z" />
+                                </svg>`;
+                            // show a short help tooltip via the toast system
+                            btn.addEventListener('click', function (ev) {
+                                try {
+                                    ev.stopPropagation();
+                                    const msg = `How to earn: Reach 80% correct over the last ${MASTERY_WINDOW} attempts in the ${arcadeName} set.`;
+                                    showLiveToast(msg);
+                                } catch (e) { }
+                            });
+                            lockWrap.appendChild(btn);
+                            icon.appendChild(lockWrap);
+                        }
+                    } catch (e) { }
                     cabinet.appendChild(el);
                 });
                 // ensure keyboard activation handlers on cabinet (event delegation)
@@ -1659,6 +1725,20 @@
                 } catch (e) { /* ignore */ }
                 // Announce to assistive tech that the badge dialog opened
                 try { showLiveToast(`Opened badge: ${name}`); } catch (e) { }
+
+                // Disable export if badge not earned
+                try {
+                    const exportBtn = document.getElementById('badge-modal-export');
+                    if (exportBtn) {
+                        if (info && info.earned) {
+                            exportBtn.disabled = false;
+                            exportBtn.title = 'Export this badge as PNG';
+                        } else {
+                            exportBtn.disabled = true;
+                            exportBtn.title = 'Earn this badge to enable download';
+                        }
+                    }
+                } catch (e) { /* ignore */ }
             }
 
             function closeModal() {
@@ -1670,12 +1750,15 @@
                 try { if (modal._lastFocus && typeof modal._lastFocus.focus === 'function') modal._lastFocus.focus(); } catch (e) { }
                 // remove focus trap handler if installed
                 try { if (modal._trapHandler) { document.removeEventListener('keydown', modal._trapHandler); modal._trapHandler = null; } } catch (e) { }
-                // If an export was in progress, clear the visual progress and mark not busy
+                // If an export was in progress, signal abort so in-flight work doesn't trigger a download
                 try {
                     const prog = document.getElementById('badge-modal-progress');
                     if (prog) { prog.style.display = 'none'; prog.setAttribute('aria-hidden', 'true'); }
                     modal.removeAttribute('aria-busy');
-                    if (modal._exportInProgress) modal._exportInProgress = false;
+                    if (modal._exportInProgress) {
+                        modal._exportAbort = true; // mark that the user closed the modal and wants to cancel
+                        modal._exportInProgress = false;
+                    }
                     const exportBtn = document.getElementById('badge-modal-export');
                     if (exportBtn) exportBtn.disabled = false;
                 } catch (e) { /* ignore */ }
@@ -1774,6 +1857,14 @@
             // Convert the inline SVG shown in the badge modal into a PNG and download it.
             function downloadBadgeImage(level) {
                 try {
+                    // only allow downloads for earned badges
+                    try {
+                        const infoCheck = getBadgeInfo(level);
+                        if (!infoCheck || !infoCheck.earned) {
+                            showLiveToast('Badge locked — earn mastery to enable download.');
+                            return;
+                        }
+                    } catch (e) { /* ignore */ }
                     const modal = document.getElementById('badge-modal');
                     const artEl = document.getElementById('modal-art');
                     if (!artEl) return showLiveToast('Badge image not available.');
@@ -1787,7 +1878,10 @@
                     if (modal) modal.setAttribute('aria-busy', 'true');
                     if (prog) { prog.style.display = 'inline-flex'; prog.setAttribute('aria-hidden', 'false'); }
                     if (exportBtn) exportBtn.disabled = true;
-                    if (modal) modal._exportInProgress = true;
+                    if (modal) {
+                        modal._exportInProgress = true;
+                        modal._exportAbort = false; // reset any previous abort marker
+                    }
 
                     const hideProgress = (msg) => {
                         try {
@@ -1804,6 +1898,10 @@
                     const svgData = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgText);
                     const img = new Image();
                     img.onload = function () {
+                        // if user closed modal while image was loading, abort export
+                        try {
+                            if (modal && modal._exportAbort) { hideProgress('Export canceled.'); return; }
+                        } catch (e) { }
                         try {
                             // scale up for a nicer PNG
                             const scale = 4;
@@ -1818,6 +1916,8 @@
                             ctx.drawImage(img, 0, 0, w, h);
                             canvas.toBlob(function (blob) {
                                 try {
+                                    // respect abort marker before creating download
+                                    if (modal && modal._exportAbort) { hideProgress('Export canceled.'); return; }
                                     if (!blob) { hideProgress('Failed to create image.'); return; }
                                     const a = document.createElement('a');
                                     const now = new Date();
@@ -1839,7 +1939,7 @@
                             }, 'image/png');
                         } catch (e) { hideProgress('Failed to export badge image.'); }
                     };
-                    img.onerror = function () { hideProgress('Failed to render badge image.'); };
+                    img.onerror = function () { try { if (modal && modal._exportAbort) { hideProgress('Export canceled.'); return; } } catch (e) { } hideProgress('Failed to render badge image.'); };
                     img.src = svgData;
                 } catch (e) {
                     try { const prog = document.getElementById('badge-modal-progress'); if (prog) { prog.style.display = 'none'; prog.setAttribute('aria-hidden', 'true'); } } catch (er) { }
