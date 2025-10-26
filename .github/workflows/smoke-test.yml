@@ -2,7 +2,9 @@ name: Smoke test
 
 on:
   push:
+    branches: [ main ]
   pull_request:
+    branches: [ main ]
 
 jobs:
   smoke:
@@ -13,5 +15,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
       - name: Run smoke test
-        run: node test_ooo_smoke.js
+        run: npm run test-smoke

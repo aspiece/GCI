@@ -1,4 +1,4 @@
-Playwright checklist and quick run guide
+# Playwright checklist and quick run guide
 
 This repository includes a minimal Playwright test to validate keyboard focus and badge-modal open/close flow.
 
@@ -17,7 +17,9 @@ npm i -D @playwright/test
 npx playwright install chromium
 ```
 
-2. Run the specific test:
+1. Run the specific test
+
+Run the accessibility test for Chromium (command shown below).
 
 ```powershell
 npx playwright test tests/playwright/accessibility.spec.mjs --project=chromium

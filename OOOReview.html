@@ -820,10 +820,13 @@
                         </div>
 
                         <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-                            <label style="margin:0">
-                                Your answer:
-                                <input id="answer" inputmode="numeric"
-                                    style="padding:8px;border-radius:8px;border:1px solid #d1d5db;width:160px;margin-left:8px" />
+                            <label style="margin:0;display:flex;align-items:center;gap:8px">
+                                <span>Your answer:</span>
+                                <input id="answer" type="number" step="1" inputmode="numeric"
+                                    style="padding:8px;border-radius:8px;border:1px solid #d1d5db;width:160px"
+                                    aria-describedby="answer-note" />
+                                <span id="answer-note" style="font-size:12px;color:var(--muted);">Integers only — no
+                                    decimals</span>
                             </label>
                             <button id="check">Check</button>
                             <button class="secondary" id="next">Skip / Next</button>
@@ -1300,7 +1303,8 @@
                         catch (err) { val = null; }
                         attempt++;
                         if (attempt > 50) break;
-                    } while (val === null || !isFinite(val) || Math.abs(val) > 1e6);
+                        // require integer results so users can answer using integers only
+                    } while (val === null || !isFinite(val) || Math.abs(val) > 1e6 || !Number.isInteger(val));
                     // if we failed to produce a valid value after many attempts, try again without counting this iteration
                     if (val === null || !isFinite(val) || Math.abs(val) > 1e6) {
                         i--; // retry this index
@@ -2084,6 +2088,30 @@
                 // badge shape selector removed; badges are fixed to shield shape
             } catch (e) { }
 
+            // Expose a simple smoke-test function for the generator in the console for quick checks
+            window.__ooo_smoke_test__ = function (iterations = 200) {
+                const failures = [];
+                const lvl = difficulty ? difficulty.value : 'medium';
+                const maxAbs = rngSelect ? parseInt(rngSelect.value, 10) : 9;
+                for (let i = 0; i < iterations; i++) {
+                    try {
+                        const ex = generateExpression(lvl, maxAbs);
+                        const val = evaluateExpr(ex);
+                        if (!Number.isFinite(val) || !Number.isInteger(val)) {
+                            failures.push({ expr: ex, value: val });
+                        }
+                    } catch (e) {
+                        failures.push({ error: e && e.message ? e.message : String(e) });
+                    }
+                }
+                if (!failures.length) {
+                    console.log(`SMOKE OK: ${iterations} integer results generated`);
+                } else {
+                    console.warn(`SMOKE FAIL: ${failures.length} failures`, failures.slice(0, 10));
+                }
+                return failures;
+            };
+
             function showProblem(i) {
                 if (i >= problems.length) {
                     problemEl.textContent = 'All done! Click Start to begin a new set.';
@@ -2194,13 +2222,12 @@
                 if (!problems.length) return;
                 const p = problems[index];
                 const user = answerInput.value.trim();
-                if (user === '') { feedbackEl.textContent = 'Enter a numeric answer or press Skip/Next.'; return; }
+                if (user === '') { feedbackEl.textContent = 'Enter an integer answer or press Skip/Next.'; return; }
                 const userNum = Number(user);
-                if (Number.isNaN(userNum)) { feedbackEl.textContent = 'Please enter a valid number.'; return; }
+                // require finite integer input (no decimals)
+                if (!Number.isFinite(userNum) || !Number.isInteger(userNum)) { feedbackEl.textContent = 'Please enter an integer (no decimals).'; return; }
                 let correct = false;
-                // allow small tolerance
-                const tol = 1e-4;
-                if (Math.abs(userNum - p.answer) <= tol) correct = true;
+                if (userNum === p.answer) correct = true;
                 if (correct) {
                     score++;
                     feedbackEl.textContent = 'Correct! ✅ ' + p.expr + ' = ' + p.answer;
@@ -2253,6 +2280,36 @@
             answerInput.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') checkBtn.click();
             });
+
+            // prevent typing decimals or non-numeric characters into the answer field
+            (function () {
+                const ai = document.getElementById('answer');
+                if (!ai) return;
+                // block '.' and ',' and other non-integer characters on keypress
+                ai.addEventListener('keypress', function (ev) {
+                    const ch = ev.key;
+                    // allow control keys
+                    if (ev.ctrlKey || ev.metaKey || ev.altKey) return;
+                    // allow digits, minus sign, and Enter
+                    if (/^[0-9\-]$/.test(ch)) return;
+                    // otherwise prevent
+                    ev.preventDefault();
+                });
+                // sanitize pasted content to integers only
+                ai.addEventListener('paste', function (ev) {
+                    try {
+                        const txt = (ev.clipboardData || window.clipboardData).getData('text');
+                        const m = txt.match(/-?\d+/);
+                        if (m) {
+                            // replace with the integer substring
+                            ev.preventDefault();
+                            ai.value = m[0];
+                        } else {
+                            ev.preventDefault();
+                        }
+                    } catch (e) { /* ignore */ }
+                });
+            })();
 
             // create a shared anchored tooltip used for lock button hints (appears on hover/focus)
             (function () {

@@ -101,8 +101,9 @@ for (const d of difficulties) {
         try {
             const ex = generateExpression(d, 20);
             const val = evaluateExpr(ex);
-            if (typeof val !== 'number' || Number.isNaN(val) || !isFinite(val) || Math.abs(val) > 1e9) {
-                console.error('Bad value', d, ex, val);
+            // enforce integer results (matches app requirement)
+            if (typeof val !== 'number' || Number.isNaN(val) || !isFinite(val) || Math.abs(val) > 1e9 || !Number.isInteger(val)) {
+                console.error('Bad value (non-integer or invalid)', d, ex, val);
                 failures++;
             }
         } catch (err) {
