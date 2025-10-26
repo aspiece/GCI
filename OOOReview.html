@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Order of Operations Practice</title>
+    <title>PEMDAS Playground — Order of Operations Adventure</title>
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <style>
         :root {
@@ -334,11 +334,38 @@
 <body>
     <div class="wrap">
         <header>
-            <h1>Order of Operations — Practice Trainer</h1>
+            <h1>PEMDAS Playground — Order of Operations Adventure</h1>
             <div style="color:var(--muted);font-size:13px">Mnemonic: PEMDAS (Parentheses, Exponents, MD, AS)</div>
         </header>
 
-        <!-- badge cabinet moved earlier; original removed -->
+        <!-- Duplicate badge cabinet removed (kept the primary instance near the top) -->
+
+        <section class="card" aria-labelledby="legend-heading">
+            <h2 id="legend-heading" style="margin:0 0 8px 0;font-size:15px">Operator legend</h2>
+            <div style="font-size:14px;color:var(--muted);">
+                <div
+                    style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace; display:flex; gap:16px; flex-wrap:wrap">
+                    <div><strong>+</strong> addition</div>
+                    <div><strong>-</strong> subtraction</div>
+                    <div><strong>*</strong> multiplication</div>
+                    <div><strong>/</strong> division</div>
+                    <div><strong>**</strong> exponent (power)</div>
+                </div>
+                <div style="margin-top:8px;color:var(--muted);font-size:13px">Tip: Problems use Python-style operators;
+                    exponents use <code>**</code>. Order follows PEMDAS.</div>
+                <div style="margin-top:10px;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, monospace">
+                    <div style="font-size:13px;color:var(--muted);margin-bottom:6px">Examples by difficulty:</div>
+                    <ul
+                        style="margin:0;padding-left:18px;color:var(--muted);font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, monospace">
+                        <li><strong>Very Easy:</strong> <code>3 + 4</code></li>
+                        <li><strong>Easy:</strong> <code>(5 + 2) * 3</code></li>
+                        <li><strong>Medium:</strong> <code>(2 + 3) ** 2 - 4</code></li>
+                        <li><strong>Hard:</strong> <code>(3 + (2 * 5)) ** 2 / 4</code></li>
+                        <li><strong>Expert:</strong> <code>((2 + 3) ** (1 + 1)) * (4 - 1)</code></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
 
         <section class="card" aria-labelledby="options-heading">
             <h2 id="options-heading" style="margin:0 0 8px 0;font-size:15px">Options</h2>
