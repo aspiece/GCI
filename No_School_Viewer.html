@@ -1,60 +1,296 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Home School No School Viewer</title>
   <style>
-    :root{
-      --bg:#f8fafc; --panel:#ffffff; --muted:#64748b; --text:#0f172a; --border:#e2e8f0;
-      --blue:#2563eb; --blue-50:#eff6ff; --blue-200:#bfdbfe; --blue-300:#93c5fd;
-      --red-100:#fee2e2; --red-800:#991b1b; --red-200:#fecaca;
-      --yellow-100:#fef9c3; --yellow-800:#854d0e; --yellow-200:#fef08a;
-      --green-100:#dcfce7; --green-800:#166534; --green-200:#bbf7d0;
-      --indigo-100:#e0e7ff; --indigo-800:#3730a3; --indigo-200:#c7d2fe;
+    :root {
+      --bg: #f8fafc;
+      --panel: #ffffff;
+      --muted: #64748b;
+      --text: #0f172a;
+      --border: #e2e8f0;
+      --blue: #2563eb;
+      --blue-50: #eff6ff;
+      --blue-200: #bfdbfe;
+      --blue-300: #93c5fd;
+      --red-100: #fee2e2;
+      --red-800: #991b1b;
+      --red-200: #fecaca;
+      --yellow-100: #fef9c3;
+      --yellow-800: #854d0e;
+      --yellow-200: #fef08a;
+      --green-100: #dcfce7;
+      --green-800: #166534;
+      --green-200: #bbf7d0;
+      --indigo-100: #e0e7ff;
+      --indigo-800: #3730a3;
+      --indigo-200: #c7d2fe;
     }
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;overflow-x:hidden}
-    .container{max-width:100%;width:100%;margin:0 auto;padding:12px 8px}
-    h1{font-size:22px;margin:0 0 6px}
-    .muted{color:var(--muted)}
-    .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-    .btn{border:1px solid var(--border);background:#fff;border-radius:10px;padding:8px 12px;cursor:pointer}
-    .btn:hover{background:#f8fafc}
-    .panel{background:var(--panel);border:1px solid var(--border);border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
-    .p-4{padding:16px}
-    input,select{height:36px;border:1px solid var(--border);border-radius:10px;padding:0 10px;background:#fff}
-    .grid-3{display:grid;grid-template-columns:1fr;gap:12px}
-@media(min-width:700px){.grid-3{grid-template-columns:1fr 1fr}}
-@media(min-width:1024px){.grid-3{grid-template-columns:1fr 1fr 1fr}}
-    .day{border:1px solid var(--border);border-radius:10px;padding:8px;background:#fff;min-width:0}
-    .day.today{background:var(--blue-50);border-color:var(--blue-300)}
-    .badge{display:inline-block;border:1px solid var(--border);border-radius:8px;padding:2px 6px;font-size:11px}
-    .badge.red{background:var(--red-100);color:var(--red-800);border-color:var(--red-200)}
-    .badge.yellow{background:var(--yellow-100);color:var(--yellow-800);border-color:var(--yellow-200)}
-    .badge.green{background:var(--green-100);color:var(--green-800);border-color:var(--green-200)}
-    .badge.indigo{background:var(--indigo-100);color:var(--indigo-800);border-color:var(--indigo-200)}
-    .week-title{font-weight:600;font-size:13px}
-    .chip-more{border:1px solid var(--border);background:#f8fafc;border-radius:8px;padding:2px 6px;font-size:11px;cursor:pointer;user-select:none}
-    .legend{display:flex;gap:8px;flex-wrap:wrap}
-    .legend .badge{cursor:default}
-    .header{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:10px}
-    .filters{display:flex;gap:10px;flex-wrap:wrap}
-    .footer{color:var(--muted);font-size:12px;margin-top:16px}
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 14px/1.4 system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      overflow-x: hidden
+    }
+
+    .container {
+      max-width: 100%;
+      width: 100%;
+      margin: 0 auto;
+      padding: 12px 8px
+    }
+
+    h1 {
+      font-size: 22px;
+      margin: 0 0 6px
+    }
+
+    .muted {
+      color: var(--muted)
+    }
+
+    .row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center
+    }
+
+    .btn {
+      border: 1px solid var(--border);
+      background: #fff;
+      border-radius: 10px;
+      padding: 8px 12px;
+      cursor: pointer
+    }
+
+    .btn:hover {
+      background: #f8fafc
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, .04)
+    }
+
+    .p-4 {
+      padding: 16px
+    }
+
+    input,
+    select {
+      height: 36px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0 10px;
+      background: #fff
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px
+    }
+
+    @media(min-width:700px) {
+      .grid-3 {
+        grid-template-columns: 1fr 1fr
+      }
+    }
+
+    @media(min-width:1024px) {
+      .grid-3 {
+        grid-template-columns: 1fr 1fr 1fr
+      }
+    }
+
+    .day {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px;
+      background: #fff;
+      min-width: 0
+    }
+
+    .day.today {
+      background: var(--blue-50);
+      border-color: var(--blue-300)
+    }
+
+    .badge {
+      display: inline-block;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2px 6px;
+      font-size: 11px
+    }
+
+    .badge.red {
+      background: var(--red-100);
+      color: var(--red-800);
+      border-color: var(--red-200)
+    }
+
+    .badge.yellow {
+      background: var(--yellow-100);
+      color: var(--yellow-800);
+      border-color: var(--yellow-200)
+    }
+
+    .badge.green {
+      background: var(--green-100);
+      color: var(--green-800);
+      border-color: var(--green-200)
+    }
+
+    .badge.indigo {
+      background: var(--indigo-100);
+      color: var(--indigo-800);
+      border-color: var(--indigo-200)
+    }
+
+    .week-title {
+      font-weight: 600;
+      font-size: 13px
+    }
+
+    .chip-more {
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      border-radius: 8px;
+      padding: 2px 6px;
+      font-size: 11px;
+      cursor: pointer;
+      user-select: none
+    }
+
+    .legend {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap
+    }
+
+    .legend .badge {
+      cursor: default
+    }
+
+    .header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px
+    }
+
+    .filters {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap
+    }
+
+    .footer {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 16px
+    }
+
     /* Month Snapshot (Mon–Fri only) */
-    .month{margin-top:14px}
-    .weekday-head{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;text-align:center;color:var(--muted);font-size:11px;text-transform:uppercase;margin:6px 0}
-    .month-grid{display:flex;flex-direction:column;gap:8px}
-    .week-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
-    .month-cell{min-height:90px;border:1px solid var(--border);border-radius:12px;padding:8px;background:#fff;min-width:0}
-    .month-cell.current{outline:2px solid var(--blue-300)}
-    .cell-top{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-bottom:6px}
-    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-  /* Teams tab fit & inputs */
-  #search,#schoolSel,#eventSel{min-width:0 !important;width:100%}
-  @media(min-width:700px){#search{flex:1} #schoolSel,#eventSel{width:auto}}
-  .panel,.day,.month-cell{max-width:100%}
-</style>
+    .month {
+      margin-top: 14px
+    }
+
+    .weekday-head {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      margin: 6px 0
+    }
+
+    .month-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 8px
+    }
+
+    .week-row {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px
+    }
+
+    .month-cell {
+      min-height: 90px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 8px;
+      background: #fff;
+      min-width: 0
+    }
+
+    .month-cell.current {
+      outline: 2px solid var(--blue-300)
+    }
+
+    .cell-top {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 11px;
+      margin-bottom: 6px
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0
+    }
+
+    /* Teams tab fit & inputs */
+    #search,
+    #schoolSel,
+    #eventSel {
+      min-width: 0 !important;
+      width: 100%
+    }
+
+    @media(min-width:700px) {
+      #search {
+        flex: 1
+      }
+
+      #schoolSel,
+      #eventSel {
+        width: auto
+      }
+    }
+
+    .panel,
+    .day,
+    .month-cell {
+      max-width: 100%
+    }
+  </style>
   <!-- Libraries (small, reliable CDNs) -->
   <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/isBetween.js"></script>
@@ -62,14 +298,17 @@
   <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/customParseFormat.js"></script>
   <script>dayjs.extend(window.dayjs_plugin_customParseFormat)</script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  </head>
-  <body>
-    <!-- Page meta: quick reference and theme -->
-    <div style="position:fixed;top:12px;right:12px;z-index:9999;padding:6px 10px;border-radius:8px;background:rgba(255,255,255,0.92);color:var(--text,#0f172a);font-size:13px;box-shadow:0 6px 18px rgba(0,0,0,0.08);">
-      <a href="./No_School_Viewer.html" style="color:var(--blue,#2563eb);font-weight:700;text-decoration:underline dotted">No_School_Viewer.html</a>
-      <div style="font-size:12px;color:var(--muted,#64748b)">Theme: Calendar</div>
-    </div>
-    <div class="container">
+</head>
+
+<body>
+  <!-- Page meta: quick reference and theme -->
+  <div
+    style="position:fixed;top:12px;right:12px;z-index:9999;padding:6px 10px;border-radius:8px;background:rgba(255,255,255,0.92);color:var(--text,#0f172a);font-size:13px;box-shadow:0 6px 18px rgba(0,0,0,0.08);">
+    <a href="./No_School_Viewer.html"
+      style="color:var(--blue,#2563eb);font-weight:700;text-decoration:underline dotted">No_School_Viewer.html</a>
+    <div style="font-size:12px;color:var(--muted,#64748b)">Theme: Calendar</div>
+  </div>
+  <div class="container">
     <div class="header">
       <div>
         <h1>Home School No School Viewer</h1>
@@ -93,449 +332,461 @@
 
     <div class="month panel p-4">
       <div class="row" style="justify-content:space-between;margin-bottom:6px">
-        <div class="row muted"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          <span id="monthLabel" class="week-title"></span></div>
+        <div class="row muted"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+          </svg>
+          <span id="monthLabel" class="week-title"></span>
+        </div>
         <div class="row">
           <button id="prevWeek" class="btn" title="Previous week">◀ Previous</button>
           <button id="nextWeek" class="btn" title="Next week">Next ▶</button>
         </div>
       </div>
       <div class="weekday-head">
-        <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div>
+        <div>Mon</div>
+        <div>Tue</div>
+        <div>Wed</div>
+        <div>Thu</div>
+        <div>Fri</div>
       </div>
       <div id="monthGrid" class="month-grid"></div>
     </div>
 
     <div class="footer">
-  Auto‑refresh every <span id="refreshEcho"></span> min • Week start: Monday
+      Auto‑refresh every <span id="refreshEcho"></span> min • Week start: Monday
     </div>
   </div>
 
   <script>
-  // ===================== CONFIG =====================
-  const CONFIG = {
-    // TODO: paste your published CSV URL here (same-origin with host is ideal in Teams)
-    DATA_URL: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTy-L_LG8bcMsu2w8HkdMXATdm2EASK-VR_O2XglJCmvzBxSSQ-B3-R_7jfba9DLctPy2Ul6bbLZvvI/pub?gid=371846928&single=true&output=csv",
-  REFRESH_MS: 5 * 60 * 1000, // 5 minutes
-    WEEK_START: "monday", // fixed to Monday for Mon–Fri viewer
-  };
-
-  // Sample CSV fallback (used if DATA_URL is empty or fetch fails)
-  const SAMPLE_CSV = `Date,Event,School Name,Notes\n2025-08-25,No School,Fenton High School,Teacher Work Day\n2025-09-01,Holiday,All Schools,Labor Day\n2025-09-18,Half Day,Beecher High School,Parent Conferences\n2025-08-27,No School,Lake Fenton High School,PD Day`;
-
-  // Color map for badges
-  const EVENT_CLASS = {
-    "No School": "badge red",
-    "Half Day": "badge yellow",
-    "Holiday": "badge green",
-    "Teacher PD": "badge indigo",
-  };
-  function classForEvent(name){
-    const n = String(name||"").toLowerCase();
-    if(n.includes("no school")) return "badge red";
-    if(n.includes("half") && n.includes("day")) return "badge yellow";
-    if(n.includes("holiday")) return "badge green";
-    if(n.includes("pd") || n.includes("professional") || n.includes("teacher")) return "badge indigo";
-    return EVENT_CLASS[name] || "badge";
-  }
-
-  // ==== School color mapping (unique color per school) ====
-  function hashHue(str){
-    let h = 0;
-    for(let i=0;i<str.length;i++) h = (h*31 + str.charCodeAt(i)) % 360;
-    return h;
-  }
-  function schoolColors(name){
-    const n = String(name||"").toLowerCase();
-    // Special handling for roll‑ups
-    if(n.includes("all school")){
-      return { bg: 'var(--blue-50)', border: 'var(--blue-300)', text: '#1e40af' };
-    }
-    const h = hashHue(name);
-    // Pastel background with readable text/border
-    const bg = `hsl(${h}, 95%, 90%)`;
-    const border = `hsl(${h}, 70%, 75%)`;
-    const text = `hsl(${h}, 45%, 25%)`;
-    return { bg, border, text };
-  }
-  function applySchoolColor(el, school){
-    const c = schoolColors(school);
-    el.style.backgroundColor = c.bg;
-    el.style.borderColor = c.border;
-    el.style.color = c.text;
-  }
-
-  // ===================== STATE =====================
-  let RAW_ROWS = []; // {date: dayjs, event, school, notes}
-  let FILTERED = [];
-  let ANCHOR_DAY = dayjs(); // base day for current/prev/next
-
-  // If user visits on Sat/Sun, snap to upcoming Monday by default
-  if ([0,6].includes(ANCHOR_DAY.day())) {
-    ANCHOR_DAY = nextMonday(ANCHOR_DAY);
-  }
-
-  // ===================== HELPERS =====================
-  function startOfWeek(d){
-    const target = 1; // Monday
-    const wd = d.day();
-    const offset = (wd - target + 7) % 7;
-    return d.subtract(offset, 'day').startOf('day');
-  }
-  function endOfWeek(d){
-    return startOfWeek(d).add(6, 'day').endOf('day');
-  }
-  function getWeekdays(weekStart){
-    return Array.from({length:5}).map((_,i)=>weekStart.add(i,'day'));
-  }
-  function nextMonday(d){
-    const wd = d.day();
-    const delta = (8 - wd) % 7 || 7; // move to next Monday
-    return d.add(delta,'day').startOf('day');
-  }
-  function fmt(d, pat){ return d.format(pat); }
-
-  function parseDateFlexible(v){
-    if(v==null) return null;
-    const s = String(v).trim();
-    if(!s) return null;
-    // Try fast paths
-    let d = dayjs(s);
-    if(d.isValid()) return d;
-    const formats = ['M/D/YYYY','MM/DD/YYYY','M/D/YY','MMM D, YYYY','MMMM D, YYYY','YYYY-MM-DD'];
-    for(const f of formats){ d = dayjs(s, f, true); if(d.isValid()) return d; }
-    if(/^\d{4,6}$/.test(s)){ const serial = parseInt(s,10); const excelEpoch = dayjs('1899-12-30'); return excelEpoch.add(serial,'day'); }
-    return null;
-  }
-  function parseCsvToRows(csv){
-    const out=[];
-    const parsed = Papa.parse(csv, { header:true, skipEmptyLines:true });
-    const headers = parsed.meta.fields || [];
-    const col = {
-      date: findHeader(headers,[
-        "Date","date","Start Date","Start","Event Date","Date (YYYY-MM-DD)"
-      ],["date","start"]),
-      event: findHeader(headers,[
-        "Event","Type","Event (No School / Half Day / Holiday / Teacher PD)",
-        "Event (No School / Half Day / Holiday / PD)",
-        "Event Type","Event Name","Category","Title"
-      ],["event","type","category","title"]),
-      school: findHeader(headers,[
-        "School Name","School","District","Building","School District"
-      ],["school","district","building"]),
-      notes: findHeader(headers,[
-        "Notes","Description","Reason","Details"
-      ],["note","desc","reason","detail","description"]),
+    // ===================== CONFIG =====================
+    const CONFIG = {
+      // TODO: paste your published CSV URL here (same-origin with host is ideal in Teams)
+      DATA_URL: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTy-L_LG8bcMsu2w8HkdMXATdm2EASK-VR_O2XglJCmvzBxSSQ-B3-R_7jfba9DLctPy2Ul6bbLZvvI/pub?gid=371846928&single=true&output=csv",
+      REFRESH_MS: 5 * 60 * 1000, // 5 minutes
+      WEEK_START: "monday", // fixed to Monday for Mon–Fri viewer
     };
-    for(const r of parsed.data){
-      const dateStr = (r[col.date]||'').trim();
-      const event = (r[col.event]||'').trim();
-      const school= (r[col.school]||'').trim();
-      const notes = (r[col.notes]||'').trim();
-      const d = parseDateFlexible(dateStr) || dayjs(dateStr);
-      if(!d.isValid() || !event || !school) continue;
-      out.push({ date:d.startOf('day'), event, school, notes });
+
+    // Sample CSV fallback (used if DATA_URL is empty or fetch fails)
+    const SAMPLE_CSV = `Date,Event,School Name,Notes\n2025-08-25,No School,Fenton High School,Teacher Work Day\n2025-09-01,Holiday,All Schools,Labor Day\n2025-09-18,Half Day,Beecher High School,Parent Conferences\n2025-08-27,No School,Lake Fenton High School,PD Day`;
+
+    // Color map for badges
+    const EVENT_CLASS = {
+      "No School": "badge red",
+      "Half Day": "badge yellow",
+      "Holiday": "badge green",
+      "Teacher PD": "badge indigo",
+    };
+    function classForEvent(name) {
+      const n = String(name || "").toLowerCase();
+      if (n.includes("no school")) return "badge red";
+      if (n.includes("half") && n.includes("day")) return "badge yellow";
+      if (n.includes("holiday")) return "badge green";
+      if (n.includes("pd") || n.includes("professional") || n.includes("teacher")) return "badge indigo";
+      return EVENT_CLASS[name] || "badge";
     }
-    out.sort((a,b)=>a.date.valueOf()-b.date.valueOf());
-    return out;
-  }
-  function findHeader(headers, cands, hints){
-    const norm = s => String(s||'').trim().toLowerCase();
-    const simplify = s => norm(s)
-      .replace(/\(.*?\)/g, '')      // drop parenthetical hints
-      .replace(/[^a-z0-9]/g, '');     // strip non-alphanumerics
-    // 1) exact or simplified matches
-    for(const c of cands){
-      const sc = simplify(c);
-      const hit = headers.find(h => {
-        const sh = simplify(h);
-        return sh === sc || sh.includes(sc) || sc.includes(sh);
+
+    // ==== School color mapping (unique color per school) ====
+    function hashHue(str) {
+      let h = 0;
+      for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) % 360;
+      return h;
+    }
+    function schoolColors(name) {
+      const n = String(name || "").toLowerCase();
+      // Special handling for roll‑ups
+      if (n.includes("all school")) {
+        return { bg: 'var(--blue-50)', border: 'var(--blue-300)', text: '#1e40af' };
+      }
+      const h = hashHue(name);
+      // Pastel background with readable text/border
+      const bg = `hsl(${h}, 95%, 90%)`;
+      const border = `hsl(${h}, 70%, 75%)`;
+      const text = `hsl(${h}, 45%, 25%)`;
+      return { bg, border, text };
+    }
+    function applySchoolColor(el, school) {
+      const c = schoolColors(school);
+      el.style.backgroundColor = c.bg;
+      el.style.borderColor = c.border;
+      el.style.color = c.text;
+    }
+
+    // ===================== STATE =====================
+    let RAW_ROWS = []; // {date: dayjs, event, school, notes}
+    let FILTERED = [];
+    let ANCHOR_DAY = dayjs(); // base day for current/prev/next
+
+    // If user visits on Sat/Sun, snap to upcoming Monday by default
+    if ([0, 6].includes(ANCHOR_DAY.day())) {
+      ANCHOR_DAY = nextMonday(ANCHOR_DAY);
+    }
+
+    // ===================== HELPERS =====================
+    function startOfWeek(d) {
+      const target = 1; // Monday
+      const wd = d.day();
+      const offset = (wd - target + 7) % 7;
+      return d.subtract(offset, 'day').startOf('day');
+    }
+    function endOfWeek(d) {
+      return startOfWeek(d).add(6, 'day').endOf('day');
+    }
+    function getWeekdays(weekStart) {
+      return Array.from({ length: 5 }).map((_, i) => weekStart.add(i, 'day'));
+    }
+    function nextMonday(d) {
+      const wd = d.day();
+      const delta = (8 - wd) % 7 || 7; // move to next Monday
+      return d.add(delta, 'day').startOf('day');
+    }
+    function fmt(d, pat) { return d.format(pat); }
+
+    function parseDateFlexible(v) {
+      if (v == null) return null;
+      const s = String(v).trim();
+      if (!s) return null;
+      // Try fast paths
+      let d = dayjs(s);
+      if (d.isValid()) return d;
+      const formats = ['M/D/YYYY', 'MM/DD/YYYY', 'M/D/YY', 'MMM D, YYYY', 'MMMM D, YYYY', 'YYYY-MM-DD'];
+      for (const f of formats) { d = dayjs(s, f, true); if (d.isValid()) return d; }
+      if (/^\d{4,6}$/.test(s)) { const serial = parseInt(s, 10); const excelEpoch = dayjs('1899-12-30'); return excelEpoch.add(serial, 'day'); }
+      return null;
+    }
+    function parseCsvToRows(csv) {
+      const out = [];
+      const parsed = Papa.parse(csv, { header: true, skipEmptyLines: true });
+      const headers = parsed.meta.fields || [];
+      const col = {
+        date: findHeader(headers, [
+          "Date", "date", "Start Date", "Start", "Event Date", "Date (YYYY-MM-DD)"
+        ], ["date", "start"]),
+        event: findHeader(headers, [
+          "Event", "Type", "Event (No School / Half Day / Holiday / Teacher PD)",
+          "Event (No School / Half Day / Holiday / PD)",
+          "Event Type", "Event Name", "Category", "Title"
+        ], ["event", "type", "category", "title"]),
+        school: findHeader(headers, [
+          "School Name", "School", "District", "Building", "School District"
+        ], ["school", "district", "building"]),
+        notes: findHeader(headers, [
+          "Notes", "Description", "Reason", "Details"
+        ], ["note", "desc", "reason", "detail", "description"]),
+      };
+      for (const r of parsed.data) {
+        const dateStr = (r[col.date] || '').trim();
+        const event = (r[col.event] || '').trim();
+        const school = (r[col.school] || '').trim();
+        const notes = (r[col.notes] || '').trim();
+        const d = parseDateFlexible(dateStr) || dayjs(dateStr);
+        if (!d.isValid() || !event || !school) continue;
+        out.push({ date: d.startOf('day'), event, school, notes });
+      }
+      out.sort((a, b) => a.date.valueOf() - b.date.valueOf());
+      return out;
+    }
+    function findHeader(headers, cands, hints) {
+      const norm = s => String(s || '').trim().toLowerCase();
+      const simplify = s => norm(s)
+        .replace(/\(.*?\)/g, '')      // drop parenthetical hints
+        .replace(/[^a-z0-9]/g, '');     // strip non-alphanumerics
+      // 1) exact or simplified matches
+      for (const c of cands) {
+        const sc = simplify(c);
+        const hit = headers.find(h => {
+          const sh = simplify(h);
+          return sh === sc || sh.includes(sc) || sc.includes(sh);
+        });
+        if (hit) return hit;
+      }
+      // 2) keyword hints (contains)
+      if (hints && hints.length) {
+        const hs = hints.map(simplify);
+        for (const h of headers) {
+          const sh = simplify(h);
+          if (hs.some(k => sh.includes(k))) return h;
+        }
+      }
+      // 3) fallback
+      return headers[0] || cands[0];
+    }
+    function groupByDate(rows) {
+      const map = {};
+      for (const r of rows) {
+        const k = fmt(r.date, 'YYYY-MM-DD');
+        (map[k] || (map[k] = [])).push(r);
+      }
+      return map;
+    }
+
+    function applyFilters() {
+      const q = document.getElementById('search').value.toLowerCase();
+      const school = document.getElementById('schoolSel').value;
+      const eventT = document.getElementById('eventSel').value;
+      FILTERED = RAW_ROWS.filter(r => {
+        const matchesQ = [r.school, r.event, r.notes || ''].some(s => s.toLowerCase().includes(q));
+        const matchesSchool = (school === 'all' || r.school === school);
+        const matchesEvent = (eventT === 'all' || r.event === eventT);
+        return matchesQ && matchesSchool && matchesEvent;
       });
-      if(hit) return hit;
     }
-    // 2) keyword hints (contains)
-    if (hints && hints.length){
-      const hs = hints.map(simplify);
-      for(const h of headers){
-        const sh = simplify(h);
-        if (hs.some(k => sh.includes(k))) return h;
-      }
-    }
-    // 3) fallback
-    return headers[0] || cands[0];
-  }
-  function groupByDate(rows){
-    const map={};
-    for(const r of rows){
-      const k = fmt(r.date,'YYYY-MM-DD');
-      (map[k]||(map[k]=[])).push(r);
-    }
-    return map;
-  }
 
-  function applyFilters(){
-    const q = document.getElementById('search').value.toLowerCase();
-    const school = document.getElementById('schoolSel').value;
-    const eventT = document.getElementById('eventSel').value;
-    FILTERED = RAW_ROWS.filter(r=>{
-      const matchesQ = [r.school,r.event,r.notes||''].some(s=>s.toLowerCase().includes(q));
-      const matchesSchool = (school==='all' || r.school===school);
-      const matchesEvent = (eventT==='all' || r.event===eventT);
-      return matchesQ && matchesSchool && matchesEvent;
-    });
-  }
-
-  // ==== Expand/collapse helpers ====
-  function makeChip(it){
-    const span = document.createElement('span');
-    span.className='badge';
-    applySchoolColor(span, it.school);
-    span.title = `${it.event} • ${it.school}${it.notes? ' — '+it.notes: ''}`;
-    span.textContent = `${it.event} · ${it.school}`;
-    return span;
-  }
-  function makeMonthChip(it){
-    const div = document.createElement('div');
-    div.className='badge';
-    applySchoolColor(div, it.school);
-    div.style.display='block';
-    div.style.marginBottom='4px';
-    div.title = `${it.event} • ${it.school}${it.notes? ' — '+it.notes: ''}`;
-    div.textContent = `${it.event} · ${it.school}`;
-    return div;
-  }
-  function attachExpand(container, list, startIndex, makeFn){
-    const restCount = list.length - startIndex;
-    const more = document.createElement('span');
-    more.className='chip-more';
-    more.setAttribute('role','button');
-    more.setAttribute('aria-expanded','false');
-    more.tabIndex = 0;
-    more.textContent = `+${restCount} more`;
-    const expand = ()=>{
-      for(const it of list.slice(startIndex)){
-        const el = makeFn(it);
-        el.classList.add('extra-chip');
-        container.appendChild(el);
-      }
-      more.textContent = 'Show less';
-      more.setAttribute('aria-expanded','true');
-    };
-    const collapse = ()=>{
-      container.querySelectorAll('.extra-chip').forEach(el=>el.remove());
+    // ==== Expand/collapse helpers ====
+    function makeChip(it) {
+      const span = document.createElement('span');
+      span.className = 'badge';
+      applySchoolColor(span, it.school);
+      span.title = `${it.event} • ${it.school}${it.notes ? ' — ' + it.notes : ''}`;
+      span.textContent = `${it.event} · ${it.school}`;
+      return span;
+    }
+    function makeMonthChip(it) {
+      const div = document.createElement('div');
+      div.className = 'badge';
+      applySchoolColor(div, it.school);
+      div.style.display = 'block';
+      div.style.marginBottom = '4px';
+      div.title = `${it.event} • ${it.school}${it.notes ? ' — ' + it.notes : ''}`;
+      div.textContent = `${it.event} · ${it.school}`;
+      return div;
+    }
+    function attachExpand(container, list, startIndex, makeFn) {
+      const restCount = list.length - startIndex;
+      const more = document.createElement('span');
+      more.className = 'chip-more';
+      more.setAttribute('role', 'button');
+      more.setAttribute('aria-expanded', 'false');
+      more.tabIndex = 0;
       more.textContent = `+${restCount} more`;
-      more.setAttribute('aria-expanded','false');
-    };
-    more.addEventListener('click', ()=>{
-      const expanded = more.getAttribute('aria-expanded')==='true';
-      if(expanded) collapse(); else expand();
-    });
-    more.addEventListener('keydown', (e)=>{
-      if(e.key==='Enter' || e.key===' '){ e.preventDefault(); more.click(); }
-    });
-    container.appendChild(more);
-  }
-
-  // ===================== RENDER =====================
-  function render(){
-    applyFilters();
-    renderWeeks();
-    renderMonthFixed();
-  }
-
-  function renderWeeks(){
-    const byDate = groupByDate(FILTERED);
-    const currStart = startOfWeek(ANCHOR_DAY);
-    const prevStart = currStart.subtract(7,'day');
-    const nextStart = currStart.add(7,'day');
-
-    const weeksEl = document.getElementById('weeks');
-    weeksEl.innerHTML='';
-
-    const blocks = [
-      { label:'Last week', start:prevStart, muted:true },
-      { label:'This week', start:currStart, highlight:true },
-      { label:'Next week', start:nextStart, muted:true },
-    ];
-
-    blocks.forEach(b=>{
-      const card = document.createElement('div');
-      card.className='panel p-4';
-      if(b.highlight) card.style.outline = '2px solid var(--blue-300)';
-
-      const weekEnd = b.start.add(4,'day');
-      const header = document.createElement('div');
-      header.className='row';
-      header.style.justifyContent='space-between';
-      header.innerHTML = `<div><div class="muted" style="text-transform:uppercase;font-size:11px">${b.label}</div><div class="week-title">${b.start.format('MMM D')} – ${weekEnd.format('MMM D')}</div></div>`;
-      card.appendChild(header);
-
-      const daysWrap = document.createElement('div');
-      daysWrap.style.display='flex';
-      daysWrap.style.flexDirection='column';
-      daysWrap.style.gap='8px';
-
-      for(const d of getWeekdays(b.start)){
-        const key = fmt(d,'YYYY-MM-DD');
-        const list = byDate[key] || [];
-        const dayDiv = document.createElement('div');
-        dayDiv.className = 'day' + (d.isSame(dayjs(),'day') ? ' today' : '');
-
-        const top = document.createElement('div');
-        top.className='row';
-        top.style.justifyContent='space-between';
-        top.innerHTML = `<div style="font-size:12px;font-weight:600;color:#334155">${d.format('ddd, MMM D')}</div><div class="muted" style="font-size:11px">${list.length} event${list.length===1?'':'s'}</div>`;
-        dayDiv.appendChild(top);
-
-        const chips = document.createElement('div');
-        chips.style.display='flex'; chips.style.flexWrap='wrap'; chips.style.gap='6px';
-        list.slice(0,6).forEach(it => chips.appendChild(makeChip(it)));
-        if(list.length>6){
-          attachExpand(chips, list, 6, makeChip);
+      const expand = () => {
+        for (const it of list.slice(startIndex)) {
+          const el = makeFn(it);
+          el.classList.add('extra-chip');
+          container.appendChild(el);
         }
-        dayDiv.appendChild(chips);
-        daysWrap.appendChild(dayDiv);
-      }
-
-      card.appendChild(daysWrap);
-      weeksEl.appendChild(card);
-    });
-  }
-
-  function renderMonthFixed(){
-    const byDate = groupByDate(FILTERED);
-    const monthCursor = ANCHOR_DAY;
-    document.getElementById('monthLabel').textContent = monthCursor.format('MMMM YYYY');
-
-    // Build Monday-start grid for whole month, but only keep Mon–Fri cells
-    const monthStart = monthCursor.startOf('month');
-    const monthEnd = monthCursor.endOf('month');
-    const gridStart = startOfWeek(monthStart);
-    const gridEnd = endOfWeek(monthEnd);
-
-    const allDays=[]; for(let d=gridStart; d.isBefore(gridEnd) || d.isSame(gridEnd,'day'); d=d.add(1,'day')) allDays.push(d);
-
-    const weeks=[];
-    for(let i=0;i<allDays.length;i+=7){
-      const chunk = allDays.slice(i,i+7);
-      const weekdays = chunk.filter(dd=>dd.day()>=1 && dd.day()<=5);
-      weeks.push(weekdays);
+        more.textContent = 'Show less';
+        more.setAttribute('aria-expanded', 'true');
+      };
+      const collapse = () => {
+        container.querySelectorAll('.extra-chip').forEach(el => el.remove());
+        more.textContent = `+${restCount} more`;
+        more.setAttribute('aria-expanded', 'false');
+      };
+      more.addEventListener('click', () => {
+        const expanded = more.getAttribute('aria-expanded') === 'true';
+        if (expanded) collapse(); else expand();
+      });
+      more.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); more.click(); }
+      });
+      container.appendChild(more);
     }
 
-    const currStart = startOfWeek(ANCHOR_DAY);
-    const currEnd = currStart.add(4,'day');
-
-    const gridEl = document.getElementById('monthGrid');
-    gridEl.innerHTML='';
-
-    for(const week of weeks){
-      const row = document.createElement('div');
-      row.className='week-row';
-      for(const d of week){
-        const key = fmt(d,'YYYY-MM-DD');
-        const items = byDate[key]||[];
-        const cell = document.createElement('div');
-        cell.className='month-cell';
-        if(d.isBetween(currStart,currEnd,'day','[]')) cell.classList.add('current');
-        if(d.month()!==monthCursor.month()){ cell.style.opacity='.65'; cell.style.background='#f8fafc'; }
-        const top = document.createElement('div');
-        top.className='cell-top';
-        const todayTag = d.isSame(dayjs(),'day') ? '<span style="background:var(--blue-200);color:#1e40af;border-radius:6px;padding:0 4px">Today</span>' : '';
-        top.innerHTML = `<span>${d.date()}</span>${todayTag}`;
-        cell.appendChild(top);
-
-        const chipsWrap = document.createElement('div');
-        for(const it of items.slice(0,3)){
-          chipsWrap.appendChild(makeMonthChip(it));
-        }
-        if(items.length>3){
-          attachExpand(chipsWrap, items, 3, makeMonthChip);
-        }
-        cell.appendChild(chipsWrap);
-
-        row.appendChild(cell);
-      }
-      gridEl.appendChild(row);
+    // ===================== RENDER =====================
+    function render() {
+      applyFilters();
+      renderWeeks();
+      renderMonthFixed();
     }
-  }
 
-  // ===================== DATA LOAD =====================
-  async function load(){
-  // Removed dataUrlEcho display
-    document.getElementById('refreshEcho').textContent = Math.round(CONFIG.REFRESH_MS/60000);
+    function renderWeeks() {
+      const byDate = groupByDate(FILTERED);
+      const currStart = startOfWeek(ANCHOR_DAY);
+      const prevStart = currStart.subtract(7, 'day');
+      const nextStart = currStart.add(7, 'day');
 
-    try{
-      let csvText = SAMPLE_CSV;
-      if(CONFIG.DATA_URL){
-        const res = await fetch(CONFIG.DATA_URL, { cache:'no-store' });
-        if(!res.ok) throw new Error('fetch '+res.status);
-        csvText = await res.text();
-      }
-      RAW_ROWS = parseCsvToRows(csvText);
-      populateFilters(RAW_ROWS);
-      render();
-    }catch(err){
-      console.warn('CSV fetch failed, using sample:', err);
-      RAW_ROWS = parseCsvToRows(SAMPLE_CSV);
-      populateFilters(RAW_ROWS);
-      render();
+      const weeksEl = document.getElementById('weeks');
+      weeksEl.innerHTML = '';
+
+      const blocks = [
+        { label: 'Last week', start: prevStart, muted: true },
+        { label: 'This week', start: currStart, highlight: true },
+        { label: 'Next week', start: nextStart, muted: true },
+      ];
+
+      blocks.forEach(b => {
+        const card = document.createElement('div');
+        card.className = 'panel p-4';
+        if (b.highlight) card.style.outline = '2px solid var(--blue-300)';
+
+        const weekEnd = b.start.add(4, 'day');
+        const header = document.createElement('div');
+        header.className = 'row';
+        header.style.justifyContent = 'space-between';
+        header.innerHTML = `<div><div class="muted" style="text-transform:uppercase;font-size:11px">${b.label}</div><div class="week-title">${b.start.format('MMM D')} – ${weekEnd.format('MMM D')}</div></div>`;
+        card.appendChild(header);
+
+        const daysWrap = document.createElement('div');
+        daysWrap.style.display = 'flex';
+        daysWrap.style.flexDirection = 'column';
+        daysWrap.style.gap = '8px';
+
+        for (const d of getWeekdays(b.start)) {
+          const key = fmt(d, 'YYYY-MM-DD');
+          const list = byDate[key] || [];
+          const dayDiv = document.createElement('div');
+          dayDiv.className = 'day' + (d.isSame(dayjs(), 'day') ? ' today' : '');
+
+          const top = document.createElement('div');
+          top.className = 'row';
+          top.style.justifyContent = 'space-between';
+          top.innerHTML = `<div style="font-size:12px;font-weight:600;color:#334155">${d.format('ddd, MMM D')}</div><div class="muted" style="font-size:11px">${list.length} event${list.length === 1 ? '' : 's'}</div>`;
+          dayDiv.appendChild(top);
+
+          const chips = document.createElement('div');
+          chips.style.display = 'flex'; chips.style.flexWrap = 'wrap'; chips.style.gap = '6px';
+          list.slice(0, 6).forEach(it => chips.appendChild(makeChip(it)));
+          if (list.length > 6) {
+            attachExpand(chips, list, 6, makeChip);
+          }
+          dayDiv.appendChild(chips);
+          daysWrap.appendChild(dayDiv);
+        }
+
+        card.appendChild(daysWrap);
+        weeksEl.appendChild(card);
+      });
     }
-  }
 
-  function populateFilters(rows){
-    const schoolSel = document.getElementById('schoolSel');
-    const eventSel = document.getElementById('eventSel');
-    const schools = Array.from(new Set(rows.map(r=>r.school))).sort();
-    const events = Array.from(new Set(rows.map(r=>r.event))).sort();
+    function renderMonthFixed() {
+      const byDate = groupByDate(FILTERED);
+      const monthCursor = ANCHOR_DAY;
+      document.getElementById('monthLabel').textContent = monthCursor.format('MMMM YYYY');
 
-    schoolSel.innerHTML = '<option value="all">All schools</option>' + schools.map(s=>`<option>${s}</option>`).join('');
-    eventSel.innerHTML = '<option value="all">All types</option>' + events.map(e=>`<option>${e}</option>`).join('');
-  }
+      // Build Monday-start grid for whole month, but only keep Mon–Fri cells
+      const monthStart = monthCursor.startOf('month');
+      const monthEnd = monthCursor.endOf('month');
+      const gridStart = startOfWeek(monthStart);
+      const gridEnd = endOfWeek(monthEnd);
 
-  // ===================== INTERACTIONS =====================
-  document.getElementById('btn-refresh').addEventListener('click', load);
-  document.getElementById('btn-today').addEventListener('click', ()=>{ ANCHOR_DAY = dayjs(); if([0,6].includes(ANCHOR_DAY.day())) ANCHOR_DAY = nextMonday(ANCHOR_DAY); render(); });
-  document.getElementById('prevWeek').addEventListener('click', ()=>{ ANCHOR_DAY = startOfWeek(ANCHOR_DAY).subtract(7,'day'); render(); });
-  document.getElementById('nextWeek').addEventListener('click', ()=>{ ANCHOR_DAY = startOfWeek(ANCHOR_DAY).add(7,'day'); render(); });
-  document.getElementById('search').addEventListener('input', render);
-  document.getElementById('schoolSel').addEventListener('change', render);
-  document.getElementById('eventSel').addEventListener('change', render);
+      const allDays = []; for (let d = gridStart; d.isBefore(gridEnd) || d.isSame(gridEnd, 'day'); d = d.add(1, 'day')) allDays.push(d);
 
-  // Auto-refresh
-  setInterval(load, CONFIG.REFRESH_MS);
+      const weeks = [];
+      for (let i = 0; i < allDays.length; i += 7) {
+        const chunk = allDays.slice(i, i + 7);
+        const weekdays = chunk.filter(dd => dd.day() >= 1 && dd.day() <= 5);
+        weeks.push(weekdays);
+      }
 
-  // ===================== SELF-TESTS (console) =====================
-  (function selfTests(){
-    const tests=[];
-    const d1 = dayjs('2025-08-27'); // Wed
-    const wMon = startOfWeek(d1);
-    tests.push(['startOfWeek Monday', wMon.format('YYYY-MM-DD')==='2025-08-25']);
-    const fri = wMon.add(4,'day');
-    tests.push(['Mon–Fri end Friday', fri.format('YYYY-MM-DD')==='2025-08-29']);
-    const weekdays = getWeekdays(wMon);
-    tests.push(['Weekdays length=5', weekdays.length===5]);
-    tests.push(['Weekdays Mon..Fri', weekdays[0].day()===1 && weekdays[4].day()===5]);
+      const currStart = startOfWeek(ANCHOR_DAY);
+      const currEnd = currStart.add(4, 'day');
 
-    // Test with user's simplified headers and first row
-    const userCsv = `Date,Event,School
+      const gridEl = document.getElementById('monthGrid');
+      gridEl.innerHTML = '';
+
+      for (const week of weeks) {
+        const row = document.createElement('div');
+        row.className = 'week-row';
+        for (const d of week) {
+          const key = fmt(d, 'YYYY-MM-DD');
+          const items = byDate[key] || [];
+          const cell = document.createElement('div');
+          cell.className = 'month-cell';
+          if (d.isBetween(currStart, currEnd, 'day', '[]')) cell.classList.add('current');
+          if (d.month() !== monthCursor.month()) { cell.style.opacity = '.65'; cell.style.background = '#f8fafc'; }
+          const top = document.createElement('div');
+          top.className = 'cell-top';
+          const todayTag = d.isSame(dayjs(), 'day') ? '<span style="background:var(--blue-200);color:#1e40af;border-radius:6px;padding:0 4px">Today</span>' : '';
+          top.innerHTML = `<span>${d.date()}</span>${todayTag}`;
+          cell.appendChild(top);
+
+          const chipsWrap = document.createElement('div');
+          for (const it of items.slice(0, 3)) {
+            chipsWrap.appendChild(makeMonthChip(it));
+          }
+          if (items.length > 3) {
+            attachExpand(chipsWrap, items, 3, makeMonthChip);
+          }
+          cell.appendChild(chipsWrap);
+
+          row.appendChild(cell);
+        }
+        gridEl.appendChild(row);
+      }
+    }
+
+    // ===================== DATA LOAD =====================
+    async function load() {
+      // Removed dataUrlEcho display
+      document.getElementById('refreshEcho').textContent = Math.round(CONFIG.REFRESH_MS / 60000);
+
+      try {
+        let csvText = SAMPLE_CSV;
+        if (CONFIG.DATA_URL) {
+          const res = await fetch(CONFIG.DATA_URL, { cache: 'no-store' });
+          if (!res.ok) throw new Error('fetch ' + res.status);
+          csvText = await res.text();
+        }
+        RAW_ROWS = parseCsvToRows(csvText);
+        populateFilters(RAW_ROWS);
+        render();
+      } catch (err) {
+        console.warn('CSV fetch failed, using sample:', err);
+        RAW_ROWS = parseCsvToRows(SAMPLE_CSV);
+        populateFilters(RAW_ROWS);
+        render();
+      }
+    }
+
+    function populateFilters(rows) {
+      const schoolSel = document.getElementById('schoolSel');
+      const eventSel = document.getElementById('eventSel');
+      const schools = Array.from(new Set(rows.map(r => r.school))).sort();
+      const events = Array.from(new Set(rows.map(r => r.event))).sort();
+
+      schoolSel.innerHTML = '<option value="all">All schools</option>' + schools.map(s => `<option>${s}</option>`).join('');
+      eventSel.innerHTML = '<option value="all">All types</option>' + events.map(e => `<option>${e}</option>`).join('');
+    }
+
+    // ===================== INTERACTIONS =====================
+    document.getElementById('btn-refresh').addEventListener('click', load);
+    document.getElementById('btn-today').addEventListener('click', () => { ANCHOR_DAY = dayjs(); if ([0, 6].includes(ANCHOR_DAY.day())) ANCHOR_DAY = nextMonday(ANCHOR_DAY); render(); });
+    document.getElementById('prevWeek').addEventListener('click', () => { ANCHOR_DAY = startOfWeek(ANCHOR_DAY).subtract(7, 'day'); render(); });
+    document.getElementById('nextWeek').addEventListener('click', () => { ANCHOR_DAY = startOfWeek(ANCHOR_DAY).add(7, 'day'); render(); });
+    document.getElementById('search').addEventListener('input', render);
+    document.getElementById('schoolSel').addEventListener('change', render);
+    document.getElementById('eventSel').addEventListener('change', render);
+
+    // Auto-refresh
+    setInterval(load, CONFIG.REFRESH_MS);
+
+    // ===================== SELF-TESTS (console) =====================
+    (function selfTests() {
+      const tests = [];
+      const d1 = dayjs('2025-08-27'); // Wed
+      const wMon = startOfWeek(d1);
+      tests.push(['startOfWeek Monday', wMon.format('YYYY-MM-DD') === '2025-08-25']);
+      const fri = wMon.add(4, 'day');
+      tests.push(['Mon–Fri end Friday', fri.format('YYYY-MM-DD') === '2025-08-29']);
+      const weekdays = getWeekdays(wMon);
+      tests.push(['Weekdays length=5', weekdays.length === 5]);
+      tests.push(['Weekdays Mon..Fri', weekdays[0].day() === 1 && weekdays[4].day() === 5]);
+
+      // Test with user's simplified headers and first row
+      const userCsv = `Date,Event,School
 2025-08-25,First Day (Half Day),Clio Schools`;
-    try{
-      const rows = parseCsvToRows(userCsv);
-      tests.push(['User CSV parses 1 row', rows.length===1]);
-      if(rows.length){
-        const cls = classForEvent(rows[0].event);
-        tests.push(['Event classifier detects Half Day', cls.includes('yellow')]);
-      }
-    }catch(e){ tests.push(['User CSV parsing exception', false]); }
+      try {
+        const rows = parseCsvToRows(userCsv);
+        tests.push(['User CSV parses 1 row', rows.length === 1]);
+        if (rows.length) {
+          const cls = classForEvent(rows[0].event);
+          tests.push(['Event classifier detects Half Day', cls.includes('yellow')]);
+        }
+      } catch (e) { tests.push(['User CSV parsing exception', false]); }
 
-    console.groupCollapsed('GCI Weekdays‑Only • Self‑tests');
-    for(const [name,pass] of tests){ console.log((pass?'✅':'❌'), name); }
-    const all = tests.every(t=>t[1]); console.log(all?'All tests passed':'Some tests failed');
-    console.groupEnd();
-  })();
+      console.groupCollapsed('GCI Weekdays‑Only • Self‑tests');
+      for (const [name, pass] of tests) { console.log((pass ? '✅' : '❌'), name); }
+      const all = tests.every(t => t[1]); console.log(all ? 'All tests passed' : 'Some tests failed');
+      console.groupEnd();
+    })();
 
-  // Kick things off
-  load();
+    // Kick things off
+    load();
   </script>
 </body>
+
 </html>
