@@ -6,8 +6,8 @@ Tools Built for the Genesee Career Institute
 
 - Production
   - `OOOReview` (Python Order of operations) — interactive practice app with badge cabinet, mastery tracking, and PNG export. Path: `OOOReview.html`
-  - `AgileReview` — instructor review tools (Production)
-  - `No_School_Viewer` — schedule viewer (Production)
+  - `AgileReview` — instructor review tools
+  - `No_School_Viewer` — schedule viewer
 
 - Alpha Testing
   - `GCI_Communications` — communications utilities (Alpha)
@@ -22,6 +22,5 @@ Tools Built for the Genesee Career Institute
 ## Quick start (OOOReview)
 
 - Open `OOOReview.html` in a browser to run the production app locally.
-- Automated keyboard/modal test: see `tests/playwright/accessibility.spec.mjs` and `PLAYWRIGHT_RUN.md` for setup and run instructions.
 
 Contributions welcome — please open an issue describing proposed changes and test steps.
