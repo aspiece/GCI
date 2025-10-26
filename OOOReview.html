@@ -115,54 +115,90 @@
         /* Badge cabinet styles */
         .cabinet {
             display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 8px;
+            align-items: stretch;
         }
 
+        /* make each badge look more like a badge: circular emblem + label */
         .badge.trophy {
-            width: 44px;
-            height: 44px;
-            display: inline-flex;
+            display: flex;
             align-items: center;
-            justify-content: center;
-            border-radius: 10px;
-            font-size: 11px;
-            padding: 6px;
-            box-shadow: 0 4px 12px rgba(2, 6, 23, 0.12);
-            cursor: default;
+            gap: 12px;
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            box-shadow: 0 6px 18px rgba(2, 6, 23, 0.06);
+            cursor: pointer;
+            justify-content: flex-start;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(2, 6, 23, 0.01));
+            transition: transform 150ms ease, box-shadow 150ms ease;
         }
 
-        /* earned badges use CSS vars so we can tint per-level in JS */
+        .badge.trophy:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(2, 6, 23, 0.12);
+        }
+
+        /* earned badges use CSS vars so we can tint per-level in JS (subtle row tint)
+           the circular emblem will carry the vivid color */
         .badge.trophy.earned {
-            background-image: linear-gradient(180deg, var(--badge-bg1, #ffde59), var(--badge-bg2, #f29f05));
             color: var(--badge-text, #111);
             font-weight: 700;
         }
 
-        /* focus and icon styles for keyboard navigation */
+        /* focus state for keyboard navigation */
         .badge.trophy:focus {
-            outline: 3px solid rgba(255, 255, 255, 0.12);
-            box-shadow: 0 6px 18px rgba(2, 6, 23, 0.18), 0 0 0 3px rgba(11, 99, 179, 0.18);
+            outline: 3px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 10px 28px rgba(2, 6, 23, 0.18), 0 0 0 4px rgba(11, 99, 179, 0.10);
         }
 
+        /* circular emblem on the left */
         .badge.trophy .icon {
-            width: 16px;
-            height: 16px;
+            width: 44px;
+            height: 44px;
             display: inline-block;
             vertical-align: middle;
-            margin-right: 6px;
+            margin-right: 8px;
+            flex: 0 0 44px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(2, 6, 23, 0.12), inset 0 -6px 12px rgba(255, 255, 255, 0.06);
+            background: linear-gradient(180deg, var(--badge-bg1, #ffde59), var(--badge-bg2, #f29f05));
+            display: grid;
+            place-items: center;
         }
 
-        /* small retro pixel colors for earned vs locked (defaults) */
-        .badge.trophy.earned {
-            background-image: linear-gradient(180deg, var(--badge-bg1, #ffde59), var(--badge-bg2, #f29f05));
-            color: var(--badge-text, #111);
+        .badge.trophy .icon svg {
+            width: 70%;
+            height: 70%;
+            display: block;
         }
 
-        .badge.trophy.locked {
+        .badge.trophy .label {
+            font-weight: 600;
+            color: inherit;
+        }
+
+        /* small right chevron to hint interactivity */
+        .badge.trophy::after {
+            content: '›';
+            margin-left: auto;
+            color: rgba(0, 0, 0, 0.2);
+            font-size: 18px;
+            transform: translateY(-1px);
+        }
+
+        .badge.trophy.locked .icon {
             background-image: linear-gradient(180deg, var(--badge-locked-1, #e6e6e6), var(--badge-locked-2, #cfcfcf));
             color: var(--badge-locked-text, #6b6b6b);
+        }
+
+        /* keep existing earned background variables available for emblem and elsewhere */
+        .badge.trophy.earned .icon {
+            background-image: linear-gradient(180deg, var(--badge-bg1, #ffde59), var(--badge-bg2, #f29f05));
+            color: var(--badge-text, #111);
         }
 
         /* visually-hidden helper for ARIA live region */
@@ -357,6 +393,45 @@
                 width: auto
             }
         }
+
+        /* Operator legend polish */
+        .legend {
+            background: linear-gradient(180deg, rgba(11, 99, 179, 0.04), transparent);
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .legend-list {
+            margin: 6px 0 0 0;
+            padding-left: 0;
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .legend-list li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px;
+            border-radius: 6px;
+        }
+
+        .legend-op {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+            background: rgba(0, 0, 0, 0.04);
+            padding: 4px 8px;
+            border-radius: 6px;
+            min-width: 44px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .legend-desc {
+            color: var(--muted);
+            font-size: 13px;
+        }
     </style>
 </head>
 
@@ -509,6 +584,8 @@
                                 </div>
                                 <div style="margin-top:12px">
                                     <div id="badge-modal-tips" style="font-size:13px;color:var(--muted)"></div>
+                                    <div id="badge-modal-earn" style="margin-top:8px;font-size:13px;color:var(--muted)">
+                                    </div>
                                     <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
                                         <button id="badge-modal-export" class="secondary"
                                             title="Export badges and mastery">Export badges</button>
@@ -530,17 +607,17 @@
                 <section class="card" aria-labelledby="legend-heading">
                     <h2 id="legend-heading" style="margin:0 0 8px 0;font-size:15px">Operator legend</h2>
                     <div style="font-size:14px;color:var(--muted);">
-                        <div
-                            style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace; display:flex; gap:16px; flex-wrap:wrap">
-                            <div><strong>+</strong> addition</div>
-                            <div><strong>-</strong> subtraction</div>
-                            <div><strong>*</strong> multiplication</div>
-                            <div><strong>/</strong> division</div>
-                            <div><strong>**</strong> exponent (power)</div>
-                        </div>
-                        <div style="margin-top:8px;color:var(--muted);font-size:13px">Tip: Problems use Python-style
-                            operators;
-                            exponents use <code>**</code>. Order follows PEMDAS.</div>
+                        <div style="margin-bottom:8px;font-size:14px">Operators used in problems:</div>
+                        <ul
+                            style="margin:0 0 8px 18px;color:var(--muted);font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, monospace">
+                            <li><code>+</code> — addition</li>
+                            <li><code>-</code> — subtraction</li>
+                            <li><code>*</code> — multiplication</li>
+                            <li><code>/</code> — division</li>
+                            <li><code>**</code> — exponent (power)</li>
+                        </ul>
+                        <div style="margin-top:6px;color:var(--muted);font-size:13px">Tip: Problems use Python-style
+                            operators; exponents use <code>**</code>. Order follows PEMDAS.</div>
                         <div style="margin-top:10px;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, monospace">
                             <div style="font-size:13px;color:var(--muted);margin-bottom:6px">Examples by difficulty:
                             </div>
@@ -1018,6 +1095,32 @@
                     } catch (e) { }
                     cabinet.appendChild(el);
                 });
+                // ensure keyboard activation handlers on cabinet (event delegation)
+                if (cabinet && !cabinet._wired) {
+                    cabinet._wired = true;
+                    cabinet.addEventListener('click', (ev) => {
+                        const tgt = ev.target.closest('.badge.trophy');
+                        if (!tgt) return;
+                        const lvl = tgt.getAttribute('data-level');
+                        const info = getBadgeInfo(lvl);
+                        const name = ARCADE_NAMES[lvl] || lvl;
+                        if (info.earned) {
+                            const d = new Date(info.earnedAt);
+                            showLiveToast(`${name} badge earned ${d.toLocaleString()}`);
+                        } else {
+                            showLiveToast(`${name} badge locked`);
+                        }
+                        try { populateModal(lvl); } catch (e) { }
+                    });
+                    cabinet.addEventListener('keydown', (ev) => {
+                        if (ev.key === 'Enter' || ev.key === ' ') {
+                            const tgt = ev.target.closest('.badge.trophy');
+                            if (!tgt) return;
+                            ev.preventDefault();
+                            tgt.click();
+                        }
+                    });
+                }
                 // announce summary
                 const live = document.getElementById('badge-aria-live');
                 if (live) {
@@ -1058,6 +1161,11 @@
                     'expert': 'Mix of nested parentheses and exponents — take it slow.'
                 };
                 tips.textContent = tipMap[level] || 'Good work — keep practicing!';
+                // explicit earning instructions
+                const earnEl = document.getElementById('badge-modal-earn');
+                if (earnEl) {
+                    earnEl.textContent = `How to earn: Reach 80% correct over the last 10 attempts in the ${name} set.`;
+                }
 
                 // pixel art (larger) per badge
                 const artSVG = {
