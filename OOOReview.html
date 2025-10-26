@@ -328,6 +328,35 @@
                 align-items: stretch
             }
         }
+
+        /* Two-column layout: main + right sidebar for badges/legend */
+        .cols {
+            display: flex;
+            gap: 18px;
+            align-items: flex-start;
+        }
+
+        .main {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        .sidebar {
+            flex: 0 0 30%;
+            max-width: 320px;
+        }
+
+        @media (max-width:800px) {
+            .cols {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                flex: none;
+                max-width: none;
+                width: auto
+            }
+        }
     </style>
 </head>
 
@@ -338,183 +367,196 @@
             <div style="color:var(--muted);font-size:13px">Mnemonic: PEMDAS (Parentheses, Exponents, MD, AS)</div>
         </header>
 
-        <!-- Duplicate badge cabinet removed (kept the primary instance near the top) -->
+        <div class="cols">
+            <main class="main">
+                <section class="card" aria-labelledby="options-heading">
+                    <h2 id="options-heading" style="margin:0 0 8px 0;font-size:15px">Options</h2>
+                    <div class="controls">
+                        <label>
+                            Difficulty:
+                            <select id="difficulty" title="Choose difficulty">
+                                <option value="very-easy">Very Easy — 1 op</option>
+                                <option value="easy">Easy — 2 ops, no exponents</option>
+                                <option value="medium">Medium — 3-4 ops, may include parentheses</option>
+                                <option value="hard">Hard — 4-6 ops, exponents & nested parentheses</option>
+                                <option value="expert">Expert — 6-8 ops, heavy nesting & exponents</option>
+                            </select>
+                        </label>
+                        <label>
+                            Number range:
+                            <select id="range">
+                                <option value="9">0–9</option>
+                                <option value="19">-10–19</option>
+                                <option value="49">-20–49</option>
+                            </select>
+                        </label>
+                        <label>
+                            Problems:
+                            <input id="count" type="number" min="1" max="20" value="10" style="width:76px" />
+                        </label>
+                        <label>
+                            Theme:
+                            <select id="theme-select">
+                                <option value="light">Light</option>
+                                <option value="dark">Dark</option>
+                                <option value="high-contrast">High Contrast</option>
+                            </select>
+                        </label>
+                        <label>
+                            <button class="secondary" id="reset-mastery" title="Reset mastery">Reset mastery</button>
+                        </label>
+                        <label>
+                            <button class="secondary" id="reset-badges" title="Reset earned badges">Reset
+                                badges</button>
+                        </label>
+                        <label>
+                            <button class="secondary" id="export-badges" title="Export badges">Export badges</button>
+                        </label>
+                        <!-- Import removed to simplify teacher workflow; use Export to save a copy -->
+                        <button id="generate">Start</button>
+                        <button class="secondary" id="show-mnemonic" title="Quick help">Show PEMDAS</button>
+                    </div>
+                </section>
 
-        <section class="card" aria-labelledby="badges-heading">
-            <h2 id="badges-heading" style="margin:0 0 8px 0;font-size:15px">Badge cabinet</h2>
-            <div style="color:var(--muted);font-size:14px">
-                <div style="margin-bottom:8px">Earn badges by achieving mastery in each difficulty. Badges persist in
-                    your browser.</div>
-                <div id="badge-cabinet" class="cabinet" aria-live="polite"></div>
-                <!-- Hidden ARIA-live summary for programmatic announcements -->
-                <div id="badge-aria-live" class="sr-only" aria-live="polite" aria-atomic="true"></div>
-                <!-- Modal for badge details -->
-                <div id="badge-modal" class="modal-backdrop" style="display:none" aria-hidden="true">
-                    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="badge-modal-title">
-                        <div style="display:flex;align-items:center;gap:12px">
-                            <div class="pixel-art" id="modal-art" aria-hidden="true"></div>
-                            <div style="flex:1">
-                                <h3 id="badge-modal-title">Badge</h3>
-                                <div id="badge-modal-desc" class="meta">Details about this badge.</div>
+                <section class="card" aria-live="polite">
+                    <div class="meta">
+                        <div class="score">Score: <strong id="score">0</strong>/<span id="asked">0</span></div>
+                        <div id="mastery" class="score" style="margin-left:12px">Mastery: <span
+                                id="mastery-val">—</span></div>
+                        <div id="progress" style="color:var(--muted)">Ready</div>
+                    </div>
+
+                    <div id="exercise" style="margin-top:12px">
+                        <div style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap">
+                            <div style="flex:1;min-width:220px">
+                                <div class="problem" id="problem">Click Start to begin a set of problems.</div>
                             </div>
-                            <button id="badge-modal-close" class="close" aria-label="Close">✖</button>
+                            <div id="badges" class="badges" aria-hidden="false"></div>
                         </div>
-                        <div style="margin-top:12px">
-                            <div id="badge-modal-tips" style="font-size:13px;color:var(--muted)"></div>
-                            <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
-                                <button id="badge-modal-export" class="secondary"
-                                    title="Export badges and mastery">Export badges</button>
-                                <button id="badge-modal-close-text" class="close" aria-label="Close">Close</button>
-                                <div style="margin-left:auto;color:var(--muted);font-size:12px">Tip: Press Esc to close
+
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+                            <label style="margin:0">
+                                Your answer:
+                                <input id="answer" inputmode="numeric"
+                                    style="padding:8px;border-radius:8px;border:1px solid #d1d5db;width:160px;margin-left:8px" />
+                            </label>
+                            <button id="check">Check</button>
+                            <button class="secondary" id="next">Skip / Next</button>
+                            <label style="margin-left:auto;color:var(--muted)">
+                                Show steps:
+                                <input id="steps-toggle" type="checkbox" style="margin-left:6px" />
+                            </label>
+                        </div>
+
+                        <div id="feedback" class="feedback" aria-live="polite"></div>
+                        <pre id="steps" class="steps" style="display:none"></pre>
+                    </div>
+                </section>
+
+                <section class="card" aria-labelledby="resources-heading">
+                    <h2 id="resources-heading" style="margin:0 0 8px 0;font-size:15px">Resources</h2>
+                    <div style="color:var(--muted);font-size:14px">
+                        <ul style="margin:0 0 8px 18px">
+                            <li><a href="https://www.w3schools.com/python/python_operators_precedence.asp"
+                                    target="_blank" rel="noopener">Python operator precedence — W3Schools</a></li>
+                            <li><a href="https://runestone.academy/ns/books/published/fopp/Conditionals/PrecedenceofOperators.html"
+                                    target="_blank" rel="noopener">Precedence of Operators — Runestone</a></li>
+                        </ul>
+
+                        <div style="margin-top:8px">
+                            <div
+                                style="max-width:720px;margin:0 auto;position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:8px">
+                                <iframe src="https://www.youtube.com/embed/nD1xTpJo4jU?si=trz2yNi4ohEjsO_V"
+                                    title="Order of Operations video" frameborder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowfullscreen
+                                    style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe>
+                            </div>
+                            <div style="font-size:13px;color:var(--muted);margin-top:6px">Video: brief overview of order
+                                of
+                                operations.</div>
+                        </div>
+                    </div>
+                </section>
+
+                <footer class="card" style="text-align:left">
+                    Tips: Work inside parentheses first, then exponents, then multiplication/division left-to-right,
+                    then
+                    addition/subtraction left-to-right. Use the "Show steps" checkbox to see a step-by-step breakdown.
+                </footer>
+            </main>
+
+            <aside class="sidebar">
+                <section class="card" aria-labelledby="badges-heading">
+                    <h2 id="badges-heading" style="margin:0 0 8px 0;font-size:15px">Badge cabinet</h2>
+                    <div style="color:var(--muted);font-size:14px">
+                        <div style="margin-bottom:8px">Earn badges by achieving mastery in each difficulty. Badges
+                            persist in
+                            your browser.</div>
+                        <div id="badge-cabinet" class="cabinet" aria-live="polite"></div>
+                        <!-- Hidden ARIA-live summary for programmatic announcements -->
+                        <div id="badge-aria-live" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+                        <!-- Modal for badge details -->
+                        <div id="badge-modal" class="modal-backdrop" style="display:none" aria-hidden="true">
+                            <div class="modal" role="dialog" aria-modal="true" aria-labelledby="badge-modal-title">
+                                <div style="display:flex;align-items:center;gap:12px">
+                                    <div class="pixel-art" id="modal-art" aria-hidden="true"></div>
+                                    <div style="flex:1">
+                                        <h3 id="badge-modal-title">Badge</h3>
+                                        <div id="badge-modal-desc" class="meta">Details about this badge.</div>
+                                    </div>
+                                    <button id="badge-modal-close" class="close" aria-label="Close">✖</button>
+                                </div>
+                                <div style="margin-top:12px">
+                                    <div id="badge-modal-tips" style="font-size:13px;color:var(--muted)"></div>
+                                    <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+                                        <button id="badge-modal-export" class="secondary"
+                                            title="Export badges and mastery">Export badges</button>
+                                        <button id="badge-modal-close-text" class="close"
+                                            aria-label="Close">Close</button>
+                                        <div style="margin-left:auto;color:var(--muted);font-size:12px">Tip: Press Esc
+                                            to close
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <div style="margin-top:8px;font-size:13px;color:var(--muted)">Tip: Reach 80% correct over the
+                            last 10
+                            attempts to earn a badge.</div>
                     </div>
-                </div>
-                <div style="margin-top:8px;font-size:13px;color:var(--muted)">Tip: Reach 80% correct over the last 10
-                    attempts to earn a badge.</div>
-            </div>
-        </section>
+                </section>
 
-        <section class="card" aria-labelledby="options-heading">
-            <h2 id="options-heading" style="margin:0 0 8px 0;font-size:15px">Options</h2>
-            <div class="controls">
-                <label>
-                    Difficulty:
-                    <select id="difficulty" title="Choose difficulty">
-                        <option value="very-easy">Very Easy — 1 op</option>
-                        <option value="easy">Easy — 2 ops, no exponents</option>
-                        <option value="medium">Medium — 3-4 ops, may include parentheses</option>
-                        <option value="hard">Hard — 4-6 ops, exponents & nested parentheses</option>
-                        <option value="expert">Expert — 6-8 ops, heavy nesting & exponents</option>
-                    </select>
-                </label>
-                <label>
-                    Number range:
-                    <select id="range">
-                        <option value="9">0–9</option>
-                        <option value="19">-10–19</option>
-                        <option value="49">-20–49</option>
-                    </select>
-                </label>
-                <label>
-                    Problems:
-                    <input id="count" type="number" min="1" max="20" value="10" style="width:76px" />
-                </label>
-                <label>
-                    Theme:
-                    <select id="theme-select">
-                        <option value="light">Light</option>
-                        <option value="dark">Dark</option>
-                        <option value="high-contrast">High Contrast</option>
-                    </select>
-                </label>
-                <label>
-                    <button class="secondary" id="reset-mastery" title="Reset mastery">Reset mastery</button>
-                </label>
-                <label>
-                    <button class="secondary" id="reset-badges" title="Reset earned badges">Reset badges</button>
-                </label>
-                <label>
-                    <button class="secondary" id="export-badges" title="Export badges">Export badges</button>
-                </label>
-                <!-- Import removed to simplify teacher workflow; use Export to save a copy -->
-                <button id="generate">Start</button>
-                <button class="secondary" id="show-mnemonic" title="Quick help">Show PEMDAS</button>
-            </div>
-        </section>
-
-        <section class="card" aria-labelledby="legend-heading">
-            <h2 id="legend-heading" style="margin:0 0 8px 0;font-size:15px">Operator legend</h2>
-            <div style="font-size:14px;color:var(--muted);">
-                <div
-                    style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace; display:flex; gap:16px; flex-wrap:wrap">
-                    <div><strong>+</strong> addition</div>
-                    <div><strong>-</strong> subtraction</div>
-                    <div><strong>*</strong> multiplication</div>
-                    <div><strong>/</strong> division</div>
-                    <div><strong>**</strong> exponent (power)</div>
-                </div>
-                <div style="margin-top:8px;color:var(--muted);font-size:13px">Tip: Problems use Python-style operators;
-                    exponents use <code>**</code>. Order follows PEMDAS.</div>
-                <div style="margin-top:10px;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, monospace">
-                    <div style="font-size:13px;color:var(--muted);margin-bottom:6px">Examples by difficulty:</div>
-                    <ul
-                        style="margin:0;padding-left:18px;color:var(--muted);font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, monospace">
-                        <li><strong>Very Easy:</strong> <code>3 + 4</code></li>
-                        <li><strong>Easy:</strong> <code>(5 + 2) * 3</code></li>
-                        <li><strong>Medium:</strong> <code>(2 + 3) ** 2 - 4</code></li>
-                        <li><strong>Hard:</strong> <code>(3 + (2 * 5)) ** 2 / 4</code></li>
-                        <li><strong>Expert:</strong> <code>((2 + 3) ** (1 + 1)) * (4 - 1)</code></li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <section class="card" aria-live="polite">
-            <div class="meta">
-                <div class="score">Score: <strong id="score">0</strong>/<span id="asked">0</span></div>
-                <div id="mastery" class="score" style="margin-left:12px">Mastery: <span id="mastery-val">—</span></div>
-                <div id="progress" style="color:var(--muted)">Ready</div>
-            </div>
-
-            <div id="exercise" style="margin-top:12px">
-                <div style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap">
-                    <div style="flex:1;min-width:220px">
-                        <div class="problem" id="problem">Click Start to begin a set of problems.</div>
+                <section class="card" aria-labelledby="legend-heading">
+                    <h2 id="legend-heading" style="margin:0 0 8px 0;font-size:15px">Operator legend</h2>
+                    <div style="font-size:14px;color:var(--muted);">
+                        <div
+                            style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace; display:flex; gap:16px; flex-wrap:wrap">
+                            <div><strong>+</strong> addition</div>
+                            <div><strong>-</strong> subtraction</div>
+                            <div><strong>*</strong> multiplication</div>
+                            <div><strong>/</strong> division</div>
+                            <div><strong>**</strong> exponent (power)</div>
+                        </div>
+                        <div style="margin-top:8px;color:var(--muted);font-size:13px">Tip: Problems use Python-style
+                            operators;
+                            exponents use <code>**</code>. Order follows PEMDAS.</div>
+                        <div style="margin-top:10px;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, monospace">
+                            <div style="font-size:13px;color:var(--muted);margin-bottom:6px">Examples by difficulty:
+                            </div>
+                            <ul
+                                style="margin:0;padding-left:18px;color:var(--muted);font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, monospace">
+                                <li><strong>Very Easy:</strong> <code>3 + 4</code></li>
+                                <li><strong>Easy:</strong> <code>(5 + 2) * 3</code></li>
+                                <li><strong>Medium:</strong> <code>(2 + 3) ** 2 - 4</code></li>
+                                <li><strong>Hard:</strong> <code>(3 + (2 * 5)) ** 2 / 4</code></li>
+                                <li><strong>Expert:</strong> <code>((2 + 3) ** (1 + 1)) * (4 - 1)</code></li>
+                            </ul>
+                        </div>
                     </div>
-                    <div id="badges" class="badges" aria-hidden="false"></div>
-                </div>
-
-                <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-                    <label style="margin:0">
-                        Your answer:
-                        <input id="answer" inputmode="numeric"
-                            style="padding:8px;border-radius:8px;border:1px solid #d1d5db;width:160px;margin-left:8px" />
-                    </label>
-                    <button id="check">Check</button>
-                    <button class="secondary" id="next">Skip / Next</button>
-                    <label style="margin-left:auto;color:var(--muted)">
-                        Show steps:
-                        <input id="steps-toggle" type="checkbox" style="margin-left:6px" />
-                    </label>
-                </div>
-
-                <div id="feedback" class="feedback" aria-live="polite"></div>
-                <pre id="steps" class="steps" style="display:none"></pre>
-            </div>
-        </section>
-
-        <section class="card" aria-labelledby="resources-heading">
-            <h2 id="resources-heading" style="margin:0 0 8px 0;font-size:15px">Resources</h2>
-            <div style="color:var(--muted);font-size:14px">
-                <ul style="margin:0 0 8px 18px">
-                    <li><a href="https://www.w3schools.com/python/python_operators_precedence.asp" target="_blank"
-                            rel="noopener">Python operator precedence — W3Schools</a></li>
-                    <li><a href="https://runestone.academy/ns/books/published/fopp/Conditionals/PrecedenceofOperators.html"
-                            target="_blank" rel="noopener">Precedence of Operators — Runestone</a></li>
-                </ul>
-
-                <div style="margin-top:8px">
-                    <div
-                        style="max-width:720px;margin:0 auto;position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:8px">
-                        <iframe src="https://www.youtube.com/embed/nD1xTpJo4jU?si=trz2yNi4ohEjsO_V"
-                            title="Order of Operations video" frameborder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe>
-                    </div>
-                    <div style="font-size:13px;color:var(--muted);margin-top:6px">Video: brief overview of order of
-                        operations.</div>
-                </div>
-            </div>
-        </section>
-
-
-
-        <footer class="card" style="text-align:left">
-            Tips: Work inside parentheses first, then exponents, then multiplication/division left-to-right, then
-            addition/subtraction left-to-right. Use the "Show steps" checkbox to see a step-by-step breakdown.
-        </footer>
+                </section>
+            </aside>
+        </div>
     </div>
 
     <script>
