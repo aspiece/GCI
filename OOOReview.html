@@ -635,11 +635,11 @@
                         <label>
                             Difficulty:
                             <select id="difficulty" title="Choose difficulty">
-                                <option value="very-easy">Very Easy — 1 op</option>
-                                <option value="easy">Easy — 2 ops, no exponents</option>
-                                <option value="medium">Medium — 3-4 ops, may include parentheses</option>
-                                <option value="hard">Hard — 4-6 ops, exponents & nested parentheses</option>
-                                <option value="expert">Expert — 6-8 ops, heavy nesting & exponents</option>
+                                <option value="very-easy">1-UP Rookie</option>
+                                <option value="easy">Pixel Player</option>
+                                <option value="medium">Combo Champ</option>
+                                <option value="hard">Boss Brawler</option>
+                                <option value="expert">High Score Legend</option>
                             </select>
                         </label>
                         <label>
@@ -1219,13 +1219,8 @@
             };
 
             // Human-friendly labels aligned with the difficulty select options
-            const DIFFICULTY_LABELS = {
-                'very-easy': 'Very Easy — 1 op',
-                'easy': 'Easy — 2 ops, no exponents',
-                'medium': 'Medium — 3–4 ops, may include parentheses',
-                'hard': 'Hard — 4–6 ops, exponents & nested parentheses',
-                'expert': 'Expert — 6–8 ops, heavy nesting & exponents'
-            };
+            // Use the arcade-themed names so option labels and badge names match
+            const DIFFICULTY_LABELS = ARCADE_NAMES;
 
             // Per-level badge color palette: [bg1, bg2, text]
             const BADGE_COLORS = {
