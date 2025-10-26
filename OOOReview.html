@@ -112,25 +112,26 @@
             font-size: 13px
         }
 
-        /* Badge cabinet styles */
+        /* Badge cabinet styles (compact, shield-only) */
         .cabinet {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
             align-items: stretch;
+            padding: 6px 0;
         }
 
-        /* make each badge look more like a badge: compact square button with emblem */
+        /* make each badge look more like a badge: compact square button with emblem (reduced ~75%) */
         .badge.trophy {
             display: inline-flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
-            width: 66px;
-            min-width: 54px;
-            padding: 6px;
-            border-radius: 12px;
-            font-size: 13px;
+            gap: 3px;
+            width: 50px;
+            min-width: 40px;
+            padding: 4px;
+            border-radius: 10px;
+            font-size: 12px;
             box-shadow: 0 6px 18px rgba(2, 6, 23, 0.06);
             cursor: pointer;
             justify-content: center;
@@ -157,14 +158,14 @@
             box-shadow: 0 10px 28px rgba(2, 6, 23, 0.18), 0 0 0 4px rgba(11, 99, 179, 0.10);
         }
 
-        /* emblem container (square for shield/ribbon, circle for medallion) */
+        /* emblem container (shield) */
         .badge.trophy .icon {
-            width: 42px;
-            height: 42px;
+            width: 32px;
+            height: 32px;
             display: inline-block;
             vertical-align: middle;
-            flex: 0 0 42px;
-            border-radius: 10px;
+            flex: 0 0 32px;
+            border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 6px 18px rgba(2, 6, 23, 0.12), inset 0 -6px 12px rgba(255, 255, 255, 0.06);
             background: linear-gradient(180deg, var(--badge-bg1, #ffde59), var(--badge-bg2, #f29f05));
@@ -172,27 +173,12 @@
             place-items: center;
         }
 
-        /* Alternate badge shapes */
-        /* Medallion (default): circular — already handled by border-radius:50% above */
-        .badge.trophy.shape-medallion .icon {
-            border-radius: 50%;
-        }
-
-        /* Shield and ribbon shapes are rendered via SVG templates for higher-fidelity exports.
-           Keep lightweight sizing tweaks here only; visual shape details come from the SVG. */
+        /* Shield shape adjustments (we only use shield now) */
         .badge.trophy.shape-shield .icon {
             border-radius: 8px;
             overflow: visible;
-            width: 38px;
-            height: 33px;
-        }
-
-        .badge.trophy.shape-ribbon .icon {
-            width: 42px;
-            height: 33px;
-            border-radius: 8px;
-            position: relative;
-            overflow: visible;
+            width: 36px;
+            height: 32px;
         }
 
         .badge.trophy .icon svg {
@@ -204,7 +190,7 @@
         .badge.trophy .label {
             font-weight: 700;
             color: inherit;
-            font-size: 12px;
+            font-size: 11px;
             display: block;
             line-height: 1;
         }
@@ -327,10 +313,10 @@
             background: var(--card);
             color: var(--text);
             border-radius: 12px;
-            padding: 18px;
+            padding: 20px;
             width: 92%;
-            max-width: 520px;
-            box-shadow: 0 12px 40px rgba(2, 6, 23, 0.2);
+            max-width: 640px;
+            box-shadow: 0 16px 48px rgba(2, 6, 23, 0.22);
         }
 
         .modal h3 {
@@ -344,22 +330,82 @@
         }
 
         .modal .pixel-art {
-            width: 64px;
-            height: 64px;
-            flex: 0 0 64px
+            width: 96px;
+            height: 96px;
+            flex: 0 0 96px;
+            display: grid;
+            place-items: center;
+            background: transparent;
         }
 
         .modal .meta {
             color: var(--muted);
-            font-size: 13px
+            font-size: 14px;
+        }
+
+        .modal-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .modal-body {
+            margin-top: 12px;
+        }
+
+        .modal .modal-tips {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .modal .modal-earn {
+            margin-top: 8px;
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .modal .pixel-art svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .modal-actions {
+            margin-top: 12px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .modal .modal-tip {
+            margin-left: auto;
+            color: var(--muted);
+            font-size: 12px;
         }
 
         .modal .close {
             margin-left: auto;
             background: transparent;
             border: 0;
-            font-size: 16px;
-            cursor: pointer
+            font-size: 18px;
+            cursor: pointer;
+            padding: 6px;
+        }
+
+        .modal .close:focus,
+        .modal .close-text:focus,
+        .modal button:focus {
+            outline: 3px solid rgba(11, 99, 179, 0.16);
+            outline-offset: 2px;
+        }
+
+        .modal .close-text {
+            background: transparent;
+            border: 0;
+            color: var(--muted);
+            padding: 6px 10px;
+            border-radius: 8px;
+            cursor: pointer;
         }
 
         .badge.trophy.locked {
@@ -666,8 +712,9 @@
                         <div id="badge-aria-live" class="sr-only" aria-live="polite" aria-atomic="true"></div>
                         <!-- Modal for badge details -->
                         <div id="badge-modal" class="modal-backdrop" style="display:none" aria-hidden="true">
-                            <div class="modal" role="dialog" aria-modal="true" aria-labelledby="badge-modal-title">
-                                <div style="display:flex;align-items:center;gap:12px">
+                            <div class="modal" role="dialog" aria-modal="true" aria-labelledby="badge-modal-title"
+                                aria-describedby="badge-modal-desc badge-modal-tips">
+                                <div class="modal-row">
                                     <div class="pixel-art" id="modal-art" aria-hidden="true"></div>
                                     <div style="flex:1">
                                         <h3 id="badge-modal-title">Badge</h3>
@@ -675,18 +722,15 @@
                                     </div>
                                     <button id="badge-modal-close" class="close" aria-label="Close">✖</button>
                                 </div>
-                                <div style="margin-top:12px">
-                                    <div id="badge-modal-tips" style="font-size:13px;color:var(--muted)"></div>
-                                    <div id="badge-modal-earn" style="margin-top:8px;font-size:13px;color:var(--muted)">
-                                    </div>
-                                    <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+                                <div class="modal-body">
+                                    <div id="badge-modal-tips" class="meta modal-tips"></div>
+                                    <div id="badge-modal-earn" class="meta modal-earn"></div>
+                                    <div class="modal-actions">
                                         <button id="badge-modal-export" class="secondary"
-                                            title="Export badges and mastery">Export badges</button>
-                                        <button id="badge-modal-close-text" class="close"
-                                            aria-label="Close">Close</button>
-                                        <div style="margin-left:auto;color:var(--muted);font-size:12px">Tip: Press Esc
-                                            to close
-                                        </div>
+                                            title="Export this badge as PNG">Download image</button>
+                                        <button id="badge-modal-close-text" class="close-text"
+                                            aria-label="Close dialog">Close</button>
+                                        <div class="modal-tip">Tip: Press Esc to close</div>
                                     </div>
                                 </div>
                             </div>
@@ -1125,20 +1169,11 @@
                 try { localStorage.setItem(SOUND_KEY, v ? '1' : '0'); } catch (e) { }
             }
 
-            // Badge shape preference key (medallion | shield | ribbon)
-            const BADGE_SHAPE_KEY = 'ooo_badge_shape';
+            // Badge shape is fixed to shield; selector and persistence removed.
 
-            function loadBadgeShape() {
-                try { return localStorage.getItem(BADGE_SHAPE_KEY) || 'shield'; } catch (e) { return 'shield'; }
-            }
-
-            function saveBadgeShape(v) {
-                try { localStorage.setItem(BADGE_SHAPE_KEY, v); } catch (e) { }
-            }
-
-            // Return an SVG string for a badge using the selected shape and level colors.
+            // Return an SVG string for a shield badge using level colors.
             // Used to render the modal preview and to provide a high-fidelity PNG export.
-            function getBadgeSVG(level, shape = 'medallion', size = 200) {
+            function getBadgeSVG(level, size = 200) {
                 try {
                     const pal = BADGE_COLORS[level] || ['#ddd', '#bbb', '#111'];
                     const gId = `g-${level}`;
@@ -1153,13 +1188,8 @@
 
                     // normalized viewBox and sizes
                     const vb = '0 0 200 200';
-                    // shape path snippets
+                    // shield path only (we no longer support multiple shapes)
                     const shieldPath = '<path d="M100 12 L170 44 L150 136 L100 180 L50 136 L30 44 Z" fill="url(#' + gId + ')" stroke="#00000022" stroke-width="2"/>';
-                    const medallion = '<circle cx="100" cy="90" r="64" fill="url(#' + gId + ')" stroke="#00000022" stroke-width="2"/>';
-                    const ribbonBase = '<rect x="32" y="24" width="136" height="132" rx="12" ry="12" fill="url(#' + gId + ')" stroke="#00000022" stroke-width="2"/>';
-                    const ribbonTails = '<g fill="url(#' + gId + ')"><path d="M52 156 L32 192 L72 172 Z"/><path d="M148 156 L168 192 L128 172 Z"/></g>';
-
-                    const shapeSVG = (shape === 'shield') ? shieldPath : (shape === 'ribbon') ? (ribbonBase + ribbonTails) : medallion;
 
                     const svg = `
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="${vb}" role="img" aria-label="${DIFFICULTY_LABELS[level] || level} badge">
@@ -1171,7 +1201,7 @@
                                                         <filter id="f1" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000" flood-opacity="0.12"/></filter>
                                                     </defs>
                                                     <g filter="url(#f1)">
-                                                        ${shapeSVG}
+                                                        ${shieldPath}
                                                     </g>
                                                     <!-- place inner pixel art centered inside the badge -->
                                                     <g transform="translate(68,56) scale(1.6)">
@@ -1191,26 +1221,12 @@
                     const a = 'var(--badge-bg1,' + pal[0] + ')';
                     const b = 'var(--badge-bg2,' + pal[1] + ')';
                     const t = 'var(--badge-text,' + (pal[2] || '#111') + ')';
-                    if (shape === 'medallion') {
-                        return `
-                                                    <svg width="44" height="44" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                                        <circle cx="32" cy="28" r="22" fill="${a}" stroke="${b}" stroke-width="2" />
-                                                        <circle cx="32" cy="28" r="8" fill="${t}" />
-                                                    </svg>`;
-                    } else if (shape === 'ribbon') {
-                        return `
-                                                    <svg width="44" height="44" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                                        <rect x="12" y="8" width="40" height="36" rx="6" ry="6" fill="${a}" stroke="${b}" stroke-width="2"/>
-                                                        <path d="M20 44 L12 60 L28 50 Z M44 44 L52 60 L36 50 Z" fill="${b}"/>
-                                                    </svg>`;
-                    } else {
-                        // shield
-                        return `
+                    // shield-only simplified SVG
+                    return `
                                                     <svg width="44" height="44" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                                         <path d="M32 6 L54 18 L50 44 L32 58 L14 44 L10 18 Z" fill="${a}" stroke="${b}" stroke-width="2"/>
                                                         <circle cx="32" cy="30" r="6" fill="${t}" />
                                                     </svg>`;
-                    }
                 } catch (e) { return ''; }
             }
 
@@ -1349,7 +1365,7 @@
                     const info = getBadgeInfo(lv);
                     const el = document.createElement('div');
                     // apply user's selected badge shape
-                    const shape = (typeof loadBadgeShape === 'function') ? loadBadgeShape() : 'shield';
+                    const shape = 'shield';
                     // fixed to shield shape; compact cabinet buttons
                     el.className = 'badge trophy shape-shield compact ' + (info.earned ? 'earned' : 'locked');
                     const arcadeName = ARCADE_NAMES[lv] || lv.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ');
@@ -1363,7 +1379,7 @@
                     icon.className = 'icon';
                     // small badge SVG for cabinet: shape outline + inner emblem
                     try {
-                        const sh = (typeof loadBadgeShape === 'function') ? loadBadgeShape() : 'shield';
+                        const sh = 'shield';
                         const smallSvg = getSmallBadgeSVG(lv, sh);
                         // use the simplified SVG optimized for small display
                         icon.innerHTML = smallSvg;
@@ -1481,8 +1497,7 @@
 
                 // pixel art (larger) per badge
                 // Render rich SVG badge (shape + inner art) for modal preview and export
-                const shape = (typeof loadBadgeShape === 'function') ? loadBadgeShape() : 'shield';
-                art.innerHTML = getBadgeSVG(level, shape, 260);
+                art.innerHTML = getBadgeSVG(level, 260);
 
                 // store open level and show modal
                 modal._openLevel = level;
@@ -1517,6 +1532,8 @@
                     };
                     document.addEventListener('keydown', modal._trapHandler);
                 } catch (e) { /* ignore */ }
+                // Announce to assistive tech that the badge dialog opened
+                try { showLiveToast(`Opened badge: ${name}`); } catch (e) { }
             }
 
             function closeModal() {
