@@ -12,7 +12,7 @@
             --accent: #0b63b3;
             --muted: #4b5563;
             --text: #0f1724;
-            --header-text: var(--text);
+            --header-text: #000;
             --button-text: #ffffff;
             --secondary-bg: #e6eef9;
             --secondary-color: var(--accent);
@@ -25,7 +25,7 @@
             --accent: #0b63b3;
             --muted: #9fb6d9;
             --text: #e6eef9;
-            --header-text: var(--text);
+            --header-text: #000;
             --button-text: #e6eef9;
             --secondary-bg: #112233;
             --secondary-color: var(--button-text);
@@ -38,8 +38,8 @@
             --muted: #ffffff;
             --text: #ffffff;
             --button-text: #000000;
-            /* Use the bright accent for header in high-contrast so it stands out on black */
-            --header-text: var(--accent);
+            /* Header text forced to black across themes per user request */
+            --header-text: #000;
             --secondary-bg: transparent;
             --secondary-color: #ffff00;
         }
@@ -500,6 +500,16 @@
             margin: 8px 0
         }
 
+        /* Empty label/placeholder box used on initial page load */
+        .empty-label {
+            min-height: 56px;
+            border: 1px dashed rgba(11, 99, 179, 0.10);
+            border-radius: 8px;
+            background: transparent;
+            width: 100%;
+            display: block;
+        }
+
         .feedback {
             margin-top: 10px;
             font-weight: 600
@@ -599,6 +609,41 @@
             border: 1px solid rgba(11, 99, 179, 0.04);
         }
 
+        /* Resources links should follow the color scheme */
+        .resources a {
+            color: var(--accent);
+            text-decoration: underline dotted;
+        }
+
+        /* Slight polish to legend for readability */
+        .legend {
+            background: linear-gradient(180deg, rgba(11, 99, 179, 0.04), transparent);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.4;
+            color: var(--muted);
+        }
+
+        .legend-list li {
+            font-size: 14px;
+            padding: 10px 12px;
+            gap: 14px;
+        }
+
+        .legend-op {
+            background: rgba(11, 99, 179, 0.10);
+            color: var(--accent);
+            padding: 6px 10px;
+            border-radius: 6px;
+            min-width: 48px;
+            text-align: center;
+            font-weight: 800;
+            box-shadow: 0 4px 10px rgba(2, 6, 23, 0.06);
+            font-size: 13px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+        }
+
         .legend-op {
             font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
             background: rgba(11, 99, 179, 0.08);
@@ -638,8 +683,8 @@
                     <h2 id="options-heading" style="margin:0 0 8px 0;font-size:15px">Options</h2>
                     <div class="controls">
                         <label>
-                            Difficulty:
-                            <select id="difficulty" title="Choose difficulty">
+                            Badge:
+                            <select id="difficulty" title="Choose badge">
                                 <option value="very-easy">1-UP Rookie</option>
                                 <option value="easy">Pixel Player</option>
                                 <option value="medium">Combo Champ</option>
@@ -724,15 +769,9 @@
 
                 <section class="card" aria-labelledby="resources-heading">
                     <h2 id="resources-heading" style="margin:0 0 8px 0;font-size:15px">Resources</h2>
-                    <div style="color:var(--muted);font-size:14px">
-                        <ul style="margin:0 0 8px 18px">
-                            <li><a href="https://www.w3schools.com/python/python_operators_precedence.asp"
-                                    target="_blank" rel="noopener">Python operator precedence — W3Schools</a></li>
-                            <li><a href="https://runestone.academy/ns/books/published/fopp/Conditionals/PrecedenceofOperators.html"
-                                    target="_blank" rel="noopener">Precedence of Operators — Runestone</a></li>
-                        </ul>
-
-                        <div style="margin-top:8px">
+                    <div class="resources" style="color:var(--muted);font-size:14px">
+                        <!-- Video first for immediate context -->
+                        <div style="margin-bottom:10px">
                             <div
                                 style="max-width:720px;margin:0 auto;position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:8px">
                                 <iframe src="https://www.youtube.com/embed/nD1xTpJo4jU?si=trz2yNi4ohEjsO_V"
@@ -742,9 +781,15 @@
                                     style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe>
                             </div>
                             <div style="font-size:13px;color:var(--muted);margin-top:6px">Video: brief overview of order
-                                of
-                                operations.</div>
+                                of operations.</div>
                         </div>
+
+                        <ul style="margin:0 0 8px 18px">
+                            <li><a href="https://www.w3schools.com/python/python_operators_precedence.asp"
+                                    target="_blank" rel="noopener">Python operator precedence — W3Schools</a></li>
+                            <li><a href="https://runestone.academy/ns/books/published/fopp/Conditionals/PrecedenceofOperators.html"
+                                    target="_blank" rel="noopener">Precedence of Operators — Runestone</a></li>
+                        </ul>
                     </div>
                 </section>
 
@@ -804,23 +849,25 @@
 
                 <section class="card" aria-labelledby="legend-heading">
                     <h2 id="legend-heading" style="margin:0 0 8px 0;font-size:15px">Operator legend</h2>
-                    <div style="font-size:14px;color:var(--muted);">
+                    <div class="legend">
                         <div style="margin-bottom:8px;font-size:14px">Operators used in problems:</div>
-                        <ul
-                            style="margin:0 0 8px 18px;color:var(--muted);font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, monospace">
-                            <li><code>+</code> — addition</li>
-                            <li><code>-</code> — subtraction</li>
-                            <li><code>*</code> — multiplication</li>
-                            <li><code>/</code> — division</li>
-                            <li><code>**</code> — exponent (power)</li>
+                        <ul class="legend-list">
+                            <li><span class="legend-op"><code>+</code></span><span class="legend-desc">addition</span>
+                            </li>
+                            <li><span class="legend-op"><code>-</code></span><span
+                                    class="legend-desc">subtraction</span></li>
+                            <li><span class="legend-op"><code>*</code></span><span
+                                    class="legend-desc">multiplication</span></li>
+                            <li><span class="legend-op"><code>/</code></span><span class="legend-desc">division</span>
+                            </li>
+                            <li><span class="legend-op"><code>**</code></span><span class="legend-desc">exponent
+                                    (power)</span></li>
                         </ul>
-                        <div style="margin-top:6px;color:var(--muted);font-size:13px">Tip: Problems use Python-style
-                            operators; exponents use <code>**</code>. Order follows PEMDAS.</div>
+                        <div style="margin-top:6px;font-size:13px">Tip: Problems use Python-style operators; exponents
+                            use <code>**</code>. Order follows PEMDAS.</div>
                         <div style="margin-top:10px;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, monospace">
-                            <div style="font-size:13px;color:var(--muted);margin-bottom:6px">Examples by difficulty:
-                            </div>
-                            <ul
-                                style="margin:0;padding-left:18px;color:var(--muted);font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, monospace">
+                            <div style="font-size:13px;margin-bottom:6px">Examples by difficulty:</div>
+                            <ul class="legend-list" style="margin:0;padding-left:18px">
                                 <li><strong>Very Easy:</strong> <code>3 + 4</code></li>
                                 <li><strong>Easy:</strong> <code>(5 + 2) * 3</code></li>
                                 <li><strong>Medium:</strong> <code>(2 + 3) ** 2 - 4</code></li>
@@ -2052,8 +2099,8 @@
                 if (e.key === 'Enter') checkBtn.click();
             });
 
-            // initialize small sample
-            problemEl.textContent = 'Choose options then click Start to generate problems.';
+            // initialize small sample: show an empty placeholder box until the user starts a set
+            problemEl.innerHTML = '<div class="empty-label" aria-hidden="true">&nbsp;</div>';
         })();
     </script>
 </body>
