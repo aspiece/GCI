@@ -614,6 +614,31 @@
             font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace
         }
 
+        /* Steps reveal animation */
+        @keyframes stepsReveal {
+            from {
+                opacity: 0;
+                transform: translateY(-6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .steps.reveal {
+            animation: stepsReveal 420ms ease both;
+        }
+
+        .steps.hint {
+            font-style: italic;
+            color: var(--muted);
+            background: transparent;
+            border: 0;
+            padding-left: 0;
+        }
+
         .meta {
             display: flex;
             gap: 12px;
@@ -2335,7 +2360,10 @@
                 answerInput.value = '';
                 feedbackEl.textContent = '';
                 stepsEl.textContent = '';
-                stepsEl.style.display = stepsToggle.checked ? 'block' : 'none';
+                // always hide steps when presenting a new problem; only show after correct answer
+                stepsEl.style.display = 'none';
+                // remove any hint or reveal classes from prior interactions
+                try { stepsEl.classList.remove('hint'); stepsEl.classList.remove('reveal'); } catch (e) { }
                 askedEl.textContent = i;
                 // update mastery UI for this problem's level
                 updateMasteryUI(p.level || difficulty.value);
@@ -2392,9 +2420,31 @@
                     // recompute authoritative score to avoid double-counting
                     score = results.reduce((s, v) => s + (v ? 1 : 0), 0);
                     feedbackEl.textContent = 'Correct! ✅ ' + p.expr + ' = ' + p.answer;
+                    // show steps if user requested; animate reveal
+                    if (stepsToggle.checked) {
+                        try {
+                            const st = stepsFor(p.expr);
+                            stepsEl.classList.remove('hint');
+                            stepsEl.textContent = st.join('\n→ ');
+                            stepsEl.style.display = 'block';
+                            stepsEl.classList.add('reveal');
+                            // remove reveal class after animation completes so it can re-run later
+                            setTimeout(() => { try { stepsEl.classList.remove('reveal'); } catch (e) { } }, 520);
+                        } catch (e) { stepsEl.style.display = 'none'; }
+                    }
                 } else {
                     results[index] = false;
                     feedbackEl.textContent = 'Not quite. ✖ Correct: ' + p.answer;
+                    // if user asked for steps, show a small hint explaining why they're hidden
+                    if (stepsToggle.checked) {
+                        try {
+                            stepsEl.classList.add('hint');
+                            stepsEl.textContent = 'Steps will be shown after a correct answer.';
+                            stepsEl.style.display = 'block';
+                        } catch (e) { }
+                    } else {
+                        try { stepsEl.style.display = 'none'; } catch (e) { }
+                    }
                 }
                 // mark this problem as answered to avoid double-counting
                 answered = true;
@@ -2405,34 +2455,47 @@
                 try { const res = recordAttempt(p.level || difficulty.value, correct); updateMasteryUI(p.level || difficulty.value, res); } catch (e) { }
                 scoreEl.textContent = score;
                 askedEl.textContent = index + 1;
-                // show steps if requested
-                if (stepsToggle.checked) {
-                    try {
-                        const st = stepsFor(p.expr);
-                        stepsEl.style.display = 'block';
-                        stepsEl.textContent = st.join('\n→ ');
-                    } catch (e) {
-                        stepsEl.style.display = 'none';
-                    }
-                }
+                // Note: steps visibility and content handled above in correct/incorrect branches.
             });
 
             nextBtn.addEventListener('click', () => {
                 if (!problems.length) return;
                 // mark as attempted
                 askedEl.textContent = index + 1;
-                // move to next
-                // update mastery UI for this problem's level
+                // if the current problem was answered correctly and steps toggle is on,
+                // ensure steps are visible briefly (giving the user a chance to review)
                 const p = problems[index];
-                updateMasteryUI(p && p.level ? p.level : difficulty.value);
-                showProblem(index + 1);
+                const wasCorrect = results[index] === true;
+                const revealBeforeNext = wasCorrect && stepsToggle.checked;
+                if (revealBeforeNext) {
+                    try {
+                        // ensure steps for current problem are visible and animated
+                        const st = stepsFor(p.expr);
+                        stepsEl.classList.remove('hint');
+                        stepsEl.textContent = st.join('\n→ ');
+                        stepsEl.style.display = 'block';
+                        stepsEl.classList.add('reveal');
+                    } catch (e) { }
+                    // wait briefly so the reveal is visible, then advance
+                    setTimeout(() => {
+                        try { stepsEl.classList.remove('reveal'); } catch (e) { }
+                        updateMasteryUI(p && p.level ? p.level : difficulty.value);
+                        showProblem(index + 1);
+                    }, 650);
+                } else {
+                    // update mastery UI for this problem's level and move on immediately
+                    updateMasteryUI(p && p.level ? p.level : difficulty.value);
+                    showProblem(index + 1);
+                }
             });
 
             generateBtn.addEventListener('click', newSet);
             stepsToggle.addEventListener('change', () => {
-                stepsEl.style.display = stepsToggle.checked ? 'block' : 'none';
+                // Only show steps immediately if current problem has already been answered correctly.
+                const showNow = stepsToggle.checked && problems.length && results[index] === true;
+                stepsEl.style.display = showNow ? 'block' : 'none';
                 // if showing, precompute steps for current problem
-                if (stepsToggle.checked && problems.length && problems[index]) {
+                if (showNow) {
                     try {
                         stepsEl.textContent = stepsFor(problems[index].expr).join('\n→ ');
                     } catch (e) { stepsEl.textContent = 'Cannot show steps for this expression.'; }
