@@ -1017,6 +1017,21 @@
         (function () {
             'use strict';
             const el = id => document.getElementById(id);
+            // safeClosest: robust replacement for Element.closest that tolerates text nodes
+            // and older browsers where .closest may not exist on the event target (e.g. text nodes).
+            const safeClosest = (node, selector) => {
+                try {
+                    if (!node) return null;
+                    if (typeof node.closest === 'function') return node.closest(selector);
+                    // If node is a text node, move to its parent element
+                    let elNode = (node.nodeType === 3) ? node.parentElement : node;
+                    while (elNode) {
+                        if (elNode.matches && elNode.matches(selector)) return elNode;
+                        elNode = elNode.parentElement;
+                    }
+                    return null;
+                } catch (e) { return null; }
+            };
             const difficulty = el('difficulty');
             const rngSelect = el('range');
             const themeSelect = el('theme-select');
@@ -1178,14 +1193,30 @@
                 // sanitize: only allow digits, spaces, operators, parentheses, decimal point and minus
                 if (!/^[0-9+\-*/^().\s]+$/.test(expr)) throw new Error('Invalid expression characters');
                 const jsExpr = expr.replace(/\^/g, '**');
-                // use Function for speed; surrounded to avoid eval scope issues
-                // handle potential division by zero -> throw
+                // Quick heuristic checks to avoid evaluating expressions that will be extremely
+                // expensive (very large exponents or exponent-chains). We reject such
+                // expressions early so callers can discard them and avoid freezing the UI.
                 try {
+                    // disallow long exponent chains (e.g. a ** b ** c)
+                    const expCount = (jsExpr.match(/\*\*/g) || []).length;
+                    if (expCount > 2) throw new Error('Rejected: too many exponent operators');
+                    // find numeric base/exponent pairs and ensure magnitudes are small
+                    const pairRe = /(-?\d+)\s*\*\*\s*(-?\d+)/g;
+                    let m;
+                    while ((m = pairRe.exec(jsExpr)) !== null) {
+                        const base = Math.abs(parseInt(m[1], 10));
+                        const exp = Math.abs(parseInt(m[2], 10));
+                        if (isNaN(base) || isNaN(exp)) continue;
+                        // enforce small base and exponent to avoid huge Math.pow computations
+                        if (base > 20 || exp > 6) throw new Error('Rejected: exponent magnitude too large');
+                    }
+                    // use Function for speed; surrounded to avoid eval scope issues
                     const val = Function('"use strict"; return (' + jsExpr + ')')();
                     if (!isFinite(val)) throw new Error('Non-finite result');
                     // round to reasonable precision to avoid floating noise
                     return Math.round((val + Number.EPSILON) * 100000) / 100000;
                 } catch (e) {
+                    // propagate so callers (newSet / stress tests) can decide to reject this expr
                     throw e;
                 }
             }
@@ -1387,9 +1418,12 @@
                         if (attempt > 50) break;
                         // require integer results so users can answer using integers only
                     } while (val === null || !isFinite(val) || Math.abs(val) > 1e6 || !Number.isInteger(val));
-                    // if we failed to produce a valid value after many attempts, try again without counting this iteration
+                    // if we failed to produce a valid value after many attempts, fall back to a simple problem
                     if (val === null || !isFinite(val) || Math.abs(val) > 1e6) {
-                        i--; // retry this index
+                        try { console.warn('newSet: failed to produce valid expression, inserting fallback'); } catch (e) { }
+                        const fallbackEx = '1 + 1';
+                        const fallbackVal = 2;
+                        problems.push({ expr: fallbackEx, answer: fallbackVal, level: 'very-easy' });
                         continue;
                     }
                     problems.push({ expr: ex, answer: val, level });
@@ -1727,7 +1761,7 @@
                 if (cabinet && !cabinet._wired) {
                     cabinet._wired = true;
                     cabinet.addEventListener('click', (ev) => {
-                        const tgt = ev.target.closest('.badge.trophy');
+                        const tgt = safeClosest(ev.target, '.badge.trophy');
                         if (!tgt) return;
                         const lvl = tgt.getAttribute('data-level');
                         const info = getBadgeInfo(lvl);
@@ -1745,7 +1779,7 @@
                         // doesn't also trigger opening the badge modal
                         if (ev.target && ev.target.closest && ev.target.closest('.lock-trigger')) return;
                         if (ev.key === 'Enter' || ev.key === ' ') {
-                            const tgt = ev.target.closest('.badge.trophy');
+                            const tgt = safeClosest(ev.target, '.badge.trophy');
                             if (!tgt) return;
                             ev.preventDefault();
                             tgt.click();
@@ -2276,7 +2310,7 @@
                     cabinet.addEventListener('click', (ev) => {
                         // if click originated from a lock helper, let its handler manage the event
                         if (ev.target && ev.target.closest && ev.target.closest('.lock-trigger')) return;
-                        const tgt = ev.target.closest('.badge.trophy');
+                        const tgt = safeClosest(ev.target, '.badge.trophy');
                         if (!tgt) return;
                         const lvl = tgt.getAttribute('data-level');
                         const info = getBadgeInfo(lvl);
@@ -2295,7 +2329,7 @@
                         // doesn't also trigger opening the badge modal
                         if (ev.target && ev.target.closest && ev.target.closest('.lock-trigger')) return;
                         if (ev.key === 'Enter' || ev.key === ' ') {
-                            const tgt = ev.target.closest('.badge.trophy');
+                            const tgt = safeClosest(ev.target, '.badge.trophy');
                             if (!tgt) return;
                             ev.preventDefault();
                             tgt.click();
