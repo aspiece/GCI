@@ -1,0 +1,23 @@
+name: Expression stress test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  expr-stress:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install puppeteer
+        run: npm install puppeteer --no-audit --no-fund
+
+      - name: Run expression stress test
+        run: node tools/expr_stress_test.js

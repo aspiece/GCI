@@ -44,6 +44,25 @@
             --secondary-color: #ffff00;
         }
 
+        /* Visually indicate an answered/disabled input (subtle) */
+        input.answered {
+            opacity: 0.6;
+            background: #f3f4f6;
+        }
+
+        /* Disabled button styling for clearer visual feedback */
+        button[disabled],
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background: #cbd5e1;
+            /* muted neutral */
+            color: #4b5563;
+            box-shadow: none;
+            border: 1px solid rgba(11, 99, 179, 0.06);
+            transition: opacity 120ms ease, background 120ms ease;
+        }
+
         body {
             font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial;
             margin: 0;
@@ -811,6 +830,36 @@
                     </div>
                 </section>
 
+                <!-- Expression generator debug / stress panel -->
+                <section id="expr-debug-card" class="card" aria-labelledby="expr-debug-heading" style="display:block">
+                    <h2 id="expr-debug-heading" style="margin:0 0 8px 0;font-size:15px">Expression Debug</h2>
+                    <div style="color:var(--muted);font-size:14px">
+                        <div style="margin-bottom:8px">Developer tools: generate expressions in-page and view stats.
+                        </div>
+                        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+                            <label style="display:flex;align-items:center;gap:8px">
+                                Level:
+                                <select id="expr-debug-level">
+                                    <option value="very-easy">1-UP Rookie</option>
+                                    <option value="easy">Pixel Player</option>
+                                    <option value="medium">Combo Champ</option>
+                                    <option value="hard">Boss Brawler</option>
+                                    <option value="expert">High Score Legend</option>
+                                </select>
+                            </label>
+                            <label style="display:flex;align-items:center;gap:8px">
+                                Iterations:
+                                <input id="expr-debug-iters" type="number" min="10" max="20000" value="2000"
+                                    style="width:100px" />
+                            </label>
+                            <button id="expr-debug-run" class="secondary">Run in-page stress</button>
+                            <button id="expr-debug-reset" class="secondary">Reset stats</button>
+                        </div>
+                        <pre id="expr-debug-output" class="steps"
+                            style="margin-top:10px;white-space:pre-wrap;max-height:220px;overflow:auto"></pre>
+                    </div>
+                </section>
+
                 <section class="card" aria-live="polite">
                     <div class="meta">
                         <div class="score">Score: <strong id="score">0</strong>/<span id="asked">0</span></div>
@@ -992,6 +1041,10 @@
             let index = 0;
             let score = 0;
             let total = 0;
+            // whether the current problem has been answered (prevents double-scoring on repeated Enter)
+            let answered = false;
+            // per-problem result storage (true/false/null) used to compute authoritative score
+            let results = [];
 
             function randInt(min, max) {
                 return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -1000,103 +1053,135 @@
             function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
             function generateExpression(level, maxAbs) {
-                // build tokens with numbers and operators, possibly parentheses and exponents
+                // initialize in-page expression stats (counts for debugging)
+                try {
+                    if (!window._exprStats) window._exprStats = { attempts: 0, div0: 0, rejects: 0, selected: 0, fallbacks: 0, maxAbs: 0, samples: [] };
+                } catch (e) { /* ignore in non-browser contexts */ }
+                // Build tokens with numbers and operators, possibly parentheses and exponents.
+                // This function avoids recursion when regenerating on division-by-zero by using an
+                // iterative retry loop (prevents stack overflow/hangs on high-difficulty sets).
                 const opsBasic = ['+', '-', '*', '/'];
-                const opsWithExp = ['+', '-', '*', '/', '**'];
-                // Enable exponents for all levels; presence controlled by random operator picks
-                const ops = opsWithExp; // include '**' in all difficulty sets
+                // Slightly reduce exponent frequency for the hardest tiers to avoid excessive big-number generation
+                const includeExpChance = level === 'very-easy' ? 0.10 : level === 'easy' ? 0.25 : level === 'medium' ? 0.5 : level === 'hard' ? 0.60 : 0.60;
+                // Cap exponent magnitude a bit tighter for the top tier to reduce large powers
+                const exponentMax = level === 'expert' ? 3 : 4;
 
-                // determine number of operations
-                let opsCount;
-                if (level === 'very-easy') opsCount = 1;
-                else if (level === 'easy') opsCount = 2;
-                else if (level === 'medium') opsCount = randInt(3, 4);
-                else if (level === 'hard') opsCount = randInt(4, 6);
-                else if (level === 'expert') opsCount = randInt(6, 8);
-                else opsCount = 2;
+                const makeOnce = () => {
+                    // determine number of operations
+                    let opsCount;
+                    if (level === 'very-easy') opsCount = 1;
+                    else if (level === 'easy') opsCount = 2;
+                    else if (level === 'medium') opsCount = randInt(3, 4);
+                    else if (level === 'hard') opsCount = randInt(4, 6);
+                    else if (level === 'expert') opsCount = randInt(6, 8);
+                    else opsCount = 2;
 
-                // produce a flat expression first
-                let tokens = [];
-                // chance to include exponent operator varies by difficulty (rarer for easier levels)
-                const includeExpChance = level === 'very-easy' ? 0.10 : level === 'easy' ? 0.25 : level === 'medium' ? 0.5 : level === 'hard' ? 0.75 : 0.9;
-                for (let i = 0; i <= opsCount; i++) {
-                    let n = randInt(-maxAbs, maxAbs);
-                    // avoid zero in denominators later by ensuring possibility
-                    tokens.push(String(n));
-                    if (i < opsCount) {
-                        // pick operator: prefer basic operators, include '**' probabilistically
-                        let op;
-                        if (Math.random() < includeExpChance) op = '**';
-                        else op = pick(opsBasic);
-                        tokens.push(op);
+                    const tokens = [];
+                    for (let i = 0; i <= opsCount; i++) {
+                        let n = randInt(-maxAbs, maxAbs);
+                        tokens.push(String(n));
+                        if (i < opsCount) {
+                            let op;
+                            if (Math.random() < includeExpChance) op = '**';
+                            else op = pick(opsBasic);
+                            tokens.push(op);
+                        }
                     }
-                }
 
-                // optionally insert parentheses pairs (allow at every level; easier levels get fewer pairs)
-                {
+                    // optionally insert parentheses pairs
                     let pairs = 0;
                     if (level === 'very-easy') pairs = randInt(0, 1);
                     else if (level === 'easy') pairs = randInt(0, 1);
                     else if (level === 'medium') pairs = randInt(0, 1);
                     else if (level === 'hard') pairs = randInt(1, 2);
                     else if (level === 'expert') pairs = randInt(2, 3);
-                    // do not add parentheses if expression is a single operation
                     if (opsCount < 2) pairs = 0;
                     for (let p = 0; p < pairs; p++) {
-                        // choose positions that encompass at least one operator
                         const len = tokens.length;
                         if (len < 3) break;
                         let i = randInt(0, Math.max(0, len - 3));
-                        // ensure i is number position (even index), start at even index
                         if (i % 2 === 1) i++;
                         let j = randInt(i + 2, Math.min(len - 1, i + 6));
                         if (j % 2 === 1) j++;
-                        // wrap tokens i..j inclusive in parentheses
                         tokens.splice(i, 0, '(');
-                        // j shifts by +1 due to insertion
                         tokens.splice(j + 1, 0, ')');
                     }
-                }
 
-                // Clamp exponents to small magnitudes to avoid huge numeric results.
-                // Find any '**' operators and ensure the exponent is a small non-negative integer (0..4)
-                const findNextNumber = (arr, start) => {
-                    for (let i = start + 1; i < arr.length; i++) {
-                        if (/^-?\d+$/.test(arr[i])) return i;
-                    }
-                    return -1;
-                };
-                const findPrevNumber = (arr, start) => {
-                    for (let i = start - 1; i >= 0; i--) {
-                        if (/^-?\d+$/.test(arr[i])) return i;
-                    }
-                    return -1;
-                };
-                for (let i = 0; i < tokens.length; i++) {
-                    if (tokens[i] === '**') {
-                        const expIdx = findNextNumber(tokens, i);
-                        const baseIdx = findPrevNumber(tokens, i);
-                        if (expIdx !== -1) {
-                            // force small non-negative exponent
-                            tokens[expIdx] = String(randInt(0, 4));
-                        }
-                        if (baseIdx !== -1) {
-                            // keep base modest to avoid huge powers
-                            let base = parseInt(tokens[baseIdx], 10) || 1;
-                            if (base > 6) base = 6;
-                            if (base < -6) base = -6;
-                            tokens[baseIdx] = String(base);
+                    // Clamp exponents to small magnitudes to avoid huge numeric results.
+                    const findNextNumber = (arr, start) => {
+                        for (let i = start + 1; i < arr.length; i++) if (/^-?\d+$/.test(arr[i])) return i;
+                        return -1;
+                    };
+                    const findPrevNumber = (arr, start) => {
+                        for (let i = start - 1; i >= 0; i--) if (/^-?\d+$/.test(arr[i])) return i;
+                        return -1;
+                    };
+                    for (let i = 0; i < tokens.length; i++) {
+                        if (tokens[i] === '**') {
+                            const expIdx = findNextNumber(tokens, i);
+                            const baseIdx = findPrevNumber(tokens, i);
+                            if (expIdx !== -1) tokens[expIdx] = String(randInt(0, exponentMax));
+                            if (baseIdx !== -1) {
+                                let base = parseInt(tokens[baseIdx], 10) || 1;
+                                if (base > 6) base = 6;
+                                if (base < -6) base = -6;
+                                tokens[baseIdx] = String(base);
+                            }
                         }
                     }
-                }
 
-                // replace some multiplies by implicit? Keep explicit.
-                // Clean up: avoid sequences like (/ 0) - later evaluator handles divide by zero by regenerating
-                const expr = tokens.join(' ');
-                if (/\/\s*0(?!\d|\.|\))/g.test(expr)) {
-                    return generateExpression(level, maxAbs); // regenerate to avoid immediate division by zero
+                    return tokens.join(' ');
+                };
+
+                // Iteratively try to build an expression that is safe and reasonably sized.
+                // We'll evaluate the candidate and reject it if it would create a non-integer result,
+                // non-finite value, or a value with excessive magnitude. This avoids producing
+                // huge numbers that cause slowdowns or many retries higher in the stack.
+                const MAX_TRIES = 120;
+                const MAX_ACCEPTABLE_ABS = 100000; // largest absolute value we accept for final evaluated result
+                for (let attempt = 0; attempt < MAX_TRIES; attempt++) {
+                    try { window._exprStats.attempts++; } catch (e) { }
+                    const expr = makeOnce();
+                    // avoid sequences like '/ 0' (followed by non-digit/decimal/paren) which would be immediate div-by-zero
+                    if (/\/\s*0(?!\d|\.|\))/g.test(expr)) {
+                        try { window._exprStats.div0++; } catch (e) { }
+                        if (attempt > 12 && typeof console !== 'undefined' && console.warn) {
+                            console.warn('generateExpression: retrying to avoid division-by-zero', { level, maxAbs, attempt, expr });
+                        }
+                        continue; // retry without recursion
+                    }
+                    // Try to quickly evaluate the candidate and reject if it is not an integer or is too large.
+                    try {
+                        // evaluateExpr is hoisted (function declaration) and safe for our generated tokens
+                        const val = evaluateExpr(expr);
+                        if (!Number.isFinite(val) || !Number.isInteger(val) || Math.abs(val) > MAX_ACCEPTABLE_ABS) {
+                            try { window._exprStats.rejects++; } catch (e) { }
+                            if (attempt > 6 && typeof console !== 'undefined' && console.debug) console.debug('generateExpression: rejecting candidate based on eval', { expr, val });
+                            continue; // try again
+                        }
+                        // record selected sample and update maxAbs
+                        try {
+                            window._exprStats.selected++;
+                            const a = Math.abs(val);
+                            if (a > window._exprStats.maxAbs) window._exprStats.maxAbs = a;
+                            if (window._exprStats.samples.length < 6) window._exprStats.samples.push({ expr, val });
+                        } catch (e) { }
+                    } catch (e) {
+                        // evaluation failed (parsing, division by zero, etc.) — retry
+                        try { window._exprStats.rejects++; } catch (er) { }
+                        if (attempt > 6 && typeof console !== 'undefined' && console.debug) console.debug('generateExpression: eval threw, retrying', { expr, err: e && e.message });
+                        continue;
+                    }
+                    if (attempt > 12 && typeof console !== 'undefined' && console.info) {
+                        console.info('generateExpression: selected expression after retries', { level, maxAbs, attempts: attempt + 1 });
+                    }
+                    return expr;
                 }
-                return expr;
+                // Last resort: return one expression even if it wasn't validated within the attempts.
+                const fallback = makeOnce();
+                try { window._exprStats.fallbacks++; if (window._exprStats.samples.length < 6) window._exprStats.samples.push({ expr: fallback, val: null }); } catch (e) { }
+                if (typeof console !== 'undefined' && console.warn) console.warn('generateExpression: fallback after max tries', { level, maxAbs, fallback });
+                return fallback;
             }
 
             // Evaluate an expression string safely for our generated expressions.
@@ -1300,6 +1385,7 @@
                 index = 0;
                 score = 0;
                 total = count;
+                results = new Array(count).fill(null);
                 for (let i = 0; i < count; i++) {
                     // ensure valid evaluated numbers and avoid division by zero artifacts
                     let ex;
@@ -2139,6 +2225,10 @@
                 try { if (nextBtn) nextBtn.disabled = false; } catch (e) { }
                 try { if (checkBtn) checkBtn.disabled = false; } catch (e) { }
                 try { if (answerInput) answerInput.disabled = false; } catch (e) { }
+                // reset per-problem answered state so check can score once
+                answered = false;
+                try { if (checkBtn) checkBtn.disabled = false; } catch (e) { }
+                try { if (answerInput) { answerInput.disabled = false; answerInput.classList.remove('answered'); } } catch (e) { }
                 // render badges indicating difficulty and contained features
                 if (badgesEl) {
                     badgesEl.innerHTML = '';
@@ -2227,6 +2317,8 @@
             }
 
             checkBtn.addEventListener('click', () => {
+                // prevent repeated checks from re-scoring the same problem
+                if (answered) { feedbackEl.textContent = 'Already answered — press Next.'; return; }
                 if (!problems.length) return;
                 const p = problems[index];
                 const user = answerInput.value.trim();
@@ -2237,11 +2329,20 @@
                 let correct = false;
                 if (userNum === p.answer) correct = true;
                 if (correct) {
-                    score++;
+                    // record result for this index
+                    results[index] = true;
+                    // recompute authoritative score to avoid double-counting
+                    score = results.reduce((s, v) => s + (v ? 1 : 0), 0);
                     feedbackEl.textContent = 'Correct! ✅ ' + p.expr + ' = ' + p.answer;
                 } else {
+                    results[index] = false;
                     feedbackEl.textContent = 'Not quite. ✖ Correct: ' + p.answer;
                 }
+                // mark this problem as answered to avoid double-counting
+                answered = true;
+                // disable further input for this problem to prevent accidental re-submission
+                try { if (checkBtn) checkBtn.disabled = true; } catch (e) { }
+                try { if (answerInput) { answerInput.disabled = true; answerInput.classList.add('answered'); } } catch (e) { }
                 // record mastery attempt
                 try { const res = recordAttempt(p.level || difficulty.value, correct); updateMasteryUI(p.level || difficulty.value, res); } catch (e) { }
                 scoreEl.textContent = score;
@@ -2318,6 +2419,58 @@
                     } catch (e) { /* ignore */ }
                 });
             })();
+
+            // In-page expression debug helpers
+            function updateExprDebugUI() {
+                try {
+                    const out = document.getElementById('expr-debug-output');
+                    if (!out) return;
+                    const s = window._exprStats || {};
+                    out.textContent = 'Expr stats:\n' + JSON.stringify(s, null, 2);
+                } catch (e) { }
+            }
+
+            function resetExprStats() {
+                try {
+                    window._exprStats = { attempts: 0, div0: 0, rejects: 0, selected: 0, fallbacks: 0, maxAbs: 0, samples: [] };
+                    updateExprDebugUI();
+                } catch (e) { }
+            }
+
+            async function runInPageStress(iters, level) {
+                try {
+                    resetExprStats();
+                    const maxAbsVal = parseInt(document.getElementById('range')?.value || '9', 10);
+                    for (let i = 0; i < iters; i++) {
+                        // generateExpression already updates global stats; we call it and optionally evaluate
+                        const ex = generateExpression(level, maxAbsVal);
+                        try {
+                            const v = evaluateExpr(ex);
+                            // small sample capture handled inside generateExpression for accepted samples
+                        } catch (e) {
+                            // re-evaluation failure ignored here because generateExpression already accounted for rejects
+                        }
+                        if (i % 100 === 0) updateExprDebugUI();
+                        // yield occasionally to keep UI responsive
+                        if (i % 500 === 0) await new Promise(r => setTimeout(r, 0));
+                    }
+                    updateExprDebugUI();
+                } catch (e) { console.error(e); }
+            }
+
+            // wire debug panel buttons
+            try {
+                const runBtn = document.getElementById('expr-debug-run');
+                const resetBtn = document.getElementById('expr-debug-reset');
+                if (runBtn) runBtn.addEventListener('click', () => {
+                    const level = document.getElementById('expr-debug-level')?.value || (difficulty && difficulty.value) || 'medium';
+                    const iters = Math.min(20000, Math.max(10, parseInt(document.getElementById('expr-debug-iters')?.value || '2000', 10)));
+                    runInPageStress(iters, level);
+                });
+                if (resetBtn) resetBtn.addEventListener('click', () => { resetExprStats(); });
+                // show initial stats
+                updateExprDebugUI();
+            } catch (e) { }
 
             // create a shared anchored tooltip used for lock button hints (appears on hover/focus)
             (function () {
