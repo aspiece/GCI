@@ -1405,22 +1405,33 @@
                 score = 0;
                 total = count;
                 results = new Array(count).fill(null);
+                const MAX_ATTEMPTS_PER_PROBLEM = 400;
                 for (let i = 0; i < count; i++) {
-                    // ensure valid evaluated numbers and avoid division by zero artifacts
-                    let ex;
-                    let val;
+                    // try repeatedly to build a valid integer-valued expression for this problem
+                    let ex = null;
+                    let val = null;
+                    const recentFails = [];
                     let attempt = 0;
-                    do {
+                    for (; attempt < MAX_ATTEMPTS_PER_PROBLEM; attempt++) {
                         ex = generateExpression(level, maxAbs);
-                        try { val = evaluateExpr(ex); }
-                        catch (err) { val = null; }
-                        attempt++;
-                        if (attempt > 50) break;
+                        try {
+                            val = evaluateExpr(ex);
+                        } catch (err) {
+                            // record a compact failure sample for debugging and continue
+                            if (recentFails.length < 8) recentFails.push({ expr: ex, error: (err && err.message) || String(err) });
+                            val = null;
+                            continue;
+                        }
                         // require integer results so users can answer using integers only
-                    } while (val === null || !isFinite(val) || Math.abs(val) > 1e6 || !Number.isInteger(val));
-                    // if we failed to produce a valid value after many attempts, fall back to a simple problem
-                    if (val === null || !isFinite(val) || Math.abs(val) > 1e6) {
-                        try { console.warn('newSet: failed to produce valid expression, inserting fallback'); } catch (e) { }
+                        if (val === null || !isFinite(val) || Math.abs(val) > 1e6 || !Number.isInteger(val)) {
+                            if (recentFails.length < 8) recentFails.push({ expr: ex, value: val });
+                            continue;
+                        }
+                        // success: got a valid integer result
+                        break;
+                    }
+                    if (attempt >= MAX_ATTEMPTS_PER_PROBLEM) {
+                        try { console.warn('newSet: max attempts reached for a problem; inserting fallback. Recent failures:', recentFails); } catch (e) { }
                         const fallbackEx = '1 + 1';
                         const fallbackVal = 2;
                         problems.push({ expr: fallbackEx, answer: fallbackVal, level: 'very-easy' });
