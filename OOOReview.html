@@ -1082,6 +1082,29 @@
                 const exponentMax = level === 'expert' ? 3 : 4;
 
                 const makeOnce = () => {
+                    // Special-case structured generation for higher difficulties to
+                    // produce nested-parentheses + exponent patterns (matches legend).
+                    const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
+                    if (level === 'hard' || level === 'expert') {
+                        // Build nested expression like (a + (b * c)) ** e [ / d ]
+                        const a = clamp(randInt(-Math.min(maxAbs, 9), Math.min(maxAbs, 9)), -9, 9);
+                        const b = clamp(randInt(-Math.min(maxAbs, 9), Math.min(maxAbs, 9)), -9, 9);
+                        const c = clamp(randInt(-Math.min(maxAbs, 9), Math.min(maxAbs, 9)), -9, 9);
+                        const inner = `${a} + (${b} * ${c})`;
+                        const e = Math.min(exponentMax, level === 'expert' ? 3 : 2);
+                        // prefer small exponents but allow 2..e
+                        const exp = randInt(1, e);
+                        let expr = `(${inner}) ** ${exp}`;
+                        // optionally append a small divisor that divides evenly
+                        const possibleDivs = [1, 2, 3, 4];
+                        const val = Math.pow(a + (b * c), exp);
+                        if (isFinite(val) && Math.abs(val) <= 1e6) {
+                            // pick a divisor that divides evenly if available
+                            const good = possibleDivs.find(d => d === 1 || (Number.isInteger(val / d) && Math.abs(val / d) <= 1e6));
+                            if (good && good !== 1) expr = `${expr} / ${good}`;
+                        }
+                        return expr;
+                    }
                     // determine number of operations
                     let opsCount;
                     if (level === 'very-easy') opsCount = 1;
@@ -1152,9 +1175,9 @@
                 // We'll evaluate the candidate and reject it if it would create a non-integer result,
                 // non-finite value, or a value with excessive magnitude. This avoids producing
                 // huge numbers that cause slowdowns or many retries higher in the stack.
-                const MAX_TRIES = 120;
+                const MAX_TRIES = 300;
                 // Limit number of exponent operators to avoid nested exponent blowups
-                const allowedExps = level === 'very-easy' ? 0 : (level === 'easy' ? 1 : 1);
+                const allowedExps = level === 'very-easy' ? 0 : (level === 'easy' ? 1 : (level === 'medium' ? 1 : (level === 'hard' ? 2 : 3)));
                 for (let attempt = 0; attempt < MAX_TRIES; attempt++) {
                     try { window._exprStats.attempts++; } catch (e) { }
                     const expr = makeOnce();
@@ -1197,9 +1220,9 @@
                 // expensive (very large exponents or exponent-chains). We reject such
                 // expressions early so callers can discard them and avoid freezing the UI.
                 try {
-                    // disallow long exponent chains (e.g. a ** b ** c)
+                    // disallow extremely long exponent chains (e.g. a ** b ** c ** d)
                     const expCount = (jsExpr.match(/\*\*/g) || []).length;
-                    if (expCount > 2) throw new Error('Rejected: too many exponent operators');
+                    if (expCount > 4) throw new Error('Rejected: too many exponent operators');
                     // find numeric base/exponent pairs and ensure magnitudes are small
                     const pairRe = /(-?\d+)\s*\*\*\s*(-?\d+)/g;
                     let m;
