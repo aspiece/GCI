@@ -1138,46 +1138,34 @@
                 // non-finite value, or a value with excessive magnitude. This avoids producing
                 // huge numbers that cause slowdowns or many retries higher in the stack.
                 const MAX_TRIES = 120;
-                const MAX_ACCEPTABLE_ABS = 100000; // largest absolute value we accept for final evaluated result
+                // Limit number of exponent operators to avoid nested exponent blowups
+                const allowedExps = level === 'very-easy' ? 0 : (level === 'easy' ? 1 : 1);
                 for (let attempt = 0; attempt < MAX_TRIES; attempt++) {
                     try { window._exprStats.attempts++; } catch (e) { }
                     const expr = makeOnce();
-                    // avoid sequences like '/ 0' (followed by non-digit/decimal/paren) which would be immediate div-by-zero
+                    // avoid sequences like '/ 0' which would be immediate division-by-zero
                     if (/\/\s*0(?!\d|\.|\))/g.test(expr)) {
                         try { window._exprStats.div0++; } catch (e) { }
                         if (attempt > 12 && typeof console !== 'undefined' && console.warn) {
                             console.warn('generateExpression: retrying to avoid division-by-zero', { level, maxAbs, attempt, expr });
                         }
-                        continue; // retry without recursion
-                    }
-                    // Try to quickly evaluate the candidate and reject if it is not an integer or is too large.
-                    try {
-                        // evaluateExpr is hoisted (function declaration) and safe for our generated tokens
-                        const val = evaluateExpr(expr);
-                        if (!Number.isFinite(val) || !Number.isInteger(val) || Math.abs(val) > MAX_ACCEPTABLE_ABS) {
-                            try { window._exprStats.rejects++; } catch (e) { }
-                            if (attempt > 6 && typeof console !== 'undefined' && console.debug) console.debug('generateExpression: rejecting candidate based on eval', { expr, val });
-                            continue; // try again
-                        }
-                        // record selected sample and update maxAbs
-                        try {
-                            window._exprStats.selected++;
-                            const a = Math.abs(val);
-                            if (a > window._exprStats.maxAbs) window._exprStats.maxAbs = a;
-                            if (window._exprStats.samples.length < 6) window._exprStats.samples.push({ expr, val });
-                        } catch (e) { }
-                    } catch (e) {
-                        // evaluation failed (parsing, division by zero, etc.) — retry
-                        try { window._exprStats.rejects++; } catch (er) { }
-                        if (attempt > 6 && typeof console !== 'undefined' && console.debug) console.debug('generateExpression: eval threw, retrying', { expr, err: e && e.message });
                         continue;
                     }
-                    if (attempt > 12 && typeof console !== 'undefined' && console.info) {
-                        console.info('generateExpression: selected expression after retries', { level, maxAbs, attempts: attempt + 1 });
+                    // reject candidate if it contains too many exponent operators (avoids nested large-power chains)
+                    const expCount = (expr.match(/\*\*/g) || []).length;
+                    if (expCount > allowedExps) {
+                        try { window._exprStats.rejects++; } catch (e) { }
+                        if (attempt > 8 && typeof console !== 'undefined' && console.debug) console.debug('generateExpression: rejecting candidate with too many exponents', { expr, expCount });
+                        continue;
                     }
+                    // success: record sample (no heavy eval here) and return
+                    try {
+                        window._exprStats.selected++;
+                        if (window._exprStats.samples.length < 6) window._exprStats.samples.push({ expr, val: null });
+                    } catch (e) { }
+                    if (attempt > 12 && typeof console !== 'undefined' && console.info) console.info('generateExpression: selected expression after retries', { level, maxAbs, attempts: attempt + 1 });
                     return expr;
                 }
-                // Last resort: return one expression even if it wasn't validated within the attempts.
                 const fallback = makeOnce();
                 try { window._exprStats.fallbacks++; if (window._exprStats.samples.length < 6) window._exprStats.samples.push({ expr: fallback, val: null }); } catch (e) { }
                 if (typeof console !== 'undefined' && console.warn) console.warn('generateExpression: fallback after max tries', { level, maxAbs, fallback });
