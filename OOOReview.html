@@ -830,35 +830,7 @@
                     </div>
                 </section>
 
-                <!-- Expression generator debug / stress panel -->
-                <section id="expr-debug-card" class="card" aria-labelledby="expr-debug-heading" style="display:block">
-                    <h2 id="expr-debug-heading" style="margin:0 0 8px 0;font-size:15px">Expression Debug</h2>
-                    <div style="color:var(--muted);font-size:14px">
-                        <div style="margin-bottom:8px">Developer tools: generate expressions in-page and view stats.
-                        </div>
-                        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-                            <label style="display:flex;align-items:center;gap:8px">
-                                Level:
-                                <select id="expr-debug-level">
-                                    <option value="very-easy">1-UP Rookie</option>
-                                    <option value="easy">Pixel Player</option>
-                                    <option value="medium">Combo Champ</option>
-                                    <option value="hard">Boss Brawler</option>
-                                    <option value="expert">High Score Legend</option>
-                                </select>
-                            </label>
-                            <label style="display:flex;align-items:center;gap:8px">
-                                Iterations:
-                                <input id="expr-debug-iters" type="number" min="10" max="20000" value="2000"
-                                    style="width:100px" />
-                            </label>
-                            <button id="expr-debug-run" class="secondary">Run in-page stress</button>
-                            <button id="expr-debug-reset" class="secondary">Reset stats</button>
-                        </div>
-                        <pre id="expr-debug-output" class="steps"
-                            style="margin-top:10px;white-space:pre-wrap;max-height:220px;overflow:auto"></pre>
-                    </div>
-                </section>
+
 
                 <section class="card" aria-live="polite">
                     <div class="meta">
@@ -921,6 +893,36 @@
                             <li><a href="https://runestone.academy/ns/books/published/fopp/Conditionals/PrecedenceofOperators.html"
                                     target="_blank" rel="noopener">Precedence of Operators — Runestone</a></li>
                         </ul>
+                    </div>
+                </section>
+
+                <!-- Expression generator debug / stress panel (moved to bottom) -->
+                <section id="expr-debug-card" class="card" aria-labelledby="expr-debug-heading" style="display:block">
+                    <h2 id="expr-debug-heading" style="margin:0 0 8px 0;font-size:15px">Expression Debug</h2>
+                    <div style="color:var(--muted);font-size:14px">
+                        <div style="margin-bottom:8px">Developer tools: generate expressions in-page and view stats.
+                        </div>
+                        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+                            <label style="display:flex;align-items:center;gap:8px">
+                                Level:
+                                <select id="expr-debug-level">
+                                    <option value="very-easy">1-UP Rookie</option>
+                                    <option value="easy">Pixel Player</option>
+                                    <option value="medium">Combo Champ</option>
+                                    <option value="hard">Boss Brawler</option>
+                                    <option value="expert">High Score Legend</option>
+                                </select>
+                            </label>
+                            <label style="display:flex;align-items:center;gap:8px">
+                                Iterations:
+                                <input id="expr-debug-iters" type="number" min="10" max="20000" value="2000"
+                                    style="width:100px" />
+                            </label>
+                            <button id="expr-debug-run" class="secondary">Run in-page stress</button>
+                            <button id="expr-debug-reset" class="secondary">Reset stats</button>
+                        </div>
+                        <pre id="expr-debug-output" class="steps"
+                            style="margin-top:10px;white-space:pre-wrap;max-height:220px;overflow:auto"></pre>
                     </div>
                 </section>
 
