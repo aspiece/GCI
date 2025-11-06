@@ -289,6 +289,16 @@
             box-shadow: 0 10px 18px rgba(255, 63, 129, 0.35);
         }
 
+        .response-area .ghost-button {
+            background: rgba(11, 9, 28, 0.8);
+            color: var(--text);
+            border: 2px solid rgba(255, 63, 129, 0.4);
+        }
+
+        .response-area .ghost-button:hover {
+            box-shadow: 0 10px 18px rgba(104, 255, 203, 0.25);
+        }
+
         .feedback {
             text-align: center;
             font-size: 1.2rem;
@@ -477,6 +487,7 @@
                     required>
                 <button type="submit">Check</button>
                 <button type="button" id="skipButton" title="Skip this challenge">skip</button>
+                <button type="button" id="showAnswerButton" class="ghost-button" hidden>Show Answer</button>
             </form>
             <p class="feedback" id="feedback" aria-live="polite"></p>
         </section>
@@ -749,7 +760,8 @@
             masteryXP: 0,
             badges: new Set(),
             history: [],
-            activeTheme: "huntrix"
+            activeTheme: "huntrix",
+            lastMiss: null
         };
 
         let currentTheme = themes.huntrix;
@@ -777,7 +789,8 @@
             sceneTag: document.getElementById("sceneTag"),
             squadDeck: document.getElementById("squadDeck"),
             heading: document.getElementById("gameHeading"),
-            tagline: document.getElementById("gameTagline")
+            tagline: document.getElementById("gameTagline"),
+            showAnswerButton: document.getElementById("showAnswerButton")
         };
 
         elements.themeButtons = Array.from(document.querySelectorAll(".theme-button"));
@@ -818,6 +831,13 @@
                 button.classList.toggle("is-active", isActive);
                 button.setAttribute("aria-pressed", String(isActive));
             });
+        }
+
+        function toggleShowAnswerButton(shouldShow) {
+            if (!elements.showAnswerButton) {
+                return;
+            }
+            elements.showAnswerButton.hidden = !shouldShow;
         }
 
         function renderSquadCards(lineup) {
@@ -1098,6 +1118,7 @@
                 return;
             }
 
+            toggleShowAnswerButton(false);
             const value = Number(elements.playerAnswer.value.trim());
             if (Number.isNaN(value)) {
                 elements.feedback.textContent = "Enter a number to charge the stage lights.";
@@ -1121,11 +1142,21 @@
                         grantIfAvailable(startBadge, "First scene captured!");
                     }
                 }
+                state.lastMiss = null;
             } else {
                 awardXP(Math.max(0, -1));
                 const missLine = hero?.miss?.length ? randomItem(hero.miss) : randomItem(pepTalks.incorrect);
                 elements.feedback.textContent = missLine || "The crowd gasps—reset!";
-                updateHistory(`❌ ${villainName} countered: ${state.currentProblem.left} ${state.currentProblem.operation} ${state.currentProblem.right} ≠ ${value} (needed ${state.currentProblem.answer})`);
+                const missed = {
+                    left: state.currentProblem.left,
+                    right: state.currentProblem.right,
+                    operation: state.currentProblem.operation,
+                    answer: state.currentProblem.answer,
+                    heroName
+                };
+                state.lastMiss = missed;
+                updateHistory(`❌ ${villainName} countered: ${missed.left} ${missed.operation} ${missed.right} ≠ ${value} (needed ${missed.answer})`);
+                toggleShowAnswerButton(true);
             }
 
             elements.correctValue.textContent = state.correctAnswers;
@@ -1134,6 +1165,7 @@
 
         function handleSkip() {
             adjustStreak(false);
+            state.lastMiss = null;
             const hero = state.currentHero;
             const heroName = hero ? hero.name : currentTheme.squadName;
             const resetLine = hero?.reset?.length ? randomItem(hero.reset) : randomItem(pepTalks.skip);
@@ -1143,6 +1175,7 @@
             } else {
                 updateHistory(`⏭️ ${heroName} resets the formation.`);
             }
+            toggleShowAnswerButton(false);
             pickProblem();
         }
 
@@ -1156,6 +1189,7 @@
             state.masteryXP = 0;
             state.badges = new Set();
             state.history = [];
+            state.lastMiss = null;
 
             elements.levelValue.textContent = levels[0].id;
             elements.streakValue.textContent = "0";
@@ -1165,6 +1199,7 @@
             elements.historyList.innerHTML = "";
             elements.feedback.textContent = "";
             elements.playerAnswer.value = "";
+            toggleShowAnswerButton(false);
 
             elements.sceneTag.textContent = currentTheme.sceneIntro;
             if (elements.squadDeck) {
@@ -1204,7 +1239,20 @@
             elements.themeButtons.forEach(button => {
                 button.addEventListener("click", () => changeTheme(button.dataset.theme));
             });
+            if (elements.showAnswerButton) {
+                elements.showAnswerButton.addEventListener("click", revealMissedAnswer);
+            }
             applyTheme(state.activeTheme);
+        }
+
+        function revealMissedAnswer() {
+            if (!state.lastMiss) {
+                toggleShowAnswerButton(false);
+                return;
+            }
+            const miss = state.lastMiss;
+            elements.feedback.innerHTML = `<strong>Answer:</strong> ${miss.left} ${miss.operation} ${miss.right} = ${miss.answer}`;
+            toggleShowAnswerButton(false);
         }
 
         initGame();
