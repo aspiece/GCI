@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>K-Pop Demon Hunter: The Movie</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #07020f;
+            --panel: #1b0f2b;
+            --accent: #ff2b6d;
+            --accent-light: #ffa3f6;
+            --text: #fef6ff;
+            --muted: #cdbbf8;
+            --warning: #ffe066;
+            --success: #5cf2d6;
+            --spotlight: rgba(255, 119, 209, 0.35);
+            --aura: rgba(32, 190, 255, 0.26);
+            --hero-rumi: linear-gradient(140deg, rgba(255, 77, 143, 0.82), rgba(103, 70, 255, 0.78));
+            --hero-mira: linear-gradient(140deg, rgba(201, 94, 255, 0.82), rgba(38, 201, 255, 0.78));
+            --hero-zoey: linear-gradient(140deg, rgba(255, 166, 92, 0.82), rgba(255, 62, 124, 0.78));
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+            background:
+                radial-gradient(circle at 10% 0%, rgba(255, 91, 145, 0.32), transparent 46%),
+                radial-gradient(circle at 85% 14%, rgba(75, 30, 255, 0.28), transparent 54%),
+                radial-gradient(circle at 16% 84%, rgba(0, 214, 255, 0.18), transparent 60%),
+                linear-gradient(110deg, rgba(14, 7, 32, 0.92), rgba(8, 3, 18, 0.95)),
+                var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .game-shell {
+            width: min(1024px, 100%);
+            background: rgba(12, 9, 27, 0.93);
+            border: 2px solid rgba(255, 70, 158, 0.48);
+            border-radius: 20px;
+            padding: 28px clamp(18px, 4vw, 36px);
+            box-shadow: 0 22px 58px rgba(0, 0, 0, 0.66);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .net-overlay {
+            position: absolute;
+            inset: 0;
+            background: conic-gradient(from 110deg, var(--spotlight) 0deg 78deg, transparent 78deg 182deg, var(--aura) 182deg 258deg, transparent 258deg 360deg);
+            mix-blend-mode: screen;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .film-grain {
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAFElEQVR42mP4/58BByBiYGAAAAAtAAOvIi6dAAAAAElFTkSuQmCC");
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .game-shell>*:not(.net-overlay):not(.film-grain) {
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            margin-top: 0;
+            font-size: clamp(1.8rem, 2.8vw, 2.6rem);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            text-align: center;
+            margin-bottom: 26px;
+            color: var(--muted);
+            font-size: 1rem;
+        }
+
+        .squad-deck {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+
+        .squad-card {
+            padding: 16px;
+            border-radius: 16px;
+            background: rgba(31, 18, 55, 0.78);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        .squad-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.04);
+            mix-blend-mode: overlay;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .squad-card h2 {
+            margin: 0 0 6px;
+            font-size: 1.1rem;
+            letter-spacing: 0.06em;
+        }
+
+        .squad-card p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.86rem;
+            line-height: 1.4;
+        }
+
+        .squad-card span {
+            display: inline-block;
+            margin-top: 8px;
+            font-size: 0.78rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.78);
+        }
+
+        .squad-card.active {
+            border-color: rgba(255, 70, 158, 0.6);
+            box-shadow: 0 10px 24px rgba(255, 70, 158, 0.28);
+            transform: translateY(-2px);
+        }
+
+        .squad-card.active::before {
+            opacity: 1;
+        }
+
+        .squad-card[data-hero="rumi"].active {
+            background: var(--hero-rumi);
+        }
+
+        .squad-card[data-hero="mira"].active {
+            background: var(--hero-mira);
+        }
+
+        .squad-card[data-hero="zoey"].active {
+            background: var(--hero-zoey);
+        }
+
+        .hud {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .hud-card {
+            border: 1px solid rgba(255, 90, 127, 0.4);
+            border-radius: 14px;
+            padding: 16px;
+            background: rgba(29, 16, 52, 0.8);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .hud-label {
+            font-size: 0.78rem;
+            color: var(--muted);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .hud-value {
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+
+        .challenge-card {
+            background: rgba(17, 10, 39, 0.91);
+            border-radius: 18px;
+            padding: clamp(20px, 3vw, 32px);
+            border: 2px solid rgba(255, 174, 94, 0.32);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 28px;
+        }
+
+        .challenge-card::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at top right, rgba(255, 174, 94, 0.18), transparent 42%);
+            pointer-events: none;
+        }
+
+        .prompt-line {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: clamp(16px, 3vw, 28px);
+            font-size: clamp(2.2rem, 4vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 18px;
+        }
+
+        .scene-callout {
+            text-align: center;
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.82);
+            margin-bottom: 12px;
+            letter-spacing: 0.04em;
+        }
+
+        .response-area {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .response-area input[type="number"] {
+            width: clamp(120px, 20vw, 180px);
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 2px solid rgba(255, 63, 129, 0.4);
+            background: rgba(11, 9, 28, 0.8);
+            color: var(--text);
+            font-size: 1.4rem;
+            text-align: center;
+        }
+
+        .response-area button {
+            padding: 12px 18px;
+            border-radius: 12px;
+            border: none;
+            font-size: 1rem;
+            font-weight: bold;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            color: var(--panel);
+        }
+
+        .response-area button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 18px rgba(255, 63, 129, 0.35);
+        }
+
+        .feedback {
+            text-align: center;
+            font-size: 1.2rem;
+            min-height: 1.6em;
+            margin-top: 14px;
+        }
+
+        .feedback strong {
+            letter-spacing: 0.08em;
+        }
+
+        .progress-track {
+            margin-bottom: 28px;
+        }
+
+        .meter-shell {
+            width: 100%;
+            height: 16px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.08);
+            overflow: hidden;
+            border: 1px solid rgba(255, 63, 129, 0.25);
+        }
+
+        .meter-fill {
+            height: 100%;
+            background: linear-gradient(135deg, rgba(104, 255, 203, 0.9), rgba(0, 188, 255, 0.85));
+            width: 0;
+            transition: width 0.3s ease;
+        }
+
+        .progress-label {
+            margin-top: 8px;
+            font-size: 0.9rem;
+            color: var(--muted);
+            text-align: right;
+        }
+
+        .badge-wall {
+            border: 1px solid rgba(255, 70, 158, 0.4);
+            border-radius: 18px;
+            padding: clamp(16px, 3vw, 26px);
+            background: rgba(22, 16, 46, 0.88);
+        }
+
+        .badge-wall h2 {
+            margin: 0 0 10px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+        }
+
+        .badge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+        }
+
+        .badge-card {
+            text-align: center;
+            border-radius: 16px;
+            padding: 10px;
+            background: rgba(18, 13, 34, 0.84);
+            border: 1px dashed rgba(255, 174, 94, 0.32);
+        }
+
+        .badge-card img {
+            width: 96px;
+            height: 96px;
+            object-fit: contain;
+        }
+
+        .badge-card span {
+            display: block;
+            margin-top: 6px;
+            font-size: 0.86rem;
+            color: var(--muted);
+        }
+
+        .history-log {
+            margin-top: 26px;
+            background: rgba(12, 9, 29, 0.9);
+            border-radius: 14px;
+            padding: 16px;
+            border: 1px solid rgba(110, 63, 255, 0.28);
+            max-height: 220px;
+            overflow-y: auto;
+        }
+
+        .history-log h3 {
+            margin: 0 0 10px;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .history-log ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: grid;
+            gap: 8px;
+            font-size: 0.92rem;
+        }
+
+        .history-log li {
+            padding: 8px 10px;
+            border-radius: 10px;
+            background: rgba(9, 6, 22, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        @media (max-width: 640px) {
+            .prompt-line {
+                font-size: clamp(1.8rem, 8vw, 2.4rem);
+            }
+
+            .hud {
+                grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            }
+
+            .squad-deck {
+                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="game-shell" role="main">
+        <div class="net-overlay" aria-hidden="true"></div>
+        <div class="film-grain" aria-hidden="true"></div>
+        <h1>K-Pop Demon Hunters: Squad Training</h1>
+        <p class="tagline">Rumi, Mira, and Zoey are counting on you to outsmart the Saja Boys before opening night.</p>
+
+        <section class="squad-deck" aria-label="Huntrix lineup">
+            <article class="squad-card" data-hero="rumi">
+                <h2>Rumi</h2>
+                <p>Fearless leader and blade dancer who slices demon glamours with neon sabers.</p>
+                <span>Leadership · Saber Forms</span>
+            </article>
+            <article class="squad-card" data-hero="mira">
+                <h2>Mira</h2>
+                <p>Power vocalist weaving protective harmonies that shield fans from dark energy.</p>
+                <span>Vocals · Harmony Ward</span>
+            </article>
+            <article class="squad-card" data-hero="zoey">
+                <h2>Zoey</h2>
+                <p>Tech-savvy DJ who hacks demon soundwaves with synthised light whips.</p>
+                <span>DJ · Signal Hacking</span>
+            </article>
+        </section>
+
+        <section class="hud" aria-label="Status dashboard">
+            <article class="hud-card" aria-live="polite">
+                <span class="hud-label">Level</span>
+                <span class="hud-value" id="levelValue">1</span>
+            </article>
+            <article class="hud-card" aria-live="polite">
+                <span class="hud-label">Combo Streak</span>
+                <span class="hud-value" id="streakValue">0</span>
+            </article>
+            <article class="hud-card" aria-live="polite">
+                <span class="hud-label">Scenes Cleared</span>
+                <span class="hud-value" id="correctValue">0</span>
+            </article>
+            <article class="hud-card" aria-live="polite">
+                <span class="hud-label">Fan Energy</span>
+                <span class="hud-value" id="xpValue">0</span>
+            </article>
+        </section>
+
+        <section class="challenge-card" aria-label="Current challenge">
+            <p class="scene-callout" id="sceneTag" aria-live="polite">Huntrix preps the next scene.</p>
+            <div class="prompt-line" aria-live="polite">
+                <span id="leftOperand">0</span>
+                <span id="operator">+</span>
+                <span id="rightOperand">0</span>
+                <span>=</span>
+                <span>?</span>
+            </div>
+            <form class="response-area" id="responseForm">
+                <label for="playerAnswer" class="sr-only">Your answer</label>
+                <input id="playerAnswer" name="playerAnswer" type="number" autocomplete="off" inputmode="numeric"
+                    required>
+                <button type="submit">Roll Camera</button>
+                <button type="button" id="skipButton" title="Skip this challenge">Dodge Glamour</button>
+            </form>
+            <p class="feedback" id="feedback" aria-live="polite"></p>
+        </section>
+
+        <section class="progress-track" aria-label="Mastery progress">
+            <div class="meter-shell" role="meter" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0"
+                aria-labelledby="progressLabel">
+                <div class="meter-fill" id="meterFill"></div>
+            </div>
+            <p class="progress-label" id="progressLabel">Next arena remix unlocks at 10 Fan Energy</p>
+        </section>
+
+        <section class="badge-wall" aria-label="Badge collection">
+            <h2>Badge Wall</h2>
+            <div class="badge-grid" id="badgeGrid"></div>
+        </section>
+
+        <section class="history-log" aria-label="Battle log">
+            <h3>Battle Log</h3>
+            <ul id="historyList"></ul>
+        </section>
+    </div>
+
+    <script>
+        "use strict";
+
+        const levels = [
+            { id: 1, maxOperand: 10, operations: ["+"], xpGoal: 10, title: "Backstage Trainee" },
+            { id: 2, maxOperand: 20, operations: ["+", "-"], xpGoal: 22, title: "Spotlight Slayer" },
+            { id: 3, maxOperand: 35, operations: ["+", "-"], xpGoal: 36, title: "Neon Underworld" },
+            { id: 4, maxOperand: 60, operations: ["+", "-"], xpGoal: 52, title: "Premiere Protector" }
+        ];
+
+        const badgeBlueprints = [
+            { id: "first-clear", threshold: 1, title: "Opening Night", subtitle: "First scene wrapped", hue: "#ff3a55" },
+            { id: "streak-3", threshold: 3, title: "Triple Take", subtitle: "3 perfect scenes", hue: "#fed766" },
+            { id: "streak-7", threshold: 7, title: "Director's Cut", subtitle: "7 perfect scenes", hue: "#6d9dff" },
+            { id: "xp-25", threshold: 25, title: "Box Office Boom", subtitle: "25 Fan Energy", hue: "#6dffcb" },
+            { id: "lvl-4", threshold: 4, title: "Red Carpet Legend", subtitle: "Reach Level 4", hue: "#b084ff" }
+        ];
+
+        const villainName = "Saja Boys";
+
+        const heroLineup = [
+            {
+                id: "rumi",
+                name: "Rumi",
+                intro: [
+                    "Rumi twirls her soulblade, carving neon runes through the fog.",
+                    "Rumi snaps, \"Keep the beat razor-sharp, Huntrix!\""
+                ],
+                success: [
+                    "Rumi cheers: \"That's how we headline over the Saja Boys!\"",
+                    "Rumi grins, sabers humming: \"Your math just melted their glam.\""
+                ],
+                miss: [
+                    "Rumi grimaces: \"They slipped a glamour—reset the formation.\"",
+                    "Rumi steadies everyone: \"Focus up, their illusions won't win.\""
+                ],
+                reset: [
+                    "Rumi calls cut: \"We block this beat again, no sweat.\"",
+                    "Rumi signals the choreo cam to reframe the next strike."
+                ]
+            },
+            {
+                id: "mira",
+                name: "Mira",
+                intro: [
+                    "Mira hums a protective harmony that shimmers violet across the stage.",
+                    "Mira whispers, \"I'll drown their glam in pure vocals.\""
+                ],
+                success: [
+                    "Mira laughs: \"Our harmonies just stunned the demon crowd!\"",
+                    "Mira beams, \"Saja Boys can't touch a perfect chord like that.\""
+                ],
+                miss: [
+                    "Mira sighs: \"They warped the pitch—let's retune.\"",
+                    "Mira centers the team: \"Deep breath. We reclaim the stage.\""
+                ],
+                reset: [
+                    "Mira floats a calming note, resetting the choreography timing.",
+                    "Mira nods: \"New take. This time, we out-sing their sorcery.\""
+                ]
+            },
+            {
+                id: "zoey",
+                name: "Zoey",
+                intro: [
+                    "Zoey flicks her holo-decks, scanning demon waveforms in neon blue.",
+                    "Zoey smirks, \"I've got their bassline mapped—let's spike it.\""
+                ],
+                success: [
+                    "Zoey shouts: \"Remix landed! They can't counter that math drop.\"",
+                    "Zoey pumps a fist: \"Huntrix tech always shreds demon hype.\""
+                ],
+                miss: [
+                    "Zoey cringes: \"Ugh, they jammed the signal—recalibrating.\"",
+                    "Zoey taps her visor: \"Glitch spotted. We'll overwrite it next take.\""
+                ],
+                reset: [
+                    "Zoey spins the decks down: \"Cut! I'll re-sequence the beat.\"",
+                    "Zoey cues the lighting rig to reboot the scene."
+                ]
+            }
+        ];
+
+        const state = {
+            levelIndex: 0,
+            currentProblem: null,
+            currentHero: null,
+            sceneNarration: "",
+            streak: 0,
+            correctAnswers: 0,
+            masteryXP: 0,
+            badges: new Set(),
+            history: []
+        };
+
+        const elements = {
+            leftOperand: document.getElementById("leftOperand"),
+            rightOperand: document.getElementById("rightOperand"),
+            operator: document.getElementById("operator"),
+            playerAnswer: document.getElementById("playerAnswer"),
+            responseForm: document.getElementById("responseForm"),
+            skipButton: document.getElementById("skipButton"),
+            feedback: document.getElementById("feedback"),
+            levelValue: document.getElementById("levelValue"),
+            streakValue: document.getElementById("streakValue"),
+            correctValue: document.getElementById("correctValue"),
+            xpValue: document.getElementById("xpValue"),
+            badgeGrid: document.getElementById("badgeGrid"),
+            historyList: document.getElementById("historyList"),
+            meterFill: document.getElementById("meterFill"),
+            progressLabel: document.getElementById("progressLabel"),
+            meterShell: document.querySelector(".meter-shell"),
+            sceneTag: document.getElementById("sceneTag")
+        };
+
+        elements.squadCards = Array.from(document.querySelectorAll(".squad-card"));
+
+        const demonPepTalks = {
+            correct: [
+                "Huntrix synergy ignites the arena!", "Fans roar as the Saja Boys stumble!",
+                "Spotlight stays ours!"
+            ],
+            incorrect: [
+                "The Saja Boys flash a distraction!", "Demon pyros flare—hold formation!",
+                "Illusion strike! Reset the beat!"
+            ],
+            skip: [
+                "Stage crew calls hold!", "Lighting reset—take a breath.", "Director signals a fresh setup."
+            ]
+        };
+
+        function randomItem(list) {
+            return list[Math.floor(Math.random() * list.length)];
+        }
+
+        function rndInRange(max) {
+            return Math.floor(Math.random() * (max + 1));
+        }
+
+        function assignHero() {
+            const previous = state.currentHero;
+            let nextHero = randomItem(heroLineup);
+            if (previous && heroLineup.length > 1) {
+                let guard = 0;
+                while (nextHero.id === previous.id && guard < 5) {
+                    nextHero = randomItem(heroLineup);
+                    guard += 1;
+                }
+            }
+            state.currentHero = nextHero;
+            const linePool = nextHero?.intro?.length ? nextHero.intro : ["Huntrix locks the formation."];
+            state.sceneNarration = randomItem(linePool);
+            highlightActiveHero();
+            updateSceneCallout();
+        }
+
+        function updateSceneCallout() {
+            if (!elements.sceneTag) {
+                return;
+            }
+            const hero = state.currentHero;
+            if (!hero) {
+                elements.sceneTag.textContent = "Huntrix preps the next scene.";
+                return;
+            }
+            const narration = state.sceneNarration || "Huntrix holds the spotlight.";
+            elements.sceneTag.innerHTML = `<strong>${hero.name}</strong> · ${narration}`;
+        }
+
+        function highlightActiveHero() {
+            if (!elements.squadCards) {
+                return;
+            }
+            elements.squadCards.forEach(card => {
+                const isActive = state.currentHero && card.dataset.hero === state.currentHero.id;
+                card.classList.toggle("active", Boolean(isActive));
+            });
+        }
+
+        function pickProblem() {
+            const profile = levels[state.levelIndex];
+            const operation = randomItem(profile.operations);
+            let left = rndInRange(profile.maxOperand);
+            let right = rndInRange(profile.maxOperand);
+
+            if (operation === "-") {
+                if (left < right) {
+                    [left, right] = [right, left];
+                }
+            }
+
+            state.currentProblem = { left, right, operation, answer: computeAnswer(left, right, operation) };
+            assignHero();
+            renderProblem();
+        }
+
+        function computeAnswer(left, right, operation) {
+            return operation === "+" ? left + right : left - right;
+        }
+
+        function renderProblem() {
+            const { left, right, operation } = state.currentProblem;
+            elements.leftOperand.textContent = left;
+            elements.rightOperand.textContent = right;
+            elements.operator.textContent = operation;
+            elements.playerAnswer.value = "";
+            elements.playerAnswer.focus();
+            updateSceneCallout();
+        }
+
+        function awardXP(amount) {
+            state.masteryXP += amount;
+            elements.xpValue.textContent = state.masteryXP;
+            checkBadgeByXP();
+            updateProgressMeter();
+            maybeLevelUp();
+        }
+
+        function updateProgressMeter() {
+            const currentLevel = levels[state.levelIndex];
+            const previousGoal = state.levelIndex === 0 ? 0 : levels[state.levelIndex - 1].xpGoal;
+            const rangeStart = previousGoal;
+            const rangeEnd = currentLevel.xpGoal;
+            const inLevelXP = Math.max(0, Math.min(state.masteryXP - rangeStart, rangeEnd - rangeStart));
+            const totalSpan = rangeEnd - rangeStart;
+            const ratio = totalSpan ? (inLevelXP / totalSpan) : 1;
+            elements.meterFill.style.width = `${Math.round(ratio * 100)}%`;
+            elements.meterShell.setAttribute("aria-valuemin", rangeStart.toString());
+            elements.meterShell.setAttribute("aria-valuemax", rangeEnd.toString());
+            elements.meterShell.setAttribute("aria-valuenow", state.masteryXP.toString());
+            elements.progressLabel.textContent = ratio >= 1
+                ? "Fan energy maxed! Land a perfect take to challenge the Saja Boys."
+                : `Next arena remix unlocks at ${currentLevel.xpGoal} Fan Energy`;
+        }
+
+        function maybeLevelUp() {
+            const currentLevel = levels[state.levelIndex];
+            if (state.masteryXP >= currentLevel.xpGoal && state.levelIndex < levels.length - 1) {
+                state.levelIndex += 1;
+                elements.levelValue.textContent = levels[state.levelIndex].id;
+                badgeCheck({ id: "lvl-" + levels[state.levelIndex].id, level: levels[state.levelIndex].id });
+                elements.feedback.innerHTML = `<strong>New Act!</strong> Huntrix storms into ${levels[state.levelIndex].title}.`;
+                updateProgressMeter();
+            }
+        }
+
+        function adjustStreak(success) {
+            if (success) {
+                state.streak += 1;
+                checkStreakBadges();
+            } else {
+                state.streak = 0;
+            }
+            elements.streakValue.textContent = state.streak;
+        }
+
+        function updateHistory(entry) {
+            state.history.unshift(entry);
+            state.history = state.history.slice(0, 8);
+            elements.historyList.innerHTML = state.history
+                .map(item => `<li>${item}</li>`)
+                .join("");
+        }
+
+        function badgeCheck(context) {
+            if (context.id === "lvl-4") {
+                const target = badgeBlueprints.find(b => b.id === "lvl-4");
+                if (!state.badges.has(target.id) && context.level >= target.threshold) {
+                    awardBadge(target, `Premiered at Level ${context.level}!`);
+                }
+            }
+        }
+
+        function checkBadgeByXP() {
+            for (const badge of badgeBlueprints) {
+                if (badge.id === "xp-25" && state.masteryXP >= badge.threshold) {
+                    grantIfAvailable(badge, `${state.masteryXP} Fan Energy box office hit!`);
+                }
+            }
+        }
+
+        function checkStreakBadges() {
+            for (const badge of badgeBlueprints) {
+                if (badge.id === "streak-3" && state.streak === badge.threshold) {
+                    grantIfAvailable(badge, "Three takes in a row!");
+                }
+                if (badge.id === "streak-7" && state.streak === badge.threshold) {
+                    grantIfAvailable(badge, "Director's cut secured!");
+                }
+            }
+        }
+
+        function grantIfAvailable(badge, reason) {
+            if (!state.badges.has(badge.id)) {
+                awardBadge(badge, reason);
+            }
+        }
+
+        function awardBadge(badge, reason) {
+            state.badges.add(badge.id);
+            const img = document.createElement("img");
+            img.src = createBadgeImage(badge.title, badge.subtitle, badge.hue);
+            img.alt = `${badge.title} badge`;
+            const wrapper = document.createElement("div");
+            wrapper.className = "badge-card";
+            const titleSpan = document.createElement("span");
+            titleSpan.textContent = badge.title;
+            const subSpan = document.createElement("span");
+            subSpan.textContent = badge.subtitle;
+            wrapper.appendChild(img);
+            wrapper.appendChild(titleSpan);
+            wrapper.appendChild(subSpan);
+            elements.badgeGrid.appendChild(wrapper);
+            elements.feedback.innerHTML = `<strong>Spotlight Trophy!</strong> ${badge.title} — ${reason}`;
+        }
+
+        function createBadgeImage(title, subtitle, hue) {
+            const size = 256;
+            const canvas = document.createElement("canvas");
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext("2d");
+
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, shadeColor(hue, -20));
+            gradient.addColorStop(1, shadeColor(hue, 25));
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+
+            ctx.fillStyle = "rgba(0, 0, 0, 0.18)";
+            ctx.beginPath();
+            ctx.moveTo(size * 0.2, size * 0.25);
+            ctx.lineTo(size * 0.8, size * 0.25);
+            ctx.lineTo(size * 0.65, size * 0.85);
+            ctx.lineTo(size * 0.35, size * 0.85);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.fillStyle = "rgba(255, 255, 255, 0.82)";
+            ctx.font = "bold 28px 'Trebuchet MS'";
+            ctx.textAlign = "center";
+            ctx.fillText(title, size / 2, size * 0.62);
+
+            ctx.font = "18px 'Trebuchet MS'";
+            ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+            ctx.fillText(subtitle, size / 2, size * 0.75);
+
+            ctx.fillStyle = "rgba(0, 0, 0, 0.22)";
+            ctx.beginPath();
+            ctx.arc(size * 0.5, size * 0.35, size * 0.18, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+            ctx.beginPath();
+            ctx.arc(size * 0.5, size * 0.33, size * 0.1, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
+            ctx.beginPath();
+            ctx.arc(size * 0.43, size * 0.32, size * 0.03, 0, Math.PI * 2);
+            ctx.arc(size * 0.57, size * 0.32, size * 0.03, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.strokeStyle = "rgba(0, 0, 0, 0.25)";
+            ctx.lineWidth = 6;
+            ctx.strokeRect(6, 6, size - 12, size - 12);
+
+            return canvas.toDataURL("image/png");
+        }
+
+        function shadeColor(hexColor, percent) {
+            const num = parseInt(hexColor.replace("#", ""), 16);
+            const amt = Math.round(2.55 * percent);
+            const r = Math.min(255, Math.max(0, (num >> 16) + amt));
+            const g = Math.min(255, Math.max(0, ((num >> 8) & 0x00ff) + amt));
+            const b = Math.min(255, Math.max(0, (num & 0x0000ff) + amt));
+            return `rgb(${r}, ${g}, ${b})`;
+        }
+
+        function handleSubmission(event) {
+            event.preventDefault();
+            if (!state.currentProblem) {
+                return;
+            }
+
+            const value = Number(elements.playerAnswer.value.trim());
+            if (Number.isNaN(value)) {
+                elements.feedback.textContent = "Enter a number to charge the stage lights.";
+                return;
+            }
+
+            const isCorrect = value === state.currentProblem.answer;
+            adjustStreak(isCorrect);
+            const hero = state.currentHero;
+            const heroName = hero ? hero.name : "Huntrix";
+
+            if (isCorrect) {
+                state.correctAnswers += 1;
+                awardXP(1 + Math.min(state.streak, 4));
+                const successLine = hero?.success?.length ? randomItem(hero.success) : randomItem(demonPepTalks.correct);
+                elements.feedback.textContent = successLine;
+                updateHistory(`✅ ${heroName} syncs the scene: ${state.currentProblem.left} ${state.currentProblem.operation} ${state.currentProblem.right} = ${value}`);
+                if (state.correctAnswers === 1) {
+                    const startBadge = badgeBlueprints.find(b => b.id === "first-clear");
+                    grantIfAvailable(startBadge, "First scene captured!");
+                }
+            } else {
+                awardXP(Math.max(0, -1));
+                const missLine = hero?.miss?.length ? randomItem(hero.miss) : randomItem(demonPepTalks.incorrect);
+                elements.feedback.textContent = missLine;
+                updateHistory(`❌ ${villainName} countered: ${state.currentProblem.left} ${state.currentProblem.operation} ${state.currentProblem.right} ≠ ${value} (needed ${state.currentProblem.answer})`);
+            }
+
+            elements.correctValue.textContent = state.correctAnswers;
+            pickProblem();
+        }
+
+        function handleSkip() {
+            adjustStreak(false);
+            const hero = state.currentHero;
+            const heroName = hero ? hero.name : "Huntrix";
+            const resetLine = hero?.reset?.length ? randomItem(hero.reset) : randomItem(demonPepTalks.skip);
+            elements.feedback.textContent = resetLine;
+            updateHistory(`⏭️ ${heroName} calls reset on ${state.currentProblem.left} ${state.currentProblem.operation} ${state.currentProblem.right}`);
+            pickProblem();
+        }
+
+        function initGame() {
+            elements.responseForm.addEventListener("submit", handleSubmission);
+            elements.skipButton.addEventListener("click", handleSkip);
+            pickProblem();
+            updateProgressMeter();
+        }
+
+        initGame();
+    </script>
+</body>
+
+</html>
