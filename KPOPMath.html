@@ -89,9 +89,41 @@
 
         .tagline {
             text-align: center;
-            margin-bottom: 26px;
+            margin-bottom: 18px;
             color: var(--muted);
             font-size: 1rem;
+        }
+
+        .theme-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .theme-button {
+            padding: 10px 18px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 70, 158, 0.4);
+            background: transparent;
+            color: var(--text);
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .theme-button:hover {
+            transform: translateY(-1px);
+        }
+
+        .theme-button.is-active {
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            color: var(--panel);
+            border-color: transparent;
+            box-shadow: 0 10px 18px rgba(255, 70, 158, 0.25);
         }
 
         .squad-deck {
@@ -102,6 +134,7 @@
         }
 
         .squad-card {
+            --cardActiveGradient: linear-gradient(140deg, rgba(255, 77, 143, 0.82), rgba(103, 70, 255, 0.78));
             padding: 16px;
             border-radius: 16px;
             background: rgba(31, 18, 55, 0.78);
@@ -147,22 +180,11 @@
             border-color: rgba(255, 70, 158, 0.6);
             box-shadow: 0 10px 24px rgba(255, 70, 158, 0.28);
             transform: translateY(-2px);
+            background: var(--cardActiveGradient);
         }
 
         .squad-card.active::before {
             opacity: 1;
-        }
-
-        .squad-card[data-hero="rumi"].active {
-            background: var(--hero-rumi);
-        }
-
-        .squad-card[data-hero="mira"].active {
-            background: var(--hero-mira);
-        }
-
-        .squad-card[data-hero="zoey"].active {
-            background: var(--hero-zoey);
         }
 
         .hud {
@@ -379,6 +401,17 @@
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+
         @media (max-width: 640px) {
             .prompt-line {
                 font-size: clamp(1.8rem, 8vw, 2.4rem);
@@ -399,26 +432,16 @@
     <div class="game-shell" role="main">
         <div class="net-overlay" aria-hidden="true"></div>
         <div class="film-grain" aria-hidden="true"></div>
-        <h1>K-Pop Demon Hunters: Squad Training</h1>
-        <p class="tagline">Rumi, Mira, and Zoey are counting on you to outsmart the Saja Boys before opening night.</p>
+        <h1 id="gameHeading">K-Pop Demon Hunters: Squad Training</h1>
+        <p class="tagline" id="gameTagline">Rumi, Mira, and Zoey are counting on you to outsmart the Saja Boys before
+            opening night.</p>
 
-        <section class="squad-deck" aria-label="Huntrix lineup">
-            <article class="squad-card" data-hero="rumi">
-                <h2>Rumi</h2>
-                <p>Fearless leader and blade dancer who slices demon glamours with neon sabers.</p>
-                <span>Leadership · Saber Forms</span>
-            </article>
-            <article class="squad-card" data-hero="mira">
-                <h2>Mira</h2>
-                <p>Power vocalist weaving protective harmonies that shield fans from dark energy.</p>
-                <span>Vocals · Harmony Ward</span>
-            </article>
-            <article class="squad-card" data-hero="zoey">
-                <h2>Zoey</h2>
-                <p>Tech-savvy DJ who hacks demon soundwaves with synthised light whips.</p>
-                <span>DJ · Signal Hacking</span>
-            </article>
-        </section>
+        <div class="theme-toggle" role="group" aria-label="Choose your squad look">
+            <button type="button" class="theme-button is-active" data-theme="huntrix">Huntrix</button>
+            <button type="button" class="theme-button" data-theme="sajaboys">Saja Boys</button>
+        </div>
+
+        <section class="squad-deck" id="squadDeck" aria-label="Team lineup"></section>
 
         <section class="hud" aria-label="Status dashboard">
             <article class="hud-card" aria-live="polite">
@@ -495,70 +518,226 @@
             { id: "lvl-4", threshold: 4, title: "Red Carpet Legend", subtitle: "Reach Level 4", hue: "#b084ff" }
         ];
 
-        const villainName = "Saja Boys";
-
-        const heroLineup = [
-            {
-                id: "rumi",
-                name: "Rumi",
-                intro: [
-                    "Rumi twirls her soulblade, carving neon runes through the fog.",
-                    "Rumi snaps, \"Keep the beat razor-sharp, Huntrix!\""
+        const themes = {
+            huntrix: {
+                id: "huntrix",
+                displayName: "Huntrix",
+                heading: "K-Pop Demon Hunters: Squad Training",
+                tagline: "Rumi, Mira, and Zoey are counting on you to outsmart the Saja Boys before opening night.",
+                squadName: "Huntrix",
+                villainName: "Saja Boys",
+                sceneIntro: "Huntrix preps the next scene.",
+                palette: {
+                    "--bg": "#07020f",
+                    "--panel": "#1b0f2b",
+                    "--accent": "#ff2b6d",
+                    "--accent-light": "#ffa3f6",
+                    "--text": "#fef6ff",
+                    "--muted": "#cdbbf8",
+                    "--warning": "#ffe066",
+                    "--success": "#5cf2d6",
+                    "--spotlight": "rgba(255, 119, 209, 0.35)",
+                    "--aura": "rgba(32, 190, 255, 0.26)"
+                },
+                heroLineup: [
+                    {
+                        id: "rumi",
+                        name: "Rumi",
+                        description: "Fearless leader and blade dancer who slices demon glamours with neon sabers.",
+                        skills: "Leadership · Saber Forms",
+                        highlight: "linear-gradient(140deg, rgba(255, 77, 143, 0.82), rgba(103, 70, 255, 0.78))",
+                        intro: [
+                            "Rumi twirls her soulblade, carving neon runes through the fog.",
+                            "Rumi snaps, \"Keep the beat razor-sharp, Huntrix!\""
+                        ],
+                        success: [
+                            "Rumi cheers: \"That's how we headline over the Saja Boys!\"",
+                            "Rumi grins, sabers humming: \"Your math just melted their glam.\""
+                        ],
+                        miss: [
+                            "Rumi grimaces: \"They slipped a glamour—reset the formation.\"",
+                            "Rumi steadies everyone: \"Focus up, their illusions won't win.\""
+                        ],
+                        reset: [
+                            "Rumi calls cut: \"We block this beat again, no sweat.\"",
+                            "Rumi signals the choreo cam to reframe the next strike."
+                        ]
+                    },
+                    {
+                        id: "mira",
+                        name: "Mira",
+                        description: "Power vocalist weaving protective harmonies that shield fans from dark energy.",
+                        skills: "Vocals · Harmony Ward",
+                        highlight: "linear-gradient(140deg, rgba(201, 94, 255, 0.82), rgba(38, 201, 255, 0.78))",
+                        intro: [
+                            "Mira hums a protective harmony that shimmers violet across the stage.",
+                            "Mira whispers, \"I'll drown their glam in pure vocals.\""
+                        ],
+                        success: [
+                            "Mira laughs: \"Our harmonies just stunned the demon crowd!\"",
+                            "Mira beams, \"Saja Boys can't touch a perfect chord like that.\""
+                        ],
+                        miss: [
+                            "Mira sighs: \"They warped the pitch—let's retune.\"",
+                            "Mira centers the team: \"Deep breath. We reclaim the stage.\""
+                        ],
+                        reset: [
+                            "Mira floats a calming note, resetting the choreography timing.",
+                            "Mira nods: \"New take. This time, we out-sing their sorcery.\""
+                        ]
+                    },
+                    {
+                        id: "zoey",
+                        name: "Zoey",
+                        description: "Tech-savvy DJ who hacks demon soundwaves with synthised light whips.",
+                        skills: "DJ · Signal Hacking",
+                        highlight: "linear-gradient(140deg, rgba(255, 166, 92, 0.82), rgba(255, 62, 124, 0.78))",
+                        intro: [
+                            "Zoey flicks her holo-decks, scanning demon waveforms in neon blue.",
+                            "Zoey smirks, \"I've got their bassline mapped—let's spike it.\""
+                        ],
+                        success: [
+                            "Zoey shouts: \"Remix landed! They can't counter that math drop.\"",
+                            "Zoey pumps a fist: \"Huntrix tech always shreds demon hype.\""
+                        ],
+                        miss: [
+                            "Zoey cringes: \"Ugh, they jammed the signal—recalibrating.\"",
+                            "Zoey taps her visor: \"Glitch spotted. We'll overwrite it next take.\""
+                        ],
+                        reset: [
+                            "Zoey spins the decks down: \"Cut! I'll re-sequence the beat.\"",
+                            "Zoey cues the lighting rig to reboot the scene."
+                        ]
+                    }
                 ],
-                success: [
-                    "Rumi cheers: \"That's how we headline over the Saja Boys!\"",
-                    "Rumi grins, sabers humming: \"Your math just melted their glam.\""
-                ],
-                miss: [
-                    "Rumi grimaces: \"They slipped a glamour—reset the formation.\"",
-                    "Rumi steadies everyone: \"Focus up, their illusions won't win.\""
-                ],
-                reset: [
-                    "Rumi calls cut: \"We block this beat again, no sweat.\"",
-                    "Rumi signals the choreo cam to reframe the next strike."
-                ]
+                pepTalks: {
+                    correct: [
+                        "Huntrix synergy ignites the arena!",
+                        "Fans roar as the Saja Boys stumble!",
+                        "Spotlight stays ours!"
+                    ],
+                    incorrect: [
+                        "The Saja Boys flash a distraction!",
+                        "Demon pyros flare—hold formation!",
+                        "Illusion strike! Reset the beat!"
+                    ],
+                    skip: [
+                        "Stage crew calls hold!",
+                        "Lighting reset—take a breath.",
+                        "Director signals a fresh setup."
+                    ]
+                }
             },
-            {
-                id: "mira",
-                name: "Mira",
-                intro: [
-                    "Mira hums a protective harmony that shimmers violet across the stage.",
-                    "Mira whispers, \"I'll drown their glam in pure vocals.\""
+            sajaboys: {
+                id: "sajaboys",
+                displayName: "Saja Boys",
+                heading: "Saja Boys: Domination Drills",
+                tagline: "Jinu, Romance, and Mystery rehearse to siphon the Pride before Huntrix hits the stage.",
+                squadName: "Saja Boys",
+                villainName: "Huntrix",
+                sceneIntro: "Saja Boys conspire for the next ambush.",
+                palette: {
+                    "--bg": "#04060f",
+                    "--panel": "#10131f",
+                    "--accent": "#ffc857",
+                    "--accent-light": "#ffe29f",
+                    "--text": "#f3f6ff",
+                    "--muted": "#b7c8ff",
+                    "--warning": "#ff9f5a",
+                    "--success": "#57f5ff",
+                    "--spotlight": "rgba(255, 200, 87, 0.32)",
+                    "--aura": "rgba(64, 120, 255, 0.28)"
+                },
+                heroLineup: [
+                    {
+                        id: "jinu",
+                        name: "Jinu",
+                        description: "Charismatic leader blending velvet vocals with sinister glamours.",
+                        skills: "Frontman · Soul Snare",
+                        highlight: "linear-gradient(140deg, rgba(255, 200, 87, 0.88), rgba(255, 87, 120, 0.78))",
+                        intro: [
+                            "Jinu flashes a dangerous grin, summoning Derpy with a whistle.",
+                            "Jinu murmurs, \"Keep the Pride under our spell.\""
+                        ],
+                        success: [
+                            "Jinu croons: \"Another heart beats for the Pride.\"",
+                            "Jinu smirks: \"Huntrix can't outshine that perfect harmony.\""
+                        ],
+                        miss: [
+                            "Jinu's eyes flare: \"Their defenses are louder—tighten up.\"",
+                            "Jinu mutters, \"Huntrix cracked the bridge; reset the charm.\""
+                        ],
+                        reset: [
+                            "Jinu waves the band offstage to reset the lighting sigil.",
+                            "Jinu calls, \"Re-rack the spell. We don't miss twice.\""
+                        ]
+                    },
+                    {
+                        id: "romance",
+                        name: "Romance Saja",
+                        description: "Flirt-fueled performer who siphons devotion with honeyed lyrics.",
+                        skills: "Charm · Pulse Control",
+                        highlight: "linear-gradient(140deg, rgba(255, 140, 187, 0.86), rgba(149, 94, 255, 0.78))",
+                        intro: [
+                            "Romance twirls his cane mic, scattering pink hex lights.",
+                            "Romance coos, \"Let's make the crowd forget Huntrix ever existed.\""
+                        ],
+                        success: [
+                            "Romance laughs: \"Another encore, another stolen scream.\"",
+                            "Romance winks: \"Even Celine would swoon for that math.\""
+                        ],
+                        miss: [
+                            "Romance pouts: \"Their fandom pushed back—pucker up and retry.\"",
+                            "Romance hisses, \"Sample glitched. Smooth it over.\""
+                        ],
+                        reset: [
+                            "Romance sprinkles glitter wards over the stage markers.",
+                            "Romance sighs, \"Fine, reset the vibe, but keep it lethal.\""
+                        ]
+                    },
+                    {
+                        id: "mystery",
+                        name: "Mystery Saja",
+                        description: "Shadow strategist layering trap beats behind sly smiles.",
+                        skills: "Producer · Rift Sequencer",
+                        highlight: "linear-gradient(140deg, rgba(116, 205, 255, 0.86), rgba(64, 88, 255, 0.78))",
+                        intro: [
+                            "Mystery sketches sigils across his mixing gauntlet.",
+                            "Mystery muses, \"Every equation is a trap door.\""
+                        ],
+                        success: [
+                            "Mystery nods: \"Equation locked; Huntrix loses tempo.\"",
+                            "Mystery chuckles: \"Add it to the Pride's highlight reel.\""
+                        ],
+                        miss: [
+                            "Mystery frowns: \"Huntrix jammed the waveform; recalculating.\"",
+                            "Mystery growls, \"Variables slipped—patch the loop.\""
+                        ],
+                        reset: [
+                            "Mystery collapses the hologram and restacks the beat wards.",
+                            "Mystery taps the console: \"Version beta was weak. Iterating.\""
+                        ]
+                    }
                 ],
-                success: [
-                    "Mira laughs: \"Our harmonies just stunned the demon crowd!\"",
-                    "Mira beams, \"Saja Boys can't touch a perfect chord like that.\""
-                ],
-                miss: [
-                    "Mira sighs: \"They warped the pitch—let's retune.\"",
-                    "Mira centers the team: \"Deep breath. We reclaim the stage.\""
-                ],
-                reset: [
-                    "Mira floats a calming note, resetting the choreography timing.",
-                    "Mira nods: \"New take. This time, we out-sing their sorcery.\""
-                ]
-            },
-            {
-                id: "zoey",
-                name: "Zoey",
-                intro: [
-                    "Zoey flicks her holo-decks, scanning demon waveforms in neon blue.",
-                    "Zoey smirks, \"I've got their bassline mapped—let's spike it.\""
-                ],
-                success: [
-                    "Zoey shouts: \"Remix landed! They can't counter that math drop.\"",
-                    "Zoey pumps a fist: \"Huntrix tech always shreds demon hype.\""
-                ],
-                miss: [
-                    "Zoey cringes: \"Ugh, they jammed the signal—recalibrating.\"",
-                    "Zoey taps her visor: \"Glitch spotted. We'll overwrite it next take.\""
-                ],
-                reset: [
-                    "Zoey spins the decks down: \"Cut! I'll re-sequence the beat.\"",
-                    "Zoey cues the lighting rig to reboot the scene."
-                ]
+                pepTalks: {
+                    correct: [
+                        "Stage smoke billows as Huntrix falters!",
+                        "The Pride howls—another flawless strike!",
+                        "Dokkaebi fireworks light the rafters!"
+                    ],
+                    incorrect: [
+                        "Huntrix pushes back with a counter-chorus!",
+                        "Fans shake free of the trance—reinforce it!",
+                        "The Honmoon flickers; recalibrate fast!"
+                    ],
+                    skip: [
+                        "Stage manager flashes the fox-sign to reset.",
+                        "Derpy knocks over the amps—take five.",
+                        "Sussie circles twice—start the beat again."
+                    ]
+                }
             }
-        ];
+        };
 
         const state = {
             levelIndex: 0,
@@ -569,8 +748,14 @@
             correctAnswers: 0,
             masteryXP: 0,
             badges: new Set(),
-            history: []
+            history: [],
+            activeTheme: "huntrix"
         };
+
+        let currentTheme = themes.huntrix;
+        let heroLineup = currentTheme.heroLineup;
+        let villainName = currentTheme.villainName;
+        let pepTalks = currentTheme.pepTalks;
 
         const elements = {
             leftOperand: document.getElementById("leftOperand"),
@@ -589,26 +774,18 @@
             meterFill: document.getElementById("meterFill"),
             progressLabel: document.getElementById("progressLabel"),
             meterShell: document.querySelector(".meter-shell"),
-            sceneTag: document.getElementById("sceneTag")
+            sceneTag: document.getElementById("sceneTag"),
+            squadDeck: document.getElementById("squadDeck"),
+            heading: document.getElementById("gameHeading"),
+            tagline: document.getElementById("gameTagline")
         };
 
-        elements.squadCards = Array.from(document.querySelectorAll(".squad-card"));
-
-        const demonPepTalks = {
-            correct: [
-                "Huntrix synergy ignites the arena!", "Fans roar as the Saja Boys stumble!",
-                "Spotlight stays ours!"
-            ],
-            incorrect: [
-                "The Saja Boys flash a distraction!", "Demon pyros flare—hold formation!",
-                "Illusion strike! Reset the beat!"
-            ],
-            skip: [
-                "Stage crew calls hold!", "Lighting reset—take a breath.", "Director signals a fresh setup."
-            ]
-        };
+        elements.themeButtons = Array.from(document.querySelectorAll(".theme-button"));
 
         function randomItem(list) {
+            if (!Array.isArray(list) || list.length === 0) {
+                return null;
+            }
             return list[Math.floor(Math.random() * list.length)];
         }
 
@@ -616,19 +793,76 @@
             return Math.floor(Math.random() * (max + 1));
         }
 
+        function applyPalette(palette) {
+            const rootStyle = document.documentElement.style;
+            Object.entries(palette).forEach(([name, value]) => {
+                rootStyle.setProperty(name, value);
+            });
+        }
+
+        function updateHeading(text) {
+            if (elements.heading) {
+                elements.heading.textContent = text;
+            }
+        }
+
+        function updateTagline(text) {
+            if (elements.tagline) {
+                elements.tagline.textContent = text;
+            }
+        }
+
+        function updateThemeButtons(activeId) {
+            elements.themeButtons.forEach(button => {
+                const isActive = button.dataset.theme === activeId;
+                button.classList.toggle("is-active", isActive);
+                button.setAttribute("aria-pressed", String(isActive));
+            });
+        }
+
+        function renderSquadCards(lineup) {
+            if (!elements.squadDeck) {
+                return;
+            }
+            elements.squadDeck.innerHTML = "";
+            lineup.forEach(hero => {
+                const card = document.createElement("article");
+                card.className = "squad-card";
+                card.dataset.hero = hero.id;
+                if (hero.highlight) {
+                    card.style.setProperty("--cardActiveGradient", hero.highlight);
+                }
+                card.innerHTML = `
+                    <h2>${hero.name}</h2>
+                    <p>${hero.description}</p>
+                    <span>${hero.skills}</span>
+                `;
+                elements.squadDeck.appendChild(card);
+            });
+            elements.squadCards = Array.from(elements.squadDeck.querySelectorAll(".squad-card"));
+        }
+
         function assignHero() {
+            if (!Array.isArray(heroLineup) || heroLineup.length === 0) {
+                state.currentHero = null;
+                state.sceneNarration = "";
+                highlightActiveHero();
+                updateSceneCallout();
+                return;
+            }
+
             const previous = state.currentHero;
             let nextHero = randomItem(heroLineup);
             if (previous && heroLineup.length > 1) {
                 let guard = 0;
-                while (nextHero.id === previous.id && guard < 5) {
+                while (nextHero && previous.id === nextHero.id && guard < 5) {
                     nextHero = randomItem(heroLineup);
                     guard += 1;
                 }
             }
-            state.currentHero = nextHero;
-            const linePool = nextHero?.intro?.length ? nextHero.intro : ["Huntrix locks the formation."];
-            state.sceneNarration = randomItem(linePool);
+            state.currentHero = nextHero || null;
+            const linePool = nextHero?.intro?.length ? nextHero.intro : [currentTheme.sceneIntro];
+            state.sceneNarration = randomItem(linePool) || currentTheme.sceneIntro;
             highlightActiveHero();
             updateSceneCallout();
         }
@@ -639,10 +873,10 @@
             }
             const hero = state.currentHero;
             if (!hero) {
-                elements.sceneTag.textContent = "Huntrix preps the next scene.";
+                elements.sceneTag.textContent = currentTheme.sceneIntro;
                 return;
             }
-            const narration = state.sceneNarration || "Huntrix holds the spotlight.";
+            const narration = state.sceneNarration || currentTheme.sceneIntro;
             elements.sceneTag.innerHTML = `<strong>${hero.name}</strong> · ${narration}`;
         }
 
@@ -658,14 +892,12 @@
 
         function pickProblem() {
             const profile = levels[state.levelIndex];
-            const operation = randomItem(profile.operations);
+            const operation = randomItem(profile.operations) || "+";
             let left = rndInRange(profile.maxOperand);
             let right = rndInRange(profile.maxOperand);
 
-            if (operation === "-") {
-                if (left < right) {
-                    [left, right] = [right, left];
-                }
+            if (operation === "-" && left < right) {
+                [left, right] = [right, left];
             }
 
             state.currentProblem = { left, right, operation, answer: computeAnswer(left, right, operation) };
@@ -678,7 +910,11 @@
         }
 
         function renderProblem() {
-            const { left, right, operation } = state.currentProblem;
+            const problem = state.currentProblem;
+            if (!problem) {
+                return;
+            }
+            const { left, right, operation } = problem;
             elements.leftOperand.textContent = left;
             elements.rightOperand.textContent = right;
             elements.operator.textContent = operation;
@@ -700,15 +936,15 @@
             const previousGoal = state.levelIndex === 0 ? 0 : levels[state.levelIndex - 1].xpGoal;
             const rangeStart = previousGoal;
             const rangeEnd = currentLevel.xpGoal;
-            const inLevelXP = Math.max(0, Math.min(state.masteryXP - rangeStart, rangeEnd - rangeStart));
             const totalSpan = rangeEnd - rangeStart;
+            const inLevelXP = Math.max(0, Math.min(state.masteryXP - rangeStart, totalSpan));
             const ratio = totalSpan ? (inLevelXP / totalSpan) : 1;
             elements.meterFill.style.width = `${Math.round(ratio * 100)}%`;
             elements.meterShell.setAttribute("aria-valuemin", rangeStart.toString());
             elements.meterShell.setAttribute("aria-valuemax", rangeEnd.toString());
             elements.meterShell.setAttribute("aria-valuenow", state.masteryXP.toString());
             elements.progressLabel.textContent = ratio >= 1
-                ? "Fan energy maxed! Land a perfect take to challenge the Saja Boys."
+                ? `${currentTheme.squadName} is stage-ready! Land a perfect take to challenge ${villainName}.`
                 : `Next arena remix unlocks at ${currentLevel.xpGoal} Fan Energy`;
         }
 
@@ -718,7 +954,7 @@
                 state.levelIndex += 1;
                 elements.levelValue.textContent = levels[state.levelIndex].id;
                 badgeCheck({ id: "lvl-" + levels[state.levelIndex].id, level: levels[state.levelIndex].id });
-                elements.feedback.innerHTML = `<strong>New Act!</strong> Huntrix storms into ${levels[state.levelIndex].title}.`;
+                elements.feedback.innerHTML = `<strong>New Act!</strong> ${currentTheme.squadName} storms into ${levels[state.levelIndex].title}.`;
                 updateProgressMeter();
             }
         }
@@ -744,7 +980,7 @@
         function badgeCheck(context) {
             if (context.id === "lvl-4") {
                 const target = badgeBlueprints.find(b => b.id === "lvl-4");
-                if (!state.badges.has(target.id) && context.level >= target.threshold) {
+                if (target && !state.badges.has(target.id) && context.level >= target.threshold) {
                     awardBadge(target, `Premiered at Level ${context.level}!`);
                 }
             }
@@ -871,22 +1107,24 @@
             const isCorrect = value === state.currentProblem.answer;
             adjustStreak(isCorrect);
             const hero = state.currentHero;
-            const heroName = hero ? hero.name : "Huntrix";
+            const heroName = hero ? hero.name : currentTheme.squadName;
 
             if (isCorrect) {
                 state.correctAnswers += 1;
                 awardXP(1 + Math.min(state.streak, 4));
-                const successLine = hero?.success?.length ? randomItem(hero.success) : randomItem(demonPepTalks.correct);
-                elements.feedback.textContent = successLine;
+                const successLine = hero?.success?.length ? randomItem(hero.success) : randomItem(pepTalks.correct);
+                elements.feedback.textContent = successLine || "Flawless victory!";
                 updateHistory(`✅ ${heroName} syncs the scene: ${state.currentProblem.left} ${state.currentProblem.operation} ${state.currentProblem.right} = ${value}`);
                 if (state.correctAnswers === 1) {
                     const startBadge = badgeBlueprints.find(b => b.id === "first-clear");
-                    grantIfAvailable(startBadge, "First scene captured!");
+                    if (startBadge) {
+                        grantIfAvailable(startBadge, "First scene captured!");
+                    }
                 }
             } else {
                 awardXP(Math.max(0, -1));
-                const missLine = hero?.miss?.length ? randomItem(hero.miss) : randomItem(demonPepTalks.incorrect);
-                elements.feedback.textContent = missLine;
+                const missLine = hero?.miss?.length ? randomItem(hero.miss) : randomItem(pepTalks.incorrect);
+                elements.feedback.textContent = missLine || "The crowd gasps—reset!";
                 updateHistory(`❌ ${villainName} countered: ${state.currentProblem.left} ${state.currentProblem.operation} ${state.currentProblem.right} ≠ ${value} (needed ${state.currentProblem.answer})`);
             }
 
@@ -897,18 +1135,76 @@
         function handleSkip() {
             adjustStreak(false);
             const hero = state.currentHero;
-            const heroName = hero ? hero.name : "Huntrix";
-            const resetLine = hero?.reset?.length ? randomItem(hero.reset) : randomItem(demonPepTalks.skip);
-            elements.feedback.textContent = resetLine;
-            updateHistory(`⏭️ ${heroName} calls reset on ${state.currentProblem.left} ${state.currentProblem.operation} ${state.currentProblem.right}`);
+            const heroName = hero ? hero.name : currentTheme.squadName;
+            const resetLine = hero?.reset?.length ? randomItem(hero.reset) : randomItem(pepTalks.skip);
+            elements.feedback.textContent = resetLine || "Resetting the choreography.";
+            if (state.currentProblem) {
+                updateHistory(`⏭️ ${heroName} calls reset on ${state.currentProblem.left} ${state.currentProblem.operation} ${state.currentProblem.right}`);
+            } else {
+                updateHistory(`⏭️ ${heroName} resets the formation.`);
+            }
             pickProblem();
+        }
+
+        function resetGameState() {
+            state.levelIndex = 0;
+            state.currentProblem = null;
+            state.currentHero = null;
+            state.sceneNarration = "";
+            state.streak = 0;
+            state.correctAnswers = 0;
+            state.masteryXP = 0;
+            state.badges = new Set();
+            state.history = [];
+
+            elements.levelValue.textContent = levels[0].id;
+            elements.streakValue.textContent = "0";
+            elements.correctValue.textContent = "0";
+            elements.xpValue.textContent = "0";
+            elements.badgeGrid.innerHTML = "";
+            elements.historyList.innerHTML = "";
+            elements.feedback.textContent = "";
+            elements.playerAnswer.value = "";
+
+            elements.sceneTag.textContent = currentTheme.sceneIntro;
+            if (elements.squadDeck) {
+                elements.squadDeck.setAttribute("aria-label", `${currentTheme.squadName} lineup`);
+            }
+
+            updateProgressMeter();
+            pickProblem();
+        }
+
+        function applyTheme(themeId) {
+            const theme = themes[themeId] || themes.huntrix;
+            currentTheme = theme;
+            state.activeTheme = theme.id;
+            heroLineup = theme.heroLineup;
+            villainName = theme.villainName;
+            pepTalks = theme.pepTalks;
+
+            applyPalette(theme.palette);
+            updateHeading(theme.heading);
+            updateTagline(theme.tagline);
+            renderSquadCards(theme.heroLineup);
+            updateThemeButtons(theme.id);
+            resetGameState();
+        }
+
+        function changeTheme(themeId) {
+            if (themeId === state.activeTheme) {
+                return;
+            }
+            applyTheme(themeId);
         }
 
         function initGame() {
             elements.responseForm.addEventListener("submit", handleSubmission);
             elements.skipButton.addEventListener("click", handleSkip);
-            pickProblem();
-            updateProgressMeter();
+            elements.themeButtons.forEach(button => {
+                button.addEventListener("click", () => changeTheme(button.dataset.theme));
+            });
+            applyTheme(state.activeTheme);
         }
 
         initGame();
