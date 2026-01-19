@@ -315,8 +315,10 @@
             <textarea id="invoiceBox" readonly
                 style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px; min-height: 300px; resize: vertical; margin-bottom: 20px; font-family: 'Courier New', monospace; line-height: 1.6;"></textarea>
 
-            <button type="button" class="btn btn-copy" onclick="copyInvoice()" style="width: 100%;">📋 Copy
-                Email</button>
+            <div class="copy-btn-container">
+                <button type="button" class="btn btn-secondary" onclick="copySubject()">📋 Copy Subject</button>
+                <button type="button" class="btn btn-copy" onclick="copyInvoice()">📋 Copy Email</button>
+            </div>
         </div>
     </div>
 
@@ -377,6 +379,22 @@
             } catch (err) {
                 navigator.clipboard.writeText(invoiceBox.value).then(() => {
                     alert('✅ Invoice copied to clipboard!');
+                }).catch(() => {
+                    alert('❌ Failed to copy. Please manually select and copy the text.');
+                });
+            }
+        }
+
+        function copySubject() {
+            const subjectBox = document.getElementById('subjectBox');
+            subjectBox.select();
+            subjectBox.setSelectionRange(0, 99999);
+            try {
+                document.execCommand('copy');
+                alert('✅ Subject copied to clipboard!');
+            } catch (err) {
+                navigator.clipboard.writeText(subjectBox.value).then(() => {
+                    alert('✅ Subject copied to clipboard!');
                 }).catch(() => {
                     alert('❌ Failed to copy. Please manually select and copy the text.');
                 });
