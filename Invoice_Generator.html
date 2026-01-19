@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Genesee Career Institute - Student Helpdesk Invoice Generator</title>
+    <title>Genesee Career Institute - 3D Print Invoice Generator</title>
     <style>
         * {
             margin: 0;
@@ -20,7 +20,7 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 800px;
             margin: 0 auto;
             background: white;
             border-radius: 10px;
@@ -36,12 +36,12 @@
         }
 
         .header h1 {
-            font-size: 2.5em;
+            font-size: 2em;
             margin-bottom: 10px;
         }
 
         .header p {
-            font-size: 1.1em;
+            font-size: 1em;
             opacity: 0.9;
         }
 
@@ -61,7 +61,6 @@
         }
 
         .form-group input,
-        .form-group select,
         .form-group textarea {
             width: 100%;
             padding: 12px;
@@ -72,7 +71,6 @@
         }
 
         .form-group input:focus,
-        .form-group select:focus,
         .form-group textarea:focus {
             outline: none;
             border-color: #667eea;
@@ -82,89 +80,6 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
-        }
-
-        .items-section {
-            margin-top: 30px;
-        }
-
-        .items-header {
-            display: grid;
-            grid-template-columns: 3fr 1fr 1fr 1fr 60px;
-            gap: 10px;
-            font-weight: 600;
-            padding: 10px;
-            background: #f5f5f5;
-            border-radius: 6px;
-            margin-bottom: 10px;
-        }
-
-        .item-row {
-            display: grid;
-            grid-template-columns: 3fr 1fr 1fr 1fr 60px;
-            gap: 10px;
-            margin-bottom: 10px;
-            align-items: center;
-        }
-
-        .item-row input {
-            padding: 10px;
-            border: 2px solid #e0e0e0;
-            border-radius: 6px;
-        }
-
-        .delete-btn {
-            background: #ff4757;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .delete-btn:hover {
-            background: #ff3838;
-        }
-
-        .add-item-btn {
-            background: #2ed573;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            margin-top: 10px;
-            transition: background 0.3s;
-        }
-
-        .add-item-btn:hover {
-            background: #26de81;
-        }
-
-        .summary {
-            margin-top: 30px;
-            padding: 20px;
-            background: #f5f5f5;
-            border-radius: 6px;
-        }
-
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 16px;
-        }
-
-        .summary-row.total {
-            font-size: 24px;
-            font-weight: 700;
-            color: #667eea;
-            padding-top: 15px;
-            border-top: 3px solid #667eea;
-            margin-top: 15px;
         }
 
         .actions {
@@ -205,150 +120,126 @@
             background: #e0e0e0;
         }
 
-        /* Invoice Preview Styles */
+        .btn-copy {
+            background: #2ed573;
+        }
+
+        .btn-copy:hover {
+            background: #26de81;
+        }
+
         .invoice-preview {
             display: none;
-            padding: 40px;
+            padding: 30px;
         }
 
         .invoice-preview.active {
             display: block;
         }
 
+        .invoice-box {
+            background: #f9f9f9;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 30px;
+        }
+
         .invoice-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 40px;
+            text-align: center;
+            margin-bottom: 25px;
             padding-bottom: 20px;
-            border-bottom: 3px solid #667eea;
+            border-bottom: 2px solid #e0e0e0;
         }
 
-        .company-info h2 {
+        .invoice-header h2 {
             color: #667eea;
-            font-size: 2em;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
+            font-size: 1.5em;
         }
 
-        .invoice-meta {
-            text-align: right;
-        }
-
-        .invoice-meta h3 {
-            font-size: 2em;
-            color: #667eea;
-            margin-bottom: 10px;
+        .invoice-header p {
+            color: #666;
+            font-size: 13px;
+            margin: 0;
         }
 
         .invoice-details {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 40px;
+            gap: 20px;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
         }
 
-        .detail-box h4 {
-            color: #667eea;
-            margin-bottom: 10px;
-            font-size: 1.1em;
+        .detail-item {
+            font-size: 13px;
         }
 
-        .detail-box p {
-            margin-bottom: 5px;
-            line-height: 1.6;
-        }
-
-        .invoice-table {
-            width: 100%;
-            margin-bottom: 30px;
-            border-collapse: collapse;
-        }
-
-        .invoice-table th {
-            background: #667eea;
-            color: white;
-            padding: 15px;
-            text-align: left;
+        .detail-item .label {
+            color: #666;
             font-weight: 600;
+            margin-bottom: 3px;
         }
 
-        .invoice-table td {
-            padding: 15px;
-            border-bottom: 1px solid #e0e0e0;
+        .detail-item .value {
+            color: #333;
         }
 
-        .invoice-table tr:last-child td {
-            border-bottom: none;
+        .invoice-amounts {
+            margin-bottom: 25px;
         }
 
-        .invoice-table .text-right {
-            text-align: right;
-        }
-
-        .invoice-summary {
-            margin-left: auto;
-            width: 300px;
-        }
-
-        .invoice-summary-row {
+        .amount-row {
             display: flex;
             justify-content: space-between;
-            padding: 10px 0;
-            font-size: 16px;
+            padding: 12px 0;
+            border-bottom: 1px solid #ddd;
+            font-size: 14px;
         }
 
-        .invoice-summary-row.total {
-            border-top: 3px solid #667eea;
-            margin-top: 10px;
+        .amount-row.total {
+            border-bottom: none;
+            border-top: 2px solid #667eea;
             padding-top: 15px;
-            font-size: 24px;
+            font-size: 18px;
             font-weight: 700;
             color: #667eea;
         }
 
-        .invoice-footer {
-            margin-top: 50px;
-            padding-top: 20px;
-            border-top: 2px solid #e0e0e0;
-            text-align: center;
-            color: #666;
+        .amount-row .label {
+            font-weight: 600;
         }
 
-        @media print {
-            body {
-                background: white;
-                padding: 0;
-            }
+        .invoice-footer {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            font-size: 12px;
+            color: #666;
+            line-height: 1.6;
+        }
 
-            .container {
-                box-shadow: none;
-                max-width: 100%;
-            }
+        .copy-section {
+            margin-top: 25px;
+        }
 
-            .form-section,
-            .actions {
-                display: none;
-            }
+        .copy-btn-container {
+            display: flex;
+            gap: 10px;
+        }
 
-            .invoice-preview {
-                display: block !important;
-            }
+        .copy-btn-container button {
+            flex: 1;
+        }
+
+        #emailText {
+            display: none;
         }
 
         @media (max-width: 768px) {
             .row {
                 grid-template-columns: 1fr;
-            }
-
-            .items-header {
-                display: none;
-            }
-
-            .item-row {
-                grid-template-columns: 1fr;
-                border: 1px solid #e0e0e0;
-                padding: 10px;
-                border-radius: 6px;
             }
 
             .invoice-details {
@@ -362,55 +253,584 @@
     <div class="container">
         <div class="header">
             <h1>GENESEE CAREER INSTITUTE</h1>
+            <p>3D Print Invoice Generator</p>
+        </div>
+
+        <div class="form-section" id="formSection">
+            <form id="invoiceForm">
+                <h2 style="margin-bottom: 20px; color: #667eea;">Student Information</h2>
+                <div class="row">
+                    <div class="form-group">
+                        <label for="clientName">Student Name *</label>
+                        <input type="text" id="clientName" required placeholder="Enter student name">
+                    </div>
+                    <div class="form-group">
+                        <label for="clientEmail">Email Address *</label>
+                        <input type="email" id="clientEmail" required placeholder="Enter email address">
+                    </div>
+                </div>
+
+                <h2 style="margin: 30px 0 20px 0; color: #667eea;">3D Print Details</h2>
+                <div class="row">
+                    <div class="form-group">
+                        <label for="printTime">Print Time (hours) *</label>
+                        <input type="number" id="printTime" step="0.01" min="0" value="0" required
+                            oninput="calculateTotal()" placeholder="e.g., 2.5">
+                        <small style="color: #666; font-size: 12px;">Service: $3.50/hour + $2.00 service fee</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="filamentGrams">Filament Used (grams) *</label>
+                        <input type="number" id="filamentGrams" step="1" min="0" value="0" required
+                            oninput="calculateTotal()" placeholder="e.g., 150">
+                        <small style="color: #666; font-size: 12px;">Material: $20.00/kg + 6% tax</small>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 30px;">
+                    <label for="notes">Additional Notes (optional)</label>
+                    <textarea id="notes" rows="3" placeholder="Any special notes..."></textarea>
+                </div>
+            </form>
+        </div>
+
+        <div class="invoice-preview" id="invoicePreview">
+            <div class="invoice-box">
+                <div class="invoice-header">
+                    <h2>GENESEE CAREER INSTITUTE</h2>
+                    <p>Student Helpdesk - 3D Print Service</p>
+                    <p style="margin-top: 10px; font-weight: 600;">Invoice #<span id="previewInvoiceNumber"></span></p>
+                </div>
+
+                <div class="invoice-details">
+                    <div class="detail-item">
+                        <div class="label">Student:</div>
+                        <div class="value"><span id="previewClientName"></span></div>
+                        <div class="label" style="margin-top: 10px;">Email:</div>
+                        <div class="value"><span id="previewClientEmail"></span></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="label">Date:</div>
+                        <div class="value"><span id="previewInvoiceDate"></span></div>
+                        <div class="label" style="margin-top: 10px;">Address:</div>
+                        <div class="value">2413 Maple Ave<br>Flint, MI 48507</div>
+                    </div>
+                </div>
+
+                <div class="invoice-amounts">
+                    <div class="amount-row">
+                        <span class="label">Service Charge:</span>
+                        <span>$<span id="previewService">0.00</span></span>
+                    </div>
+                    <div class="amount-row">
+                        <span class="label">Material Cost:</span>
+                        <span>$<span id="previewMaterials">0.00</span></span>
+                    </div>
+                    <div class="amount-row">
+                        <span class="label">Sales Tax (6%):</span>
+                        <span>$<span id="previewSalesTax">0.00</span></span>
+                    </div>
+                    <div class="amount-row total">
+                        <span>TOTAL DUE:</span>
+                        <span>$<span id="previewTotalDue">0.00</span></span>
+                    </div>
+                </div>
+
+                <div id="previewNotes"
+                    style="display: none; margin-bottom: 20px; padding: 15px; background: white; border-radius: 5px;">
+                    <p style="font-size: 13px; color: #333; line-height: 1.5;"><span id="notesText"></span></p>
+                </div>
+
+                <div class="invoice-footer">
+                    <p style="margin-bottom: 10px;"><strong>Payments accepted online by credit card.</strong></p>
+                    <p>Questions? Email: <a href="mailto:studenthelpdesk@geneseeisd.org"
+                            style="color: #0066cc;">studenthelpdesk@geneseeisd.org</a></p>
+                    <p style="margin-top: 10px;">2413 Maple Ave • Flint, MI 48507</p>
+                    <p style="margin-top: 15px;"><strong>Thank you for using GCI Student Helpdesk!</strong></p>
+                </div>
+
+                <div class="copy-section">
+                    <div class="copy-btn-container">
+                        <button type="button" class="btn btn-copy" onclick="copyToClipboard()">📋 Copy Invoice</button>
+                        <button type="button" class="btn btn-secondary" onclick="editInvoice()">✎ Edit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions" id="actionButtons">
+            <button type="button" class="btn btn-secondary" onclick="resetForm()" id="resetBtn">Reset</button>
+            <button type="button" class="btn btn-primary" onclick="generateInvoice()" id="generateBtn">Generate
+                Invoice</button>
+        </div>
+    </div>
+
+    <textarea id="emailText" readonly></textarea>
+
+    <script>
+        window.onload = function () { calculateTotal(); };
+
+        function calculateTotal() {
+            const printTime = parseFloat(document.getElementById('printTime').value) || 0;
+            const filamentGrams = parseFloat(document.getElementById('filamentGrams').value) || 0;
+            const service = (printTime * 3.50) + 2.00;
+            const materials = (filamentGrams / 1000) * 20.00;
+            const salesTax = materials * 0.06;
+            document.getElementById('previewService').textContent = service.toFixed(2);
+            document.getElementById('previewMaterials').textContent = materials.toFixed(2);
+            document.getElementById('previewSalesTax').textContent = salesTax.toFixed(2);
+            document.getElementById('previewTotalDue').textContent = (service + materials + salesTax).toFixed(2);
+        }
+
+        function generateInvoice() {
+            const form = document.getElementById('invoiceForm');
+            if (!form.checkValidity()) { form.reportValidity(); return; }
+
+            const date = new Date();
+            const invoiceNum = `${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}-${Math.floor(Math.random() * 100).toString().padStart(2, '0')}`;
+
+            const clientName = document.getElementById('clientName').value;
+            const clientEmail = document.getElementById('clientEmail').value;
+            const printTime = parseFloat(document.getElementById('printTime').value) || 0;
+            const filamentGrams = parseFloat(document.getElementById('filamentGrams').value) || 0;
+            const notes = document.getElementById('notes').value.trim();
+
+            const service = (printTime * 3.50) + 2.00;
+            const materials = (filamentGrams / 1000) * 20.00;
+            const salesTax = materials * 0.06;
+            const total = service + materials + salesTax;
+
+            document.getElementById('previewInvoiceNumber').textContent = invoiceNum;
+            document.getElementById('previewClientName').textContent = clientName;
+            document.getElementById('previewClientEmail').textContent = clientEmail;
+            document.getElementById('previewInvoiceDate').textContent = date.toLocaleDateString();
+            document.getElementById('previewService').textContent = service.toFixed(2);
+            document.getElementById('previewMaterials').textContent = materials.toFixed(2);
+            document.getElementById('previewSalesTax').textContent = salesTax.toFixed(2);
+            document.getElementById('previewTotalDue').textContent = total.toFixed(2);
+
+            if (notes) {
+                document.getElementById('notesText').textContent = notes;
+                document.getElementById('previewNotes').style.display = 'block';
+            } else {
+                document.getElementById('previewNotes').style.display = 'none';
+            }
+
+            const emailText = `Subject: GCI 3D Print Invoice #${invoiceNum}\n\n========================================\nGENESEE CAREER INSTITUTE\nStudent Helpdesk - 3D Print Service\n2413 Maple Ave, Flint, MI 48507\n========================================\n\nInvoice #: ${invoiceNum}\nDate: ${date.toLocaleDateString()}\n\nStudent: ${clientName}\nEmail: ${clientEmail}\n\n----------------------------------------\nService Charge:           $${service.toFixed(2)}\nMaterial Cost:            $${materials.toFixed(2)}\nSales Tax (6%):           $${salesTax.toFixed(2)}\n----------------------------------------\nTOTAL DUE:                $${total.toFixed(2)}\n========================================\n\n${notes ? 'Notes: ' + notes + '\n\n' : ''}Payments accepted online by credit card.\n\nQuestions? Email: studenthelpdesk@geneseeisd.org\n\nThank you for using GCI Student Helpdesk!`;
+
+            document.getElementById('emailText').value = emailText;
+            document.getElementById('formSection').style.display = 'none';
+            document.getElementById('invoicePreview').classList.add('active');
+            document.getElementById('generateBtn').style.display = 'none';
+            document.getElementById('resetBtn').style.display = 'none';
+        }
+
+        function editInvoice() {
+            document.getElementById('formSection').style.display = 'block';
+            document.getElementById('invoicePreview').classList.remove('active');
+            document.getElementById('generateBtn').style.display = 'inline-block';
+            document.getElementById('resetBtn').style.display = 'inline-block';
+        }
+
+        function copyToClipboard() {
+            const emailText = document.getElementById('emailText');
+            emailText.select();
+            emailText.setSelectionRange(0, 99999);
+            try {
+                document.execCommand('copy');
+                alert('✅ Invoice copied to clipboard!\n\nYou can now paste it into your email.');
+            } catch (err) {
+                navigator.clipboard.writeText(emailText.value).then(() => {
+                    alert('✅ Invoice copied to clipboard!\n\nYou can now paste it into your email.');
+                }).catch(() => {
+                    alert('❌ Failed to copy. Please manually select and copy the text.');
+                });
+            }
+        }
+
+        function resetForm() {
+            if (confirm('Reset the form?')) {
+                document.getElementById('invoiceForm').reset();
+                calculateTotal();
+            }
+        }
+    </script>
+</body>
+
+</html>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 20px;
+        min-height: 100vh;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+    }
+
+    .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        text-align: center;
+    }
+
+    .header h1 {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+    }
+
+    .header p {
+        font-size: 1.1em;
+        opacity: 0.9;
+    }
+
+    .form-section {
+        padding: 30px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: border-color 0.3s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #667eea;
+    }
+
+    .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .items-section {
+        margin-top: 30px;
+    }
+
+    .items-header {
+        display: grid;
+        grid-template-columns: 3fr 1fr 1fr 1fr 60px;
+        gap: 10px;
+        font-weight: 600;
+        padding: 10px;
+        background: #f5f5f5;
+        border-radius: 6px;
+        margin-bottom: 10px;
+    }
+
+    .item-row {
+        display: grid;
+        grid-template-columns: 3fr 1fr 1fr 1fr 60px;
+        gap: 10px;
+        margin-bottom: 10px;
+        align-items: center;
+    }
+
+    .item-row input {
+        padding: 10px;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+    }
+
+    .delete-btn {
+        background: #ff4757;
+        color: white;
+        border: none;
+        padding: 10px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    .delete-btn:hover {
+        background: #ff3838;
+    }
+
+    .add-item-btn {
+        background: #2ed573;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        margin-top: 10px;
+        transition: background 0.3s;
+    }
+
+    .add-item-btn:hover {
+        background: #26de81;
+    }
+
+    .summary {
+        margin-top: 30px;
+        padding: 20px;
+        background: #f5f5f5;
+        border-radius: 6px;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        font-size: 16px;
+    }
+
+    .summary-row.total {
+        font-size: 24px;
+        font-weight: 700;
+        color: #667eea;
+        padding-top: 15px;
+        border-top: 3px solid #667eea;
+        margin-top: 15px;
+    }
+
+    .actions {
+        padding: 30px;
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        background: #f9f9f9;
+    }
+
+    .btn {
+        padding: 15px 40px;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .btn-primary {
+        background: #667eea;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #5568d3;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-secondary {
+        background: #f1f1f1;
+        color: #333;
+    }
+
+    .btn-secondary:hover {
+        background: #e0e0e0;
+    }
+
+    /* Invoice Preview Styles */
+    .invoice-preview {
+        display: none;
+        padding: 40px;
+    }
+
+    .invoice-preview.active {
+        display: block;
+    }
+
+    .invoice-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 40px;
+        padding-bottom: 20px;
+        border-bottom: 3px solid #667eea;
+    }
+
+    .company-info h2 {
+        color: #667eea;
+        font-size: 2em;
+        margin-bottom: 10px;
+    }
+
+    .invoice-meta {
+        text-align: right;
+    }
+
+    .invoice-meta h3 {
+        font-size: 2em;
+        color: #667eea;
+        margin-bottom: 10px;
+    }
+
+    .invoice-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-bottom: 40px;
+    }
+
+    .detail-box h4 {
+        color: #667eea;
+        margin-bottom: 10px;
+        font-size: 1.1em;
+    }
+
+    .detail-box p {
+        margin-bottom: 5px;
+        line-height: 1.6;
+    }
+
+    .invoice-table {
+        width: 100%;
+        margin-bottom: 30px;
+        border-collapse: collapse;
+    }
+
+    .invoice-table th {
+        background: #667eea;
+        color: white;
+        padding: 15px;
+        text-align: left;
+        font-weight: 600;
+    }
+
+    .invoice-table td {
+        padding: 15px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .invoice-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .invoice-table .text-right {
+        text-align: right;
+    }
+
+    .invoice-summary {
+        margin-left: auto;
+        width: 300px;
+    }
+
+    .invoice-summary-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        font-size: 16px;
+    }
+
+    .invoice-summary-row.total {
+        border-top: 3px solid #667eea;
+        margin-top: 10px;
+        padding-top: 15px;
+        font-size: 24px;
+        font-weight: 700;
+        color: #667eea;
+    }
+
+    .invoice-footer {
+        margin-top: 50px;
+        padding-top: 20px;
+        border-top: 2px solid #e0e0e0;
+        text-align: center;
+        color: #666;
+    }
+
+    @media print {
+        body {
+            background: white;
+            padding: 0;
+        }
+
+        .container {
+            box-shadow: none;
+            max-width: 100%;
+        }
+
+        .form-section,
+        .actions {
+            display: none;
+        }
+
+        .invoice-preview {
+            display: block !important;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .row {
+            grid-template-columns: 1fr;
+        }
+
+        .items-header {
+            display: none;
+        }
+
+        .item-row {
+            grid-template-columns: 1fr;
+            border: 1px solid #e0e0e0;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        .invoice-details {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>GENESEE CAREER INSTITUTE</h1>
             <p>Student Helpdesk - Invoice Generator</p>
         </div>
 
         <!-- Form Section -->
         <div class="form-section" id="formSection">
             <form id="invoiceForm">
-                <h2 style="margin-bottom: 20px; color: #667eea;">Invoice Information</h2>
+                <h2 style="margin-bottom: 20px; color: #667eea;">Student Information</h2>
 
                 <div class="row">
                     <div class="form-group">
-                        <label for="ticketNumber">Ticket/Invoice Number *</label>
-                        <input type="text" id="ticketNumber" required placeholder="Enter helpdesk ticket #"
-                            oninput="syncTicketNumber()">
-                        <small style="color: #666; font-size: 12px;">This will be used as both the ticket number and
-                            invoice number</small>
+                        <label for="clientName">Student Name *</label>
+                        <input type="text" id="clientName" required placeholder="Enter student name">
                     </div>
                     <div class="form-group">
-                        <label for="invoiceDate">Invoice Date *</label>
-                        <input type="date" id="invoiceDate" required>
+                        <label for="clientEmail">Email Address *</label>
+                        <input type="email" id="clientEmail" required placeholder="Enter email address">
                     </div>
-                </div>
-
-                <h2 style="margin: 30px 0 20px 0; color: #667eea;">Client Information</h2>
-
-                <div class="row">
-                    <div class="form-group">
-                        <label for="clientName">Client Name *</label>
-                        <input type="text" id="clientName" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="clientEmail">Client Email</label>
-                        <input type="email" id="clientEmail">
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="form-group">
-                        <label for="clientPhone">Client Phone</label>
-                        <input type="tel" id="clientPhone">
-                    </div>
-                    <div class="form-group">
-                        <label for="studentId">Student/Staff ID</label>
-                        <input type="text" id="studentId">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="clientAddress">Client Address</label>
-                    <textarea id="clientAddress" rows="2"></textarea>
                 </div>
 
                 <h2 style="margin: 30px 0 20px 0; color: #667eea;">3D Print Details</h2>
