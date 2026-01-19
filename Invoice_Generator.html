@@ -298,39 +298,7 @@
                 </div>
             </form>
         </div>
-
-        <div class="invoice-preview" id="invoicePreview">
-            <div class="invoice-box">
-                <h3 style="margin-bottom: 15px; color: #667eea;">Email Subject</h3>
-                <div style="margin-bottom: 20px;">
-                    <textarea id="subjectText" readonly
-                        style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px; min-height: 50px; resize: vertical; background: white; color: #333; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;"></textarea>
-                </div>
-
-                <h3 style="margin-bottom: 15px; color: #667eea;">Invoice Content</h3>
-                <div style="margin-bottom: 25px;">
-                    <textarea id="emailText" readonly
-                        style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px; min-height: 300px; resize: vertical; background: white; color: #333; font-family: 'Courier New', monospace; line-height: 1.6;"></textarea>
-                </div>
-
-                <div class="copy-section">
-                    <div class="copy-btn-container">
-                        <button type="button" class="btn btn-copy" onclick="copyInvoiceContent()">📋 Copy
-                            Invoice</button>
-                        <button type="button" class="btn btn-secondary" onclick="editInvoice()">✎ Edit</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="actions" id="actionButtons">
-            <button type="button" class="btn btn-secondary" onclick="resetForm()" id="resetBtn">Reset</button>
-            <button type="button" class="btn btn-primary" onclick="generateInvoice()" id="generateBtn">Generate
-                Invoice</button>
-        </div>
     </div>
-
-    <textarea id="emailText" readonly></textarea>
 
     <script>
         window.onload = function () { calculateTotal(); };
@@ -341,89 +309,95 @@
             const service = (printTime * 3.50) + 2.00;
             const materials = (filamentGrams / 1000) * 20.00;
             const salesTax = materials * 0.06;
-            document.getElementById('previewService').textContent = service.toFixed(2);
-            document.getElementById('previewMaterials').textContent = materials.toFixed(2);
-            document.getElementById('previewSalesTax').textContent = salesTax.toFixed(2);
-            document.getElementById('previewTotalDue').textContent = (service + materials + salesTax).toFixed(2);
-        }
-
-        function generateInvoice() {
-            const form = document.getElementById('invoiceForm');
-            if (!form.checkValidity()) { form.reportValidity(); return; }
-
-            const date = new Date();
-            const invoiceNum = `${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}-${Math.floor(Math.random() * 100).toString().padStart(2, '0')}`;
-
-            const clientName = document.getElementById('clientName').value;
-            const clientEmail = document.getElementById('clientEmail').value;
-            const ticketNumber = document.getElementById('ticketNumber').value;
-            const printTime = parseFloat(document.getElementById('printTime').value) || 0;
-            const filamentGrams = parseFloat(document.getElementById('filamentGrams').value) || 0;
-            const notes = document.getElementById('notes').value.trim();
-
-            const service = (printTime * 3.50) + 2.00;
-            const materials = (filamentGrams / 1000) * 20.00;
-            const salesTax = materials * 0.06;
-            const total = service + materials + salesTax;
-
-            document.getElementById('previewTicketNumber').textContent = ticketNumber;
-            document.getElementById('previewClientName').textContent = clientName;
-            document.getElementById('previewClientEmail').textContent = clientEmail;
-            document.getElementById('previewInvoiceDate').textContent = date.toLocaleDateString();
-            document.getElementById('previewService').textContent = service.toFixed(2);
-            document.getElementById('previewMaterials').textContent = materials.toFixed(2);
-            document.getElementById('previewSalesTax').textContent = salesTax.toFixed(2);
-            document.getElementById('previewTotalDue').textContent = total.toFixed(2);
-
-            if (notes) {
-                document.getElementById('notesText').textContent = notes;
-                document.getElementById('previewNotes').style.display = 'block';
-            } else {
-                document.getElementById('previewNotes').style.display = 'none';
-            }
-
-            const subjectLine = `GCI 3D Print Invoice #${ticketNumber}`;
-
-            const emailText = `========================================\nGENESEE CAREER INSTITUTE\nStudent Helpdesk - 3D Print Service\n2413 Maple Ave, Flint, MI 48507\n========================================\n\nTicket #: ${ticketNumber}\nDate: ${date.toLocaleDateString()}\n\nClient: ${clientName}\nEmail: ${clientEmail}\n\n----------------------------------------\nService Charge:           $${service.toFixed(2)}\nMaterial Cost:            $${materials.toFixed(2)}\nSales Tax (6%):           $${salesTax.toFixed(2)}\n----------------------------------------\nTOTAL DUE:                $${total.toFixed(2)}\n========================================\n\n${notes ? 'Notes: ' + notes + '\n\n' : ''}Payments accepted online by credit card.\n\nQuestions? Email: studenthelpdesk@geneseeisd.org\n\nThank you for using GCI Student Helpdesk!`;
-
-            document.getElementById('subjectText').value = subjectLine;
-            document.getElementById('emailText').value = emailText;
-            document.getElementById('formSection').style.display = 'none';
-            document.getElementById('invoicePreview').classList.add('active');
-            document.getElementById('generateBtn').style.display = 'none';
-            document.getElementById('resetBtn').style.display = 'none';
-        }
-
-        function editInvoice() {
-            document.getElementById('formSection').style.display = 'block';
-            document.getElementById('invoicePreview').classList.remove('active');
-            document.getElementById('generateBtn').style.display = 'inline-block';
-            document.getElementById('resetBtn').style.display = 'inline-block';
-        }
-
-        function copyInvoiceContent() {
-            const emailText = document.getElementById('emailText');
-            emailText.select();
-            emailText.setSelectionRange(0, 99999);
-            try {
-                document.execCommand('copy');
-                alert('✅ Invoice copied to clipboard!\n\nYou can now paste it into your email.');
-            } catch (err) {
-                navigator.clipboard.writeText(emailText.value).then(() => {
-                    alert('✅ Invoice copied to clipboard!\n\nYou can now paste it into your email.');
-                }).catch(() => {
-                    alert('❌ Failed to copy. Please manually select and copy the text.');
-                });
-            }
-        }
-
-        function resetForm() {
-            if (confirm('Reset the form?')) {
-                document.getElementById('invoiceForm').reset();
-                calculateTotal();
-            }
         }
     </script>
+</body>
+
+</html>
+const form = document.getElementById('invoiceForm');
+if (!form.checkValidity()) { form.reportValidity(); return; }
+
+const date = new Date();
+const invoiceNum = `${date.getFullYear()}${String(date.getMonth() + 1).padStart(2,
+'0')}${String(date.getDate()).padStart(2, '0')}-${Math.floor(Math.random() * 100).toString().padStart(2, '0')}`;
+
+const clientName = document.getElementById('clientName').value;
+const clientEmail = document.getElementById('clientEmail').value;
+const ticketNumber = document.getElementById('ticketNumber').value;
+const printTime = parseFloat(document.getElementById('printTime').value) || 0;
+const filamentGrams = parseFloat(document.getElementById('filamentGrams').value) || 0;
+const notes = document.getElementById('notes').value.trim();
+
+const service = (printTime * 3.50) + 2.00;
+const materials = (filamentGrams / 1000) * 20.00;
+const salesTax = materials * 0.06;
+const total = service + materials + salesTax;
+
+document.getElementById('previewTicketNumber').textContent = ticketNumber;
+document.getElementById('previewClientName').textContent = clientName;
+document.getElementById('previewClientEmail').textContent = clientEmail;
+document.getElementById('previewInvoiceDate').textContent = date.toLocaleDateString();
+document.getElementById('previewService').textContent = service.toFixed(2);
+document.getElementById('previewMaterials').textContent = materials.toFixed(2);
+document.getElementById('previewSalesTax').textContent = salesTax.toFixed(2);
+document.getElementById('previewTotalDue').textContent = total.toFixed(2);
+
+if (notes) {
+document.getElementById('notesText').textContent = notes;
+document.getElementById('previewNotes').style.display = 'block';
+} else {
+document.getElementById('previewNotes').style.display = 'none';
+}
+
+const subjectLine = `GCI 3D Print Invoice #${ticketNumber}`;
+
+const emailText = `========================================\nGENESEE CAREER INSTITUTE\nStudent Helpdesk - 3D Print
+Service\n2413 Maple Ave, Flint, MI 48507\n========================================\n\nTicket #: ${ticketNumber}\nDate:
+${date.toLocaleDateString()}\n\nClient: ${clientName}\nEmail:
+${clientEmail}\n\n----------------------------------------\nService Charge: $${service.toFixed(2)}\nMaterial Cost:
+$${materials.toFixed(2)}\nSales Tax (6%): $${salesTax.toFixed(2)}\n----------------------------------------\nTOTAL DUE:
+$${total.toFixed(2)}\n========================================\n\n${notes ? 'Notes: ' + notes + '\n\n' : ''}Payments
+accepted online by credit card.\n\nQuestions? Email: studenthelpdesk@geneseeisd.org\n\nThank you for using GCI Student
+Helpdesk!`;
+
+document.getElementById('subjectText').value = subjectLine;
+document.getElementById('emailText').value = emailText;
+document.getElementById('formSection').style.display = 'none';
+document.getElementById('invoicePreview').classList.add('active');
+document.getElementById('generateBtn').style.display = 'none';
+document.getElementById('resetBtn').style.display = 'none';
+}
+
+function editInvoice() {
+document.getElementById('formSection').style.display = 'block';
+document.getElementById('invoicePreview').classList.remove('active');
+document.getElementById('generateBtn').style.display = 'inline-block';
+document.getElementById('resetBtn').style.display = 'inline-block';
+}
+
+function copyInvoiceContent() {
+const emailText = document.getElementById('emailText');
+emailText.select();
+emailText.setSelectionRange(0, 99999);
+try {
+document.execCommand('copy');
+alert('✅ Invoice copied to clipboard!\n\nYou can now paste it into your email.');
+} catch (err) {
+navigator.clipboard.writeText(emailText.value).then(() => {
+alert('✅ Invoice copied to clipboard!\n\nYou can now paste it into your email.');
+}).catch(() => {
+alert('❌ Failed to copy. Please manually select and copy the text.');
+});
+}
+}
+
+function resetForm() {
+if (confirm('Reset the form?')) {
+document.getElementById('invoiceForm').reset();
+calculateTotal();
+}
+}
+</script>
 </body>
 
 </html>
