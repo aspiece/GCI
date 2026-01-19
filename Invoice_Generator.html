@@ -269,6 +269,12 @@
                         <input type="email" id="clientEmail" required placeholder="Enter email address">
                     </div>
                 </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label for="ticketNumber">Ticket Number *</label>
+                        <input type="text" id="ticketNumber" required placeholder="Enter ticket number">
+                    </div>
+                </div>
 
                 <h2 style="margin: 30px 0 20px 0; color: #667eea;">3D Print Details</h2>
                 <div class="row">
@@ -295,62 +301,22 @@
 
         <div class="invoice-preview" id="invoicePreview">
             <div class="invoice-box">
-                <div class="invoice-header">
-                    <h2>GENESEE CAREER INSTITUTE</h2>
-                    <p>Student Helpdesk - 3D Print Service</p>
-                    <p style="margin-top: 10px; font-weight: 600;"><span id="previewInvoiceNumber"></span></p>
+                <h3 style="margin-bottom: 15px; color: #667eea;">Email Subject</h3>
+                <div style="margin-bottom: 20px;">
+                    <textarea id="subjectText" readonly
+                        style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px; min-height: 50px; resize: vertical; background: white; color: #333; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;"></textarea>
                 </div>
 
-                <div class="invoice-details">
-                    <div class="detail-item">
-                        <div class="label">Client:</div>
-                        <div class="value"><span id="previewClientName"></span></div>
-                        <div class="label" style="margin-top: 10px;">Email:</div>
-                        <div class="value"><span id="previewClientEmail"></span></div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="label">Date:</div>
-                        <div class="value"><span id="previewInvoiceDate"></span></div>
-                        <div class="label" style="margin-top: 10px;">Address:</div>
-                        <div class="value">2413 Maple Ave<br>Flint, MI 48507</div>
-                    </div>
-                </div>
-
-                <div class="invoice-amounts">
-                    <div class="amount-row">
-                        <span class="label">Service Charge:</span>
-                        <span>$<span id="previewService">0.00</span></span>
-                    </div>
-                    <div class="amount-row">
-                        <span class="label">Material Cost:</span>
-                        <span>$<span id="previewMaterials">0.00</span></span>
-                    </div>
-                    <div class="amount-row">
-                        <span class="label">Sales Tax (6%):</span>
-                        <span>$<span id="previewSalesTax">0.00</span></span>
-                    </div>
-                    <div class="amount-row total">
-                        <span>TOTAL DUE:</span>
-                        <span>$<span id="previewTotalDue">0.00</span></span>
-                    </div>
-                </div>
-
-                <div id="previewNotes"
-                    style="display: none; margin-bottom: 20px; padding: 15px; background: white; border-radius: 5px;">
-                    <p style="font-size: 13px; color: #333; line-height: 1.5;"><span id="notesText"></span></p>
-                </div>
-
-                <div class="invoice-footer">
-                    <p style="margin-bottom: 10px;"><strong>Payments accepted online by credit card.</strong></p>
-                    <p>Questions? Email: <a href="mailto:studenthelpdesk@geneseeisd.org"
-                            style="color: #0066cc;">studenthelpdesk@geneseeisd.org</a></p>
-                    <p style="margin-top: 10px;">2413 Maple Ave • Flint, MI 48507</p>
-                    <p style="margin-top: 15px;"><strong>Thank you for using GCI Student Helpdesk!</strong></p>
+                <h3 style="margin-bottom: 15px; color: #667eea;">Invoice Content</h3>
+                <div style="margin-bottom: 25px;">
+                    <textarea id="emailText" readonly
+                        style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px; min-height: 300px; resize: vertical; background: white; color: #333; font-family: 'Courier New', monospace; line-height: 1.6;"></textarea>
                 </div>
 
                 <div class="copy-section">
                     <div class="copy-btn-container">
-                        <button type="button" class="btn btn-copy" onclick="copyToClipboard()">📋 Copy Invoice</button>
+                        <button type="button" class="btn btn-copy" onclick="copyInvoiceContent()">📋 Copy
+                            Invoice</button>
                         <button type="button" class="btn btn-secondary" onclick="editInvoice()">✎ Edit</button>
                     </div>
                 </div>
@@ -390,6 +356,7 @@
 
             const clientName = document.getElementById('clientName').value;
             const clientEmail = document.getElementById('clientEmail').value;
+            const ticketNumber = document.getElementById('ticketNumber').value;
             const printTime = parseFloat(document.getElementById('printTime').value) || 0;
             const filamentGrams = parseFloat(document.getElementById('filamentGrams').value) || 0;
             const notes = document.getElementById('notes').value.trim();
@@ -399,7 +366,7 @@
             const salesTax = materials * 0.06;
             const total = service + materials + salesTax;
 
-            document.getElementById('previewInvoiceNumber').textContent = invoiceNum;
+            document.getElementById('previewTicketNumber').textContent = ticketNumber;
             document.getElementById('previewClientName').textContent = clientName;
             document.getElementById('previewClientEmail').textContent = clientEmail;
             document.getElementById('previewInvoiceDate').textContent = date.toLocaleDateString();
@@ -415,8 +382,11 @@
                 document.getElementById('previewNotes').style.display = 'none';
             }
 
-            const emailText = `Subject: GCI 3D Print Invoice #${invoiceNum}\n\n========================================\nGENESEE CAREER INSTITUTE\nStudent Helpdesk - 3D Print Service\n2413 Maple Ave, Flint, MI 48507\n========================================\n\nInvoice #: ${invoiceNum}\nDate: ${date.toLocaleDateString()}\n\nStudent: ${clientName}\nEmail: ${clientEmail}\n\n----------------------------------------\nService Charge:           $${service.toFixed(2)}\nMaterial Cost:            $${materials.toFixed(2)}\nSales Tax (6%):           $${salesTax.toFixed(2)}\n----------------------------------------\nTOTAL DUE:                $${total.toFixed(2)}\n========================================\n\n${notes ? 'Notes: ' + notes + '\n\n' : ''}Payments accepted online by credit card.\n\nQuestions? Email: studenthelpdesk@geneseeisd.org\n\nThank you for using GCI Student Helpdesk!`;
+            const subjectLine = `GCI 3D Print Invoice #${ticketNumber}`;
 
+            const emailText = `========================================\nGENESEE CAREER INSTITUTE\nStudent Helpdesk - 3D Print Service\n2413 Maple Ave, Flint, MI 48507\n========================================\n\nTicket #: ${ticketNumber}\nDate: ${date.toLocaleDateString()}\n\nClient: ${clientName}\nEmail: ${clientEmail}\n\n----------------------------------------\nService Charge:           $${service.toFixed(2)}\nMaterial Cost:            $${materials.toFixed(2)}\nSales Tax (6%):           $${salesTax.toFixed(2)}\n----------------------------------------\nTOTAL DUE:                $${total.toFixed(2)}\n========================================\n\n${notes ? 'Notes: ' + notes + '\n\n' : ''}Payments accepted online by credit card.\n\nQuestions? Email: studenthelpdesk@geneseeisd.org\n\nThank you for using GCI Student Helpdesk!`;
+
+            document.getElementById('subjectText').value = subjectLine;
             document.getElementById('emailText').value = emailText;
             document.getElementById('formSection').style.display = 'none';
             document.getElementById('invoicePreview').classList.add('active');
@@ -431,7 +401,7 @@
             document.getElementById('resetBtn').style.display = 'inline-block';
         }
 
-        function copyToClipboard() {
+        function copyInvoiceContent() {
             const emailText = document.getElementById('emailText');
             emailText.select();
             emailText.setSelectionRange(0, 99999);
