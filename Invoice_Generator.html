@@ -372,22 +372,15 @@
 
                 <div class="row">
                     <div class="form-group">
-                        <label for="ticketNumber">Ticket Number *</label>
-                        <input type="text" id="ticketNumber" required placeholder="Enter helpdesk ticket #">
+                        <label for="ticketNumber">Ticket/Invoice Number *</label>
+                        <input type="text" id="ticketNumber" required placeholder="Enter helpdesk ticket #"
+                            oninput="syncTicketNumber()">
+                        <small style="color: #666; font-size: 12px;">This will be used as both the ticket number and
+                            invoice number</small>
                     </div>
-                    <div class="form-group">
-                        <label for="invoiceNumber">Invoice Number *</label>
-                        <input type="text" id="invoiceNumber" required>
-                    </div>
-                </div>
-                <div class="row">
                     <div class="form-group">
                         <label for="invoiceDate">Invoice Date *</label>
                         <input type="date" id="invoiceDate" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="invoiceFor">Invoice For</label>
-                        <input type="text" id="invoiceFor" value="Helpdesk Services" readonly>
                     </div>
                 </div>
 
@@ -563,6 +556,22 @@
                     style="color: #0066cc;">studenthelpdesk@geneseeisd.org</a></p>
             <p style="font-weight: 600; font-size: 1.1em;">Thank you for your business!</p>
         </div>
+
+        <!-- Email Copy Box -->
+        <div id="emailCopyBox"
+            style="margin-top: 30px; padding: 20px; background: #f0f7ff; border: 2px dashed #667eea; border-radius: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="color: #667eea; margin: 0;">📧 Copy for Email</h3>
+                <button onclick="copyToClipboard()"
+                    style="background: #667eea; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: 600; transition: background 0.3s;"
+                    onmouseover="this.style.background='#5568d3'" onmouseout="this.style.background='#667eea'">📋 Copy
+                    to Clipboard</button>
+            </div>
+            <textarea id="emailText" readonly
+                style="width: 100%; min-height: 350px; padding: 15px; font-family: 'Courier New', monospace; font-size: 13px; border: 1px solid #ccc; border-radius: 5px; background: white; resize: vertical;"></textarea>
+            <p style="margin-top: 10px; font-size: 12px; color: #666;">💡 Click the button above to copy. The subject
+                line is included at the top - copy it for your email subject, then copy the rest for the email body.</p>
+        </div>
     </div>
 
     <!-- Action Buttons -->
@@ -570,6 +579,8 @@
         <button type="button" class="btn btn-secondary" onclick="resetForm()" id="resetBtn">Reset Form</button>
         <button type="button" class="btn btn-primary" onclick="generateInvoice()" id="generateBtn">Generate
             Invoice</button>
+        <button type="button" class="btn btn-primary" onclick="copyToClipboard()" id="copyBtn"
+            style="display: none; background: #2ed573;">📋 Copy Email Text</button>
         <button type="button" class="btn btn-primary" onclick="printInvoice()" id="printBtn"
             style="display: none;">Print Invoice</button>
         <button type="button" class="btn btn-secondary" onclick="editInvoice()" id="editBtn" style="display: none;">Edit
@@ -590,7 +601,13 @@
             const year = date.getFullYear();
             const month = String(date.getMonth() + 1).padStart(2, '0');
             const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-            document.getElementById('invoiceNumber').value = `INV-${year}${month}-${random}`;
+            document.getElementById('ticketNumber').value = `${year}${month}-${random}`;
+        }
+
+        function syncTicketNumber() {
+            // Ticket number is used as the invoice number
+            const ticketNum = document.getElementById('ticketNumber').value;
+            // No separate invoice number field anymore
         }
 
         function calculateTotal() {
@@ -630,10 +647,11 @@
             }
 
             // Populate preview
-            document.getElementById('previewTicketNumber').textContent = document.getElementById('ticketNumber').value;
-            document.getElementById('previewInvoiceNumber').textContent = document.getElementById('invoiceNumber').value;
+            const ticketNum = document.getElementById('ticketNumber').value;
+            document.getElementById('previewTicketNumber').textContent = ticketNum;
+            document.getElementById('previewInvoiceNumber').textContent = ticketNum;
             document.getElementById('previewInvoiceDate').textContent = new Date(document.getElementById('invoiceDate').value).toLocaleDateString();
-            document.getElementById('previewInvoiceFor').textContent = document.getElementById('invoiceFor').value;
+            document.getElementById('previewInvoiceFor').textContent = 'Helpdesk Services';
             document.getElementById('previewClientName').textContent = document.getElementById('clientName').value;
 
             const email = document.getElementById('clientEmail').value;
@@ -657,6 +675,51 @@
             document.getElementById('previewSalesTax').textContent = salesTax.toFixed(2);
             document.getElementById('previewTotalDue').textContent = total.toFixed(2);
 
+            // Generate email text
+            const invoiceDate = new Date(document.getElementById('invoiceDate').value).toLocaleDateString();
+            const clientName = document.getElementById('clientName').value;
+            const emailSubject = `Subject: Student Helpdesk Invoice Ticket # ${ticketNum}`;
+            const emailText = `${emailSubject}
+
+========================================
+COPY THE SUBJECT LINE ABOVE FOR YOUR EMAIL
+========================================
+
+
+
+GENESEE CAREER INSTITUTE
+Student Helpdesk
+2413 Maple Ave
+Flint, MI 48507
+
+INVOICE/RECEIPT
+Invoice #: ${ticketNum}
+Date: ${invoiceDate}
+For: Helpdesk Services
+
+Client: ${clientName}${studentId ? ' (ID: ' + studentId + ')' : ''}
+${email ? 'Email: ' + email : ''}
+${phone ? 'Phone: ' + phone : ''}
+
+----------------------------------------
+DESCRIPTION                      AMOUNT
+----------------------------------------
+-Service                        $${service.toFixed(2)}
+-Materials                      $${materials.toFixed(2)}
+SALES TAX (parts)               $${salesTax.toFixed(2)}
+----------------------------------------
+Total Due                       $${total.toFixed(2)}
+========================================
+
+${notes ? 'NOTES:\n' + notes + '\n\n' : ''}Payments can be paid online by credit card.
+
+Questions?
+Email: studenthelpdesk@geneseeisd.org
+
+Thank you for your business!`;
+
+            document.getElementById('emailText').value = emailText;
+
             // Populate notes
             const notes = document.getElementById('notes').value.trim();
             const notesDiv = document.getElementById('previewNotes');
@@ -672,6 +735,7 @@
             document.getElementById('invoicePreview').classList.add('active');
             document.getElementById('generateBtn').style.display = 'none';
             document.getElementById('resetBtn').style.display = 'none';
+            document.getElementById('copyBtn').style.display = 'inline-block';
             document.getElementById('printBtn').style.display = 'inline-block';
             document.getElementById('editBtn').style.display = 'inline-block';
         }
@@ -681,6 +745,7 @@
             document.getElementById('invoicePreview').classList.remove('active');
             document.getElementById('generateBtn').style.display = 'inline-block';
             document.getElementById('resetBtn').style.display = 'inline-block';
+            document.getElementById('copyBtn').style.display = 'none';
             document.getElementById('printBtn').style.display = 'none';
             document.getElementById('editBtn').style.display = 'none';
         }
@@ -689,10 +754,27 @@
             window.print();
         }
 
+        function copyToClipboard() {
+            const emailText = document.getElementById('emailText');
+            emailText.select();
+            emailText.setSelectionRange(0, 99999); // For mobile devices
+
+            try {
+                document.execCommand('copy');
+                alert('✅ Invoice text copied to clipboard!\n\nYou can now paste it into your email.');
+            } catch (err) {
+                // Fallback for modern browsers
+                navigator.clipboard.writeText(emailText.value).then(() => {
+                    alert('✅ Invoice text copied to clipboard!\n\nYou can now paste it into your email.');
+                }).catch(() => {
+                    alert('❌ Failed to copy. Please manually select and copy the text.');
+                });
+            }
+        }
+
         function resetForm() {
             if (confirm('Are you sure you want to reset the form? All data will be lost.')) {
                 document.getElementById('invoiceForm').reset();
-                document.getElementById('invoiceFor').value = 'Helpdesk Services';
                 calculateTotal();
                 document.getElementById('invoiceDate').valueAsDate = new Date();
                 generateInvoiceNumber();
