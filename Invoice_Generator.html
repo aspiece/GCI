@@ -328,7 +328,7 @@
         function calculateTotal() {
             const printTime = parseFloat(document.getElementById('printTime').value) || 0;
             const filamentGrams = parseFloat(document.getElementById('filamentGrams').value) || 0;
-            const service = (printTime * 3.50) + 2.00;
+            const service = (printTime * 1.50) + 2.00;
             const materials = (filamentGrams / 1000) * 20.00;
             const salesTax = materials * 0.06;
         }
