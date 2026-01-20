@@ -379,18 +379,33 @@
 
         function copyInvoice() {
             const invoiceBoxPlain = document.getElementById('invoiceBoxPlain');
-            invoiceBoxPlain.select();
-            invoiceBoxPlain.setSelectionRange(0, 99999);
+            const textToCopy = invoiceBoxPlain.value;
+
+            // Try modern clipboard API first
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    alert('✅ Invoice copied to clipboard!');
+                }).catch(() => {
+                    // Fallback to older method
+                    fallbackCopy(invoiceBoxPlain);
+                });
+            } else {
+                // Fallback for older browsers
+                fallbackCopy(invoiceBoxPlain);
+            }
+        }
+
+        function fallbackCopy(textarea) {
+            textarea.style.display = 'block';
+            textarea.select();
+            textarea.setSelectionRange(0, 99999);
             try {
                 document.execCommand('copy');
                 alert('✅ Invoice copied to clipboard!');
             } catch (err) {
-                navigator.clipboard.writeText(invoiceBoxPlain.value).then(() => {
-                    alert('✅ Invoice copied to clipboard!');
-                }).catch(() => {
-                    alert('❌ Failed to copy. Please manually select and copy the text.');
-                });
+                alert('❌ Failed to copy. Please manually select and copy the text.');
             }
+            textarea.style.display = 'none';
         }
 
         function copySubject() {
