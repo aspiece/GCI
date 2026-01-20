@@ -335,6 +335,9 @@
     </div>
 
     <script>
+        // Google Apps Script Web App URL - Replace with your deployed web app URL
+        const GOOGLE_SHEETS_URL = 'YOUR_WEB_APP_URL_HERE';
+
         window.onload = function () { calculateTotal(); };
 
         function calculateTotal() {
@@ -453,6 +456,8 @@ Thank you for using GCI Student Helpdesk!`;
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(textToCopy).then(() => {
                     alert('✅ Invoice copied to clipboard!');
+                    // Send to Google Sheets
+                    sendToGoogleSheets();
                 }).catch(() => {
                     // Fallback to older method
                     fallbackCopy(invoiceBoxPlain);
@@ -489,6 +494,59 @@ Thank you for using GCI Student Helpdesk!`;
                 }).catch(() => {
                     alert('❌ Failed to copy. Please manually select and copy the text.');
                 });
+            }
+        }
+
+        async function sendToGoogleSheets() {
+            if (!GOOGLE_SHEETS_URL || GOOGLE_SHEETS_URL === 'YOUR_WEB_APP_URL_HERE') {
+                console.log('Google Sheets integration not configured. Set GOOGLE_SHEETS_URL to enable.');
+                return;
+            }
+
+            try {
+                const date = new Date();
+                const clientName = document.getElementById('clientName').value;
+                const clientEmail = document.getElementById('clientEmail').value;
+                const ticketNumber = document.getElementById('ticketNumber').value;
+                const printTime = parseFloat(document.getElementById('printTime').value) || 0;
+                const filamentGrams = parseFloat(document.getElementById('filamentGrams').value) || 0;
+                const designFeeChecked = document.getElementById('designFee').checked;
+                const notes = document.getElementById('notes').value.trim();
+
+                const service = (printTime * 1.50) + 2.00;
+                const materials = (filamentGrams / 1000) * 20.00;
+                const salesTax = materials * 0.06;
+                const designFee = designFeeChecked ? 5.00 : 0;
+                const total = service + materials + salesTax + designFee;
+
+                const data = {
+                    timestamp: date.toISOString(),
+                    date: date.toLocaleDateString(),
+                    ticketNumber: ticketNumber,
+                    clientName: clientName,
+                    clientEmail: clientEmail,
+                    printTime: printTime,
+                    filamentGrams: filamentGrams,
+                    serviceCharge: service.toFixed(2),
+                    materialCost: materials.toFixed(2),
+                    salesTax: salesTax.toFixed(2),
+                    designFee: designFee.toFixed(2),
+                    totalDue: total.toFixed(2),
+                    notes: notes
+                };
+
+                const response = await fetch(GOOGLE_SHEETS_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                console.log('Invoice data sent to Google Sheets successfully');
+            } catch (error) {
+                console.error('Error sending data to Google Sheets:', error);
             }
         }
     </script>
