@@ -312,8 +312,10 @@
                 style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px; min-height: 50px; resize: vertical; margin-bottom: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;"></textarea>
 
             <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Invoice Content:</label>
-            <textarea id="invoiceBox" readonly
-                style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px; min-height: 300px; resize: vertical; margin-bottom: 20px; font-family: 'Courier New', monospace; line-height: 1.6;"></textarea>
+            <div id="invoiceBox" readonly
+                style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px; min-height: 300px; margin-bottom: 20px; font-family: 'Courier New', monospace; line-height: 1.6; background: white; white-space: pre-wrap; overflow-y: auto; max-height: 500px;">
+            </div>
+            <textarea id="invoiceBoxPlain" readonly style="display: none;"></textarea>
 
             <div class="copy-btn-container">
                 <button type="button" class="btn btn-secondary" onclick="copySubject()">📋 Copy Subject</button>
@@ -362,22 +364,28 @@
 
             const subjectLine = `GCI 3D Print Invoice #${ticketNumber}`;
 
-            const invoiceContent = `========================================\nGENESEE CAREER INSTITUTE\nStudent Helpdesk - 3D Print Service\n2413 Maple Ave, Flint, MI 48507\n========================================\n\nTicket #: ${ticketNumber}\nDate: ${date.toLocaleDateString()}\n\nClient: ${clientName}\nEmail: ${clientEmail}\n\n----------------------------------------\nService Charge:           $${service.toFixed(2)}\nMaterial Cost:            $${materials.toFixed(2)}\nSales Tax (6%):           $${salesTax.toFixed(2)}\n----------------------------------------\nTOTAL DUE:                $${total.toFixed(2)}\n========================================\n\n${notes ? 'Notes: ' + notes + '\n\n' : ''}Pay online: https://payments.efundsforschools.com/v3/districts/56317/add-to-cart/3B3KtRq8LrG2%7c78zzRKCjcG78%7cgeneral-item\n\nQuestions? Email: studenthelpdesk@geneseeisd.org\n\nThank you for using GCI Student Helpdesk!`;
+            const paymentUrl = 'https://payments.efundsforschools.com/v3/districts/56317/add-to-cart/3B3KtRq8LrG2%7c78zzRKCjcG78%7cgeneral-item';
+            const emailAddress = 'studenthelpdesk@geneseeisd.org';
+
+            const invoiceContentPlain = `========================================\nGENESEE CAREER INSTITUTE\nStudent Helpdesk - 3D Print Service\n2413 Maple Ave, Flint, MI 48507\n========================================\n\nTicket #: ${ticketNumber}\nDate: ${date.toLocaleDateString()}\n\nClient: ${clientName}\nEmail: ${clientEmail}\n\n----------------------------------------\nService Charge:           $${service.toFixed(2)}\nMaterial Cost:            $${materials.toFixed(2)}\nSales Tax (6%):           $${salesTax.toFixed(2)}\n----------------------------------------\nTOTAL DUE:                $${total.toFixed(2)}\n========================================\n\n${notes ? 'Notes: ' + notes + '\n\n' : ''}** PAY ONLINE **\n\n${paymentUrl}\n\n----------------------------------------\n\nQuestions? Email: ${emailAddress}\n\nThank you for using GCI Student Helpdesk!`;
+
+            const invoiceContentHTML = `========================================\nGENESEE CAREER INSTITUTE\nStudent Helpdesk - 3D Print Service\n2413 Maple Ave, Flint, MI 48507\n========================================\n\nTicket #: ${ticketNumber}\nDate: ${date.toLocaleDateString()}\n\nClient: ${clientName}\nEmail: ${clientEmail}\n\n----------------------------------------\nService Charge:           $${service.toFixed(2)}\nMaterial Cost:            $${materials.toFixed(2)}\nSales Tax (6%):           $${salesTax.toFixed(2)}\n----------------------------------------\nTOTAL DUE:                $${total.toFixed(2)}\n========================================\n\n${notes ? 'Notes: ' + notes + '\n\n' : ''}<strong>** PAY ONLINE **</strong>\n\n<a href="${paymentUrl}" target="_blank" style="color: #0066cc; text-decoration: underline;">${paymentUrl}</a>\n\n----------------------------------------\n\nQuestions? Email: <a href="mailto:${emailAddress}" style="color: #0066cc; text-decoration: underline;">${emailAddress}</a>\n\nThank you for using GCI Student Helpdesk!`;
 
             document.getElementById('subjectBox').value = subjectLine;
-            document.getElementById('invoiceBox').value = invoiceContent;
+            document.getElementById('invoiceBox').innerHTML = invoiceContentHTML;
+            document.getElementById('invoiceBoxPlain').value = invoiceContentPlain;
             document.getElementById('emailSection').style.display = 'block';
         }
 
         function copyInvoice() {
-            const invoiceBox = document.getElementById('invoiceBox');
-            invoiceBox.select();
-            invoiceBox.setSelectionRange(0, 99999);
+            const invoiceBoxPlain = document.getElementById('invoiceBoxPlain');
+            invoiceBoxPlain.select();
+            invoiceBoxPlain.setSelectionRange(0, 99999);
             try {
                 document.execCommand('copy');
                 alert('✅ Invoice copied to clipboard!');
             } catch (err) {
-                navigator.clipboard.writeText(invoiceBox.value).then(() => {
+                navigator.clipboard.writeText(invoiceBoxPlain.value).then(() => {
                     alert('✅ Invoice copied to clipboard!');
                 }).catch(() => {
                     alert('❌ Failed to copy. Please manually select and copy the text.');
