@@ -282,7 +282,7 @@
                         <label for="printTime">Print Time (hours) *</label>
                         <input type="number" id="printTime" step="0.01" min="0" value="0" required
                             oninput="calculateTotal()" placeholder="e.g., 2.5">
-                        <small style="color: #666; font-size: 12px;">Service: $3.50/hour + $2.00 service fee</small>
+                        <small style="color: #666; font-size: 12px;">Service: $1.50/hour + $2.00 service fee</small>
                     </div>
                     <div class="form-group">
                         <label for="filamentGrams">Filament Used (grams) *</label>
@@ -355,7 +355,7 @@
             const filamentGrams = parseFloat(document.getElementById('filamentGrams').value) || 0;
             const notes = document.getElementById('notes').value.trim();
 
-            const service = (printTime * 3.50) + 2.00;
+            const service = (printTime * 1.50) + 2.00;
             const materials = (filamentGrams / 1000) * 20.00;
             const salesTax = materials * 0.06;
             const total = service + materials + salesTax;
