@@ -367,9 +367,63 @@
             const paymentUrl = 'https://payments.efundsforschools.com/v3/districts/56317/add-to-cart/3B3KtRq8LrG2%7c78zzRKCjcG78%7cgeneral-item';
             const emailAddress = 'studenthelpdesk@geneseeisd.org';
 
-            const invoiceContentPlain = `========================================\nGENESEE CAREER INSTITUTE\nStudent Helpdesk - 3D Print Service\n2413 Maple Ave, Flint, MI 48507\n========================================\n\nTicket #: ${ticketNumber}\nDate: ${date.toLocaleDateString()}\n\nClient: ${clientName}\nEmail: ${clientEmail}\n\n----------------------------------------\nService Charge:           $${service.toFixed(2)}\nMaterial Cost:            $${materials.toFixed(2)}\nSales Tax (6%):           $${salesTax.toFixed(2)}\n----------------------------------------\nTOTAL DUE:                $${total.toFixed(2)}\n========================================\n\n${notes ? 'Notes: ' + notes + '\n\n' : ''}** PAY ONLINE **\n\n${paymentUrl}\n\n----------------------------------------\n\nQuestions? Email: ${emailAddress}\n\nThank you for using GCI Student Helpdesk!`;
+            const invoiceContentPlain = `========================================
+GENESEE CAREER INSTITUTE
+Student Helpdesk - 3D Print Service
+2413 Maple Ave, Flint, MI 48507
+========================================
 
-            const invoiceContentHTML = `========================================\nGENESEE CAREER INSTITUTE\nStudent Helpdesk - 3D Print Service\n2413 Maple Ave, Flint, MI 48507\n========================================\n\nTicket #: ${ticketNumber}\nDate: ${date.toLocaleDateString()}\n\nClient: ${clientName}\nEmail: ${clientEmail}\n\n----------------------------------------\nService Charge:           $${service.toFixed(2)}\nMaterial Cost:            $${materials.toFixed(2)}\nSales Tax (6%):           $${salesTax.toFixed(2)}\n----------------------------------------\nTOTAL DUE:                $${total.toFixed(2)}\n========================================\n\n${notes ? 'Notes: ' + notes + '\n\n' : ''}<div style="text-align: center; margin: 20px 0;"><a href="${paymentUrl}" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">💳 PAY ONLINE NOW</a></div>\n\n----------------------------------------\n\nQuestions? Email: <a href="mailto:${emailAddress}" style="color: #0066cc; text-decoration: underline;">${emailAddress}</a>\n\nThank you for using GCI Student Helpdesk!`;
+Ticket #: ${ticketNumber}
+Date: ${date.toLocaleDateString()}
+
+Client: ${clientName}
+Email: ${clientEmail}
+
+----------------------------------------
+Service Charge:           $${service.toFixed(2)}
+Material Cost:            $${materials.toFixed(2)}
+Sales Tax (6%):           $${salesTax.toFixed(2)}
+----------------------------------------
+TOTAL DUE:                $${total.toFixed(2)}
+========================================
+
+${notes ? 'Notes: ' + notes + '\n\n' : ''}** PAY ONLINE **
+
+${paymentUrl}
+
+----------------------------------------
+
+Questions? Email: ${emailAddress}
+
+Thank you for using GCI Student Helpdesk!`;
+
+            const invoiceContentHTML = `========================================
+GENESEE CAREER INSTITUTE
+Student Helpdesk - 3D Print Service
+2413 Maple Ave, Flint, MI 48507
+========================================
+
+Ticket #: ${ticketNumber}
+Date: ${date.toLocaleDateString()}
+
+Client: ${clientName}
+Email: ${clientEmail}
+
+----------------------------------------
+Service Charge:           $${service.toFixed(2)}
+Material Cost:            $${materials.toFixed(2)}
+Sales Tax (6%):           $${salesTax.toFixed(2)}
+----------------------------------------
+TOTAL DUE:                $${total.toFixed(2)}
+========================================
+
+${notes ? 'Notes: ' + notes + '\n\n' : ''}<div style="text-align: center; margin: 20px 0;"><a href="${paymentUrl}" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">💳 PAY ONLINE NOW</a></div>
+
+----------------------------------------
+
+Questions? Email: <a href="mailto:${emailAddress}" style="color: #0066cc; text-decoration: underline;">${emailAddress}</a>
+
+Thank you for using GCI Student Helpdesk!`;
 
             document.getElementById('subjectBox').value = subjectLine;
             document.getElementById('invoiceBox').innerHTML = invoiceContentHTML;
