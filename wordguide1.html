@@ -93,7 +93,6 @@
           <p>Scenario: You are an employee at Munson’s Pickles and Preserves Farm preparing the initial Proposal Plan document.</p>
         </div>
         <div class="controls">
-          <select id="jumpMenu" title="Jump to section/task"></select>
           <button id="resetBtn" title="Reset progress">Reset</button>
           <button id="prevBtn">◀ Previous</button>
           <button id="nextBtn" class="primary">Next ▶</button>
@@ -541,7 +540,6 @@
         prevBtn2: document.getElementById('prevBtn2'),
         nextBtn2: document.getElementById('nextBtn2'),
         resetBtn: document.getElementById('resetBtn'),
-        jumpMenu: document.getElementById('jumpMenu'),
       };
 
       const STORAGE_KEY = 'mos-word-p1-page';
@@ -588,55 +586,20 @@
         for (const b of [els.prevBtn, els.prevBtn2]) b.disabled = atStart;
         for (const b of [els.nextBtn, els.nextBtn2]) b.disabled = atEnd;
         localStorage.setItem(STORAGE_KEY, String(idx));
-        updateJumpSelection();
       }
 
       function next() { if (idx < total - 1) { idx++; render(); } }
       function prev() { if (idx > 0) { idx--; render(); } }
 
-      // Jump menu: build logical anchors (section and task intros)
-      const anchors = [];
-      function buildAnchors() {
-        anchors.length = 0;
-        pages.forEach((s, i) => {
-          if (s.kind === 'task') anchors.push({ label: `${s.section} — ${s.title}`, index: i });
-        });
-      }
-      function populateJumpMenu() {
-        buildAnchors();
-        els.jumpMenu.innerHTML = '';
-        const opt0 = document.createElement('option');
-        opt0.value = '-1'; opt0.textContent = 'Jump to…';
-        els.jumpMenu.appendChild(opt0);
-        anchors.forEach((a) => {
-          const o = document.createElement('option');
-          o.value = String(a.index); o.textContent = a.label;
-          els.jumpMenu.appendChild(o);
-        });
-      }
-      function updateJumpSelection() {
-        // Find nearest anchor at or before idx
-        let nearest = -1;
-        for (const a of anchors) { if (a.index <= idx) nearest = a.index; else break; }
-        els.jumpMenu.value = nearest >= 0 ? String(nearest) : '-1';
-      }
-
       // Wire controls
       [els.prevBtn, els.prevBtn2].forEach(b => b.addEventListener('click', prev));
       [els.nextBtn, els.nextBtn2].forEach(b => b.addEventListener('click', next));
       els.resetBtn.addEventListener('click', () => { idx = 0; render(); });
-      els.jumpMenu.addEventListener('change', (e) => {
-        const v = Number(e.target.value);
-        if (v >= 0) { idx = v; render(); }
-        else { updateJumpSelection(); }
-      });
       window.addEventListener('keydown', (e) => {
         if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) return;
         if (e.key === 'ArrowRight') { next(); }
         if (e.key === 'ArrowLeft') { prev(); }
       });
-
-      populateJumpMenu();
       render();
     </script>
   </body>
