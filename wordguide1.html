@@ -28,7 +28,7 @@
         max-width: 960px; margin: 32px auto; padding: 0 16px;
       }
       header {
-        display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px;
+        display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 16px;
       }
       .title {
         display: flex; flex-direction: column; gap: 4px;
@@ -37,7 +37,7 @@
       .title p { margin: 0; font-size: 13px; color: var(--muted); }
 
       .controls {
-        display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: flex-end;
+        display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start; justify-content: flex-end;
       }
       select, button {
         background: var(--card); color: var(--text); border: 1px solid var(--border);
@@ -495,38 +495,41 @@
         }
       ];
 
-      // Flatten into a linear step list with covers and intros
-      function buildSteps(data) {
-        const steps = [];
-        steps.push({
+      // Flatten into a linear page list: intro + each task (with all steps visible) + outro
+      function buildPages(data) {
+        const pages = [];
+        pages.push({
           kind: 'cover',
           section: 'Welcome',
           title: 'MOS Word Project 1 — Guided Walkthrough',
-          text: 'You will complete Project 1 for Munson’s Pickles and Preserves Farm. Move one step at a time using the Next button or your arrow keys.',
+          text: 'You will complete Project 1 for Munson’s Pickles and Preserves Farm. Navigate task-by-task using Next/Previous or your arrow keys.',
           points: [
             'Open and inspect a Word document',
             'Format text, apply styles, and manage sections',
             'Insert bookmarks and a table of contents',
             'Convert lists/tables and format table properties',
-            'Insert and format images, accessibility and compatibility checks',
+            'Insert and format images; run accessibility/compatibility checks',
             'Export to PDF and share'
           ]
         });
         for (const sec of data) {
-          steps.push({ kind: 'section', section: sec.section, title: sec.section, text: null });
           for (const task of sec.tasks) {
-            steps.push({ kind: 'task-intro', section: sec.section, title: task.title, resource: task.resource, extraResources: task.extraResources || [] });
-            task.steps.forEach((s, idx) => {
-              steps.push({ kind: 'task-step', section: sec.section, title: task.title, stepIndex: idx + 1, text: s, resource: task.resource, extraResources: task.extraResources || [] });
-              });
+            pages.push({
+              kind: 'task',
+              section: sec.section,
+              title: task.title,
+              steps: task.steps,
+              resource: task.resource,
+              extraResources: task.extraResources || []
+            });
           }
         }
-        steps.push({ kind: 'cover', section: 'Finish', title: 'Great job!', text: 'You have completed all steps for Project 1. Review any areas as needed or reset progress to practice again.' });
-        return steps;
+        pages.push({ kind: 'cover', section: 'Finish', title: 'Great job!', text: 'You have completed all tasks for Project 1. Review any areas as needed or reset progress to practice again.' });
+        return pages;
       }
 
-      const linearSteps = buildSteps(curriculum);
-      const total = linearSteps.length;
+      const pages = buildPages(curriculum);
+      const total = pages.length;
 
       const els = {
         content: document.getElementById('content'),
@@ -541,7 +544,7 @@
         jumpMenu: document.getElementById('jumpMenu'),
       };
 
-      const STORAGE_KEY = 'mos-word-p1-step';
+      const STORAGE_KEY = 'mos-word-p1-page';
       let idx = Number(localStorage.getItem(STORAGE_KEY) || 0);
       if (!(idx >= 0 && idx < total)) idx = 0;
 
@@ -549,7 +552,7 @@
       function pct(n) { return Math.max(0, Math.min(100, Math.round(((n) / (total - 1)) * 100))); }
 
       function render() {
-        const cur = linearSteps[idx];
+        const cur = pages[idx];
         els.stepCounter.textContent = fmtStep(idx + 1);
         els.sectionBadge.textContent = cur.section || '—';
         els.progressBar.style.width = pct(idx) + '%';
@@ -563,12 +566,7 @@
             html += '<ul>' + cur.points.map(p => `<li>${p}</li>`).join('') + '</ul>';
           }
           html += `</div>`;
-        } else if (cur.kind === 'section') {
-          html += `<div class="cover">`;
-          html += `<h2>${cur.title}</h2>`;
-          html += `<p class="note">You are starting a new section. Continue to see the tasks and steps.</p>`;
-          html += `</div>`;
-        } else if (cur.kind === 'task-intro') {
+        } else if (cur.kind === 'task') {
           html += `<h2>Task</h2>`;
           html += `<h3>${cur.title}</h3>`;
           if (cur.resource) {
@@ -578,17 +576,8 @@
             }
             html += `</div>`;
           }
-          html += `<p class="note">Follow the next steps one by one.</p>`;
-        } else if (cur.kind === 'task-step') {
-          html += `<h2>Step ${cur.stepIndex}</h2>`;
-          html += `<h3>${cur.title}</h3>`;
-          html += `<p>${cur.text}</p>`;
-          if (cur.resource) {
-            html += `<div class="resource">Resource: <a href="${cur.resource}" target="_blank" rel="noopener">${cur.resource}</a>`;
-            if (cur.extraResources && cur.extraResources.length) {
-              html += cur.extraResources.map(r => ` · <a href="${r}" target="_blank" rel="noopener">${r}</a>`).join('');
-            }
-            html += `</div>`;
+          if (cur.steps && cur.steps.length) {
+            html += '<ol>'; html += cur.steps.map(step => `<li>${step}</li>`).join(''); html += '</ol>';
           }
         }
         els.content.innerHTML = html;
@@ -609,9 +598,8 @@
       const anchors = [];
       function buildAnchors() {
         anchors.length = 0;
-        linearSteps.forEach((s, i) => {
-          if (s.kind === 'section') anchors.push({ label: s.section, index: i });
-          if (s.kind === 'task-intro') anchors.push({ label: '· ' + s.title, index: i });
+        pages.forEach((s, i) => {
+          if (s.kind === 'task') anchors.push({ label: `${s.section} — ${s.title}`, index: i });
         });
       }
       function populateJumpMenu() {
