@@ -1,0 +1,655 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MOS Word Project 1 — Step-by-Step Guide</title>
+    <style>
+      :root {
+        --bg: #0b0c0f;
+        --card: #12141a;
+        --muted: #aab2c0;
+        --text: #e8ecf2;
+        --primary: #4f8cff;
+        --primary-weak: #2a5bd7;
+        --accent: #22b07d;
+        --danger: #ff6b6b;
+        --border: #1e2230;
+        --shadow: 0 6px 24px rgba(0,0,0,0.35), 0 2px 6px rgba(0,0,0,0.25);
+      }
+      html, body { height: 100%; }
+      body {
+        margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        background: radial-gradient(1200px 800px at 90% -10%, #1a2235 0%, var(--bg) 35%), radial-gradient(1000px 600px at -10% 110%, #16202e 0%, transparent 40%) var(--bg);
+        color: var(--text);
+        -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+      }
+      .wrap {
+        max-width: 960px; margin: 32px auto; padding: 0 16px;
+      }
+      header {
+        display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px;
+      }
+      .title {
+        display: flex; flex-direction: column; gap: 4px;
+      }
+      .title h1 { font-size: 22px; margin: 0; letter-spacing: 0.2px; }
+      .title p { margin: 0; font-size: 13px; color: var(--muted); }
+
+      .controls {
+        display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: flex-end;
+      }
+      select, button {
+        background: var(--card); color: var(--text); border: 1px solid var(--border);
+        border-radius: 10px; padding: 10px 12px; font-size: 14px;
+      }
+      button { cursor: pointer; }
+      button.primary { background: linear-gradient(180deg, var(--primary) 0%, var(--primary-weak) 100%); border: none; }
+      button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+      .card {
+        background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.0));
+        border: 1px solid var(--border);
+        border-radius: 16px; padding: 20px; box-shadow: var(--shadow);
+      }
+      .meta {
+        display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; color: var(--muted); font-size: 12px;
+      }
+      .badge { padding: 4px 8px; border-radius: 999px; background: #1a2332; border: 1px solid #213147; color: #a8c1ff; }
+      .section-badge { background: #1a2b23; border-color: #214336; color: #9fe2c5; }
+      .progress {
+        height: 8px; background: #0f1117; border-radius: 999px; border: 1px solid var(--border); overflow: hidden; margin: 16px 0 12px;
+      }
+      .progress > div { height: 100%; background: linear-gradient(90deg, #5fa8ff, #22b07d); width: 0%; }
+      .content { line-height: 1.55; }
+      .content h2 { margin: 8px 0 6px; font-size: 18px; }
+      .content h3 { margin: 8px 0 10px; font-size: 16px; font-weight: 600; color: #cfe3ff; }
+      .content p { margin: 0 0 10px; }
+      .content .note { color: var(--muted); font-size: 13px; }
+      .resource { margin-top: 10px; }
+      .resource a { color: #9fcbff; text-decoration: none; }
+      .resource a:hover { text-decoration: underline; }
+      .nav {
+        display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 14px;
+      }
+      .nav .left, .nav .right { display: flex; gap: 8px; }
+      .kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; background: #0f1117; border: 1px solid var(--border); color: var(--muted); padding: 2px 6px; border-radius: 6px; }
+      .footer { margin-top: 18px; color: var(--muted); font-size: 12px; display: flex; align-items: center; gap: 8px; }
+      .hint { color: var(--muted); font-size: 12px; }
+
+      .cover {
+        border: 1px dashed #2a3346; background: #111621; border-radius: 12px; padding: 14px; margin-bottom: 8px;
+      }
+      .cover h2 { margin: 0 0 6px; }
+      .cover ul { margin: 6px 0 0 18px; }
+      .cover li { margin: 4px 0; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <div class="title">
+          <h1>MOS Word Project 1 — Step-by-Step Guide</h1>
+          <p>Scenario: You are an employee at Munson’s Pickles and Preserves Farm preparing the initial Proposal Plan document.</p>
+        </div>
+        <div class="controls">
+          <select id="jumpMenu" title="Jump to section/task"></select>
+          <button id="resetBtn" title="Reset progress">Reset</button>
+          <button id="prevBtn">◀ Previous</button>
+          <button id="nextBtn" class="primary">Next ▶</button>
+        </div>
+      </header>
+
+      <div class="card">
+        <div class="meta">
+          <span class="badge" id="stepCounter">Step 1 of N</span>
+          <span class="badge section-badge" id="sectionBadge">Section</span>
+        </div>
+        <div class="progress"><div id="progressBar"></div></div>
+        <div id="content" class="content"></div>
+        <div class="nav">
+          <div class="left hint">Tip: Use <span class="kbd">←</span> <span class="kbd">→</span> arrow keys</div>
+          <div class="right">
+            <button id="prevBtn2">◀ Previous</button>
+            <button id="nextBtn2" class="primary">Next ▶</button>
+          </div>
+        </div>
+        <div class="footer">
+          <span>Required files:</span>
+          <span class="kbd">Project1_datafile.docx</span>
+          <span class="kbd">sign_illustration.png</span>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Data model: sections -> tasks -> steps
+      const curriculum = [
+        {
+          section: 'Section 1: Document Inspection and Core Properties',
+          tasks: [
+            {
+              title: 'Inspect the document and remove Document Properties and Personal Information and Hidden Text.',
+              resource: 'https://aka.ms/removeinformation',
+              steps: [
+                'Open Project1_datafile.docx.',
+                'From the File tab, select Info.',
+                'In the Inspect Document section, select Check for Issues, then Inspect Document.',
+                'Remove all the check marks except Document Properties and Personal Information and Hidden Text, then select Inspect.',
+                'Select Remove All, then Reinspect, and Close.',
+                'Select the back arrow button to return to normal view.'
+              ]
+            },
+            {
+              title: 'Find every instance of the text “Munsons’” and replace with “Munson’s”.',
+              resource: 'https://aka.ms/findandreplace1',
+              steps: [
+                'From the Home tab > Editing group, select Replace.',
+                'In the Find what box, enter Munsons’.',
+                'In the Replace with box, enter Munson’s.',
+                'Select Replace All (Note: There are 13 replacements).',
+                'Select OK and then select Close.'
+              ]
+            },
+            {
+              title: 'Change the document properties: Title “Proposal Plan”, Author your name, Keywords “flowers”, “plants”, “greenhouse”, “outsourcing”.',
+              resource: 'https://aka.ms/documentproperties',
+              steps: [
+                'From the File tab, select Info, select the Properties drop-down, then Advanced Properties.',
+                'In the Document Properties dialog box, select the Summary tab.',
+                'In Title, enter “Proposal Plan”.',
+                'In Author, enter your name.',
+                'In Keywords, enter “flowers”, “plants”, “greenhouse”, and “outsourcing”.',
+                'Select OK.',
+                'Select the back arrow button to return to normal view.'
+              ]
+            },
+            {
+              title: 'Without printing, change Print settings to Uncollated and 2 Pages Per Sheet.',
+              resource: 'https://aka.ms/printadoc',
+              steps: [
+                'From the File tab, select Print.',
+                'In Settings, change Collated to Uncollated.',
+                'In Settings, change 1 Page Per Sheet to 2 Pages Per Sheet.',
+                'Select the back arrow to return to normal view (do not print).'
+              ]
+            }
+          ]
+        },
+        {
+          section: 'Section 2: Formatting and Section Layout',
+          tasks: [
+            {
+              title: 'Apply Text Effect Fill: Black, Text color 1; Shadow to title, center align, and set font size to 20.',
+              resource: 'https://aka.ms/texteffects',
+              steps: [
+                'Select the first two lines of text beginning with “Munson’s” and ending with “Plan”.',
+                'Select Text Effects and Typography, choose Text Effect “Fill: Black, Text color 1; Shadow”.',
+                'From Home > Paragraph, select Center.',
+                'Select Increase Font Size until the font size is 20.'
+              ]
+            },
+            {
+              title: 'Insert a section break that starts a new page after the first two lines of text.',
+              resource: 'https://aka.ms/pagebreaks',
+              steps: [
+                'Place the cursor below the text “Proposal Plan”.',
+                'From Layout > Page Setup > Breaks, select Next Page.'
+              ]
+            },
+            {
+              title: 'View the page break using Show/Hide.',
+              resource: 'https://aka.ms/showhide',
+              steps: [
+                'From Home > Paragraph, select Show/Hide.'
+              ]
+            },
+            {
+              title: 'Change the margins for the first section to 3 inches for top and bottom.',
+              resource: 'https://aka.ms/sectionbreaks',
+              steps: [
+                'Place the cursor before the section break on the first page.',
+                'From Layout > Margins, select Custom Margins.',
+                'Change Top and Bottom margins to 3”.',
+                'Set Apply to: This section.',
+                'Select OK.'
+              ]
+            },
+            {
+              title: 'Apply the Style Set “Casual”.',
+              resource: 'https://aka.ms/applystyles',
+              steps: [
+                'From Design > Document Formatting > Style Set gallery, select the Casual Style Set.'
+              ]
+            },
+            {
+              title: 'Set paragraph spacing Before and After to 6 pt.',
+              resource: 'https://aka.ms/linespacing',
+              steps: [
+                'From Home > Editing, choose Select > Select All.',
+                'Open Paragraph Settings dialog.',
+                'Indents and Spacing tab: set Before to 6 pt and After to 6 pt.',
+                'Select OK.'
+              ]
+            },
+            {
+              title: 'Format headings: Heading 1 for “Background,” “Proposal Overview,” and “Summary”.',
+              resource: 'https://aka.ms/applystyles',
+              steps: [
+                'Select “Background,” “Proposal Overview,” and “Summary” (use Ctrl for multi-select).',
+                'From Home > Styles, select Heading 1.'
+              ]
+            },
+            {
+              title: 'Format “Identified Plants and Flowers” as Heading 2.',
+              resource: 'https://aka.ms/applystyles',
+              steps: [
+                'Select “Identified Plants and Flowers”.',
+                'From Home > Styles, select Heading 2.'
+              ]
+            },
+            {
+              title: 'Format “Popular Flowers by Region” and “Native Plants“ as Heading 3.',
+              resource: 'https://aka.ms/applystyles',
+              steps: [
+                'Select “Popular Flowers by Region” and “Native Plants“.',
+                'From Home > Styles, select Heading 3.'
+              ]
+            },
+            {
+              title: 'Use Format Painter to copy formatting of “Identified Plants and Flowers” to “Greenhouse Option” and “Outsourcing Option”.',
+              resource: 'https://aka.ms/edittext',
+              steps: [
+                'Select the text “Identified Plants and Flowers”.',
+                'From Home > Clipboard, double-click Format Painter.',
+                'Select the text “Greenhouse Option” then “Outsourcing Option”.',
+                'Click Format Painter to deactivate.'
+              ]
+            }
+          ]
+        },
+        {
+          section: 'Section 3: Navigation and Referencing',
+          tasks: [
+            {
+              title: 'Insert bookmarks at “Background,” “Proposal Overview,” and “Summary”.',
+              resource: 'https://aka.ms/supportbookmarks',
+              steps: [
+                'Select the text “Background”. Insert > Links > Bookmark, enter name: Background, select Add.',
+                'Repeat for “Proposal Overview” (name: ProposalOverview).',
+                'Repeat for “Summary” (name: Summary).'
+              ]
+            },
+            {
+              title: 'Use Go To to find each bookmark.',
+              resource: 'https://aka.ms/wordoptions',
+              steps: [
+                'From Home > Editing, select Find drop-down > Go To.',
+                'On Go To tab, set Go to what: Bookmark.',
+                'Find each of the three bookmarks and select Go To.',
+                'Select Close.'
+              ]
+            },
+            {
+              title: 'Add a Draft 1 watermark.',
+              resource: 'https://aka.ms/insertwatermark',
+              steps: [
+                'From Design > Page Background > Watermark, open the menu.',
+                'Under Disclaimers, select Draft 1.'
+              ]
+            },
+            {
+              title: 'Add a second page and insert the Automatic Table 2 Table of Contents.',
+              resource: 'https://aka.ms/toc1',
+              steps: [
+                'Place the cursor above the heading “Background” and select Breaks > Page.',
+                'Ensure the cursor is at the top of the new page 2.',
+                'From References > Table of Contents, choose Automatic Table 2.'
+              ]
+            },
+            {
+              title: 'Change the Table of Contents to show Heading levels 1–2 with underscore tab leader.',
+              resource: 'https://aka.ms/formattoc',
+              steps: [
+                'Select the table of contents and choose Custom Table of Contents.',
+                'Set Tab leader to underscore (last option).',
+                'Change Show levels to 2.',
+                'Select OK.'
+              ]
+            }
+          ]
+        },
+        {
+          section: 'Section 4: Tables and Lists',
+          tasks: [
+            {
+              title: 'Convert the table “Miniature Hollyhock” through “Goatsbeard” to text separated by paragraph.',
+              resource: 'https://aka.ms/converttext',
+              steps: [
+                'Select the table beginning with “Miniature Hollyhock” and ending with “Goatsbeard”.',
+                'From Table Tools Layout > Data, select Convert to Text.',
+                'Ensure Paragraph marks is selected and choose OK.'
+              ]
+            },
+            {
+              title: 'Format the “Miniature Hollyhock” through “Goatsbeard” text as a bulleted list.',
+              resource: 'https://aka.ms/lists1',
+              steps: [
+                'Select the text beginning with “Miniature Hollyhock” and ending with “Goatsbeard”.',
+                'From Home > Paragraph, select Bullets.'
+              ]
+            },
+            {
+              title: 'Change that bulleted list to solid boxes.',
+              resource: 'https://aka.ms/formatlist',
+              steps: [
+                'Select the bulleted list.',
+                'From Home > Paragraph, open Bullets dropdown and choose the solid box style.'
+              ]
+            },
+            {
+              title: 'Apply two columns with 0.2 spacing and a line between for the list “Zone 3” through “Zone 9”.',
+              resource: 'https://aka.ms/createcolumns',
+              steps: [
+                'Select text beginning with “Zone 3” and ending with “Zone 9”.',
+                'From Layout > Columns > More Columns.',
+                'Select Two, check Line between, and set Spacing to 0.2.',
+                'Select OK.'
+              ]
+            },
+            {
+              title: 'Convert “Popular Flowers by Region … United States: Rose” to a 2‑column table separated by colon (:).',
+              resource: 'https://aka.ms/insertatable',
+              steps: [
+                'Select text “Popular Flowers by Region” through “United States: Rose”.',
+                'Insert > Table > Convert Text to Table.',
+                'Set number of columns to 2.',
+                'Under Separate text at, choose Other and enter a colon (:).',
+                'Select OK.'
+              ]
+            },
+            {
+              title: 'Resize the first column width to 1.5” and the first row height to 0.5”.',
+              resource: 'https://aka.ms/tableproperties',
+              steps: [
+                'Select the first column and set Table Tools Layout > Cell Size > Width to 1.5”.',
+                'Select the first row and set Table Tools Layout > Cell Size > Height to 0.5”.'
+              ]
+            },
+            {
+              title: 'Merge the first row of the “Popular Flowers by Region” table.',
+              resource: 'https://aka.ms/mergesplit',
+              steps: [
+                'Select the first row of the table.',
+                'From Table Tools Layout > Merge, select Merge Cells.'
+              ]
+            },
+            {
+              title: 'Sort the table data by the Region name.',
+              resource: 'https://aka.ms/sorttable',
+              steps: [
+                'Select the table except the first two rows.',
+                'From Table Tools Layout > Data, select Sort.',
+                'In Sort dialog, set Sort by to Column 1 and select OK.'
+              ]
+            },
+            {
+              title: 'Set default cell margins to 0.05 in the table.',
+              resource: 'https://aka.ms/tableproperties',
+              steps: [
+                'Select the table and open Table Tools Layout > Alignment > Cell Margins.',
+                'Set Top, Bottom, Left, and Right to 0.05 and select OK.'
+              ]
+            },
+            {
+              title: 'Format the first two rows as repeating header rows.',
+              resource: 'https://aka.ms/tableheader',
+              steps: [
+                'Select the first two rows of the table.',
+                'From Table Tools Layout > Data, select Repeat Header Rows.'
+              ]
+            }
+          ]
+        },
+        {
+          section: 'Section 5: Graphics and Finalization',
+          tasks: [
+            {
+              title: 'On the title page, insert the image sign_illustration.png after the title “Proposal Plan”.',
+              resource: 'https://aka.ms/insertpictures',
+              steps: [
+                'Place the cursor on the title page after “Proposal Plan”.',
+                'Insert > Pictures > This Device… and insert sign_illustration.png.'
+              ]
+            },
+            {
+              title: 'Remove the picture background, keeping only the jar, pickles, and garlic.',
+              resource: 'https://aka.ms/picturebackgrounds',
+              steps: [
+                'Select the inserted picture sign_illustration.png.',
+                'From Picture Tools Format > Adjust, select Remove Background.',
+                'Adjust areas as needed and select Keep Changes.'
+              ]
+            },
+            {
+              title: 'Apply Glow: 5 pt; Gray, Accent color 3 to the picture.',
+              resource: 'https://aka.ms/pictureeffects',
+              steps: [
+                'Select the picture.',
+                'Open Picture Effects > Glow and choose 5 pt; Gray, Accent color 3.'
+              ]
+            },
+            {
+              title: 'Set wrapping to Square, center horizontally relative to Page, set vertical absolute 0.5” below paragraph, width 2.5”.',
+              resource: 'https://aka.ms/layoutoptions',
+              steps: [
+                'Select the picture and open Wrap Text > More Layout Options.',
+                'Text Wrapping tab: select Square.',
+                'Position tab: Horizontal alignment Centered relative to Page; Vertical absolute position 0.5” below Paragraph.',
+                'Size tab: set Absolute Width to 2.5” and select OK.'
+              ]
+            },
+            {
+              title: 'Add appropriate alternative text to the picture.',
+              resource: 'https://aka.ms/alttext',
+              steps: [
+                'Select the picture and open Picture Format > Accessibility > Alt Text.',
+                'Enter a description such as “Munson’s logo” and close the pane.'
+              ]
+            },
+            {
+              title: 'Locate and correct accessibility issues.',
+              resource: 'https://aka.ms/docaccessiblity',
+              steps: [
+                'From Review > Accessibility, select Check Accessibility.',
+                'In the Accessibility pane, locate “Image or object not inline”, open the Picture menu and choose “Place this inline”.'
+              ]
+            },
+            {
+              title: 'Check compatibility issues.',
+              resource: 'https://aka.ms/doccompatibility',
+              steps: [
+                'From File > Info, select Check for Issues > Check Compatibility.',
+                'Select OK. Note: There should be six occurrences of “effects on text removed”.'
+              ]
+            },
+            {
+              title: 'Hide all formatting marks.',
+              resource: 'https://aka.ms/showhide',
+              steps: [
+                'From Home > Paragraph, select Show/Hide to hide marks.'
+              ]
+            },
+            {
+              title: 'Save as PDF, share electronically with the instructor, and close the document.',
+              resource: 'https://aka.ms/wordtasks',
+              extraResources: ['https://aka.ms/shareadoc'],
+              steps: [
+                'From File > Save As, choose PDF as the file type and Save.',
+                'Select Share (top-right) or File > Share.',
+                'Add the name or email address of the instructor.',
+                'Save and close the document.'
+              ]
+            }
+          ]
+        }
+      ];
+
+      // Flatten into a linear step list with covers and intros
+      function buildSteps(data) {
+        const steps = [];
+        steps.push({
+          kind: 'cover',
+          section: 'Welcome',
+          title: 'MOS Word Project 1 — Guided Walkthrough',
+          text: 'You will complete Project 1 for Munson’s Pickles and Preserves Farm. Move one step at a time using the Next button or your arrow keys.',
+          points: [
+            'Open and inspect a Word document',
+            'Format text, apply styles, and manage sections',
+            'Insert bookmarks and a table of contents',
+            'Convert lists/tables and format table properties',
+            'Insert and format images, accessibility and compatibility checks',
+            'Export to PDF and share'
+          ]
+        });
+        for (const sec of data) {
+          steps.push({ kind: 'section', section: sec.section, title: sec.section, text: null });
+          for (const task of sec.tasks) {
+            steps.push({ kind: 'task-intro', section: sec.section, title: task.title, resource: task.resource, extraResources: task.extraResources || [] });
+            task.steps.forEach((s, idx) => {
+              steps.push({ kind: 'task-step', section: sec.section, title: task.title, stepIndex: idx + 1, text: s, resource: task.resource, extraResources: task.extraResources || [] });
+              });
+          }
+        }
+        steps.push({ kind: 'cover', section: 'Finish', title: 'Great job!', text: 'You have completed all steps for Project 1. Review any areas as needed or reset progress to practice again.' });
+        return steps;
+      }
+
+      const linearSteps = buildSteps(curriculum);
+      const total = linearSteps.length;
+
+      const els = {
+        content: document.getElementById('content'),
+        stepCounter: document.getElementById('stepCounter'),
+        sectionBadge: document.getElementById('sectionBadge'),
+        progressBar: document.getElementById('progressBar'),
+        prevBtn: document.getElementById('prevBtn'),
+        nextBtn: document.getElementById('nextBtn'),
+        prevBtn2: document.getElementById('prevBtn2'),
+        nextBtn2: document.getElementById('nextBtn2'),
+        resetBtn: document.getElementById('resetBtn'),
+        jumpMenu: document.getElementById('jumpMenu'),
+      };
+
+      const STORAGE_KEY = 'mos-word-p1-step';
+      let idx = Number(localStorage.getItem(STORAGE_KEY) || 0);
+      if (!(idx >= 0 && idx < total)) idx = 0;
+
+      function fmtStep(n) { return `Step ${n} of ${total}`; }
+      function pct(n) { return Math.max(0, Math.min(100, Math.round(((n) / (total - 1)) * 100))); }
+
+      function render() {
+        const cur = linearSteps[idx];
+        els.stepCounter.textContent = fmtStep(idx + 1);
+        els.sectionBadge.textContent = cur.section || '—';
+        els.progressBar.style.width = pct(idx) + '%';
+
+        let html = '';
+        if (cur.kind === 'cover') {
+          html += `<div class="cover">`;
+          html += `<h2>${cur.title}</h2>`;
+          if (cur.text) html += `<p>${cur.text}</p>`;
+          if (cur.points && cur.points.length) {
+            html += '<ul>' + cur.points.map(p => `<li>${p}</li>`).join('') + '</ul>';
+          }
+          html += `</div>`;
+        } else if (cur.kind === 'section') {
+          html += `<div class="cover">`;
+          html += `<h2>${cur.title}</h2>`;
+          html += `<p class="note">You are starting a new section. Continue to see the tasks and steps.</p>`;
+          html += `</div>`;
+        } else if (cur.kind === 'task-intro') {
+          html += `<h2>Task</h2>`;
+          html += `<h3>${cur.title}</h3>`;
+          if (cur.resource) {
+            html += `<div class="resource">Resource: <a href="${cur.resource}" target="_blank" rel="noopener">${cur.resource}</a>`;
+            if (cur.extraResources && cur.extraResources.length) {
+              html += cur.extraResources.map(r => ` · <a href="${r}" target="_blank" rel="noopener">${r}</a>`).join('');
+            }
+            html += `</div>`;
+          }
+          html += `<p class="note">Follow the next steps one by one.</p>`;
+        } else if (cur.kind === 'task-step') {
+          html += `<h2>Step ${cur.stepIndex}</h2>`;
+          html += `<h3>${cur.title}</h3>`;
+          html += `<p>${cur.text}</p>`;
+          if (cur.resource) {
+            html += `<div class="resource">Resource: <a href="${cur.resource}" target="_blank" rel="noopener">${cur.resource}</a>`;
+            if (cur.extraResources && cur.extraResources.length) {
+              html += cur.extraResources.map(r => ` · <a href="${r}" target="_blank" rel="noopener">${r}</a>`).join('');
+            }
+            html += `</div>`;
+          }
+        }
+        els.content.innerHTML = html;
+
+        // Button state
+        const atStart = idx === 0;
+        const atEnd = idx === total - 1;
+        for (const b of [els.prevBtn, els.prevBtn2]) b.disabled = atStart;
+        for (const b of [els.nextBtn, els.nextBtn2]) b.disabled = atEnd;
+        localStorage.setItem(STORAGE_KEY, String(idx));
+        updateJumpSelection();
+      }
+
+      function next() { if (idx < total - 1) { idx++; render(); } }
+      function prev() { if (idx > 0) { idx--; render(); } }
+
+      // Jump menu: build logical anchors (section and task intros)
+      const anchors = [];
+      function buildAnchors() {
+        anchors.length = 0;
+        linearSteps.forEach((s, i) => {
+          if (s.kind === 'section') anchors.push({ label: s.section, index: i });
+          if (s.kind === 'task-intro') anchors.push({ label: '· ' + s.title, index: i });
+        });
+      }
+      function populateJumpMenu() {
+        buildAnchors();
+        els.jumpMenu.innerHTML = '';
+        const opt0 = document.createElement('option');
+        opt0.value = '-1'; opt0.textContent = 'Jump to…';
+        els.jumpMenu.appendChild(opt0);
+        anchors.forEach((a) => {
+          const o = document.createElement('option');
+          o.value = String(a.index); o.textContent = a.label;
+          els.jumpMenu.appendChild(o);
+        });
+      }
+      function updateJumpSelection() {
+        // Find nearest anchor at or before idx
+        let nearest = -1;
+        for (const a of anchors) { if (a.index <= idx) nearest = a.index; else break; }
+        els.jumpMenu.value = nearest >= 0 ? String(nearest) : '-1';
+      }
+
+      // Wire controls
+      [els.prevBtn, els.prevBtn2].forEach(b => b.addEventListener('click', prev));
+      [els.nextBtn, els.nextBtn2].forEach(b => b.addEventListener('click', next));
+      els.resetBtn.addEventListener('click', () => { idx = 0; render(); });
+      els.jumpMenu.addEventListener('change', (e) => {
+        const v = Number(e.target.value);
+        if (v >= 0) { idx = v; render(); }
+        else { updateJumpSelection(); }
+      });
+      window.addEventListener('keydown', (e) => {
+        if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) return;
+        if (e.key === 'ArrowRight') { next(); }
+        if (e.key === 'ArrowLeft') { prev(); }
+      });
+
+      populateJumpMenu();
+      render();
+    </script>
+  </body>
+</html>
