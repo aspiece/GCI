@@ -750,6 +750,7 @@
           html += `</div>`;
         }
         if (cur.steps && cur.steps.length) {
+          html += '<h3 style="margin-top: 20px;">Steps to complete in Word:</h3>';
           html += '<ol>'; html += cur.steps.map(step => `<li>${step}</li>`).join(''); html += '</ol>';
         }
       }
