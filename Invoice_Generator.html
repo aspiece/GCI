@@ -365,6 +365,7 @@
         function resetForm() {
             if (confirm('Reset the form?')) {
                 document.getElementById('invoiceForm').reset();
+                document.getElementById('emailSection').style.display = 'none';
                 calculateTotal();
             }
         }
