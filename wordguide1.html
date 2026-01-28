@@ -693,7 +693,7 @@
           ]
       });
           for (const sec of data) {
-          for (const task of sec.tasks) {
+        for (const task of sec.tasks) {
             pages.push({
               kind: 'task',
               section: sec.section,
@@ -702,11 +702,11 @@
               resource: task.resource,
               extraResources: task.extraResources || []
             });
-          }
         }
+      }
           pages.push({kind: 'cover', section: 'Finish', title: 'Great job!', text: 'You have completed all tasks for Project 1. Review any areas as needed or reset progress to practice again.' });
           return pages;
-      }
+    }
 
           const pages = buildPages(curriculum);
           const total = pages.length;
