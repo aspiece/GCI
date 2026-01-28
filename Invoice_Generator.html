@@ -302,6 +302,20 @@
                         customization</small>
                 </div>
 
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="checkbox" id="taxExempt" onchange="calculateTotal()"
+                            style="margin-right: 10px; width: auto; cursor: pointer;">
+                        <span>Tax Exempt</span>
+                    </label>
+                    <small style="color: #666; font-size: 12px; margin-left: 30px;">Check if client is tax exempt</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="printDescription">Print Description *</label>
+                    <textarea id="printDescription" rows="3" required placeholder="Describe what was printed (e.g., robot arm, replacement part, prototype)"></textarea>
+                </div>
+
                 <div class="form-group" style="margin-top: 30px;">
                     <label for="notes">Additional Notes (optional)</label>
                     <textarea id="notes" rows="3" placeholder="Any special notes..."></textarea>
@@ -344,15 +358,17 @@
             const printTime = parseFloat(document.getElementById('printTime').value) || 0;
             const filamentGrams = parseFloat(document.getElementById('filamentGrams').value) || 0;
             const designFeeChecked = document.getElementById('designFee')?.checked || false;
+            const taxExemptChecked = document.getElementById('taxExempt')?.checked || false;
             const service = (printTime * 1.50) + 2.00;
             const materials = (filamentGrams / 1000) * 20.00;
-            const salesTax = materials * 0.06;
+            const salesTax = taxExemptChecked ? 0 : materials * 0.06;
             const designFee = designFeeChecked ? 5.00 : 0;
         }
 
         function resetForm() {
             if (confirm('Reset the form?')) {
                 document.getElementById('invoiceForm').reset();
+                document.getElementById('emailSection').style.display = 'none';
                 calculateTotal();
             }
         }
@@ -371,11 +387,13 @@
             const printTime = parseFloat(document.getElementById('printTime').value) || 0;
             const filamentGrams = parseFloat(document.getElementById('filamentGrams').value) || 0;
             const designFeeChecked = document.getElementById('designFee').checked;
+            const taxExemptChecked = document.getElementById('taxExempt').checked;
+            const printDescription = document.getElementById('printDescription').value.trim();
             const notes = document.getElementById('notes').value.trim();
 
             const service = (printTime * 1.50) + 2.00;
             const materials = (filamentGrams / 1000) * 20.00;
-            const salesTax = materials * 0.06;
+            const salesTax = taxExemptChecked ? 0 : materials * 0.06;
             const designFee = designFeeChecked ? 5.00 : 0;
             const total = service + materials + salesTax + designFee;
 
@@ -395,6 +413,8 @@ Date: ${date.toLocaleDateString()}
 
 Client: ${clientName}
 Email: ${clientEmail}
+
+Print Description: ${printDescription}
 
 ----------------------------------------
 Print Details:
@@ -430,6 +450,8 @@ Date: ${date.toLocaleDateString()}
 
 Client: ${clientName}
 Email: ${clientEmail}
+
+Print Description: ${printDescription}
 
 ----------------------------------------
 Print Details:
