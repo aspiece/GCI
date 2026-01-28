@@ -682,106 +682,106 @@
         kind: 'cover',
         section: 'Project Overview',
         title: 'MOS Word Project 1 — Guided Walkthrough',
-        text: '<strong>📖 Read through this overview before starting.</strong><br><br>You will complete Project 1 for Munson's Pickles and Preserves Farm.This guide contains 40 steps that walk you through each task.< br > <br><strong>How to use this guide:</strong><br>• Download the required files (see bottom of page)<br>• Follow each step in order using the Next button or arrow keys<br>• Complete the action in Word before advancing to the next step<br>• Use the resource links provided for additional help<br>• Reset progress at any time using the Reset button',
-          points: [
+        text: '<strong>📖 Read through this overview before starting.</strong><br><br>You will complete Project 1 for Munson\'s Pickles and Preserves Farm. This guide contains 40 steps that walk you through each task.<br><br><strong>How to use this guide:</strong><br>• Download the required files (see bottom of page)<br>• Follow each step in order using the Next button or arrow keys<br>• Complete the action in Word before advancing to the next step<br>• Use the resource links provided for additional help<br>• Reset progress at any time using the Reset button',
+        points: [
           'Open and inspect a Word document',
           'Format text, apply styles, and manage sections',
           'Insert bookmarks and a table of contents',
           'Convert lists/tables and format table properties',
           'Insert and format images; run accessibility/compatibility checks',
           'Export to PDF and share'
-          ]
+        ]
       });
-          for (const sec of data) {
+      for (const sec of data) {
         for (const task of sec.tasks) {
-            pages.push({
-              kind: 'task',
-              section: sec.section,
-              title: task.title,
-              steps: task.steps,
-              resource: task.resource,
-              extraResources: task.extraResources || []
-            });
+          pages.push({
+            kind: 'task',
+            section: sec.section,
+            title: task.title,
+            steps: task.steps,
+            resource: task.resource,
+            extraResources: task.extraResources || []
+          });
         }
       }
-          pages.push({kind: 'cover', section: 'Finish', title: 'Great job!', text: 'You have completed all tasks for Project 1. Review any areas as needed or reset progress to practice again.' });
-          return pages;
+      pages.push({ kind: 'cover', section: 'Finish', title: 'Great job!', text: 'You have completed all tasks for Project 1. Review any areas as needed or reset progress to practice again.' });
+      return pages;
     }
 
-          const pages = buildPages(curriculum);
-          const total = pages.length;
+    const pages = buildPages(curriculum);
+    const total = pages.length;
 
-          const els = {
-            content: document.getElementById('content'),
-          stepCounter: document.getElementById('stepCounter'),
-          sectionBadge: document.getElementById('sectionBadge'),
-          progressBar: document.getElementById('progressBar'),
-          prevBtn: document.getElementById('prevBtn'),
-          nextBtn: document.getElementById('nextBtn'),
-          prevBtn2: document.getElementById('prevBtn2'),
-          nextBtn2: document.getElementById('nextBtn2'),
-          resetBtn: document.getElementById('resetBtn'),
-      };
+    const els = {
+      content: document.getElementById('content'),
+      stepCounter: document.getElementById('stepCounter'),
+      sectionBadge: document.getElementById('sectionBadge'),
+      progressBar: document.getElementById('progressBar'),
+      prevBtn: document.getElementById('prevBtn'),
+      nextBtn: document.getElementById('nextBtn'),
+      prevBtn2: document.getElementById('prevBtn2'),
+      nextBtn2: document.getElementById('nextBtn2'),
+      resetBtn: document.getElementById('resetBtn'),
+    };
 
-          const STORAGE_KEY = 'mos-word-p1-page';
-          let idx = Number(localStorage.getItem(STORAGE_KEY) || 0);
-      if (!(idx >= 0 && idx < total)) idx = 0;
+    const STORAGE_KEY = 'mos-word-p1-page';
+    let idx = Number(localStorage.getItem(STORAGE_KEY) || 0);
+    if (!(idx >= 0 && idx < total)) idx = 0;
 
-          function fmtStep(n) { return `Step ${n} of ${total}`; }
-          function pct(n) { return Math.max(0, Math.min(100, Math.round(((n) / (total - 1)) * 100))); }
+    function fmtStep(n) { return `Step ${n} of ${total}`; }
+    function pct(n) { return Math.max(0, Math.min(100, Math.round(((n) / (total - 1)) * 100))); }
 
-          function render() {
-        const cur = pages[idx];
-          els.stepCounter.textContent = fmtStep(idx + 1);
-          els.sectionBadge.textContent = cur.section || '—';
-          els.progressBar.style.width = pct(idx) + '%';
+    function render() {
+      const cur = pages[idx];
+      els.stepCounter.textContent = fmtStep(idx + 1);
+      els.sectionBadge.textContent = cur.section || '—';
+      els.progressBar.style.width = pct(idx) + '%';
 
-          let html = '';
-          if (cur.kind === 'cover') {
-            html += `<div class="cover">`;
-          html += `<h2>${cur.title}</h2>`;
-          if (cur.text) html += `<p>${cur.text}</p>`;
-          if (cur.points && cur.points.length) {
-            html += '<ul>' + cur.points.map(p => `<li>${p}</li>`).join('') + '</ul>';
-          }
-          html += `</div>`;
-        } else if (cur.kind === 'task') {
-            html += `<h2>Task</h2>`;
-          html += `<h3>${cur.title}</h3>`;
-          if (cur.resource) {
-            html += `<div class="resource">Resource: <a href="${cur.resource}" target="_blank" rel="noopener">${cur.resource}</a>`;
+      let html = '';
+      if (cur.kind === 'cover') {
+        html += `<div class="cover">`;
+        html += `<h2>${cur.title}</h2>`;
+        if (cur.text) html += `<p>${cur.text}</p>`;
+        if (cur.points && cur.points.length) {
+          html += '<ul>' + cur.points.map(p => `<li>${p}</li>`).join('') + '</ul>';
+        }
+        html += `</div>`;
+      } else if (cur.kind === 'task') {
+        html += `<h2>Task</h2>`;
+        html += `<h3>${cur.title}</h3>`;
+        if (cur.resource) {
+          html += `<div class="resource">Resource: <a href="${cur.resource}" target="_blank" rel="noopener">${cur.resource}</a>`;
           if (cur.extraResources && cur.extraResources.length) {
             html += cur.extraResources.map(r => ` · <a href="${r}" target="_blank" rel="noopener">${r}</a>`).join('');
-            }
+          }
           html += `</div>`;
-          }
-          if (cur.steps && cur.steps.length) {
-            html += '<ol>'; html += cur.steps.map(step => `<li>${step}</li>`).join(''); html += '</ol>';
-          }
         }
-        els.content.innerHTML = html;
-
-        // Button state
-        const atStart = idx === 0;
-        const atEnd = idx === total - 1;
-        for (const b of [els.prevBtn, els.prevBtn2]) b.disabled = atStart;
-        for (const b of [els.nextBtn, els.nextBtn2]) b.disabled = atEnd;
-        localStorage.setItem(STORAGE_KEY, String(idx));
+        if (cur.steps && cur.steps.length) {
+          html += '<ol>'; html += cur.steps.map(step => `<li>${step}</li>`).join(''); html += '</ol>';
+        }
       }
+      els.content.innerHTML = html;
 
-      function next() { if (idx < total - 1) { idx++; render(); } }
-      function prev() { if (idx > 0) { idx--; render(); } }
+      // Button state
+      const atStart = idx === 0;
+      const atEnd = idx === total - 1;
+      for (const b of [els.prevBtn, els.prevBtn2]) b.disabled = atStart;
+      for (const b of [els.nextBtn, els.nextBtn2]) b.disabled = atEnd;
+      localStorage.setItem(STORAGE_KEY, String(idx));
+    }
 
-      // Wire controls
-      [els.prevBtn, els.prevBtn2].forEach(b => b.addEventListener('click', prev));
-      [els.nextBtn, els.nextBtn2].forEach(b => b.addEventListener('click', next));
-      els.resetBtn.addEventListener('click', () => { idx = 0; render(); });
-      window.addEventListener('keydown', (e) => {
-        if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) return;
-        if (e.key === 'ArrowRight') { next(); }
-        if (e.key === 'ArrowLeft') { prev(); }
-      });
-      render();
+    function next() { if (idx < total - 1) { idx++; render(); } }
+    function prev() { if (idx > 0) { idx--; render(); } }
+
+    // Wire controls
+    [els.prevBtn, els.prevBtn2].forEach(b => b.addEventListener('click', prev));
+    [els.nextBtn, els.nextBtn2].forEach(b => b.addEventListener('click', next));
+    els.resetBtn.addEventListener('click', () => { idx = 0; render(); });
+    window.addEventListener('keydown', (e) => {
+      if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) return;
+      if (e.key === 'ArrowRight') { next(); }
+      if (e.key === 'ArrowLeft') { prev(); }
+    });
+    render();
   </script>
 </body>
 
