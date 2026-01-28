@@ -397,6 +397,11 @@ Client: ${clientName}
 Email: ${clientEmail}
 
 ----------------------------------------
+Print Details:
+  Print Time:             ${printTime.toFixed(2)} hours
+  Filament Used:          ${filamentGrams}g (${(filamentGrams / 1000).toFixed(3)} kg)
+
+Charges:
 Service Charge:           $${service.toFixed(2)}
 Material Cost:            $${materials.toFixed(2)}
 Sales Tax (6%):           $${salesTax.toFixed(2)}${designFeeChecked ? '\nDesign Fee:               $' + designFee.toFixed(2) : ''}
@@ -427,6 +432,11 @@ Client: ${clientName}
 Email: ${clientEmail}
 
 ----------------------------------------
+Print Details:
+  Print Time:             ${printTime.toFixed(2)} hours
+  Filament Used:          ${filamentGrams}g (${(filamentGrams / 1000).toFixed(3)} kg)
+
+Charges:
 Service Charge:           $${service.toFixed(2)}
 Material Cost:            $${materials.toFixed(2)}
 Sales Tax (6%):           $${salesTax.toFixed(2)}${designFeeChecked ? '\nDesign Fee:               $' + designFee.toFixed(2) : ''}
