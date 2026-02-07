@@ -1042,12 +1042,32 @@
             prevBtn2: document.getElementById('prevBtn2'),
             nextBtn2: document.getElementById('nextBtn2'),
             resetBtn: document.getElementById('resetBtn'),
-            jumpToTask: document.getElementById('jumpToTask'), \n            themeSelector: document.getElementById('themeSelector'),
+            jumpToTask: document.getElementById('jumpToTask'),
+            themeSelector: document.getElementById('themeSelector'),
         };
 
-        const STORAGE_KEY = 'mos-word-p2-page'; \n\n        // Theme management\n        const THEME_STORAGE_KEY = 'mos-word-p2-theme';\n        \n        function initializeTheme() {\n            const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || 'dark';\n            document.documentElement.setAttribute('data-theme', savedTheme);\n            if (els.themeSelector) {\n                els.themeSelector.value = savedTheme;\n            }\n        }\n        \n        function setTheme(theme) {\n            document.documentElement.setAttribute('data-theme', theme);\n            localStorage.setItem(THEME_STORAGE_KEY, theme);\n        }\n\n        // Initialize theme\n        initializeTheme();
+        const STORAGE_KEY = 'mos-word-p2-page';
         let idx = Number(localStorage.getItem(STORAGE_KEY) || 0);
         if (!(idx >= 0 && idx < total)) idx = 0;
+
+        // Theme management
+        const THEME_STORAGE_KEY = 'mos-word-p2-theme';
+
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            if (els.themeSelector) {
+                els.themeSelector.value = savedTheme;
+            }
+        }
+
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem(THEME_STORAGE_KEY, theme);
+        }
+
+        // Initialize theme
+        initializeTheme();
 
         // Populate jump-to-task dropdown
         pages.forEach((page, i) => {
