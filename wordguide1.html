@@ -1038,6 +1038,9 @@
         if (cur.successIndicators && cur.successIndicators.length) {
           html += cur.successIndicators.map(s => `<div class="success">${s}</div>`).join('');
         }
+
+        // Add legend on task pages
+        html += '<div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border);"><strong>Legend:</strong><div class="legend"><div class="legend-item"><span class="ui-btn">Button/Menu</span><span>Click this in Word.</span></div><div class="legend-item"><span class="ui-text">Text to select</span><span>Highlight this text in the document.</span></div><div class="legend-item"><span class="ui-field">Field/Option</span><span>Type or choose a value.</span></div><div class="legend-item"><span class="ui-key">Ctrl+S</span><span>Keyboard shortcut to press.</span></div></div></div>';
       }
       els.content.innerHTML = html;
 
