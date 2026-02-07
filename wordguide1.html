@@ -929,14 +929,11 @@
         text: '<strong>📖 Read through this overview before starting.</strong><br><br>You will complete Project 1 for Munson\'s Pickles and Preserves Farm. This guide walks you through each task step-by-step.<br><br><strong style="color: #ff6b6b;">⚠️ Important: Use Microsoft Word (desktop app on your computer), not Word Online or the web browser version.</strong><br><br><strong>Before You Start - Prerequisites Checklist:</strong><ul class="checklist"><li>Microsoft Word desktop app installed on your computer</li><li>Downloaded both <strong>Project1_datafile 1.docx</strong> and <strong>sign_illustration 1.png</strong> files (see bottom of page)</li><li>Files saved in an easy-to-find location (like your Documents or Downloads folder)</li><li>Word zoom level set to 100% for consistency</li></ul><br><strong>💡 Quick Tips:</strong><br>• <strong>Made a mistake?</strong> Press <span class="ui-key">Ctrl+Z</span> to undo your last action<br>• <strong>Need to redo?</strong> Press <span class="ui-key">Ctrl+Y</span> to redo an undone action<br>• <strong>Save your work:</strong> Press <span class="ui-key">Ctrl+S</span> frequently to save your progress<br><br><strong>How to use this guide:</strong><br>• Follow each step in order using the navigation buttons at the bottom or arrow keys<br>• Complete the action in Word before advancing to the next step<br>• Use the "Jump to task..." dropdown above to skip to specific tasks<br>• Check off completed tasks using the checkbox at the top of each task<br>• Use the resource links provided for additional help<br>• Time estimates (⏱️) help you pace yourself<br>• Reset progress at any time using the Reset button<br><br><div class="collapsible"><div class="collapsible-header" onclick="this.parentElement.classList.toggle(\'collapsed\')">📋 Keyboard Shortcuts Reference (click to expand)</div><div class="collapsible-content"><strong>Shortcuts you\'ll use in this project:</strong><br><br><span class="ui-key">Ctrl+H</span> - Find and Replace<br><span class="ui-key">Ctrl+A</span> - Select All<br><span class="ui-key">Ctrl+G</span> - Go To<br><span class="ui-key">Ctrl+Enter</span> - Insert Page Break<br><span class="ui-key">Ctrl+S</span> - Save Document<br><span class="ui-key">Ctrl+Z</span> - Undo<br><span class="ui-key">Ctrl+Y</span> - Redo<br><br><strong>Navigation shortcuts:</strong><br><span class="ui-key">←</span> <span class="ui-key">→</span> - Navigate between steps in this guide</div></div><br><strong>Legend:</strong><div class="legend"><div class="legend-item"><span class="ui-btn">Button/Menu</span><span>Click this in Word.</span></div><div class="legend-item"><span class="ui-text">Text to select</span><span>Highlight this text in the document.</span></div><div class="legend-item"><span class="ui-field">Field/Option</span><span>Type or choose a value.</span></div><div class="legend-item"><span class="ui-key">Ctrl+S</span><span>Keyboard shortcut to press.</span></div></div>',
 
       });
-      let taskNumber = 0;
       for (const sec of data) {
         for (const task of sec.tasks) {
-          taskNumber++;
           pages.push({
             kind: 'task',
             section: sec.section,
-            taskNumber: taskNumber,
             title: task.title,
             estimatedTime: task.estimatedTime || '',
             steps: task.steps,
@@ -1007,7 +1004,7 @@
         html += `<label for="${taskId}">Mark this task as complete</label>`;
         html += `</div>`;
 
-        html += `<h2>Task ${cur.taskNumber}`;
+        html += `<h2>Task`;
         if (cur.estimatedTime) html += ` <span class="time-badge">⏱️ ${cur.estimatedTime}</span>`;
         html += `</h2>`;
         html += `<h3>${cur.title}</h3>`;
