@@ -45,6 +45,7 @@
       justify-content: space-between;
       gap: 12px;
       margin-bottom: 16px;
+      flex-wrap: wrap;
     }
 
     .title {
@@ -71,6 +72,7 @@
       gap: 8px;
       align-items: flex-start;
       justify-content: flex-end;
+      flex: 1;
     }
 
     select,
@@ -258,6 +260,227 @@
     .cover li {
       margin: 4px 0;
     }
+
+    .ui-btn {
+      font-weight: 700;
+      color: #cfe3ff;
+      background: #0f1117;
+      border: 1px solid var(--border);
+      padding: 1px 6px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+
+    .ui-text {
+      font-weight: 700;
+      color: #ffd38a;
+      background: #2a2314;
+      border: 1px solid #5a4724;
+      padding: 1px 6px;
+      border-radius: 6px;
+    }
+
+    .ui-field {
+      font-weight: 700;
+      color: #b2f5ea;
+      background: #0f1f1f;
+      border: 1px solid #214a47;
+      padding: 1px 6px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+
+    .ui-key {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      font-weight: 700;
+      color: #e8ecf2;
+      background: #111621;
+      border: 1px solid #2a3346;
+      padding: 1px 6px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+
+    .legend {
+      margin-top: 10px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .legend-item span:first-child {
+      flex-shrink: 0;
+    }
+
+    .legend-item span:last-child {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* Checkboxes for task completion */
+    .task-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 12px 0;
+      padding: 8px 12px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .task-checkbox:hover {
+      background: #1a1d27;
+    }
+
+    .task-checkbox input {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    .task-checkbox label {
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .task-checkbox input:checked+label {
+      color: var(--accent);
+      text-decoration: line-through;
+    }
+
+    /* Warning boxes */
+    .warning {
+      margin: 12px 0;
+      padding: 12px 16px;
+      background: rgba(255, 107, 107, 0.08);
+      border-left: 3px solid var(--danger);
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .warning strong {
+      color: var(--danger);
+    }
+
+    /* Success indicators */
+    .success {
+      margin: 12px 0;
+      padding: 12px 16px;
+      background: rgba(34, 176, 125, 0.08);
+      border-left: 3px solid var(--accent);
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .success strong {
+      color: var(--accent);
+    }
+
+    /* Time estimate badge */
+    .time-badge {
+      display: inline-block;
+      margin-left: 8px;
+      padding: 4px 8px;
+      background: rgba(79, 140, 255, 0.15);
+      color: var(--primary);
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    /* Collapsible sections */
+    .collapsible {
+      margin: 16px 0;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .collapsible-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: var(--card);
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+
+    .collapsible-header:hover {
+      background: #1a1d27;
+    }
+
+    .collapsible-header::after {
+      content: '\u25bc';
+      font-size: 10px;
+      transition: transform 0.3s;
+    }
+
+    .collapsible.collapsed .collapsible-header::after {
+      transform: rotate(-90deg);
+    }
+
+    .collapsible-content {
+      padding: 16px;
+      background: rgba(18, 20, 26, 0.5);
+      max-height: 500px;
+      overflow: auto;
+      transition: max-height 0.3s, padding 0.3s;
+    }
+
+    .collapsible.collapsed .collapsible-content {
+      max-height: 0;
+      padding: 0 16px;
+      overflow: hidden;
+    }
+
+    /* Checklist style */
+    .checklist {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .checklist li {
+      padding: 6px 0;
+      padding-left: 28px;
+      position: relative;
+    }
+
+    .checklist li::before {
+      content: '\u2713';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    /* Jump to task selector */
+    .jump-selector {
+      margin-bottom: 8px;
+    }
+
+    .context-note {
+      margin: 12px 0;
+      padding: 12px 16px;
+      background: rgba(79, 140, 255, 0.08);
+      border-left: 3px solid var(--primary);
+      border-radius: 6px;
+      font-size: 14px;
+      font-style: italic;
+    }
   </style>
 </head>
 
@@ -270,6 +493,9 @@
           document.</p>
       </div>
       <div class="controls">
+        <select id="jumpToTask" class="jump-selector" title="Jump to a specific task">
+          <option value="">Jump to task...</option>
+        </select>
         <button id="resetBtn" title="Reset progress">Reset</button>
         <button id="prevBtn">◀ Previous</button>
         <button id="nextBtn" class="primary">Next ▶</button>
@@ -310,49 +536,56 @@
         tasks: [
           {
             title: 'Inspect the document and remove Document Properties and Personal Information and Hidden Text.',
+            estimatedTime: '2-3 min',
             resource: 'https://aka.ms/removeinformation',
-            steps: [
-              'Open Project1_datafile 1.docx in Microsoft Word (desktop app).',
-              'Select File (top-left), then select Info.',
-              'Under Inspect Document, select Check for Issues, then select Inspect Document.',
-              'In Document Inspector, uncheck every box except Document Properties and Personal Information and Hidden Text, then select Inspect.',
-              'Select Remove All for each item found, then select Reinspect, then Close.',
-              'Select the Back arrow to return to the document.'
-            ]
+            contextNote: '📍 You should be opening the file for the first time.',
+            warnings: ['⚠️ Don't skip the Reinspect step - it confirms everything was removed.'],
+            successIndicators: ['✓ You should see "No items were found" after reinspecting.'],
+              steps: [
+                'Open Project1_datafile 1.docx in Microsoft Word (desktop app).',
+                'Select <span class="ui-btn">File</span> (top-left), then select <span class="ui-btn">Info</span>.',
+                'Under Inspect Document, select <span class="ui-btn">Check for Issues</span>, then select <span class="ui-btn">Inspect Document</span>.',
+                'In Document Inspector, uncheck every box except Document Properties and Personal Information and Hidden Text, then select <span class="ui-btn">Inspect</span>.',
+                'Select <span class="ui-btn">Remove All</span> for each item found, then select <span class="ui-btn">Reinspect</span>, then <span class="ui-btn">Close</span>.',
+                'Select the <span class="ui-btn">Back</span> arrow to return to the document.'
+              ]
           },
           {
             title: 'Find every instance of the text “Munsons’” and replace with “Munson’s”.',
             resource: 'https://aka.ms/findandreplace1',
             steps: [
-              'From the Home tab, in the Editing group, select Replace (or press Ctrl+H).',
-              'In Find what, type Munsons’.',
-              'In Replace with, type Munson’s.',
-              'Select Replace All (you should see 13 replacements).',
-              'Select OK, then select Close.'
+              'From the <span class="ui-btn">Home</span> tab, in the Editing group, select <span class="ui-btn">Replace</span> (or press <span class="ui-key">Ctrl+H</span>).',
+              'In the <span class="ui-field">Find what</span> box, type Munsons’.',
+              'In the <span class="ui-field">Replace with</span> box, type Munson’s.',
+              'Select <span class="ui-btn">Replace All</span> (you should see 13 replacements).',
+              'Select <span class="ui-btn">OK</span>, then select <span class="ui-btn">Close</span>.'
             ]
           },
           {
             title: 'Change the document properties: Title “Proposal Plan”, Author your name, Keywords “flowers”, “plants”, “greenhouse”, “outsourcing”.',
             resource: 'https://aka.ms/documentproperties',
             steps: [
-              'Select File, then select Info.',
-              'Select the Properties drop-down (top-right), then select Advanced Properties.',
-              'In the Document Properties dialog box, select the Summary tab.',
-              'In Title, type Proposal Plan.',
-              'In Author, type your name.',
-              'In Keywords, type flowers, plants, greenhouse, outsourcing.',
-              'Select OK.',
-              'Select the Back arrow to return to the document.'
+              'Select <span class="ui-btn">File</span>, then select <span class="ui-btn">Info</span>.',
+              'Select the <span class="ui-btn">Properties</span> drop-down (top-right), then select <span class="ui-btn">Advanced Properties</span>.',
+              'In the Document Properties dialog box, select the <span class="ui-btn">Summary</span> tab.',
+              'In the <span class="ui-field">Title</span> box, type Proposal Plan.',
+              'In the <span class="ui-field">Author</span> box, type your name.',
+              'In the <span class="ui-field">Keywords</span> box, type flowers, plants, greenhouse, outsourcing.',
+              'Select <span class="ui-btn">OK</span>.',
+              'Select the <span class="ui-btn">Back</span> arrow to return to the document.'
             ]
           },
           {
             title: 'Without printing, change Print settings to Uncollated and 2 Pages Per Sheet.',
+            estimatedTime: '1-2 min',
             resource: 'https://aka.ms/printadoc',
+            warnings: ['⚠️ Do NOT click the Print button - these are settings only!'],
+            successIndicators: ['✓ You should see the print preview update to show 2 pages per sheet.'],
             steps: [
-              'Select File, then select Print.',
-              'In Settings, open the Collated drop-down and choose Uncollated.',
-              'In Settings, open the 1 Page Per Sheet drop-down and choose 2 Pages Per Sheet.',
-              'Do not print. Select the Back arrow to return to the document.'
+              'Select <span class="ui-btn">File</span>, then select <span class="ui-btn">Print</span>.',
+              'In Settings, open the <span class="ui-btn">Collated</span> drop-down and choose <span class="ui-btn">Uncollated</span>.',
+              'In Settings, open the <span class="ui-btn">1 Page Per Sheet</span> drop-down and choose <span class="ui-btn">2 Pages Per Sheet</span>.',
+              'Do not print. Select the <span class="ui-btn">Back</span> arrow to return to the document.'
             ]
           }
         ]
@@ -362,85 +595,98 @@
         tasks: [
           {
             title: 'Apply Text Effect Fill: Black, Text color 1; Shadow to title, center align, and set font size to 20.',
+            estimatedTime: '3-4 min',
             resource: 'https://aka.ms/texteffects',
+            contextNote: '📍 Select the first two lines that say "Munson's Pickles and Preserves Farm" and "Proposal Plan".',
+            warnings: ['⚠️ Make sure to select both lines before applying the text effect.'],
+            successIndicators: ['✓ The title should now have a shadow effect and be centered at font size 20.'],
             steps: [
-              'Select the first two lines of text starting with “Munson’s” and ending with “Plan”.',
-              'From the Home tab, select Text Effects and Typography, then choose “Fill: Black, Text color 1; Shadow”.',
-              'From Home > Paragraph, select Center.',
-              'In the font size box, type 20 and press Enter (or use Increase Font Size until it shows 20).'
+              'Select the first two lines of text starting with <span class="ui-text">“Munson’s”</span> and ending with <span class="ui-text">“Plan”</span>.',
+              'From the <span class="ui-btn">Home</span> tab, select <span class="ui-btn">Text Effects and Typography</span>, then choose “Fill: Black, Text color 1; Shadow”.',
+              'From Home > Paragraph, select <span class="ui-btn">Center</span>.',
+              'In the font size box, type <span class="ui-btn">20</span> and press Enter (or use <span class="ui-btn">Increase Font Size</span> until it shows 20).'
             ]
           },
           {
             title: 'Insert a section break that starts a new page and view it using Show/Hide.',
+            estimatedTime: '1-2 min',
             resource: 'https://aka.ms/pagebreaks',
-            steps: [
-              'Click at the end of the line that contains “Proposal Plan”.',
-              'From Layout > Breaks, select Next Page (this inserts a section break).',
-              'From Home > Paragraph, select Show/Hide to see the section break mark.'
-            ]
+            warnings: ['⚠️ This is a section break, not just a page break - they're different!'],
+            successIndicators: ['✓ You should see "===== Section Break (Next Page) =====" when Show/Hide is on.'],
+              steps: [
+                'Click at the end of the line that contains <span class="ui-text">“Proposal Plan”</span>.',
+                'From Layout > Breaks, select <span class="ui-btn">Next Page</span> (this inserts a section break).',
+                'From Home > Paragraph, select <span class="ui-btn">Show/Hide</span> to see the section break mark.'
+              ]
           },
           {
             title: 'Change the margins for the first section to 3 inches for top and bottom.',
+            estimatedTime: '2-3 min',
             resource: 'https://support.microsoft.com/en-us/office/use-section-breaks-to-change-the-layout-or-formatting-in-one-section-of-your-word-document-4cdfa638-3ea9-434a-8034-bf1e4274c450',
+            warnings: ['⚠️ Make sure "This section" is selected, not "Whole document."'],
+            successIndicators: ['✓ The title page should now have extra white space at top and bottom.'],
             steps: [
               'Click anywhere on the first page (above the section break).',
-              'From Layout > Margins, select Custom Margins.',
-              'Set Top to 3" and Bottom to 3".',
-              'Set Apply to: This section.',
-              'Select OK.'
+              'From Layout > Margins, select <span class="ui-btn">Custom Margins</span>.',
+              'In <span class="ui-field">Top</span>, type 3" and in <span class="ui-field">Bottom</span>, type 3".',
+              'In <span class="ui-field">Apply to</span>, choose This section.',
+              'Select <span class="ui-btn">OK</span>.'
             ]
           },
           {
             title: 'Apply the Style Set “Casual”.',
             resource: 'https://aka.ms/applystyles',
             steps: [
-              'From Design > Document Formatting, open the Style Set gallery and select Casual.'
+              'From Design > Document Formatting, open the <span class="ui-btn">Style Set</span> gallery and select <span class="ui-btn">Casual</span>.'
             ]
           },
           {
             title: 'Set paragraph spacing Before and After to 6 pt.',
+            estimatedTime: '2-3 min',
             resource: 'https://aka.ms/linespacing',
+            warnings: ['⚠️ Use "pt" (points) not "in" (inches) - 6 pt, not 6 in!'],
+            successIndicators: ['✓ All paragraphs will have consistent spacing before and after.'],
             steps: [
-              'From Home > Editing, choose Select > Select All (or press Ctrl+A).',
-              'Open the Paragraph dialog box (Home tab > Paragraph, click the small arrow).',
-              'On the Indents and Spacing tab, set Before to 6 pt and After to 6 pt.',
-              'Select OK.'
+              'From Home > Editing, choose <span class="ui-btn">Select</span> > <span class="ui-btn">Select All</span> (or press <span class="ui-key">Ctrl+A</span>).',
+              'Open the <span class="ui-btn">Paragraph</span> dialog box (Home tab > Paragraph, click the small arrow).',
+              'On the <span class="ui-field">Indents and Spacing</span> tab, in <span class="ui-field">Before</span> type 6 pt and in <span class="ui-field">After</span> type 6 pt.',
+              'Select <span class="ui-btn">OK</span>.'
             ]
           },
           {
             title: 'Format headings: Heading 1 for “Background,” “Proposal Overview,” and “Summary”.',
             resource: 'https://aka.ms/applystyles',
             steps: [
-              'Select the word “Background”.',
-              'From Home > Styles, select Heading 1.',
-              'Repeat for “Proposal Overview” and “Summary”.'
+              'Select the word <span class="ui-text">“Background”</span>.',
+              'From Home > Styles, select <span class="ui-btn">Heading 1</span>.',
+              'Repeat for <span class="ui-text">“Proposal Overview”</span> and <span class="ui-text">“Summary”</span>.'
             ]
           },
           {
             title: 'Format “Identified Plants and Flowers” as Heading 2.',
             resource: 'https://aka.ms/applystyles',
             steps: [
-              'Select “Identified Plants and Flowers”.',
-              'From Home > Styles, select Heading 2.'
+              'Select <span class="ui-text">“Identified Plants and Flowers”</span>.',
+              'From Home > Styles, select <span class="ui-btn">Heading 2</span>.'
             ]
           },
           {
             title: 'Format “Popular Flowers by Region” and “Native Plants“ as Heading 3.',
             resource: 'https://aka.ms/applystyles',
             steps: [
-              'Select “Popular Flowers by Region”.',
-              'From Home > Styles, select Heading 3.',
-              'Repeat for “Native Plants”.'
+              'Select <span class="ui-text">“Popular Flowers by Region”</span>.',
+              'From Home > Styles, select <span class="ui-btn">Heading 3</span>.',
+              'Repeat for <span class="ui-text">“Native Plants”</span>.'
             ]
           },
           {
             title: 'Use Format Painter to copy formatting of “Identified Plants and Flowers” to “Greenhouse Option” and “Outsourcing Option”.',
             resource: 'https://aka.ms/edittext',
             steps: [
-              'Select the text “Identified Plants and Flowers”.',
-              'From Home > Clipboard, double-click Format Painter.',
-              'Select “Greenhouse Option”, then select “Outsourcing Option”.',
-              'Press Esc or select Format Painter to turn it off.'
+              'Select the text <span class="ui-text">“Identified Plants and Flowers”</span>.',
+              'From Home > Clipboard, double-click <span class="ui-btn">Format Painter</span>.',
+              'Select <span class="ui-text">“Greenhouse Option”</span>, then select <span class="ui-text">“Outsourcing Option”</span>.',
+              'Press Esc or select <span class="ui-btn">Format Painter</span> to turn it off.'
             ]
           }
         ]
@@ -452,38 +698,38 @@
             title: 'Insert bookmarks at “Background,” “Proposal Overview,” and “Summary”.',
             resource: 'https://support.microsoft.com/en-us/office/add-or-delete-bookmarks-in-a-word-document-or-outlook-message-f68d781f-0150-4583-a90e-a4009d99c2a0',
             steps: [
-              'Select the text “Background”.',
-              'Insert > Links > Bookmark, type Background, then select Add.',
-              'Repeat for “Proposal Overview” (name ProposalOverview).',
-              'Repeat for “Summary” (name Summary).'
+              'Select the text <span class="ui-text">“Background”</span>.',
+              'Insert > Links > <span class="ui-btn">Bookmark</span>, type Background, then select <span class="ui-btn">Add</span>.',
+              'Repeat for <span class="ui-text">“Proposal Overview”</span> (name ProposalOverview).',
+              'Repeat for <span class="ui-text">“Summary”</span> (name Summary).'
             ]
           },
           {
             title: 'Use Go To to find each bookmark.',
             resource: 'https://aka.ms/wordoptions',
             steps: [
-              'Press Ctrl+G (or Home > Editing > Find drop-down > Go To).',
-              'On the Go To tab, set Go to what to Bookmark.',
-              'Select Background, then select Go To.',
-              'Repeat for ProposalOverview and Summary, then select Close.'
+              'Press <span class="ui-key">Ctrl+G</span> (or Home > Editing > Find drop-down > <span class="ui-btn">Go To</span>).',
+              'On the Go To tab, in <span class="ui-field">Go to what</span>, choose <span class="ui-btn">Bookmark</span>.',
+              'Select <span class="ui-btn">Background</span>, then select <span class="ui-btn">Go To</span>.',
+              'Repeat for ProposalOverview and Summary, then select <span class="ui-btn">Close</span>.'
             ]
           },
           {
             title: 'Add a Draft 1 watermark.',
             resource: 'https://aka.ms/insertwatermark',
             steps: [
-              'From Design > Watermark, open the menu.',
-              'Under Disclaimers, select Draft 1.'
+              'From Design > <span class="ui-btn">Watermark</span>, open the menu.',
+              'Under Disclaimers, select <span class="ui-btn">Draft 1</span>.'
             ]
           },
           {
             title: 'Add a second page and insert the Automatic Table 2 Table of Contents.',
             resource: 'https://aka.ms/toc1',
             steps: [
-              'Place the cursor before the heading “Background”.',
-              'Insert a page break: Layout > Breaks > Page (or press Ctrl+Enter).',
+              'Place the cursor before the heading <span class="ui-text">“Background”</span>.',
+              'Insert a page break: Layout > Breaks > <span class="ui-btn">Page</span> (or press <span class="ui-key">Ctrl+Enter</span>).',
               'Make sure the cursor is on the new blank page 2.',
-              'From References > Table of Contents, choose Automatic Table 2.'
+              'From References > Table of Contents, choose <span class="ui-btn">Automatic Table 2</span>.'
             ]
           },
           {
@@ -491,10 +737,10 @@
             resource: 'https://aka.ms/formattoc',
             steps: [
               'Click inside the table of contents.',
-              'References > Table of Contents > Custom Table of Contents.',
-              'Set Tab leader to underscore (last option).',
-              'Change Show levels to 2.',
-              'Select OK, and if prompted, choose to replace the table.'
+              'References > Table of Contents > <span class="ui-btn">Custom Table of Contents</span>.',
+              'In <span class="ui-field">Tab leader</span>, choose underscore (last option).',
+              'In <span class="ui-field">Show levels</span>, set it to 2.',
+              'Select <span class="ui-btn">OK</span>, and if prompted, choose to replace the table.'
             ]
           }
         ]
@@ -506,17 +752,17 @@
             title: 'Convert the table “Miniature Hollyhock” through “Goatsbeard” to text separated by paragraph.',
             resource: 'https://aka.ms/converttext',
             steps: [
-              'Click inside the table, then select the table handle to select the whole table from “Miniature Hollyhock” to “Goatsbeard”.',
-              'From Table Tools Layout > Data, select Convert to Text.',
-              'Choose Paragraph marks, then select OK.'
+              'Click inside the table, then select the table handle to select the whole table from <span class="ui-text">“Miniature Hollyhock”</span> to <span class="ui-text">“Goatsbeard”</span>.',
+              'From Table Tools Layout > Data, select <span class="ui-btn">Convert to Text</span>.',
+              'In <span class="ui-field">Paragraph marks</span>, choose that option, then select <span class="ui-btn">OK</span>.',
             ]
           },
           {
             title: 'Format the “Miniature Hollyhock” through “Goatsbeard” text as a bulleted list.',
             resource: 'https://aka.ms/lists1',
             steps: [
-              'Select the list of items from “Miniature Hollyhock” through “Goatsbeard”.',
-              'From Home > Paragraph, select Bullets.'
+              'Select the list of items from <span class="ui-text">“Miniature Hollyhock”</span> through <span class="ui-text">“Goatsbeard”</span>.',
+              'From Home > Paragraph, select <span class="ui-btn">Bullets</span>.'
             ]
           },
           {
@@ -524,36 +770,36 @@
             resource: 'https://aka.ms/formatlist',
             steps: [
               'Select the bulleted list.',
-              'From Home > Paragraph, open the Bullets drop-down and choose the solid box style.'
+              'From Home > Paragraph, open the <span class="ui-btn">Bullets</span> drop-down and choose the solid box style.'
             ]
           },
           {
             title: 'Apply two columns with 0.2 spacing and a line between for the list “Zone 3” through “Zone 9”.',
             resource: 'https://aka.ms/createcolumns',
             steps: [
-              'Select the list from “Zone 3” through “Zone 9”.',
-              'From Layout > Columns > More Columns.',
-              'Choose Two, check Line between, and set Spacing to 0.2".',
-              'Select OK.'
+              'Select the list from <span class="ui-text">“Zone 3”</span> through <span class="ui-text">“Zone 9”</span>.',
+              'From Layout > Columns > <span class="ui-btn">More Columns</span>.',
+              'Choose <span class="ui-btn">Two</span>, check <span class="ui-btn">Line between</span>, and in <span class="ui-field">Spacing</span> type 0.2".',
+              'Select <span class="ui-btn">OK</span>.'
             ]
           },
           {
             title: 'Convert “Popular Flowers by Region … United States: Rose” to a 2‑column table separated by colon (:).',
             resource: 'https://aka.ms/insertatable',
             steps: [
-              'Select text from “Popular Flowers by Region” down to “United States: Rose”.',
-              'Insert > Table > Convert Text to Table.',
-              'Set Number of columns to 2.',
-              'Under Separate text at, choose Other and type a colon (:).',
-              'Select OK.'
+              'Select text from <span class="ui-text">“Popular Flowers by Region”</span> down to <span class="ui-text">“United States: Rose”</span>.',
+              'Insert > Table > <span class="ui-btn">Convert Text to Table</span>.',
+              'In <span class="ui-field">Number of columns</span>, type 2.',
+              'Under <span class="ui-field">Separate text at</span>, choose <span class="ui-field">Other</span> and type a colon (:).',
+              'Select <span class="ui-btn">OK</span>.'
             ]
           },
           {
             title: 'Resize the first column width to 1.5” and the first row height to 0.5”.',
             resource: 'https://aka.ms/tableproperties',
             steps: [
-              'Select the first column and set Table Tools Layout > Cell Size > Width to 1.5".',
-              'Select the first row and set Table Tools Layout > Cell Size > Height to 0.5".'
+              'Select the first column and in <span class="ui-field">Width</span>, type 1.5".',
+              'Select the first row and in <span class="ui-field">Height</span>, type 0.5".'
             ]
           },
           {
@@ -561,7 +807,7 @@
             resource: 'https://aka.ms/mergesplit',
             steps: [
               'Select the first row of the table.',
-              'From Table Tools Layout > Merge, select Merge Cells.'
+              'From Table Tools Layout > Merge, select <span class="ui-btn">Merge Cells</span>.'
             ]
           },
           {
@@ -569,16 +815,16 @@
             resource: 'https://aka.ms/sorttable',
             steps: [
               'Select the table data except the first two rows (leave header rows unchanged).',
-              'From Table Tools Layout > Data, select Sort.',
-              'Set Sort by to Column 1 (Text), Ascending, then select OK.'
+              'From Table Tools Layout > Data, select <span class="ui-btn">Sort</span>.',
+              'In <span class="ui-field">Sort by</span>, choose Column 1 (Text), then choose <span class="ui-field">Ascending</span> and select <span class="ui-btn">OK</span>.',
             ]
           },
           {
             title: 'Set default cell margins to 0.05 in the table.',
             resource: 'https://aka.ms/tableproperties',
             steps: [
-              'Select the table and open Table Tools Layout > Alignment > Cell Margins.',
-              'Set Top, Bottom, Left, and Right to 0.05" and select OK.'
+              'Select the table and open Table Tools Layout > Alignment > <span class="ui-btn">Cell Margins</span>.',
+              'In <span class="ui-field">Top</span>, <span class="ui-field">Bottom</span>, <span class="ui-field">Left</span>, and <span class="ui-field">Right</span>, type 0.05" and select <span class="ui-btn">OK</span>.'
             ]
           },
           {
@@ -586,7 +832,7 @@
             resource: 'https://aka.ms/tableheader',
             steps: [
               'Select the first two rows of the table.',
-              'From Table Tools Layout > Data, select Repeat Header Rows.'
+              'From Table Tools Layout > Data, select <span class="ui-btn">Repeat Header Rows</span>.'
             ]
           }
         ]
@@ -598,8 +844,8 @@
             title: 'On the title page, insert the image sign_illustration.png after the title “Proposal Plan”.',
             resource: 'https://support.microsoft.com/en-us/office/make-or-find-pictures-to-insert-in-office-documents-4904e22f-9f1e-4f73-a9b7-a4a4eb3cb34c',
             steps: [
-              'Click after “Proposal Plan” on the title page.',
-              'Insert > Pictures > This Device, select sign_illustration 1.png, then select Insert.'
+              'Click after <span class="ui-text">“Proposal Plan”</span> on the title page.',
+              'Insert > Pictures > <span class="ui-btn">This Device</span>, select sign_illustration 1.png, then select <span class="ui-btn">Insert</span>.'
             ]
           },
           {
@@ -607,8 +853,8 @@
             resource: 'https://aka.ms/picturebackgrounds',
             steps: [
               'Select the inserted picture (sign_illustration 1.png).',
-              'From Picture Format > Adjust, select Remove Background.',
-              'Adjust the selection so only the jar, pickles, and garlic remain, then select Keep Changes.'
+              'From Picture Format > Adjust, select <span class="ui-btn">Remove Background</span>.',
+              'Adjust the selection so only the jar, pickles, and garlic remain, then select <span class="ui-btn">Keep Changes</span>.'
             ]
           },
           {
@@ -616,48 +862,48 @@
             resource: 'https://aka.ms/pictureeffects',
             steps: [
               'Select the picture.',
-              'Picture Format > Picture Effects > Glow, choose 5 pt; Gray, Accent color 3.'
+              'Picture Format > Picture Effects > <span class="ui-btn">Glow</span>, choose 5 pt; Gray, Accent color 3.'
             ]
           },
           {
             title: 'Set wrapping to Square, center horizontally relative to Page, set vertical absolute 0.5” below paragraph, width 2.5”.',
             resource: 'https://aka.ms/layoutoptions',
             steps: [
-              'Select the picture, then choose Wrap Text > More Layout Options.',
-              'Text Wrapping tab: select Square.',
-              'Position tab: Horizontal alignment Centered relative to Page; Vertical absolute position 0.5" below Paragraph.',
-              'Size tab: set Absolute Width to 2.5", then select OK.'
+              'Select the picture, then choose Wrap Text > <span class="ui-btn">More Layout Options</span>.',
+              'Text Wrapping tab: select <span class="ui-btn">Square</span>.',
+              'Position tab: Horizontal alignment <span class="ui-btn">Centered</span> relative to Page; Vertical absolute position 0.5" below Paragraph.',
+              'Size tab: set <span class="ui-btn">Absolute Width</span> to 2.5", then select <span class="ui-btn">OK</span>.'
             ]
           },
           {
             title: 'Add appropriate alternative text to the picture.',
             resource: 'https://aka.ms/alttext',
             steps: [
-              'Right-click the picture and select View Alt Text (or Picture Format > Alt Text).',
-              'Enter a brief description such as “Munson’s logo with jar of pickles” and close the pane.'
+              'Right-click the picture and select <span class="ui-btn">View Alt Text</span> (or Picture Format > <span class="ui-btn">Alt Text</span>).',
+              'Enter a brief description such as <span class="ui-text">“Munson’s logo with jar of pickles”</span> and close the pane.'
             ]
           },
           {
             title: 'Locate and correct accessibility issues.',
             resource: 'https://support.microsoft.com/en-us/office/make-your-word-documents-accessible-to-people-with-disabilities-d9bf3683-87ac-47ea-b91a-78dcacb3c66d',
             steps: [
-              'From Review > Check Accessibility, open the Accessibility pane.',
-              'Find “Image or object not inline”, open the Picture menu, and choose “Place this inline”.'
+              'From Review > <span class="ui-btn">Check Accessibility</span>, open the Accessibility pane.',
+              'Find <span class="ui-text">“Image or object not inline”</span>, open the Picture menu, and choose <span class="ui-btn">Place this inline</span>.'
             ]
           },
           {
             title: 'Check compatibility issues.',
             resource: 'https://aka.ms/doccompatibility',
             steps: [
-              'From File > Info, select Check for Issues > Check Compatibility.',
-              'Select OK. You should see six occurrences of “effects on text removed”.'
+              'From File > Info, select <span class="ui-btn">Check for Issues</span> > <span class="ui-btn">Check Compatibility</span>.',
+              'Select <span class="ui-btn">OK</span>. You should see six occurrences of <span class="ui-text">“effects on text removed”</span>.'
             ]
           },
           {
             title: 'Hide all formatting marks.',
             resource: 'https://aka.ms/showhide',
             steps: [
-              'From Home > Paragraph, select Show/Hide to hide formatting marks.'
+              'From Home > Paragraph, select <span class="ui-btn">Show/Hide</span> to hide formatting marks.'
             ]
           },
           {
@@ -665,8 +911,8 @@
             resource: 'https://aka.ms/wordtasks',
             extraResources: ['https://aka.ms/shareadoc'],
             steps: [
-              'From File > Save As > Browse, set Save as type to PDF (*.pdf), then select Save.',
-              'Select Share (top-right) or File > Share.',
+              'From File > Save As > Browse, set Save as type to PDF (*.pdf), then select <span class="ui-btn">Save</span>.',
+              'Select <span class="ui-btn">Share</span> (top-right) or File > <span class="ui-btn">Share</span>.',
               'Enter the instructor’s name or email address, then share.',
               'Close the document.'
             ]
@@ -682,7 +928,7 @@
         kind: 'cover',
         section: 'Project Overview',
         title: 'MOS Word Project 1 — Guided Walkthrough',
-        text: '<strong>📖 Read through this overview before starting.</strong><br><br>You will complete Project 1 for Munson\'s Pickles and Preserves Farm. This guide walks you through each task step-by-step.<br><br><strong style="color: #ff6b6b;">⚠️ Important: Use Microsoft Word (desktop app on your computer), not Word Online or the web browser version.</strong><br><br><strong>How to use this guide:</strong><br>• Download the required files (see bottom of page)<br>• Open <strong>Project1_datafile 1.docx</strong> in Microsoft Word on your computer to begin<br>• The <strong>sign_illustration 1.png</strong> file is an image you\'ll need to insert during one of the steps<br>• Follow each step in order using the Next button or arrow keys<br>• Complete the action in Word before advancing to the next step<br>• Use the resource links provided for additional help<br>• Reset progress at any time using the Reset button',
+        text: '<strong>📖 Read through this overview before starting.</strong><br><br>You will complete Project 1 for Munson\'s Pickles and Preserves Farm. This guide walks you through each task step-by-step.<br><br><strong style="color: #ff6b6b;">⚠️ Important: Use Microsoft Word (desktop app on your computer), not Word Online or the web browser version.</strong><br><br><strong>Before You Start - Prerequisites Checklist:</strong><ul class="checklist"><li>Microsoft Word desktop app installed on your computer</li><li>Downloaded both <strong>Project1_datafile 1.docx</strong> and <strong>sign_illustration 1.png</strong> files (see bottom of page)</li><li>Files saved in an easy-to-find location (like your Documents or Downloads folder)</li><li>Word zoom level set to 100% for consistency</li></ul><br><strong>💡 Quick Tips:</strong><br>• <strong>Made a mistake?</strong> Press <span class="ui-key">Ctrl+Z</span> to undo your last action<br>• <strong>Need to redo?</strong> Press <span class="ui-key">Ctrl+Y</span> to redo an undone action<br>• <strong>Save your work:</strong> Press <span class="ui-key">Ctrl+S</span> frequently to save your progress<br><br><strong>How to use this guide:</strong><br>• Follow each step in order using the Next button or arrow keys<br>• Complete the action in Word before advancing to the next step<br>• Use the "Jump to task..." dropdown above to skip to specific tasks<br>• Check off completed tasks using the checkbox at the top of each task<br>• Use the resource links provided for additional help<br>• Time estimates (⏱️) help you pace yourself<br>• Reset progress at any time using the Reset button<br><br><div class="collapsible"><div class="collapsible-header" onclick="this.parentElement.classList.toggle(\'collapsed\')">📋 Keyboard Shortcuts Reference (click to expand)</div><div class="collapsible-content"><strong>Shortcuts you\'ll use in this project:</strong><br><br><span class="ui-key">Ctrl+H</span> - Find and Replace<br><span class="ui-key">Ctrl+A</span> - Select All<br><span class="ui-key">Ctrl+G</span> - Go To<br><span class="ui-key">Ctrl+Enter</span> - Insert Page Break<br><span class="ui-key">Ctrl+S</span> - Save Document<br><span class="ui-key">Ctrl+Z</span> - Undo<br><span class="ui-key">Ctrl+Y</span> - Redo<br><br><strong>Navigation shortcuts:</strong><br><span class="ui-key">←</span> <span class="ui-key">→</span> - Navigate between steps in this guide</div></div><br><strong>Legend:</strong><div class="legend"><div class="legend-item"><span class="ui-btn">Button/Menu</span><span>Click this in Word.</span></div><div class="legend-item"><span class="ui-text">Text to select</span><span>Highlight this text in the document.</span></div><div class="legend-item"><span class="ui-field">Field/Option</span><span>Type or choose a value.</span></div><div class="legend-item"><span class="ui-key">Ctrl+S</span><span>Keyboard shortcut to press.</span></div></div>',
 
       });
       for (const sec of data) {
@@ -691,7 +937,11 @@
             kind: 'task',
             section: sec.section,
             title: task.title,
+            estimatedTime: task.estimatedTime || '',
             steps: task.steps,
+            warnings: task.warnings || [],
+            successIndicators: task.successIndicators || [],
+            contextNote: task.contextNote || '',
             resource: task.resource,
             extraResources: task.extraResources || []
           });
@@ -714,11 +964,22 @@
       prevBtn2: document.getElementById('prevBtn2'),
       nextBtn2: document.getElementById('nextBtn2'),
       resetBtn: document.getElementById('resetBtn'),
+      jumpToTask: document.getElementById('jumpToTask'),
     };
 
     const STORAGE_KEY = 'mos-word-p1-page';
     let idx = Number(localStorage.getItem(STORAGE_KEY) || 0);
     if (!(idx >= 0 && idx < total)) idx = 0;
+
+    // Populate jump-to-task dropdown
+    pages.forEach((page, i) => {
+      if (page.kind === 'task') {
+        const option = document.createElement('option');
+        option.value = i;
+        option.textContent = `${page.section.replace(/Section \d+: /, '')}: ${page.title.substring(0, 60)}${page.title.length > 60 ? '...' : ''}`;
+        els.jumpToTask.appendChild(option);
+      }
+    });
 
     function fmtStep(n) { return `Step ${n} of ${total}`; }
     function pct(n) { return Math.max(0, Math.min(100, Math.round(((n) / (total - 1)) * 100))); }
@@ -739,8 +1000,27 @@
         }
         html += `</div>`;
       } else if (cur.kind === 'task') {
-        html += `<h2>Task</h2>`;
+        const taskId = `task-${idx}`;
+        const isChecked = localStorage.getItem(taskId) === 'true';
+
+        html += `<div class="task-checkbox">`;
+        html += `<input type="checkbox" id="${taskId}" ${isChecked ? 'checked' : ''} onchange="localStorage.setItem('${taskId}', this.checked)">`;
+        html += `<label for="${taskId}">Mark this task as complete</label>`;
+        html += `</div>`;
+
+        html += `<h2>Task`;
+        if (cur.estimatedTime) html += ` <span class="time-badge">⏱️ ${cur.estimatedTime}</span>`;
+        html += `</h2>`;
         html += `<h3>${cur.title}</h3>`;
+
+        if (cur.contextNote) {
+          html += `<div class="context-note">${cur.contextNote}</div>`;
+        }
+
+        if (cur.warnings && cur.warnings.length) {
+          html += cur.warnings.map(w => `<div class="warning">${w}</div>`).join('');
+        }
+
         if (cur.resource) {
           html += `<div class="resource">Resource: <a href="${cur.resource}" target="_blank" rel="noopener">${cur.resource}</a>`;
           if (cur.extraResources && cur.extraResources.length) {
@@ -750,7 +1030,13 @@
         }
         if (cur.steps && cur.steps.length) {
           html += '<h3 style="margin-top: 20px;">Steps to complete in Word:</h3>';
-          html += '<ol>'; html += cur.steps.map(step => `<li>${step}</li>`).join(''); html += '</ol>';
+          html += '<ol>';
+          html += cur.steps.map(step => `<li>${step}</li>`).join('');
+          html += '</ol>';
+        }
+
+        if (cur.successIndicators && cur.successIndicators.length) {
+          html += cur.successIndicators.map(s => `<div class="success">${s}</div>`).join('');
         }
       }
       els.content.innerHTML = html;
@@ -770,6 +1056,13 @@
     [els.prevBtn, els.prevBtn2].forEach(b => b.addEventListener('click', prev));
     [els.nextBtn, els.nextBtn2].forEach(b => b.addEventListener('click', next));
     els.resetBtn.addEventListener('click', () => { idx = 0; render(); });
+    els.jumpToTask.addEventListener('change', (e) => {
+      if (e.target.value) {
+        idx = Number(e.target.value);
+        render();
+        e.target.value = ''; // Reset dropdown
+      }
+    });
     window.addEventListener('keydown', (e) => {
       if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) return;
       if (e.key === 'ArrowRight') { next(); }
