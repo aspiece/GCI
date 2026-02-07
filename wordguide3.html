@@ -1,0 +1,1392 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MOS Word Project 3 - Step-by-Step Guide</title>
+    <style>
+        :root {
+            --bg: #0b0c0f;
+            --card: #12141a;
+            --muted: #aab2c0;
+            --text: #e8ecf2;
+            --primary: #4f8cff;
+            --primary-weak: #2a5bd7;
+            --accent: #22b07d;
+            --danger: #ff6b6b;
+            --border: #1e2230;
+            --shadow: 0 6px 24px rgba(0, 0, 0, 0.35), 0 2px 6px rgba(0, 0, 0, 0.25);
+        }
+
+        /* Light theme */
+        [data-theme="light"] {
+            --bg: #f5f5f5;
+            --card: #ffffff;
+            --muted: #666666;
+            --text: #1a1a1a;
+            --primary: #0052cc;
+            --primary-weak: #003fa3;
+            --accent: #28a745;
+            --danger: #dc3545;
+            --border: #d0d0d0;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        /* High contrast theme */
+        [data-theme="high-contrast"] {
+            --bg: #000000;
+            --card: #ffffff;
+            --muted: #333333;
+            --text: #ffffff;
+            --primary: #00ffff;
+            --primary-weak: #00ccff;
+            --accent: #00cc00;
+            --danger: #ff0000;
+            --border: #000000;
+            --shadow: 0 2px 4px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Light theme overrides */
+        [data-theme="light"] .badge {
+            background: #e3f0ff;
+            border: 1px solid #b3d9ff;
+            color: #0052cc;
+        }
+
+        [data-theme="light"] .section-badge {
+            background: #e6f4f1;
+            border-color: #7dd3c0;
+            color: #1b5e5e;
+        }
+
+        [data-theme="light"] .progress {
+            background: #e0e0e0;
+            border: 1px solid #d0d0d0;
+        }
+
+        [data-theme="light"] .progress>div {
+            background: linear-gradient(90deg, #0052cc, #28a745);
+        }
+
+        [data-theme="light"] .content h3 {
+            color: #0052cc;
+        }
+
+        [data-theme="light"] .resource a {
+            color: #0052cc;
+        }
+
+        [data-theme="light"] .resource a:hover {
+            text-decoration: underline;
+        }
+
+        [data-theme="light"] .nav {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid #d0d0d0;
+        }
+
+        [data-theme="light"] .kbd {
+            background: #f5f5f5;
+            border: 1px solid #d0d0d0;
+            color: #666666;
+        }
+
+        [data-theme="light"] .kbd a {
+            color: #0052cc;
+        }
+
+        [data-theme="light"] .kbd a:hover {
+            color: #003fa3;
+        }
+
+        [data-theme="light"] .cover {
+            border: 1px dashed #b5c6d9;
+            background: #f9fafb;
+        }
+
+        [data-theme="light"] .ui-btn {
+            color: #0052cc;
+            background: #f5f5f5;
+            border: 1px solid #d0d0d0;
+        }
+
+        [data-theme="light"] .ui-text {
+            color: #cc6600;
+            background: #fff9f0;
+            border: 1px solid #d9b399;
+        }
+
+        [data-theme="light"] .ui-field {
+            color: #1b5e5e;
+            background: #f0f9f7;
+            border: 1px solid #a3d9d1;
+        }
+
+        [data-theme="light"] .ui-key {
+            color: #1a1a1a;
+            background: #f5f5f5;
+            border: 1px solid #d0d0d0;
+        }
+
+        [data-theme="light"] .task-checkbox:hover {
+            background: #f9f9f9;
+        }
+
+        [data-theme="light"] .warning {
+            background: rgba(220, 53, 69, 0.08);
+        }
+
+        [data-theme="light"] .success {
+            background: rgba(40, 167, 69, 0.08);
+        }
+
+        [data-theme="light"] .time-badge {
+            background: rgba(0, 82, 204, 0.1);
+        }
+
+        [data-theme="light"] .context-note {
+            background: rgba(0, 82, 204, 0.08);
+            border-left: 3px solid #0052cc;
+        }
+
+        [data-theme="light"] .card {
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.0));
+        }
+
+        [data-theme="light"] .collapsible-header:hover {
+            background: #f0f0f0;
+        }
+
+        [data-theme="light"] .collapsible-content {
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        [data-theme="light"] select,
+        [data-theme="light"] button {
+            background: #ffffff;
+            color: #1a1a1a;
+            border: 1px solid #d0d0d0;
+        }
+
+        [data-theme="light"] button.primary {
+            background: linear-gradient(180deg, #0052cc 0%, #003fa3 100%);
+            color: #ffffff;
+            border: none;
+        }
+
+        [data-theme="light"] h1,
+        [data-theme="light"] h2,
+        [data-theme="light"] h3 {
+            color: #1a1a1a;
+        }
+
+        [data-theme="light"] .title p {
+            color: #666666;
+        }
+
+        /* High contrast theme overrides */
+        [data-theme="high-contrast"] .badge {
+            background: #000000;
+            border: 2px solid #00ffff;
+            color: #00ffff;
+        }
+
+        [data-theme="high-contrast"] .section-badge {
+            background: #000000;
+            border: 2px solid #00cc00;
+            color: #00cc00;
+        }
+
+        [data-theme="high-contrast"] .progress {
+            background: #ffffff;
+            border: 2px solid #000000;
+        }
+
+        [data-theme="high-contrast"] .progress>div {
+            background: #00ffff;
+        }
+
+        [data-theme="high-contrast"] .content h3 {
+            color: #00ffff;
+        }
+
+        [data-theme="high-contrast"] .resource a {
+            color: #00ffff;
+        }
+
+        [data-theme="high-contrast"] .resource a:hover {
+            text-decoration: underline;
+        }
+
+        [data-theme="high-contrast"] .nav {
+            background: #000000;
+            border: 2px solid #ffffff;
+        }
+
+        [data-theme="high-contrast"] .kbd {
+            background: #ffffff;
+            border: 2px solid #000000;
+            color: #000000;
+        }
+
+        [data-theme="high-contrast"] .kbd a {
+            color: #00ffff;
+        }
+
+        [data-theme="high-contrast"] .kbd a:hover {
+            color: #00ccff;
+        }
+
+        [data-theme="high-contrast"] .cover {
+            border: 2px solid #000000;
+            background: #ffffff;
+            color: #000000;
+        }
+
+        [data-theme="high-contrast"] .cover h2 {
+            color: #000000;
+        }
+
+        [data-theme="high-contrast"] .ui-btn {
+            color: #ffffff;
+            background: #000000;
+            border: 2px solid #00ffff;
+        }
+
+        [data-theme="high-contrast"] .ui-text {
+            color: #ffffff;
+            background: #000000;
+            border: 2px solid #ffcc00;
+        }
+
+        [data-theme="high-contrast"] .ui-field {
+            color: #ffffff;
+            background: #000000;
+            border: 2px solid #00cc00;
+        }
+
+        [data-theme="high-contrast"] .ui-key {
+            color: #ffffff;
+            background: #000000;
+            border: 2px solid #ffffff;
+        }
+
+        [data-theme="high-contrast"] .task-checkbox {
+            background: #ffffff;
+            border: 2px solid #000000;
+        }
+
+        [data-theme="high-contrast"] .task-checkbox:hover {
+            background: #f0f0f0;
+        }
+
+        [data-theme="high-contrast"] .task-checkbox label {
+            color: #000000;
+        }
+
+        [data-theme="high-contrast"] .warning {
+            background: #ffffff;
+            border-left: 4px solid #ff0000;
+            color: #000000;
+        }
+
+        [data-theme="high-contrast"] .warning strong {
+            color: #ff0000;
+        }
+
+        [data-theme="high-contrast"] .success {
+            background: #ffffff;
+            border-left: 4px solid #00cc00;
+            color: #000000;
+        }
+
+        [data-theme="high-contrast"] .success strong {
+            color: #00cc00;
+        }
+
+        [data-theme="high-contrast"] .time-badge {
+            background: #ffffff;
+            color: #00ffff;
+            border: 1px solid #00ffff;
+        }
+
+        [data-theme="high-contrast"] .context-note {
+            background: #ffffff;
+            border-left: 4px solid #00ffff;
+            color: #000000;
+        }
+
+        [data-theme="high-contrast"] .card {
+            background: #000000;
+            border: 2px solid #ffffff;
+        }
+
+        [data-theme="high-contrast"] .collapsible {
+            border: 2px solid #000000;
+        }
+
+        [data-theme="high-contrast"] .collapsible-header {
+            background: #ffffff;
+            color: #000000;
+            border-bottom: 2px solid #000000;
+        }
+
+        [data-theme="high-contrast"] .collapsible-header:hover {
+            background: #f0f0f0;
+        }
+
+        [data-theme="high-contrast"] .collapsible-content {
+            background: #ffffff;
+            color: #000000;
+        }
+
+        [data-theme="high-contrast"] select,
+        [data-theme="high-contrast"] button {
+            background: #ffffff;
+            color: #000000;
+            border: 2px solid #000000;
+        }
+
+        [data-theme="high-contrast"] button.primary {
+            background: #00ffff;
+            color: #000000;
+            border: 2px solid #00ffff;
+        }
+
+        [data-theme="high-contrast"] button:disabled {
+            background: #cccccc;
+            color: #666666;
+            border: 2px solid #999999;
+        }
+
+        [data-theme="high-contrast"] h1,
+        [data-theme="high-contrast"] h2,
+        [data-theme="high-contrast"] h3 {
+            color: #ffffff;
+        }
+
+        [data-theme="high-contrast"] .title h1 {
+            color: #ffffff;
+        }
+
+        [data-theme="high-contrast"] .title p {
+            color: #cccccc;
+        }
+
+        [data-theme="high-contrast"] .cover h2 {
+            color: #000000;
+        }
+
+        [data-theme="high-contrast"] .cover li {
+            color: #000000;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+            background: radial-gradient(1200px 800px at 90% -10%, #1a2235 0%, var(--bg) 35%), radial-gradient(1000px 600px at -10% 110%, #16202e 0%, transparent 40%) var(--bg);
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        [data-theme="light"] body {
+            background: #f5f5f5;
+        }
+
+        [data-theme="high-contrast"] body {
+            background: #000000;
+        }
+
+        .wrap {
+            max-width: 960px;
+            margin: 32px auto;
+            padding: 0 16px;
+        }
+
+        header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .title {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .title h1 {
+            font-size: 22px;
+            margin: 0;
+            letter-spacing: 0.2px;
+        }
+
+        .title p {
+            margin: 0;
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: flex-start;
+            justify-content: flex-end;
+            flex: 1;
+        }
+
+        select,
+        button {
+            background: var(--card);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 14px;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        button.primary {
+            background: linear-gradient(180deg, var(--primary) 0%, var(--primary-weak) 100%);
+            border: none;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .card {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.0));
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .meta {
+            display: none;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 8px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: #1a2332;
+            border: 1px solid #213147;
+            color: #a8c1ff;
+        }
+
+        .section-badge {
+            background: #1a2b23;
+            border-color: #214336;
+            color: #9fe2c5;
+        }
+
+        .progress {
+            height: 8px;
+            background: #0f1117;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            margin: 16px 0 12px;
+        }
+
+        .progress>div {
+            height: 100%;
+            background: linear-gradient(90deg, #5fa8ff, #22b07d);
+            width: 0%;
+        }
+
+        .content {
+            line-height: 1.55;
+        }
+
+        .content h2 {
+            margin: 8px 0 6px;
+            font-size: 18px;
+        }
+
+        .content h3 {
+            margin: 8px 0 10px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #cfe3ff;
+        }
+
+        .content p {
+            margin: 0 0 10px;
+        }
+
+        .content .note {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .resource {
+            margin-top: 10px;
+        }
+
+        .resource a {
+            color: #9fcbff;
+            text-decoration: none;
+        }
+
+        .resource a:hover {
+            text-decoration: underline;
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-top: 14px;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            background: rgba(18, 20, 26, 0.95);
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        .nav .left,
+        .nav .right {
+            display: flex;
+            gap: 8px;
+        }
+
+        .kbd {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: 12px;
+            background: #0f1117;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 2px 6px;
+            border-radius: 6px;
+        }
+
+        .kbd a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .kbd a:hover {
+            color: #5fa8ff;
+            text-decoration: underline;
+        }
+
+        .footer {
+            margin-top: 18px;
+            color: var(--muted);
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hint {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .cover {
+            border: 1px dashed #2a3346;
+            background: #111621;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 8px;
+        }
+
+        .cover h2 {
+            margin: 0 0 6px;
+        }
+
+        .cover ul {
+            margin: 6px 0 0 18px;
+        }
+
+        .cover li {
+            margin: 4px 0;
+        }
+
+        .ui-btn {
+            font-weight: 700;
+            color: #cfe3ff;
+            background: #0f1117;
+            border: 1px solid var(--border);
+            padding: 1px 6px;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+
+        .ui-text {
+            font-weight: 700;
+            color: #ffd38a;
+            background: #2a2314;
+            border: 1px solid #5a4724;
+            padding: 1px 6px;
+            border-radius: 6px;
+        }
+
+        .ui-field {
+            font-weight: 700;
+            color: #b2f5ea;
+            background: #0f1f1f;
+            border: 1px solid #214a47;
+            padding: 1px 6px;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+
+        .ui-key {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: 12px;
+            font-weight: 700;
+            color: #e8ecf2;
+            background: #111621;
+            border: 1px solid #2a3346;
+            padding: 1px 6px;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+
+        .legend {
+            margin-top: 10px;
+            display: grid;
+            gap: 6px;
+        }
+
+        .legend-item {
+            display: inline-flex;
+            gap: 8px;
+            align-items: center;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .legend-item span:first-child {
+            flex-shrink: 0;
+        }
+
+        .legend-item span:last-child {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        /* Checkboxes for task completion */
+        .task-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 12px 0;
+            padding: 8px 12px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .task-checkbox:hover {
+            background: #1a1d27;
+        }
+
+        .task-checkbox input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .task-checkbox label {
+            cursor: pointer;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .task-checkbox input:checked+label {
+            color: var(--accent);
+            text-decoration: line-through;
+        }
+
+        /* Warning boxes */
+        .warning {
+            border-left: 4px solid var(--danger);
+            background: rgba(255, 107, 107, 0.08);
+            padding: 10px 12px;
+            border-radius: 6px;
+            margin: 12px 0;
+            font-size: 13px;
+        }
+
+        .warning strong {
+            color: var(--danger);
+        }
+
+        /* Success boxes */
+        .success {
+            border-left: 4px solid var(--accent);
+            background: rgba(34, 176, 125, 0.08);
+            padding: 10px 12px;
+            border-radius: 6px;
+            margin: 12px 0;
+            font-size: 13px;
+        }
+
+        .success strong {
+            color: var(--accent);
+        }
+
+        .time-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: rgba(95, 168, 255, 0.15);
+            color: var(--text);
+            margin-left: 6px;
+        }
+
+        /* Collapsible details */
+        .collapsible {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 14px;
+        }
+
+        .collapsible-header {
+            cursor: pointer;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.03);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+        }
+
+        .collapsible-header::after {
+            content: '\25bc';
+            font-size: 12px;
+        }
+
+        .collapsible-content {
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.02);
+            font-size: 13px;
+        }
+
+        .collapsible.collapsed .collapsible-content {
+            display: none;
+        }
+
+        .collapsible.collapsed .collapsible-header::after {
+            content: '\25b6';
+        }
+
+        /* Jump to task selector */
+        .jump-selector {
+            margin-bottom: 8px;
+        }
+
+        .context-note {
+            margin: 12px 0;
+            padding: 12px 16px;
+            background: rgba(79, 140, 255, 0.08);
+            border-left: 3px solid var(--primary);
+            border-radius: 6px;
+            font-size: 14px;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <header>
+            <div class="title">
+                <h1>MOS Word Project 3 - Step-by-Step Guide</h1>
+                <p>Scenario: Complete all Project 3 tasks for the Word Associate 2019 MOS certification using the
+                    provided project files.</p>
+            </div>
+            <div class="controls">
+                <select id="themeSelector" title="Select theme">
+                    <option value="dark">Dark Theme</option>
+                    <option value="light">Light Theme</option>
+                    <option value="high-contrast">High Contrast</option>
+                </select>
+                <select id="jumpToTask" class="jump-selector" title="Jump to a specific task">
+                    <option value="">Jump to task...</option>
+                </select>
+                <button id="resetBtn" title="Reset progress">Reset</button>
+            </div>
+        </header>
+
+        <div class="card">
+            <div class="meta">
+                <span class="badge" id="stepCounter">Step 1 of N</span>
+                <span class="badge section-badge" id="sectionBadge">Section</span>
+            </div>
+            <div class="progress">
+                <div id="progressBar"></div>
+            </div>
+            <div id="content" class="content"></div>
+            <div class="nav">
+                <div class="left hint">Tip: Use <span class="kbd">&larr;</span> <span class="kbd">&rarr;</span> arrow
+                    keys</div>
+                <div class="right">
+                    <button id="prevBtn2">&larr; Previous</button>
+                    <button id="nextBtn2" class="primary">Next &rarr;</button>
+                </div>
+            </div>
+            <div class="footer">
+                <span>Required files:</span>
+                <span class="kbd"><a href="wordprojectfiles/Project3_datafile.docx"
+                        download>Project3_datafile.docx</a></span>
+                <span class="kbd"><a href="wordprojectfiles/Bee.docx" download>Bee.docx</a></span>
+                <span class="kbd"><a href="wordprojectfiles/logo_square.png" download>logo_square.png</a></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data model: sections -> tasks -> steps
+        const curriculum = [
+            {
+                section: 'Section 1: Styles and Text Effects',
+                tasks: [
+                    {
+                        title: 'Apply the Title style and text effects to the first line',
+                        estimatedTime: '2 min',
+                        resource: 'https://support.microsoft.com/en-us/office/apply-styles-6f3cfb63-7a07-4b5e-a367-8bcfb9ad1d0a',
+                        contextNote: 'Open Project3_datafile.docx before starting this task.',
+                        steps: [
+                            'Open <span class="ui-text">Project3_datafile.docx</span>.',
+                            'Select the first line of text <span class="ui-text">Munson\'s Pickles and Preserves Farm</span>.',
+                            'From the <span class="ui-btn">Home</span> tab > Styles group, select <span class="ui-btn">Title</span>.',
+                            'From the <span class="ui-btn">Home</span> tab > Font group, select <span class="ui-btn">Font Color</span> and choose <span class="ui-field">Blue, Accent 5</span>.',
+                            'From the <span class="ui-btn">Home</span> tab > Font group, select <span class="ui-btn">Text Effects and Typography</span> > Shadow > Inner > <span class="ui-field">Inside: Bottom</span>.'
+                        ]
+                    },
+                    {
+                        title: 'Apply the Subtitle style and set font size to 19',
+                        estimatedTime: '1 min',
+                        resource: 'https://support.microsoft.com/en-us/office/apply-styles-6f3cfb63-7a07-4b5e-a367-8bcfb9ad1d0a',
+                        steps: [
+                            'Select the second line of text <span class="ui-text">Proposal Plan</span>.',
+                            'From the <span class="ui-btn">Home</span> tab > Styles group, select <span class="ui-btn">Subtitle</span>.',
+                            'In the <span class="ui-btn">Font Size</span> box, enter <span class="ui-field">19</span> and press <span class="ui-key">Enter</span>.'
+                        ]
+                    }
+                ]
+            },
+            {
+                section: 'Section 2: Section Breaks and Pictures',
+                tasks: [
+                    {
+                        title: 'Insert a Next Page Section Break before "Background"',
+                        estimatedTime: '1 min',
+                        resource: 'https://support.microsoft.com/en-us/office/insert-a-section-break-190a16a0-976a-43e1-83a4-5cf1040c0a1a',
+                        steps: [
+                            'Place the cursor before the text <span class="ui-text">Background</span>.',
+                            'From the <span class="ui-btn">Layout</span> tab > Page Setup group, select <span class="ui-btn">Breaks</span>.',
+                            'Under Section Breaks, select <span class="ui-btn">Next Page</span>.'
+                        ]
+                    },
+                    {
+                        title: 'Insert logo_square.png after "Proposal Plan" with Photocopy effect',
+                        estimatedTime: '3 min',
+                        resource: 'https://support.microsoft.com/en-us/office/insert-pictures-3c51edf4-22e1-460a-b372-9329a8724344',
+                        steps: [
+                            'From the <span class="ui-btn">Home</span> tab > Paragraph group, select <span class="ui-btn">Show/Hide</span> to display formatting marks.',
+                            'Place the cursor after <span class="ui-text">Proposal Plan</span> and before the section break.',
+                            'From the <span class="ui-btn">Insert</span> tab > Illustrations group, select <span class="ui-btn">Pictures</span> > <span class="ui-btn">This Device</span>.',
+                            'Browse to <span class="ui-text">logo_square.png</span> and select <span class="ui-btn">Insert</span>.',
+                            'From the <span class="ui-btn">Picture Tools Format</span> tab > Adjust group, select <span class="ui-btn">Artistic Effects</span> and choose <span class="ui-field">Photocopy</span>.',
+                            'Select <span class="ui-btn">Show/Hide</span> again to hide formatting marks.'
+                        ]
+                    }
+                ]
+            },
+            {
+                section: 'Section 3: Headings and Format Painter',
+                tasks: [
+                    {
+                        title: 'Apply Heading 2 to the title "Background"',
+                        estimatedTime: '1 min',
+                        resource: 'https://support.microsoft.com/en-us/office/apply-styles-6f3cfb63-7a07-4b5e-a367-8bcfb9ad1d0a',
+                        steps: [
+                            'Select the title <span class="ui-text">Background</span>.',
+                            'From the <span class="ui-btn">Home</span> tab > Styles group, select <span class="ui-btn">Heading 2</span>.'
+                        ]
+                    },
+                    {
+                        title: 'Use Format Painter to apply Heading 2 to other section titles',
+                        estimatedTime: '1-2 min',
+                        resource: 'https://support.microsoft.com/en-us/office/use-the-format-painter-8e7ac91a-8c7b-4ff2-a1c7-4ad8c4699490',
+                        steps: [
+                            'Select the <span class="ui-text">Background</span> heading.',
+                            'From the <span class="ui-btn">Home</span> tab > Clipboard group, double-click <span class="ui-btn">Format Painter</span>.',
+                            'Select the <span class="ui-text">Proposal Overview</span> heading.',
+                            'Select the <span class="ui-text">Summary</span> heading.',
+                            'Press <span class="ui-key">Esc</span> to stop Format Painter.'
+                        ]
+                    }
+                ]
+            },
+            {
+                section: 'Section 4: Text Boxes and Shapes',
+                tasks: [
+                    {
+                        title: 'Move the first paragraph into a text box and format it',
+                        estimatedTime: '6-7 min',
+                        resource: 'https://support.microsoft.com/en-us/office/add-copy-or-delete-a-text-box-in-word-645f03ea-0dc1-47ec-abcd-394043a965f8',
+                        warnings: ['Ensure you select the paragraph that starts with "The Munson\'s" and ends with "the community,".'],
+                        steps: [
+                            'Select the first paragraph beginning with <span class="ui-text">The Munson\'s</span> and ending with <span class="ui-text">the community,</span>.',
+                            'From the <span class="ui-btn">Home</span> tab > Clipboard group, select <span class="ui-btn">Cut</span>.',
+                            'From the <span class="ui-btn">Insert</span> tab > Text group, select <span class="ui-btn">Text Box</span> > <span class="ui-btn">Draw Text Box</span>.',
+                            'Draw the text box below the <span class="ui-text">Background</span> heading.',
+                            'Click inside the text box and select <span class="ui-btn">Paste</span>.',
+                            'Select the pasted text and set the font size to <span class="ui-field">11</span>.',
+                            'Select the text box border. From <span class="ui-btn">Shape Format</span> > Arrange group, select <span class="ui-btn">Wrap Text</span> > <span class="ui-btn">More Layout Options</span>.',
+                            'Text Wrapping tab: select <span class="ui-field">Top and bottom</span>.',
+                            'Size tab: set <span class="ui-field">Height: 2\"</span> and <span class="ui-field">Width: 4\"</span>, both Absolute relative to Margin.',
+                            'Position tab: set Vertical <span class="ui-field">Absolute position 0.33\" below Paragraph</span>. Select <span class="ui-btn">OK</span>.',
+                            'From <span class="ui-btn">Shape Format</span> > Shape Styles, set <span class="ui-btn">Shape Fill</span> to <span class="ui-field">Green, Accent 6, Lighter 80%</span>.',
+                            'Set <span class="ui-btn">Shape Outline</span> to <span class="ui-field">Black, Text 1</span>.',
+                            'Set <span class="ui-btn">Shape Outline</span> > Weight to <span class="ui-field">2 1/4 pt</span>.'
+                        ]
+                    },
+                    {
+                        title: 'Create a Scroll: Horizontal shape and link text from the text box',
+                        estimatedTime: '6-7 min',
+                        resource: 'https://support.microsoft.com/en-us/office/add-copy-or-delete-a-text-box-in-word-645f03ea-0dc1-47ec-abcd-394043a965f8',
+                        steps: [
+                            'From the <span class="ui-btn">Insert</span> tab > Illustrations group, select <span class="ui-btn">Shapes</span> > Stars and Banners > <span class="ui-btn">Scroll: Horizontal</span>.',
+                            'Draw the shape below the text box.',
+                            'Right-click the scroll shape and select <span class="ui-btn">Add Text</span>.',
+                            'Click inside the first text box, then from <span class="ui-btn">Shape Format</span> > Text group, select <span class="ui-btn">Create Link</span>.',
+                            'When the cursor becomes a measuring cup, click inside the scroll shape to link the text.',
+                            'Select the scroll shape. From <span class="ui-btn">Shape Format</span> > Arrange group, select <span class="ui-btn">Wrap Text</span> > <span class="ui-btn">More Layout Options</span>.',
+                            'Text Wrapping tab: select <span class="ui-field">Top and bottom</span>.',
+                            'Size tab: set <span class="ui-field">Height: 2.04\"</span> and <span class="ui-field">Width: 4.23\"</span>.',
+                            'Position tab: set Horizontal <span class="ui-field">Alignment Right</span> relative to Margin; set Vertical <span class="ui-field">Absolute position 2.17\" below Paragraph</span>. Select <span class="ui-btn">OK</span>.',
+                            'From <span class="ui-btn">Shape Format</span> > Shape Styles, set <span class="ui-btn">Shape Fill</span> to <span class="ui-field">Green, Accent 6, Lighter 80%</span>.',
+                            'Set <span class="ui-btn">Shape Outline</span> to <span class="ui-field">Black, Text 1</span>.',
+                            'Set <span class="ui-btn">Shape Outline</span> > Weight to <span class="ui-field">2 1/4 pt</span>.',
+                            'Set font size for the text inside the scroll to <span class="ui-field">11</span>.'
+                        ]
+                    }
+                ]
+            },
+            {
+                section: 'Section 5: Screenshots and Artistic Effects',
+                tasks: [
+                    {
+                        title: 'Insert a screen clipping of the bee and apply effects',
+                        estimatedTime: '6-7 min',
+                        resource: 'https://support.microsoft.com/en-us/office/insert-a-screenshot-or-screen-clipping-d09a18ed-2b59-4bd3-a2b6-95d3c37c97b3',
+                        steps: [
+                            'Open <span class="ui-text">Bee.docx</span>, then switch back to <span class="ui-text">Project3_datafile.docx</span>.',
+                            'From the <span class="ui-btn">Insert</span> tab > Illustrations group, select <span class="ui-btn">Screenshot</span> > <span class="ui-btn">Screen Clipping</span>.',
+                            'When Bee.docx appears, draw a box tightly around the bee.',
+                            'Close Bee.docx.',
+                            'Select the inserted bee clipping. From <span class="ui-btn">Picture Tools Format</span> > Arrange group, select <span class="ui-btn">Wrap Text</span> > <span class="ui-btn">More Layout Options</span>.',
+                            'Text Wrapping tab: select <span class="ui-field">Square</span>.',
+                            'Size tab: set <span class="ui-field">Height: 2\"</span> and <span class="ui-field">Width: 2\"</span>. Select <span class="ui-btn">OK</span>.',
+                            'Move the bee image to the right side of the text box.',
+                            'From <span class="ui-btn">Picture Tools Format</span>, select <span class="ui-btn">Remove Background</span> and keep changes.',
+                            'From <span class="ui-btn">Picture Tools Format</span> > Adjust group, select <span class="ui-btn">Artistic Effects</span> > <span class="ui-field">Paint Brush</span>.'
+                        ]
+                    }
+                ]
+            },
+            {
+                section: 'Section 6: Columns and Breaks',
+                tasks: [
+                    {
+                        title: 'Format the Popular Flowers list into 3 columns with custom widths',
+                        estimatedTime: '4-5 min',
+                        resource: 'https://support.microsoft.com/en-us/office/format-text-in-columns-849af7d8-e1f1-4f59-b698-83e5bb78e8e7',
+                        steps: [
+                            'Select the list beginning with <span class="ui-text">Malaysia</span> and ending with <span class="ui-text">Peony</span>.',
+                            'From the <span class="ui-btn">Layout</span> tab > Page Setup group, select <span class="ui-btn">Columns</span> > <span class="ui-btn">More Columns</span>.',
+                            'Set <span class="ui-field">Number of columns</span> to <span class="ui-field">3</span>.',
+                            'Clear <span class="ui-field">Equal column width</span>.',
+                            'Set Column 1: <span class="ui-field">Width 2.8\"</span>, <span class="ui-field">Spacing 0.08\"</span>.',
+                            'Set Column 2 and Column 3: <span class="ui-field">Width 2.1\"</span>.',
+                            'Select <span class="ui-btn">OK</span>.'
+                        ]
+                    },
+                    {
+                        title: 'Insert column breaks before "England" and "Afghanistan"',
+                        estimatedTime: '2-3 min',
+                        resource: 'https://support.microsoft.com/en-us/office/insert-a-page-break-fbbc548a-7618-4c40-8270-d857c2de8c7b',
+                        steps: [
+                            'In the second column, place the cursor before <span class="ui-text">England</span>.',
+                            'From the <span class="ui-btn">Layout</span> tab > Page Setup group, select <span class="ui-btn">Breaks</span> > <span class="ui-btn">Column</span>.',
+                            'Place the cursor before <span class="ui-text">Afghanistan</span>.',
+                            'From the <span class="ui-btn">Layout</span> tab > Page Setup group, select <span class="ui-btn">Breaks</span> > <span class="ui-btn">Column</span>.'
+                        ]
+                    },
+                    {
+                        title: 'Show breaks and set column section margins to 0.5" left/right',
+                        estimatedTime: '3-4 min',
+                        resource: 'https://support.microsoft.com/en-us/office/adjust-margins-in-a-document-da21a474-99d8-4e54-bl84-6d3f5d5c86c7',
+                        steps: [
+                            'Click anywhere inside the column section.',
+                            'From the <span class="ui-btn">Home</span> tab > Paragraph group, select <span class="ui-btn">Show/Hide</span> to display breaks.',
+                            'From the <span class="ui-btn">Layout</span> tab > Page Setup group, open the <span class="ui-btn">Page Setup</span> dialog launcher.',
+                            'Set <span class="ui-field">Left: 0.5\"</span> and <span class="ui-field">Right: 0.5\"</span>.',
+                            'In <span class="ui-field">Apply to:</span> choose <span class="ui-field">This section</span>.',
+                            'Select <span class="ui-btn">OK</span>.',
+                            'Select <span class="ui-btn">Show/Hide</span> to hide formatting marks.'
+                        ]
+                    }
+                ]
+            },
+            {
+                section: 'Section 7: Bookmarks and Links',
+                tasks: [
+                    {
+                        title: 'Create bookmarks for key headings',
+                        estimatedTime: '4-5 min',
+                        resource: 'https://support.microsoft.com/en-us/office/add-or-delete-bookmarks-in-a-document-6f0a2e7a-0cda-4a72-8d4d-00a1ad40bb1f',
+                        steps: [
+                            'Select the heading <span class="ui-text">Popular Flowers by Region</span>.',
+                            'From the <span class="ui-btn">Insert</span> tab > Links group, select <span class="ui-btn">Bookmark</span>.',
+                            'Enter <span class="ui-field">Popular_Flowers</span> and select <span class="ui-btn">Add</span>.',
+                            'Repeat for <span class="ui-text">Native Plants</span> (use <span class="ui-field">Native_Plants</span>).',
+                            'Repeat for <span class="ui-text">Greenhouse Option</span> (use <span class="ui-field">Greenhouse_Option</span>).',
+                            'Repeat for <span class="ui-text">Outsourcing Option</span> (use <span class="ui-field">Outsourcing_Option</span>).'
+                        ]
+                    },
+                    {
+                        title: 'Link text in the Proposal Overview paragraph to the bookmarks',
+                        estimatedTime: '4-5 min',
+                        resource: 'https://support.microsoft.com/en-us/office/add-or-edit-a-hyperlink-64f9c2ed-1f22-4026-8bdc-3b7b471d57a1',
+                        steps: [
+                            'In the Proposal Overview paragraph, select the text <span class="ui-text">popular flowers</span>.',
+                            'From the <span class="ui-btn">Insert</span> tab > Links group, select <span class="ui-btn">Link</span>.',
+                            'Select <span class="ui-btn">Place in This Document</span> and choose the <span class="ui-field">Popular_Flowers</span> bookmark. Select <span class="ui-btn">OK</span>.',
+                            'Select the text <span class="ui-text">plants that are native to the area</span> and link it to <span class="ui-field">Native_Plants</span>.',
+                            'Select the text <span class="ui-text">greenhouse</span> and link it to <span class="ui-field">Greenhouse_Option</span>.',
+                            'Select the text <span class="ui-text">outsource</span> and link it to <span class="ui-field">Outsourcing_Option</span>.'
+                        ]
+                    }
+                ]
+            },
+            {
+                section: 'Section 8: SmartArt',
+                tasks: [
+                    {
+                        title: 'Insert a Vertical Bullet List SmartArt after the Outsourcing Option paragraph',
+                        estimatedTime: '5-6 min',
+                        resource: 'https://support.microsoft.com/en-us/office/create-a-smartart-graphic-7e133dc8-4e24-4c06-8c5a-3f606a9e0dfd',
+                        steps: [
+                            'Place the cursor after the Outsourcing Option paragraph ending in <span class="ui-text">listed below,</span>.',
+                            'From the <span class="ui-btn">Insert</span> tab > Illustrations group, select <span class="ui-btn">SmartArt</span>.',
+                            'Select <span class="ui-btn">List</span>, then choose <span class="ui-btn">Vertical Bullet List</span>.',
+                            'Enter <span class="ui-field">Zone 6</span> with the bullet <span class="ui-field">Christmas Valley, Oregon</span>.',
+                            'Enter <span class="ui-field">Zone 7</span> with the bullet <span class="ui-field">Kennewick, Washington</span>.',
+                            'Add a shape for <span class="ui-field">Zone 8</span> with bullet <span class="ui-field">Edison, Washington</span>.',
+                            'Add a shape for <span class="ui-field">Zone 9</span> with bullet <span class="ui-field">Gold Beach, Oregon</span>.'
+                        ]
+                    },
+                    {
+                        title: 'Format the SmartArt layout and colors',
+                        estimatedTime: '4-5 min',
+                        resource: 'https://support.microsoft.com/en-us/office/change-the-layout-or-type-of-a-smartart-graphic-7216f350-b2b0-4d7e-9a4b-6e6d4d1e5c4f',
+                        steps: [
+                            'Select the SmartArt graphic.',
+                            'From the <span class="ui-btn">SmartArt Tools Format</span> tab, select <span class="ui-btn">Wrap Text</span> > <span class="ui-btn">More Layout Options</span>.',
+                            'Text Wrapping tab: select <span class="ui-field">Top and bottom</span>.',
+                            'Size tab: set <span class="ui-field">Width: 2.5\"</span>.',
+                            'Position tab: set Horizontal <span class="ui-field">Absolute position 0.75\" to the right of Column</span> and Vertical <span class="ui-field">Absolute position 0 below Paragraph</span>.',
+                            'Select <span class="ui-btn">OK</span>.',
+                            'From the <span class="ui-btn">SmartArt Tools Design</span> tab > SmartArt Styles, select <span class="ui-btn">Change Colors</span> > <span class="ui-field">Colorful Range - Accent Colors 5 to 6</span>.'
+                        ]
+                    }
+                ]
+            },
+            {
+                section: 'Section 9: Table Properties and 3D Models',
+                tasks: [
+                    {
+                        title: 'Format Native Plants table properties',
+                        estimatedTime: '5-6 min',
+                        resource: 'https://support.microsoft.com/en-us/office/format-a-table-4890b65f-2f24-434c-bc95-2e5310a5f2c1',
+                        steps: [
+                            'Click inside the Native Plants table.',
+                            'From <span class="ui-btn">Table Tools Layout</span> > Tables group, select <span class="ui-btn">Properties</span>.',
+                            'On the Table tab, select <span class="ui-btn">Options</span>.',
+                            'Set cell margins: <span class="ui-field">Top 0.01\"</span>, <span class="ui-field">Bottom 0.01\"</span>, <span class="ui-field">Left 0.05\"</span>, <span class="ui-field">Right 0.05\"</span>, then select <span class="ui-btn">OK</span>.',
+                            'On the Column tab, set <span class="ui-field">Preferred width 2\"</span> (Inches).',
+                            'On the Cell tab, set <span class="ui-field">Preferred width 2\"</span> (Inches) and <span class="ui-field">Vertical alignment: Center</span>.',
+                            'On the Alt Text tab, set Title to <span class="ui-field">Native Plants</span> and Description to <span class="ui-field">List of Native Plants in the region</span>.',
+                            'Select <span class="ui-btn">OK</span>.'
+                        ]
+                    },
+                    {
+                        title: 'Insert and format a 3D model near the Native Plants table',
+                        estimatedTime: '5-6 min',
+                        resource: 'https://support.microsoft.com/en-us/office/insert-3d-models-in-word-excel-or-powerpoint-ec5feb79-b0af-47f6-a885-151fcc88ac0a',
+                        steps: [
+                            'Place the cursor to the right of the Native Plants table.',
+                            'From the <span class="ui-btn">Insert</span> tab > Illustrations group, select <span class="ui-btn">3D Models</span> > <span class="ui-btn">Stock 3D Models</span>.',
+                            'Search for and insert an appropriate 3D model.',
+                            'From the <span class="ui-btn">3D Model Tools Format</span> tab > Arrange group, select <span class="ui-btn">Wrap Text</span> > <span class="ui-btn">In Front of Text</span>.',
+                            'Resize the model to about <span class="ui-field">2.5\" x 2.5\"</span>.',
+                            'Move the model to the right of the Native Plants table.',
+                            'From the <span class="ui-btn">3D Model Tools Format</span> tab > 3D Model Views group, choose an appropriate view.'
+                        ]
+                    }
+                ]
+            },
+            {
+                section: 'Section 10: Footnotes and Endnotes',
+                tasks: [
+                    {
+                        title: 'Insert an endnote after the third line of the Background text',
+                        estimatedTime: '2 min',
+                        resource: 'https://support.microsoft.com/en-us/office/insert-footnotes-and-endnotes-61f3fba6-1e26-4dd4-b734-4e55343184e6',
+                        steps: [
+                            'Place the cursor at the third line of text in the <span class="ui-text">Background</span> section.',
+                            'From the <span class="ui-btn">References</span> tab > Footnotes group, select <span class="ui-btn">Insert Endnote</span>.',
+                            'Enter: <span class="ui-field">For additional information on the Background of Munson\'s Pickles and Preserves Farm please refer to http://www.munsonspicklesandpreservesfarm.com</span>.'
+                        ]
+                    },
+                    {
+                        title: 'Insert an endnote after the "Identified Plants and Flowers" title',
+                        estimatedTime: '2 min',
+                        resource: 'https://support.microsoft.com/en-us/office/insert-footnotes-and-endnotes-61f3fba6-1e26-4dd4-b734-4e55343184e6',
+                        steps: [
+                            'Place the cursor after the <span class="ui-text">Identified Plants and Flowers</span> title.',
+                            'From the <span class="ui-btn">References</span> tab > Footnotes group, select <span class="ui-btn">Insert Endnote</span>.',
+                            'Enter: <span class="ui-field">Information provided by Trey Research. Once the growing option is chosen the list will be updated.</span>'
+                        ]
+                    },
+                    {
+                        title: 'Insert a footnote at the end of the Proposal Overview paragraph',
+                        estimatedTime: '2 min',
+                        resource: 'https://support.microsoft.com/en-us/office/insert-footnotes-and-endnotes-61f3fba6-1e26-4dd4-b734-4e55343184e6',
+                        steps: [
+                            'Place the cursor at the end of the Proposal Overview paragraph ending with <span class="ui-text">United States</span>.',
+                            'From the <span class="ui-btn">References</span> tab > Footnotes group, select <span class="ui-btn">Insert Footnote</span>.',
+                            'Enter: <span class="ui-field">Specific calculations will be provided in the financial reports.</span>'
+                        ]
+                    },
+                    {
+                        title: 'Format endnote and footnote number formats',
+                        estimatedTime: '2-3 min',
+                        resource: 'https://support.microsoft.com/en-us/office/insert-footnotes-and-endnotes-61f3fba6-1e26-4dd4-b734-4e55343184e6',
+                        steps: [
+                            'Click in the main document area.',
+                            'From the <span class="ui-btn">References</span> tab > Footnotes group, open the dialog launcher.',
+                            'In the dialog, set <span class="ui-field">Footnotes</span> number format to <span class="ui-field">1, 2, 3</span>.',
+                            'Set <span class="ui-field">Endnotes</span> number format to <span class="ui-field">A, B, C</span>.',
+                            'Select <span class="ui-btn">Insert</span> to apply the formats.'
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        // Flatten into a linear page list: intro + each task (with all steps visible) + outro
+        function buildPages(data) {
+            const pages = [];
+            pages.push({
+                kind: 'cover',
+                section: 'Project Overview',
+                title: 'MOS Word Project 3 - Guided Walkthrough',
+                text: '<strong>Read this overview before starting.</strong><br><br>You will complete Project 3 covering Exam MO-100: Microsoft Word (Word and Word 2019) objectives. This guide walks you through styles, page layout, graphics, columns, links, SmartArt, tables, and references.<br><br><strong>Important:</strong> Use Microsoft Word (desktop app), not Word Online or the web browser version.<br><br><strong>Quick Tips:</strong><br>• <strong>Undo:</strong> Press <span class="ui-key">Ctrl+Z</span><br>• <strong>Redo:</strong> Press <span class="ui-key">Ctrl+Y</span><br>• <strong>Save:</strong> Press <span class="ui-key">Ctrl+S</span> often<br>• <strong>Timing:</strong> Plan for 45-60 minutes to complete Project 3<br><br><strong>How to use this guide:</strong><br>• Follow each task in order using the navigation buttons or arrow keys<br>• Complete the action in Word before advancing to the next step<br>• Use the Jump to task dropdown to skip ahead<br>• Check off completed tasks using the checkbox at the top of each task<br>• Reset progress at any time using the Reset button<br><br><div class="collapsible collapsed"><div class="collapsible-header" onclick="this.parentElement.classList.toggle(\'collapsed\')">Keyboard Shortcuts Reference (click to expand)</div><div class="collapsible-content"><strong>Shortcuts you will use:</strong><br><br><span class="ui-key">Ctrl+S</span> - Save Document<br><span class="ui-key">Ctrl+W</span> - Close Document<br><span class="ui-key">Ctrl+Z</span> - Undo<br><span class="ui-key">Ctrl+Y</span> - Redo<br><span class="ui-key">Ctrl+Enter</span> - Insert Page Break<br><span class="ui-key">Tab</span> - Increase indent level (lists)<br><span class="ui-key">Shift+Tab</span> - Decrease indent level (lists)<br><br><strong>Navigation:</strong><br><span class="ui-key">&larr;</span> <span class="ui-key">&rarr;</span> - Navigate between steps</div></div><br><strong>Legend:</strong><div class="legend"><div class="legend-item"><span class="ui-btn">Button/Menu</span><span>Click this in Word.</span></div><div class="legend-item"><span class="ui-text">Text to select</span><span>Highlight or locate this text in the document.</span></div><div class="legend-item"><span class="ui-field">Field/Option</span><span>Type or choose this value.</span></div><div class="legend-item"><span class="ui-key">Ctrl+S</span><span>Keyboard shortcut to press.</span></div></div>'
+
+            });
+            for (const sec of data) {
+                for (const task of sec.tasks) {
+                    pages.push({
+                        kind: 'task',
+                        section: sec.section,
+                        title: task.title,
+                        estimatedTime: task.estimatedTime || '',
+                        steps: task.steps,
+                        warnings: task.warnings || [],
+                        successIndicators: task.successIndicators || [],
+                        contextNote: task.contextNote || '',
+                        resource: task.resource,
+                        extraResources: task.extraResources || []
+                    });
+                }
+            }
+            pages.push({ kind: 'cover', section: 'Finish', title: 'Excellent work!', text: 'You have completed MOS Word Project 3. You practiced styles, graphics, layout, columns, links, SmartArt, tables, 3D models, and references.<br><br><strong>Next steps:</strong><br>• Review tasks that felt difficult and repeat them<br>• Use the Reset button to practice again<br>• Time yourself to build speed and confidence<br>• Refer to your Learning Directory for extra practice resources<br><br>Great job preparing for your MOS certification.' });
+            return pages;
+        }
+
+        const pages = buildPages(curriculum);
+        const total = pages.length;
+
+        const els = {
+            content: document.getElementById('content'),
+            stepCounter: document.getElementById('stepCounter'),
+            sectionBadge: document.getElementById('sectionBadge'),
+            progressBar: document.getElementById('progressBar'),
+            prevBtn2: document.getElementById('prevBtn2'),
+            nextBtn2: document.getElementById('nextBtn2'),
+            resetBtn: document.getElementById('resetBtn'),
+            jumpToTask: document.getElementById('jumpToTask'),
+            themeSelector: document.getElementById('themeSelector'),
+        };
+
+        const STORAGE_KEY = 'mos-word-p3-page';
+        let idx = Number(localStorage.getItem(STORAGE_KEY) || 0);
+        if (!(idx >= 0 && idx < total)) idx = 0;
+
+        // Theme management
+        const THEME_STORAGE_KEY = 'mos-word-p3-theme';
+
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            if (els.themeSelector) {
+                els.themeSelector.value = savedTheme;
+            }
+        }
+
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem(THEME_STORAGE_KEY, theme);
+        }
+
+        // Initialize theme
+        initializeTheme();
+
+        // Populate jump-to-task dropdown
+        pages.forEach((page, i) => {
+            if (page.kind === 'task') {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = `${page.section.replace(/Section \d+: /, '')}: ${page.title.substring(0, 50)}${page.title.length > 50 ? '...' : ''}`;
+                els.jumpToTask.appendChild(option);
+            }
+        });
+
+        function fmtStep(n) { return `Step ${n} of ${total}`; }
+        function pct(n) { return Math.max(0, Math.min(100, Math.round(((n) / (total - 1)) * 100))); }
+
+        function render() {
+            const cur = pages[idx];
+            els.stepCounter.textContent = fmtStep(idx + 1);
+            els.sectionBadge.textContent = cur.section || '-';
+            els.progressBar.style.width = pct(idx) + '%';
+
+            let html = '';
+            if (cur.kind === 'cover') {
+                html += `<div class="cover">`;
+                html += `<h2>${cur.title}</h2>`;
+                if (cur.text) html += `<p>${cur.text}</p>`;
+                if (cur.points && cur.points.length) {
+                    html += '<ul>' + cur.points.map(p => `<li>${p}</li>`).join('') + '</ul>';
+                }
+                html += `</div>`;
+            } else if (cur.kind === 'task') {
+                const taskId = `task-${idx}`;
+                const isChecked = localStorage.getItem(taskId) === 'true';
+
+                html += `<div class="task-checkbox">`;
+                html += `<input type="checkbox" id="${taskId}" ${isChecked ? 'checked' : ''} onchange="localStorage.setItem('${taskId}', this.checked)">`;
+                html += `<label for="${taskId}">Mark this task as complete</label>`;
+                html += `</div>`;
+
+                html += `<h2>Task`;
+                if (cur.estimatedTime) html += ` <span class="time-badge">Time: ${cur.estimatedTime}</span>`;
+                html += `</h2>`;
+                html += `<h3>${cur.title}</h3>`;
+
+                if (cur.contextNote) {
+                    html += `<div class="context-note">${cur.contextNote}</div>`;
+                }
+
+                if (cur.warnings && cur.warnings.length) {
+                    html += cur.warnings.map(w => `<div class="warning">${w}</div>`).join('');
+                }
+
+                if (cur.resource) {
+                    html += `<div class="resource">Resource: <a href="${cur.resource}" target="_blank" rel="noopener">${cur.resource}</a>`;
+                    if (cur.extraResources && cur.extraResources.length) {
+                        html += cur.extraResources.map(r => ` · <a href="${r}" target="_blank" rel="noopener">${r}</a>`).join('');
+                    }
+                    html += `</div>`;
+                }
+                if (cur.steps && cur.steps.length) {
+                    html += '<h3 style="margin-top: 20px;">Steps to complete in Word:</h3>';
+                    html += '<ol>';
+                    html += cur.steps.map(step => `<li>${step}</li>`).join('');
+                    html += '</ol>';
+                }
+
+                if (cur.successIndicators && cur.successIndicators.length) {
+                    html += cur.successIndicators.map(s => `<div class="success">${s}</div>`).join('');
+                }
+
+                html += '<div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border);"><strong>Legend:</strong><div class="legend"><div class="legend-item"><span class="ui-btn">Button/Menu</span><span>Click this in Word.</span></div><div class="legend-item"><span class="ui-text">Text to select</span><span>Highlight or locate this text in the document.</span></div><div class="legend-item"><span class="ui-field">Field/Option</span><span>Type or choose this value.</span></div><div class="legend-item"><span class="ui-key">Ctrl+S</span><span>Keyboard shortcut to press.</span></div></div></div>';
+            }
+            els.content.innerHTML = html;
+
+            const atStart = idx === 0;
+            const atEnd = idx === total - 1;
+            els.prevBtn2.disabled = atStart;
+            els.nextBtn2.disabled = atEnd;
+            localStorage.setItem(STORAGE_KEY, String(idx));
+        }
+
+        function next() { if (idx < total - 1) { idx++; render(); } }
+        function prev() { if (idx > 0) { idx--; render(); } }
+
+        // Wire controls
+        els.prevBtn2.addEventListener('click', prev);
+        els.nextBtn2.addEventListener('click', next);
+        els.resetBtn.addEventListener('click', () => { idx = 0; render(); });
+        els.themeSelector.addEventListener('change', (e) => { setTheme(e.target.value); });
+        els.jumpToTask.addEventListener('change', (e) => {
+            if (e.target.value) {
+                idx = Number(e.target.value);
+                render();
+                e.target.value = '';
+            }
+        });
+        window.addEventListener('keydown', (e) => {
+            if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) return;
+            if (e.key === 'ArrowRight') { next(); }
+            if (e.key === 'ArrowLeft') { prev(); }
+        });
+        render();
+    </script>
+</body>
+
+</html>
