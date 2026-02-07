@@ -19,6 +19,34 @@
             --shadow: 0 6px 24px rgba(0, 0, 0, 0.35), 0 2px 6px rgba(0, 0, 0, 0.25);
         }
 
+        /* Light theme */
+        [data-theme="light"] {
+            --bg: #f5f5f5;
+            --card: #ffffff;
+            --muted: #666666;
+            --text: #1a1a1a;
+            --primary: #0052cc;
+            --primary-weak: #003fa3;
+            --accent: #28a745;
+            --danger: #dc3545;
+            --border: #e0e0e0;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        /* High contrast theme */
+        [data-theme="high-contrast"] {
+            --bg: #000000;
+            --card: #ffffff;
+            --muted: #000000;
+            --text: #000000;
+            --primary: #0000ff;
+            --primary-weak: #0000cc;
+            --accent: #008000;
+            --danger: #ff0000;
+            --border: #000000;
+            --shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
         html,
         body {
             height: 100%;
@@ -31,6 +59,15 @@
             color: var(--text);
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        [data-theme="light"] body {
+            background: #f5f5f5;
+        }
+
+        [data-theme="high-contrast"] body {
+            background: #000000;
         }
 
         .wrap {
@@ -490,9 +527,14 @@
             <div class="title">
                 <h1>MOS Word Project 2 — Step-by-Step Guide</h1>
                 <p>Scenario: You are completing advanced document formatting and collaboration tasks for Munson's
-                    Pickles and Preserves Farm. This project includes 34 tasks covering all MO-100 exam objectives.</p>
+                    Pickles and Preserves Farm covering all MO-100 exam objectives.</p>
             </div>
             <div class="controls">
+                <select id="themeSelector" title="Select theme">
+                    <option value="dark">Dark Theme</option>
+                    <option value="light">Light Theme</option>
+                    <option value="high-contrast">High Contrast</option>
+                </select>
                 <select id="jumpToTask" class="jump-selector" title="Jump to a specific task">
                     <option value="">Jump to task...</option>
                 </select>
@@ -949,7 +991,7 @@
                         title: 'Save and Close the document',
                         estimatedTime: '30 sec',
                         resource: 'https://support.microsoft.com/en-us/office/save-a-document-in-word-b3daf3f9-36ab-4fd2-9cc8-6cd26133f4ff',
-                        successIndicators: ["✓ Congratulations! You've completed all 34 tasks for MOS Word Project 2."],
+                        successIndicators: ["✓ Congratulations! You've completed MOS Word Project 2."],
                         steps: [
                             'Press <span class="ui-key">Ctrl+S</span> to save the document (or select <span class="ui-btn">File</span> > <span class="ui-btn">Save</span>).',
                             'Close the document by selecting <span class="ui-btn">File</span> > <span class="ui-btn">Close</span>, or press <span class="ui-key">Ctrl+W</span>, or click the X button.'
@@ -966,7 +1008,7 @@
                 kind: 'cover',
                 section: 'Project Overview',
                 title: 'MOS Word Project 2 — Guided Walkthrough',
-                text: '<strong>📖 Read through this overview before starting.</strong><br><br>You will complete 34 tasks for Project 2 covering all Exam MO-100: Microsoft Word (Word and Word 2019) objectives. This comprehensive guide walks you through document collaboration, advanced formatting, tables, lists, graphics, and more.<br><br><strong style="color: #ff6b6b;">⚠️ Important: Use Microsoft Word (desktop app on your computer), not Word Online or the web browser version.</strong><br><br><strong>💡 Quick Tips:</strong><br>• <strong>Made a mistake?</strong> Press <span class="ui-key">Ctrl+Z</span> to undo your last action<br>• <strong>Need to redo?</strong> Press <span class="ui-key">Ctrl+Y</span> to redo an undone action<br>• <strong>Save your work:</strong> Press <span class="ui-key">Ctrl+S</span> frequently to save your progress<br>• <strong>Take your time:</strong> Project 2 has more tasks than Project 1 — plan for 45-60 minutes to complete<br><br><strong>How to use this guide:</strong><br>• Follow each step in order using the navigation buttons at the bottom or arrow keys<br>• Complete the action in Word before advancing to the next step<br>• Use the "Jump to task..." dropdown above to skip to specific tasks<br>• Check off completed tasks using the checkbox at the top of each task<br>• Use the resource links provided for additional help<br>• Time estimates (⏱️) help you pace yourself<br>• Reset progress at any time using the Reset button<br><br><div class="collapsible collapsed"><div class="collapsible-header" onclick="this.parentElement.classList.toggle(\'collapsed\')">📋 Keyboard Shortcuts Reference (click to expand)</div><div class="collapsible-content"><strong>Shortcuts you\'ll use in this project:</strong><br><br><span class="ui-key">Ctrl+S</span> - Save Document<br><span class="ui-key">Ctrl+W</span> - Close Document<br><span class="ui-key">Ctrl+Z</span> - Undo<br><span class="ui-key">Ctrl+Y</span> - Redo<br><span class="ui-key">Ctrl+Enter</span> - Insert Page Break<br><span class="ui-key">Tab</span> - Increase indent level (in lists)<br><span class="ui-key">Shift+Tab</span> - Decrease indent level (in lists)<br><br><strong>Navigation shortcuts:</strong><br><span class="ui-key">←</span> <span class="ui-key">→</span> - Navigate between steps in this guide</div></div><br><strong>Legend:</strong><div class="legend"><div class="legend-item"><span class="ui-btn">Button/Menu</span><span>Click this in Word.</span></div><div class="legend-item"><span class="ui-text">Text to select</span><span>Highlight or locate this text in the document.</span></div><div class="legend-item"><span class="ui-field">Field/Option</span><span>Type or choose this value.</span></div><div class="legend-item"><span class="ui-key">Ctrl+S</span><span>Keyboard shortcut to press.</span></div></div>',
+                text: '<strong>📖 Read through this overview before starting.</strong><br><br>You will complete Project 2 covering all Exam MO-100: Microsoft Word (Word and Word 2019) objectives. This comprehensive guide walks you through document collaboration, advanced formatting, tables, lists, graphics, and more.<br><br><strong style="color: #ff6b6b;">⚠️ Important: Use Microsoft Word (desktop app on your computer), not Word Online or the web browser version.</strong><br><br><strong>💡 Quick Tips:</strong><br>• <strong>Made a mistake?</strong> Press <span class="ui-key">Ctrl+Z</span> to undo your last action<br>• <strong>Need to redo?</strong> Press <span class="ui-key">Ctrl+Y</span> to redo an undone action<br>• <strong>Save your work:</strong> Press <span class="ui-key">Ctrl+S</span> frequently to save your progress<br>• <strong>Take your time:</strong> Project 2 has more tasks than Project 1 — plan for 45-60 minutes to complete<br><br><strong>How to use this guide:</strong><br>• Follow each step in order using the navigation buttons at the bottom or arrow keys<br>• Complete the action in Word before advancing to the next step<br>• Use the "Jump to task..." dropdown above to skip to specific tasks<br>• Check off completed tasks using the checkbox at the top of each task<br>• Use the resource links provided for additional help<br>• Time estimates (⏱️) help you pace yourself<br>• Reset progress at any time using the Reset button<br><br><div class="collapsible collapsed"><div class="collapsible-header" onclick="this.parentElement.classList.toggle(\'collapsed\')">📋 Keyboard Shortcuts Reference (click to expand)</div><div class="collapsible-content"><strong>Shortcuts you\'ll use in this project:</strong><br><br><span class="ui-key">Ctrl+S</span> - Save Document<br><span class="ui-key">Ctrl+W</span> - Close Document<br><span class="ui-key">Ctrl+Z</span> - Undo<br><span class="ui-key">Ctrl+Y</span> - Redo<br><span class="ui-key">Ctrl+Enter</span> - Insert Page Break<br><span class="ui-key">Tab</span> - Increase indent level (in lists)<br><span class="ui-key">Shift+Tab</span> - Decrease indent level (in lists)<br><br><strong>Navigation shortcuts:</strong><br><span class="ui-key">←</span> <span class="ui-key">→</span> - Navigate between steps in this guide</div></div><br><strong>Legend:</strong><div class="legend"><div class="legend-item"><span class="ui-btn">Button/Menu</span><span>Click this in Word.</span></div><div class="legend-item"><span class="ui-text">Text to select</span><span>Highlight or locate this text in the document.</span></div><div class="legend-item"><span class="ui-field">Field/Option</span><span>Type or choose this value.</span></div><div class="legend-item"><span class="ui-key">Ctrl+S</span><span>Keyboard shortcut to press.</span></div></div>',
 
             });
             for (const sec of data) {
@@ -985,7 +1027,7 @@
                     });
                 }
             }
-            pages.push({ kind: 'cover', section: 'Finish', title: '🎉 Excellent work!', text: 'You have completed all 34 tasks for MOS Word Project 2! You\'ve practiced advanced document collaboration, formatting, tables, lists, graphics, and page layout skills.<br><br><strong>What you accomplished:</strong><br>• Document review and track changes<br>• Headers, footers, and symbols<br>• Advanced table creation and formatting<br>• Multilevel lists with custom formatting<br>• Graphics, text boxes, and 3D models<br>• Page layout and document properties<br><br><strong>Next steps:</strong><br>• Review any areas where you felt less confident<br>• Practice again using the Reset button<br>• Try timing yourself to build speed<br>• Refer to the Learning Directory for additional resources<br><br>Great job preparing for your MOS certification! 🎓' });
+            pages.push({ kind: 'cover', section: 'Finish', title: '🎉 Excellent work!', text: 'You have completed MOS Word Project 2! You\'ve practiced advanced document collaboration, formatting, tables, lists, graphics, and page layout skills.<br><br><strong>What you accomplished:</strong><br>• Document review and track changes<br>• Headers, footers, and symbols<br>• Advanced table creation and formatting<br>• Multilevel lists with custom formatting<br>• Graphics, text boxes, and 3D models<br>• Page layout and document properties<br><br><strong>Next steps:</strong><br>• Review any areas where you felt less confident<br>• Practice again using the Reset button<br>• Try timing yourself to build speed<br>• Refer to the Learning Directory for additional resources<br><br>Great job preparing for your MOS certification! 🎓' });
             return pages;
         }
 
@@ -1000,10 +1042,10 @@
             prevBtn2: document.getElementById('prevBtn2'),
             nextBtn2: document.getElementById('nextBtn2'),
             resetBtn: document.getElementById('resetBtn'),
-            jumpToTask: document.getElementById('jumpToTask'),
+            jumpToTask: document.getElementById('jumpToTask'), \n            themeSelector: document.getElementById('themeSelector'),
         };
 
-        const STORAGE_KEY = 'mos-word-p2-page';
+        const STORAGE_KEY = 'mos-word-p2-page'; \n\n        // Theme management\n        const THEME_STORAGE_KEY = 'mos-word-p2-theme';\n        \n        function initializeTheme() {\n            const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || 'dark';\n            document.documentElement.setAttribute('data-theme', savedTheme);\n            if (els.themeSelector) {\n                els.themeSelector.value = savedTheme;\n            }\n        }\n        \n        function setTheme(theme) {\n            document.documentElement.setAttribute('data-theme', theme);\n            localStorage.setItem(THEME_STORAGE_KEY, theme);\n        }\n\n        // Initialize theme\n        initializeTheme();
         let idx = Number(localStorage.getItem(STORAGE_KEY) || 0);
         if (!(idx >= 0 && idx < total)) idx = 0;
 
@@ -1094,7 +1136,7 @@
         // Wire controls
         els.prevBtn2.addEventListener('click', prev);
         els.nextBtn2.addEventListener('click', next);
-        els.resetBtn.addEventListener('click', () => { idx = 0; render(); });
+        els.resetBtn.addEventListener('click', () => { idx = 0; render(); }); \n        els.themeSelector.addEventListener('change', (e) => { setTheme(e.target.value); });
         els.jumpToTask.addEventListener('change', (e) => {
             if (e.target.value) {
                 idx = Number(e.target.value);

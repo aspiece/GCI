@@ -9,7 +9,7 @@ Tools Built for the Genesee Career Institute
   - `AgileReview` — instructor review tools
   - `No_School_Viewer` — schedule viewer
   - `wordguide1` — MOS Word Project 1 step-by-step guide. Path: `wordguide1.html`
-  - `wordguide2` — MOS Word Project 2 step-by-step guide (34 tasks). Path: `wordguide2.html`
+  - `wordguide2` — MOS Word Project 2 step-by-step guide. Path: `wordguide2.html`
 
   - `Lab Manual Generator` (Python) — Teacher edition DOCX generator (production). Script: `HArdware Lab Manual.py`. Output: `GCI_Computer_Hardware_Labs_Teacher_Edition_updated.docx`
 
@@ -30,7 +30,7 @@ Tools Built for the Genesee Career Institute
 ## Quick start (MOS Word Guides)
 
 - Open `wordguide1.html` in a browser for Project 1 guided walkthrough
-- Open `wordguide2.html` in a browser for Project 2 guided walkthrough (34 tasks)
+- Open `wordguide2.html` in a browser for Project 2 guided walkthrough
 - Required project files are located in the `wordprojectfiles` folder
 - Progress is automatically saved in your browser
 
