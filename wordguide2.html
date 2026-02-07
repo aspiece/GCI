@@ -1,0 +1,1114 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MOS Word Project 2 — Step-by-Step Guide</title>
+    <style>
+        :root {
+            --bg: #0b0c0f;
+            --card: #12141a;
+            --muted: #aab2c0;
+            --text: #e8ecf2;
+            --primary: #4f8cff;
+            --primary-weak: #2a5bd7;
+            --accent: #22b07d;
+            --danger: #ff6b6b;
+            --border: #1e2230;
+            --shadow: 0 6px 24px rgba(0, 0, 0, 0.35), 0 2px 6px rgba(0, 0, 0, 0.25);
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+            background: radial-gradient(1200px 800px at 90% -10%, #1a2235 0%, var(--bg) 35%), radial-gradient(1000px 600px at -10% 110%, #16202e 0%, transparent 40%) var(--bg);
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .wrap {
+            max-width: 960px;
+            margin: 32px auto;
+            padding: 0 16px;
+        }
+
+        header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .title {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .title h1 {
+            font-size: 22px;
+            margin: 0;
+            letter-spacing: 0.2px;
+        }
+
+        .title p {
+            margin: 0;
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: flex-start;
+            justify-content: flex-end;
+            flex: 1;
+        }
+
+        select,
+        button {
+            background: var(--card);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 14px;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        button.primary {
+            background: linear-gradient(180deg, var(--primary) 0%, var(--primary-weak) 100%);
+            border: none;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .card {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.0));
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .meta {
+            display: none;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 8px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: #1a2332;
+            border: 1px solid #213147;
+            color: #a8c1ff;
+        }
+
+        .section-badge {
+            background: #1a2b23;
+            border-color: #214336;
+            color: #9fe2c5;
+        }
+
+        .progress {
+            height: 8px;
+            background: #0f1117;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            margin: 16px 0 12px;
+        }
+
+        .progress>div {
+            height: 100%;
+            background: linear-gradient(90deg, #5fa8ff, #22b07d);
+            width: 0%;
+        }
+
+        .content {
+            line-height: 1.55;
+        }
+
+        .content h2 {
+            margin: 8px 0 6px;
+            font-size: 18px;
+        }
+
+        .content h3 {
+            margin: 8px 0 10px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #cfe3ff;
+        }
+
+        .content p {
+            margin: 0 0 10px;
+        }
+
+        .content .note {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .resource {
+            margin-top: 10px;
+        }
+
+        .resource a {
+            color: #9fcbff;
+            text-decoration: none;
+        }
+
+        .resource a:hover {
+            text-decoration: underline;
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-top: 14px;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            background: rgba(18, 20, 26, 0.95);
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        .nav .left,
+        .nav .right {
+            display: flex;
+            gap: 8px;
+        }
+
+        .kbd {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: 12px;
+            background: #0f1117;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 2px 6px;
+            border-radius: 6px;
+        }
+
+        .kbd a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .kbd a:hover {
+            color: #5fa8ff;
+            text-decoration: underline;
+        }
+
+        .footer {
+            margin-top: 18px;
+            color: var(--muted);
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hint {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .cover {
+            border: 1px dashed #2a3346;
+            background: #111621;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 8px;
+        }
+
+        .cover h2 {
+            margin: 0 0 6px;
+        }
+
+        .cover ul {
+            margin: 6px 0 0 18px;
+        }
+
+        .cover li {
+            margin: 4px 0;
+        }
+
+        .ui-btn {
+            font-weight: 700;
+            color: #cfe3ff;
+            background: #0f1117;
+            border: 1px solid var(--border);
+            padding: 1px 6px;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+
+        .ui-text {
+            font-weight: 700;
+            color: #ffd38a;
+            background: #2a2314;
+            border: 1px solid #5a4724;
+            padding: 1px 6px;
+            border-radius: 6px;
+        }
+
+        .ui-field {
+            font-weight: 700;
+            color: #b2f5ea;
+            background: #0f1f1f;
+            border: 1px solid #214a47;
+            padding: 1px 6px;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+
+        .ui-key {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: 12px;
+            font-weight: 700;
+            color: #e8ecf2;
+            background: #111621;
+            border: 1px solid #2a3346;
+            padding: 1px 6px;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+
+        .legend {
+            margin-top: 10px;
+            display: grid;
+            gap: 6px;
+        }
+
+        .legend-item {
+            display: inline-flex;
+            gap: 8px;
+            align-items: center;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .legend-item span:first-child {
+            flex-shrink: 0;
+        }
+
+        .legend-item span:last-child {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        /* Checkboxes for task completion */
+        .task-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 12px 0;
+            padding: 8px 12px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .task-checkbox:hover {
+            background: #1a1d27;
+        }
+
+        .task-checkbox input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .task-checkbox label {
+            cursor: pointer;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .task-checkbox input:checked+label {
+            color: var(--accent);
+            text-decoration: line-through;
+        }
+
+        /* Warning boxes */
+        .warning {
+            margin: 12px 0;
+            padding: 12px 16px;
+            background: rgba(255, 107, 107, 0.08);
+            border-left: 3px solid var(--danger);
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .warning strong {
+            color: var(--danger);
+        }
+
+        /* Success indicators */
+        .success {
+            margin: 12px 0;
+            padding: 12px 16px;
+            background: rgba(34, 176, 125, 0.08);
+            border-left: 3px solid var(--accent);
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .success strong {
+            color: var(--accent);
+        }
+
+        /* Time estimate badge */
+        .time-badge {
+            display: inline-block;
+            margin-left: 8px;
+            padding: 4px 8px;
+            background: rgba(79, 140, 255, 0.15);
+            color: var(--primary);
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* Collapsible sections */
+        .collapsible {
+            margin: 16px 0;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .collapsible-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: var(--card);
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .collapsible-header:hover {
+            background: #1a1d27;
+        }
+
+        .collapsible-header::after {
+            content: '\u25bc';
+            font-size: 10px;
+            transition: transform 0.3s;
+        }
+
+        .collapsible.collapsed .collapsible-header::after {
+            transform: rotate(-90deg);
+        }
+
+        .collapsible-content {
+            padding: 16px;
+            background: rgba(18, 20, 26, 0.5);
+            max-height: 500px;
+            overflow: auto;
+            transition: max-height 0.3s, padding 0.3s;
+        }
+
+        .collapsible.collapsed .collapsible-content {
+            max-height: 0;
+            padding: 0 16px;
+            overflow: hidden;
+        }
+
+        /* Checklist style */
+        .checklist {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .checklist li {
+            padding: 6px 0;
+            padding-left: 28px;
+            position: relative;
+        }
+
+        .checklist li::before {
+            content: '\u2713';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        /* Jump to task selector */
+        .jump-selector {
+            margin-bottom: 8px;
+        }
+
+        .context-note {
+            margin: 12px 0;
+            padding: 12px 16px;
+            background: rgba(79, 140, 255, 0.08);
+            border-left: 3px solid var(--primary);
+            border-radius: 6px;
+            font-size: 14px;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <header>
+            <div class="title">
+                <h1>MOS Word Project 2 — Step-by-Step Guide</h1>
+                <p>Scenario: You are completing advanced document formatting and collaboration tasks for Munson's
+                    Pickles and Preserves Farm. This project includes 34 tasks covering all MO-100 exam objectives.</p>
+            </div>
+            <div class="controls">
+                <select id="jumpToTask" class="jump-selector" title="Jump to a specific task">
+                    <option value="">Jump to task...</option>
+                </select>
+                <button id="resetBtn" title="Reset progress">Reset</button>
+            </div>
+        </header>
+
+        <div class="card">
+            <div class="meta">
+                <span class="badge" id="stepCounter">Step 1 of N</span>
+                <span class="badge section-badge" id="sectionBadge">Section</span>
+            </div>
+            <div class="progress">
+                <div id="progressBar"></div>
+            </div>
+            <div id="content" class="content"></div>
+            <div class="nav">
+                <div class="left hint">Tip: Use <span class="kbd">←</span> <span class="kbd">→</span> arrow keys</div>
+                <div class="right">
+                    <button id="prevBtn2">◀ Previous</button>
+                    <button id="nextBtn2" class="primary">Next ▶</button>
+                </div>
+            </div>
+            <div class="footer">
+                <span>Required files:</span>
+                <span class="kbd"><a href="wordprojectfiles/Project2_datafile.docx"
+                        download>Project2_datafile.docx</a></span>
+                <span class="kbd"><a href="wordprojectfiles/dandelion_photo.jpg" download>dandelion_photo.jpg</a></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data model: sections -> tasks -> steps
+        const curriculum = [
+            {
+                section: 'Section 1: Document Review and Collaboration',
+                tasks: [
+                    {
+                        title: 'Unlock Tracking with the password "project"',
+                        estimatedTime: '1 min',
+                        resource: 'https://support.microsoft.com/en-us/office/track-changes-in-word-197ba630-0f5f-4a8e-9a77-3712475e806a',
+                        contextNote: "📍 You should be opening Project2_datafile.docx for the first time. The document has tracking locked with password 'project'.",
+                        steps: [
+                            'Open <span class="ui-text">Project2_datafile.docx</span> from the wordprojectfiles folder.',
+                            'From the <span class="ui-btn">Review</span> tab > Tracking group, select the <span class="ui-btn">Track Changes</span> drop-down.',
+                            'Select <span class="ui-btn">Lock Tracking</span>.',
+                            'In the password field, enter <span class="ui-field">project</span>.',
+                            'Select <span class="ui-btn">OK</span>.'
+                        ]
+                    },
+                    {
+                        title: 'Turn off Track Changes',
+                        estimatedTime: '30 sec',
+                        resource: 'https://support.microsoft.com/en-us/office/track-changes-in-word-197ba630-0f5f-4a8e-9a77-3712475e806a',
+                        steps: [
+                            'From the <span class="ui-btn">Review</span> tab > Tracking group, select the <span class="ui-btn">Track Changes</span> drop-down.',
+                            'Select <span class="ui-btn">Track Changes</span> to turn it off.'
+                        ]
+                    },
+                    {
+                        title: 'Review the Tracked Changes',
+                        estimatedTime: '1 min',
+                        resource: 'https://support.microsoft.com/en-us/office/track-changes-in-word-197ba630-0f5f-4a8e-9a77-3712475e806a',
+                        steps: [
+                            'From the <span class="ui-btn">Review</span> tab > Tracking group, select the <span class="ui-btn">Display for Review</span> drop-down.',
+                            'Select <span class="ui-btn">All Markup</span> to view all tracked changes.'
+                        ]
+                    },
+                    {
+                        title: 'Accept all Tracked Changes',
+                        estimatedTime: '1 min',
+                        resource: 'https://support.microsoft.com/en-us/office/track-changes-in-word-197ba630-0f5f-4a8e-9a77-3712475e806a',
+                        successIndicators: ["✓ All red markup should disappear from the document once all changes are accepted."],
+                        steps: [
+                            'From the <span class="ui-btn">Review</span> tab > Changes group, select the <span class="ui-btn">Accept</span> drop-down.',
+                            'Select <span class="ui-btn">Accept All Changes</span>.'
+                        ]
+                    },
+                    {
+                        title: 'Reply to the first comment with the text "Looks great!"',
+                        estimatedTime: '1 min',
+                        resource: 'https://support.microsoft.com/en-us/office/insert-or-delete-a-comment-8d3f868a-867e-4df2-8c68-bf96671641e2',
+                        steps: [
+                            'From the <span class="ui-btn">Review</span> tab > Comments group, select <span class="ui-btn">Next</span> to navigate to the first comment.',
+                            'In the comment, select <span class="ui-btn">Reply</span>.',
+                            'Enter the text <span class="ui-field">Looks great!</span>.',
+                            'Select <span class="ui-btn">Post</span> (or press <span class="ui-key">Ctrl+Enter</span>).'
+                        ]
+                    },
+                    {
+                        title: 'Resolve the second comment',
+                        estimatedTime: '30 sec',
+                        resource: 'https://support.microsoft.com/en-us/office/insert-or-delete-a-comment-8d3f868a-867e-4df2-8c68-bf96671641e2',
+                        contextNote: "📍 Look for the comment that says 'It appears some information...'",
+                        steps: [
+                            'Navigate to the second comment that begins with <span class="ui-text">It appears some information…</span>.',
+                            'Select <span class="ui-btn">Resolve thread</span> (or right-click and select Resolve).'
+                        ]
+                    },
+                    {
+                        title: 'Delete the third comment',
+                        estimatedTime: '30 sec',
+                        resource: 'https://support.microsoft.com/en-us/office/insert-or-delete-a-comment-8d3f868a-867e-4df2-8c68-bf96671641e2',
+                        steps: [
+                            'From the <span class="ui-btn">Review</span> tab > Comments group, select <span class="ui-btn">Next</span> until you locate the third comment.',
+                            'From the <span class="ui-btn">Review</span> tab > Comments group, select <span class="ui-btn">Delete</span> drop-down.',
+                            'Select <span class="ui-btn">Delete Thread</span>.'
+                        ]
+                    }
+                ]
+            },
+            {
+                section: 'Section 2: Headers, Footers, and Symbols',
+                tasks: [
+                    {
+                        title: 'Modify the Footer to include today\'s date, updated automatically and centered',
+                        estimatedTime: '2 min',
+                        resource: 'https://support.microsoft.com/en-us/office/insert-headers-and-footers-b87ee4df-abc1-41f8-995b-b39f6d99c70d',
+                        steps: [
+                            'From the <span class="ui-btn">Insert</span> tab > Header & Footer group, select the <span class="ui-btn">Footer</span> drop-down.',
+                            'Select <span class="ui-btn">Edit Footer</span>.',
+                            'Double-click in the center area of the footer (or use the <span class="ui-key">Tab</span> key to move to center).',
+                            'From the <span class="ui-btn">Header & Footer Design</span> tab > Insert group, select <span class="ui-btn">Date & Time</span>.',
+                            'In the Date and Time dialog box, select the first available format date.',
+                            'Check the <span class="ui-field">Update automatically</span> checkbox.',
+                            'Select <span class="ui-btn">OK</span>.',
+                            'From the <span class="ui-btn">Header & Footer Design</span> tab > Close group, select <span class="ui-btn">Close Header and Footer</span>.'
+                        ]
+                    },
+                    {
+                        title: 'Insert a Registered sign (®) after every instance of "Munson\'s Pickles and Preserves Farm"',
+                        estimatedTime: '3-4 min',
+                        resource: 'https://support.microsoft.com/en-us/office/insert-a-symbol-in-word-98c6c273-9ce4-410b-8b6e-f02cac9a8a3d',
+                        contextNote: "📍 There are three places where you need to add the ® symbol: in the title, after the 'Background' heading, and after the 'Summary' heading.",
+                        warnings: ["⚠️ Make sure to position your cursor immediately after the text, before any spaces or punctuation."],
+                        steps: [
+                            'In the title, place the cursor immediately after <span class="ui-text">Munson\'s Pickles and Preserves Farm</span>.',
+                            'From the <span class="ui-btn">Insert</span> tab > Symbols group, select the <span class="ui-btn">Symbol</span> drop-down.',
+                            'From the symbol gallery, select the <span class="ui-text">®</span> (Registered Sign). Or select <span class="ui-btn">More Symbols</span> to find it.',
+                            'After the <span class="ui-text">Background</span> heading in the fourth paragraph, place the cursor after <span class="ui-text">Munson\'s Pickles and Preserves Farm</span>.',
+                            'From the <span class="ui-btn">Insert</span> tab > Symbols group, select the <span class="ui-btn">Symbol</span> drop-down and choose the <span class="ui-text">®</span> (Registered Sign).',
+                            'After the <span class="ui-text">Summary</span> heading in the first paragraph, place the cursor after <span class="ui-text">Munson\'s Pickles and Preserves Farm</span>.',
+                            'From the <span class="ui-btn">Insert</span> tab > Symbols group, select the <span class="ui-btn">Symbol</span> drop-down and choose the <span class="ui-text">®</span> (Registered Sign).'
+                        ]
+                    }
+                ]
+            },
+            {
+                section: 'Section 3: Tables',
+                tasks: [
+                    {
+                        title: 'After the heading "Identified Plants and Flowers," insert a Table that is 2 columns and 6 rows',
+                        estimatedTime: '3-4 min',
+                        resource: 'https://support.microsoft.com/en-us/office/insert-a-table-a138f745-73ef-4879-b99a-2f3d38be612a',
+                        contextNote: "📍 You'll need to enter data for Region and Flower columns including Australia, Singapore, Finland, Iceland, and Samoa.",
+                        steps: [
+                            'Scroll to find the heading <span class="ui-text">Identified Plants and Flowers</span>.',
+                            'Place the cursor after the heading and press <span class="ui-key">Enter</span>.',
+                            'From the <span class="ui-btn">Insert</span> tab > Tables group, select the <span class="ui-btn">Table</span> drop-down.',
+                            'Select <span class="ui-btn">Insert Table</span>.',
+                            'In the Insert Table dialog box, set <span class="ui-field">Number of columns: 2</span>.',
+                            'Set <span class="ui-field">Number of rows: 6</span>.',
+                            'Select <span class="ui-btn">OK</span>.',
+                            'In the first row, enter <span class="ui-field">Region</span> in the first cell and <span class="ui-field">Flower</span> in the second cell.',
+                            'Fill in the remaining rows with the following data:<br>• Australia — Golden Wattle<br>• Singapore — Orchid<br>• Finland — Lily of the Valley<br>• Iceland — Mountain avens<br>• Samoa — Red ginger'
+                        ]
+                    },
+                    {
+                        title: 'Split the Cell that contains "Lily of the Valley" and enter "Water Lily" in the new cell',
+                        estimatedTime: '1-2 min',
+                        resource: 'https://support.microsoft.com/en-us/office/merge-and-split-cells-in-a-table-6a75d5c8-c551-4afb-a2ce-2f62edc7e929',
+                        steps: [
+                            'Click in the cell that contains <span class="ui-text">Lily of the Valley</span>.',
+                            'From the <span class="ui-btn">Table Tools Layout</span> tab > Merge group, select <span class="ui-btn">Split Cells</span>.',
+                            'In the Split Cells dialog box, ensure <span class="ui-field">Number of columns: 2</span> and <span class="ui-field">Number of rows: 1</span>.',
+                            'Select <span class="ui-btn">OK</span>.',
+                            'In the new blank cell (to the right of Lily of the Valley), enter <span class="ui-field">Water Lily</span>.'
+                        ]
+                    },
+                    {
+                        title: 'Add a new row to the top of the table with "Popular Flowers by Region" and merge the cells',
+                        estimatedTime: '2 min',
+                        resource: 'https://support.microsoft.com/en-us/office/merge-and-split-cells-in-a-table-6a75d5c8-c551-4afb-a2ce-2f62edc7e929',
+                        steps: [
+                            'Click anywhere in the first row of the table (the row with Region and Flower).',
+                            'From the <span class="ui-btn">Table Tools Layout</span> tab > Rows & Columns group, select <span class="ui-btn">Insert Above</span>.',
+                            'In the new first row, enter the text <span class="ui-field">Popular Flowers by Region</span> in the first cell.',
+                            'Select both cells in the first row (you can click in the first cell and drag to the second, or click the first and hold <span class="ui-key">Shift</span> while clicking the second).',
+                            'From the <span class="ui-btn">Table Tools Layout</span> tab > Merge group, select <span class="ui-btn">Merge Cells</span>.'
+                        ]
+                    },
+                    {
+                        title: 'Insert the dandelion_photo.jpg after the text "Popular Flowers by Region" in the table',
+                        estimatedTime: '1 min',
+                        resource: 'https://support.microsoft.com/en-us/office/insert-pictures-3c51edf4-22e1-460a-b372-9329a8724344',
+                        steps: [
+                            'Place the cursor after the text <span class="ui-text">Popular Flowers by Region</span> in the first row (press <span class="ui-key">Enter</span> or position after the text).',
+                            'From the <span class="ui-btn">Insert</span> tab > Illustrations group, select <span class="ui-btn">Pictures</span>.',
+                            'Select <span class="ui-btn">This Device…</span>.',
+                            'Browse to the wordprojectfiles folder, select <span class="ui-text">dandelion_photo.jpg</span>.',
+                            'Select <span class="ui-btn">Insert</span>.'
+                        ]
+                    },
+                    {
+                        title: 'Adjust the dandelion_photo.jpg with specific size, text wrapping, and position settings',
+                        estimatedTime: '4-5 min',
+                        resource: 'https://support.microsoft.com/en-us/office/wrap-text-around-a-picture-in-word-0b05e922-761f-4b18-89dd-8eaa5ae0e4ea',
+                        contextNote: "📍 This task involves multiple settings: Size (20% height), Text Wrapping (Tight, Both sides), and Position (Right aligned, Centered vertically).",
+                        warnings: ["⚠️ Make sure to lock the aspect ratio before changing the height to 20% so the image doesn't distort."],
+                        steps: [
+                            'Select the <span class="ui-text">dandelion_photo.jpg</span> image.',
+                            'From the <span class="ui-btn">Picture Tools Format</span> tab > Size group, click the dialog launcher (small arrow in bottom-right corner) to open the <span class="ui-btn">Layout</span> dialog box.',
+                            'In the Layout dialog box, go to the <span class="ui-btn">Size</span> tab.',
+                            'In the Scale section, ensure <span class="ui-field">Lock aspect ratio</span> is checked.',
+                            'Set <span class="ui-field">Height: 20%</span> (Width will adjust automatically).',
+                            'Go to the <span class="ui-btn">Text Wrapping</span> tab.',
+                            'In the Wrapping style section, select <span class="ui-field">Tight</span>.',
+                            'In the Wrap text section, select <span class="ui-field">Both sides</span>.',
+                            'In the Distance from text section, enter <span class="ui-field">0.1"</span> for both Left and Right.',
+                            'Go to the <span class="ui-btn">Position</span> tab.',
+                            'In the Horizontal section, select <span class="ui-field">Alignment</span>, then choose <span class="ui-field">Right</span> relative to <span class="ui-field">Right Margin</span>.',
+                            'In the Vertical section, select <span class="ui-field">Alignment</span>, then choose <span class="ui-field">Centered</span> relative to <span class="ui-field">Page</span>.',
+                            'Select <span class="ui-btn">OK</span>.'
+                        ]
+                    },
+                    {
+                        title: 'Apply the Texturizer Artistic Effect to the dandelion_photo.jpg',
+                        estimatedTime: '1 min',
+                        resource: 'https://support.microsoft.com/en-us/office/apply-artistic-effects-to-a-picture-a8068c53-9e82-4da3-9cf3-da7dd23d0ef3',
+                        steps: [
+                            'Select the <span class="ui-text">dandelion_photo.jpg</span> image.',
+                            'From the <span class="ui-btn">Picture Tools Format</span> tab > Adjust group, select the <span class="ui-btn">Artistic Effects</span> drop-down.',
+                            'Select the <span class="ui-field">Texturizer</span> artistic effect (usually in the bottom row).'
+                        ]
+                    },
+                    {
+                        title: 'Add the Alt Text "Picture of a dandelion" to the dandelion_photo.jpg',
+                        estimatedTime: '1 min',
+                        resource: 'https://support.microsoft.com/en-us/office/add-alternative-text-to-a-shape-picture-chart-table-smartart-graphic-or-other-object-44989b2a-903c-4d9a-b742-6a75b451c669',
+                        contextNote: "📍 Alt text makes images accessible to people using screen readers.",
+                        steps: [
+                            'Select the <span class="ui-text">dandelion_photo.jpg</span> image.',
+                            'From the <span class="ui-btn">Picture Tools Format</span> tab > Accessibility group, select <span class="ui-btn">Alt Text</span>.',
+                            'The Alt Text pane will open on the right side.',
+                            'Delete any default text in the pane.',
+                            'Enter <span class="ui-field">Picture of a dandelion</span>.',
+                            'Close the Alt Text pane.'
+                        ]
+                    },
+                    {
+                        title: 'Split the Native Plants table between "Tuft Hairgrass" and "Fireweed" then format both tables with No Border',
+                        estimatedTime: '2-3 min',
+                        resource: 'https://support.microsoft.com/en-us/office/merge-and-split-cells-in-a-table-6a75d5c8-c551-4afb-a2ce-2f62edc7e929',
+                        contextNote: "📍 Scroll down to find the Native Plants table in the document.",
+                        steps: [
+                            'Scroll to find the Native Plants table.',
+                            'Place the cursor in the row containing <span class="ui-text">Fireweed</span>.',
+                            'From the <span class="ui-btn">Table Tools Layout</span> tab > Merge group, select <span class="ui-btn">Split Table</span>.',
+                            'Select the first Native Plants table (click the table move handle in the upper-left corner or select all cells).',
+                            'From the <span class="ui-btn">Table Design</span> tab > Borders group, select the <span class="ui-btn">Borders</span> drop-down.',
+                            'Select <span class="ui-btn">No Border</span>.',
+                            'Repeat for the second Native Plants table: select the table, then from <span class="ui-btn">Table Design</span> > Borders, select <span class="ui-btn">No Border</span>.'
+                        ]
+                    },
+                    {
+                        title: 'Format the tables in Two Columns beginning with "Miniature Hollyhock" and ending with "Goatsbeard"',
+                        estimatedTime: '2 min',
+                        resource: 'https://support.microsoft.com/en-us/office/format-text-in-columns-849af7d8-e1f1-4f59-b698-83e5bb78e8e7',
+                        contextNote: "📍 This creates a two-column layout for the text containing both Native Plants tables.",
+                        steps: [
+                            'Select the area containing the two Native Plants tables, starting with <span class="ui-text">Miniature Hollyhock</span> and ending with <span class="ui-text">Goatsbeard</span>.',
+                            'From the <span class="ui-btn">Layout</span> tab > Page Setup group, select the <span class="ui-btn">Columns</span> drop-down.',
+                            'Select <span class="ui-btn">Two</span>.',
+                            'If needed, adjust the tables to ensure they align at the top of each column.'
+                        ]
+                    }
+                ]
+            },
+            {
+                section: 'Section 4: Lists and Numbering',
+                tasks: [
+                    {
+                        title: 'Convert the bulleted list to a Multilevel list with 1) a) i) format',
+                        estimatedTime: '2 min',
+                        resource: 'https://support.microsoft.com/en-us/office/create-a-bulleted-or-numbered-list-9ff81241-58a8-4d88-8d8c-acab3006a23e',
+                        contextNote: "📍 You're looking for the list that begins with 'Zone 3' and ends with 'Christmas Valley, Oregon'.",
+                        steps: [
+                            'Scroll to find the bulleted list beginning with <span class="ui-text">Zone 3</span> and ending with <span class="ui-text">Christmas Valley, Oregon</span>.',
+                            'Select the entire list.',
+                            'From the <span class="ui-btn">Home</span> tab > Paragraph group, select the <span class="ui-btn">Multilevel List</span> drop-down.',
+                            'From the List Library, select the list format <span class="ui-field">1) a) i)</span>.'
+                        ]
+                    },
+                    {
+                        title: 'Increase the city, state items to the second level',
+                        estimatedTime: '2-3 min',
+                        resource: 'https://support.microsoft.com/en-us/office/create-a-bulleted-or-numbered-list-9ff81241-58a8-4d88-8d8c-acab3006a23e',
+                        contextNote: "📍 Quick Tip: The Tab key is a fast way to increase indent level for multilevel lists.",
+                        steps: [
+                            'Place the cursor before <span class="ui-text">Harlem, Montana</span>.',
+                            'From the <span class="ui-btn">Home</span> tab > Paragraph group, select <span class="ui-btn">Increase Indent</span> (or press <span class="ui-key">Tab</span>).',
+                            'Repeat for <span class="ui-text">Casper, Wyoming</span>: place cursor before the text and press <span class="ui-key">Tab</span> or select <span class="ui-btn">Increase Indent</span>.',
+                            'Repeat for <span class="ui-text">Lamar, Colorado</span>.',
+                            'Repeat for <span class="ui-text">Christmas Valley, Oregon</span>.'
+                        ]
+                    },
+                    {
+                        title: 'Set the second list to continue from the first list starting with number 5',
+                        estimatedTime: '1-2 min',
+                        resource: 'https://support.microsoft.com/en-us/office/create-a-bulleted-or-numbered-list-9ff81241-58a8-4d88-8d8c-acab3006a23e',
+                        contextNote: "📍 Look for the second list that begins with 'Zone 7' and ends with 'Oregon'.",
+                        steps: [
+                            'Select the second list beginning with <span class="ui-text">Zone 7</span> and ending with <span class="ui-text">Oregon</span>.',
+                            'From the <span class="ui-btn">Home</span> tab > Paragraph group, select the <span class="ui-btn">Numbering</span> drop-down.',
+                            'Select <span class="ui-btn">Set Numbering Value</span>.',
+                            'In the Set Numbering Value dialog box, select <span class="ui-field">Set value to:</span>.',
+                            'Enter <span class="ui-field">5</span>.',
+                            'Select <span class="ui-btn">OK</span>.'
+                        ]
+                    },
+                    {
+                        title: 'Set the second level of both lists to a custom bullet using Webdings character 252',
+                        estimatedTime: '2-3 min',
+                        resource: 'https://support.microsoft.com/en-us/office/create-a-bulleted-or-numbered-list-9ff81241-58a8-4d88-8d8c-acab3006a23e',
+                        contextNote: "📍 Webdings character 252 is a decorative bullet symbol. Selecting one second-level item should select all second-level items in both lists.",
+                        steps: [
+                            'Select the <span class="ui-text">a)</span> before <span class="ui-text">Harlem, Montana</span> (this should select all second-level items from both lists).',
+                            'If not all second-level items are selected, manually select all city/state lines from both lists.',
+                            'From the <span class="ui-btn">Home</span> tab > Paragraph group, select the <span class="ui-btn">Bullets</span> drop-down.',
+                            'Select <span class="ui-btn">Define New Bullet</span>.',
+                            'In the Define New Bullet dialog box, under Bullet character section, select <span class="ui-btn">Symbol</span>.',
+                            'In the Symbol dialog box, in the <span class="ui-field">Font:</span> box, select <span class="ui-field">Webdings</span>.',
+                            'In the <span class="ui-field">Character code:</span> box, enter <span class="ui-field">252</span>.',
+                            'Select <span class="ui-btn">OK</span> to close the Symbol dialog box.',
+                            'Select <span class="ui-btn">OK</span> to close the Define New Bullet dialog box.'
+                        ]
+                    }
+                ]
+            },
+            {
+                section: 'Section 5: Text Boxes and 3D Models',
+                tasks: [
+                    {
+                        title: 'Insert an Austin Quote Text Box with specific text and formatting',
+                        estimatedTime: '4-5 min',
+                        resource: 'https://support.microsoft.com/en-us/office/add-copy-or-delete-a-text-box-in-word-645f03ea-0dc1-47ec-abcd-394043a965f8',
+                        contextNote: "📍 Look for the first paragraph ending with 'community' and the word 'Today' at the start of the next paragraph.",
+                        warnings: ["⚠️ Make sure to set the correct text wrapping and position settings."],
+                        steps: [
+                            'Scroll to find the first paragraph ending with the word <span class="ui-text">community</span>.',
+                            'Place the cursor at the beginning of the second paragraph, before the word <span class="ui-text">Today</span>.',
+                            'From the <span class="ui-btn">Insert</span> tab > Text group, select the <span class="ui-btn">Text Box</span> drop-down.',
+                            'Select <span class="ui-btn">Austin Quote</span> from the gallery.',
+                            'Click inside the text box and delete the placeholder text.',
+                            'Enter <span class="ui-field">Today, the farm grows over 100 acres of fresh vegetables and maintains 40 hives of honeybees.</span>',
+                            'Select all the text inside the text box.',
+                            'From the <span class="ui-btn">Home</span> tab > Font group, change the font to <span class="ui-field">Comic Sans MS</span>.',
+                            'Change the font size to <span class="ui-field">12</span>.',
+                            'Select the text box border to select the entire text box.',
+                            'From the <span class="ui-btn">Shape Format</span> tab > Arrange group, select the <span class="ui-btn">Wrap Text</span> drop-down.',
+                            'Select <span class="ui-btn">More Layout Options</span>.',
+                            'In the Layout dialog box, go to the <span class="ui-btn">Text Wrapping</span> tab and ensure <span class="ui-field">Top and bottom</span> is selected.',
+                            'Go to the <span class="ui-btn">Position</span> tab.',
+                            'In the Horizontal section, select <span class="ui-field">Alignment: Centered</span> relative to <span class="ui-field">Page</span>.',
+                            'In the Vertical section, select <span class="ui-field">Absolute position: 0"</span> below <span class="ui-field">Paragraph</span>.',
+                            'Select <span class="ui-btn">OK</span>.'
+                        ]
+                    },
+                    {
+                        title: 'Insert an appropriate 3D Model on the first page after "Proposal Plan"',
+                        estimatedTime: '2-3 min',
+                        resource: 'https://support.microsoft.com/en-us/office/insert-3d-models-in-word-excel-or-powerpoint-ec5feb79-b0af-47f6-a885-151fcc88ac0a',
+                        contextNote: "📍 Choose a 3D model that fits the farm theme, such as vegetables, plants, or farm-related items.",
+                        steps: [
+                            'Scroll to the first page and find the text <span class="ui-text">Proposal Plan</span>.',
+                            'Place the cursor after <span class="ui-text">Proposal Plan</span>.',
+                            'From the <span class="ui-btn">Insert</span> tab > Illustrations group, select the <span class="ui-btn">3D Models</span> drop-down.',
+                            'Select <span class="ui-btn">Stock 3D Models</span>.',
+                            'In the search box, search for an appropriate 3D model (such as <span class="ui-field">vegetables</span>, <span class="ui-field">farm</span>, or <span class="ui-field">garden</span>).',
+                            'Select a model that fits the theme.',
+                            'Select <span class="ui-btn">Insert</span>.'
+                        ]
+                    },
+                    {
+                        title: 'Add Alt Text to the 3D Model',
+                        estimatedTime: '1 min',
+                        resource: 'https://support.microsoft.com/en-us/office/add-alternative-text-to-a-shape-picture-chart-table-smartart-graphic-or-other-object-44989b2a-903c-4d9a-b742-6a75b451c669',
+                        steps: [
+                            'Select the 3D Model.',
+                            'From the <span class="ui-btn">3D Model Tools Format</span> tab > Accessibility group, select <span class="ui-btn">Alt Text</span>.',
+                            'In the Alt Text pane, enter a description of the object and its context (e.g., <span class="ui-field">3D model of vegetables representing farm produce</span>).',
+                            'Close the Alt Text pane.'
+                        ]
+                    },
+                    {
+                        title: 'Change the 3D Model View',
+                        estimatedTime: '30 sec',
+                        resource: 'https://support.microsoft.com/en-us/office/insert-3d-models-in-word-excel-or-powerpoint-ec5feb79-b0af-47f6-a885-151fcc88ac0a',
+                        steps: [
+                            'Select the 3D Model.',
+                            'From the <span class="ui-btn">3D Model</span> tab > 3D Model Views group, select an appropriate view that displays the model well.',
+                            'You can also manually rotate the model by dragging the rotation handle on the model itself.'
+                        ]
+                    }
+                ]
+            },
+            {
+                section: 'Section 6: Page Layout and Final Formatting',
+                tasks: [
+                    {
+                        title: 'Insert a Page Break after the 3D Model',
+                        estimatedTime: '30 sec',
+                        resource: 'https://support.microsoft.com/en-us/office/insert-a-page-break-fbbc548a-7618-4c40-8270-d857c2de8c7b',
+                        steps: [
+                            'Place the cursor before the <span class="ui-text">Background</span> heading (after the 3D Model).',
+                            'From the <span class="ui-btn">Layout</span> tab > Page Setup group, select the <span class="ui-btn">Breaks</span> drop-down.',
+                            'Select <span class="ui-btn">Page</span> (under Page Breaks).',
+                            'Alternatively, press <span class="ui-key">Ctrl+Enter</span>.'
+                        ]
+                    },
+                    {
+                        title: 'Add the document title "Proposal plan" to document properties',
+                        estimatedTime: '1-2 min',
+                        resource: 'https://support.microsoft.com/en-us/office/view-or-change-the-properties-for-an-office-file-21d604c2-481e-4379-8e54-1dd4622c6b75',
+                        steps: [
+                            'Select the <span class="ui-btn">File</span> tab to open Backstage view.',
+                            'Select <span class="ui-btn">Info</span> (if not already selected).',
+                            'Select the <span class="ui-btn">Properties</span> drop-down.',
+                            'Select <span class="ui-btn">Advanced Properties</span>.',
+                            'In the Document Properties dialog box, select the <span class="ui-btn">Summary</span> tab.',
+                            'In the <span class="ui-field">Title:</span> field, enter <span class="ui-field">Proposal Plan</span>.',
+                            'Select <span class="ui-btn">OK</span>.',
+                            'Select the back arrow button to return to normal view.'
+                        ]
+                    },
+                    {
+                        title: 'Change Margins to Top and Bottom 1", Left and Right .5" with .5" Gutter',
+                        estimatedTime: '2 min',
+                        resource: 'https://support.microsoft.com/en-us/office/adjust-margins-in-a-document-da21a474-99d8-4e54-bl84-6d3f5d5c86c7',
+                        successIndicators: ["✓ Your margins should now be set with narrower left/right margins and a gutter for binding."],
+                        steps: [
+                            'From the <span class="ui-btn">Layout</span> tab > Page Setup group, select <span class="ui-btn">Margins</span>.',
+                            'Select <span class="ui-btn">Custom Margins</span> at the bottom of the menu.',
+                            'In the Page Setup dialog box, on the <span class="ui-btn">Margins</span> tab:',
+                            'Ensure <span class="ui-field">Top: 1"</span> and <span class="ui-field">Bottom: 1"</span> are set.',
+                            'Set <span class="ui-field">Left: 0.5"</span>.',
+                            'Set <span class="ui-field">Right: 0.5"</span>.',
+                            'Set <span class="ui-field">Gutter: 0.5"</span>.',
+                            'Select <span class="ui-btn">OK</span>.'
+                        ]
+                    },
+                    {
+                        title: 'Save and Close the document',
+                        estimatedTime: '30 sec',
+                        resource: 'https://support.microsoft.com/en-us/office/save-a-document-in-word-b3daf3f9-36ab-4fd2-9cc8-6cd26133f4ff',
+                        successIndicators: ["✓ Congratulations! You've completed all 34 tasks for MOS Word Project 2."],
+                        steps: [
+                            'Press <span class="ui-key">Ctrl+S</span> to save the document (or select <span class="ui-btn">File</span> > <span class="ui-btn">Save</span>).',
+                            'Close the document by selecting <span class="ui-btn">File</span> > <span class="ui-btn">Close</span>, or press <span class="ui-key">Ctrl+W</span>, or click the X button.'
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        // Flatten into a linear page list: intro + each task (with all steps visible) + outro
+        function buildPages(data) {
+            const pages = [];
+            pages.push({
+                kind: 'cover',
+                section: 'Project Overview',
+                title: 'MOS Word Project 2 — Guided Walkthrough',
+                text: '<strong>📖 Read through this overview before starting.</strong><br><br>You will complete 34 tasks for Project 2 covering all Exam MO-100: Microsoft Word (Word and Word 2019) objectives. This comprehensive guide walks you through document collaboration, advanced formatting, tables, lists, graphics, and more.<br><br><strong style="color: #ff6b6b;">⚠️ Important: Use Microsoft Word (desktop app on your computer), not Word Online or the web browser version.</strong><br><br><strong>💡 Quick Tips:</strong><br>• <strong>Made a mistake?</strong> Press <span class="ui-key">Ctrl+Z</span> to undo your last action<br>• <strong>Need to redo?</strong> Press <span class="ui-key">Ctrl+Y</span> to redo an undone action<br>• <strong>Save your work:</strong> Press <span class="ui-key">Ctrl+S</span> frequently to save your progress<br>• <strong>Take your time:</strong> Project 2 has more tasks than Project 1 — plan for 45-60 minutes to complete<br><br><strong>How to use this guide:</strong><br>• Follow each step in order using the navigation buttons at the bottom or arrow keys<br>• Complete the action in Word before advancing to the next step<br>• Use the "Jump to task..." dropdown above to skip to specific tasks<br>• Check off completed tasks using the checkbox at the top of each task<br>• Use the resource links provided for additional help<br>• Time estimates (⏱️) help you pace yourself<br>• Reset progress at any time using the Reset button<br><br><div class="collapsible collapsed"><div class="collapsible-header" onclick="this.parentElement.classList.toggle(\'collapsed\')">📋 Keyboard Shortcuts Reference (click to expand)</div><div class="collapsible-content"><strong>Shortcuts you\'ll use in this project:</strong><br><br><span class="ui-key">Ctrl+S</span> - Save Document<br><span class="ui-key">Ctrl+W</span> - Close Document<br><span class="ui-key">Ctrl+Z</span> - Undo<br><span class="ui-key">Ctrl+Y</span> - Redo<br><span class="ui-key">Ctrl+Enter</span> - Insert Page Break<br><span class="ui-key">Tab</span> - Increase indent level (in lists)<br><span class="ui-key">Shift+Tab</span> - Decrease indent level (in lists)<br><br><strong>Navigation shortcuts:</strong><br><span class="ui-key">←</span> <span class="ui-key">→</span> - Navigate between steps in this guide</div></div><br><strong>Legend:</strong><div class="legend"><div class="legend-item"><span class="ui-btn">Button/Menu</span><span>Click this in Word.</span></div><div class="legend-item"><span class="ui-text">Text to select</span><span>Highlight or locate this text in the document.</span></div><div class="legend-item"><span class="ui-field">Field/Option</span><span>Type or choose this value.</span></div><div class="legend-item"><span class="ui-key">Ctrl+S</span><span>Keyboard shortcut to press.</span></div></div>',
+
+            });
+            for (const sec of data) {
+                for (const task of sec.tasks) {
+                    pages.push({
+                        kind: 'task',
+                        section: sec.section,
+                        title: task.title,
+                        estimatedTime: task.estimatedTime || '',
+                        steps: task.steps,
+                        warnings: task.warnings || [],
+                        successIndicators: task.successIndicators || [],
+                        contextNote: task.contextNote || '',
+                        resource: task.resource,
+                        extraResources: task.extraResources || []
+                    });
+                }
+            }
+            pages.push({ kind: 'cover', section: 'Finish', title: '🎉 Excellent work!', text: 'You have completed all 34 tasks for MOS Word Project 2! You\'ve practiced advanced document collaboration, formatting, tables, lists, graphics, and page layout skills.<br><br><strong>What you accomplished:</strong><br>• Document review and track changes<br>• Headers, footers, and symbols<br>• Advanced table creation and formatting<br>• Multilevel lists with custom formatting<br>• Graphics, text boxes, and 3D models<br>• Page layout and document properties<br><br><strong>Next steps:</strong><br>• Review any areas where you felt less confident<br>• Practice again using the Reset button<br>• Try timing yourself to build speed<br>• Refer to the Learning Directory for additional resources<br><br>Great job preparing for your MOS certification! 🎓' });
+            return pages;
+        }
+
+        const pages = buildPages(curriculum);
+        const total = pages.length;
+
+        const els = {
+            content: document.getElementById('content'),
+            stepCounter: document.getElementById('stepCounter'),
+            sectionBadge: document.getElementById('sectionBadge'),
+            progressBar: document.getElementById('progressBar'),
+            prevBtn2: document.getElementById('prevBtn2'),
+            nextBtn2: document.getElementById('nextBtn2'),
+            resetBtn: document.getElementById('resetBtn'),
+            jumpToTask: document.getElementById('jumpToTask'),
+        };
+
+        const STORAGE_KEY = 'mos-word-p2-page';
+        let idx = Number(localStorage.getItem(STORAGE_KEY) || 0);
+        if (!(idx >= 0 && idx < total)) idx = 0;
+
+        // Populate jump-to-task dropdown
+        pages.forEach((page, i) => {
+            if (page.kind === 'task') {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = `${page.section.replace(/Section \d+: /, '')}: ${page.title.substring(0, 50)}${page.title.length > 50 ? '...' : ''}`;
+                els.jumpToTask.appendChild(option);
+            }
+        });
+
+        function fmtStep(n) { return `Step ${n} of ${total}`; }
+        function pct(n) { return Math.max(0, Math.min(100, Math.round(((n) / (total - 1)) * 100))); }
+
+        function render() {
+            const cur = pages[idx];
+            els.stepCounter.textContent = fmtStep(idx + 1);
+            els.sectionBadge.textContent = cur.section || '—';
+            els.progressBar.style.width = pct(idx) + '%';
+
+            let html = '';
+            if (cur.kind === 'cover') {
+                html += `<div class="cover">`;
+                html += `<h2>${cur.title}</h2>`;
+                if (cur.text) html += `<p>${cur.text}</p>`;
+                if (cur.points && cur.points.length) {
+                    html += '<ul>' + cur.points.map(p => `<li>${p}</li>`).join('') + '</ul>';
+                }
+                html += `</div>`;
+            } else if (cur.kind === 'task') {
+                const taskId = `task-${idx}`;
+                const isChecked = localStorage.getItem(taskId) === 'true';
+
+                html += `<div class="task-checkbox">`;
+                html += `<input type="checkbox" id="${taskId}" ${isChecked ? 'checked' : ''} onchange="localStorage.setItem('${taskId}', this.checked)">`;
+                html += `<label for="${taskId}">Mark this task as complete</label>`;
+                html += `</div>`;
+
+                html += `<h2>Task`;
+                if (cur.estimatedTime) html += ` <span class="time-badge">⏱️ ${cur.estimatedTime}</span>`;
+                html += `</h2>`;
+                html += `<h3>${cur.title}</h3>`;
+
+                if (cur.contextNote) {
+                    html += `<div class="context-note">${cur.contextNote}</div>`;
+                }
+
+                if (cur.warnings && cur.warnings.length) {
+                    html += cur.warnings.map(w => `<div class="warning">${w}</div>`).join('');
+                }
+
+                if (cur.resource) {
+                    html += `<div class="resource">Resource: <a href="${cur.resource}" target="_blank" rel="noopener">${cur.resource}</a>`;
+                    if (cur.extraResources && cur.extraResources.length) {
+                        html += cur.extraResources.map(r => ` · <a href="${r}" target="_blank" rel="noopener">${r}</a>`).join('');
+                    }
+                    html += `</div>`;
+                }
+                if (cur.steps && cur.steps.length) {
+                    html += '<h3 style="margin-top: 20px;">Steps to complete in Word:</h3>';
+                    html += '<ol>';
+                    html += cur.steps.map(step => `<li>${step}</li>`).join('');
+                    html += '</ol>';
+                }
+
+                if (cur.successIndicators && cur.successIndicators.length) {
+                    html += cur.successIndicators.map(s => `<div class="success">${s}</div>`).join('');
+                }
+
+                // Add legend on task pages
+                html += '<div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border);"><strong>Legend:</strong><div class="legend"><div class="legend-item"><span class="ui-btn">Button/Menu</span><span>Click this in Word.</span></div><div class="legend-item"><span class="ui-text">Text to select</span><span>Highlight or locate this text in the document.</span></div><div class="legend-item"><span class="ui-field">Field/Option</span><span>Type or choose this value.</span></div><div class="legend-item"><span class="ui-key">Ctrl+S</span><span>Keyboard shortcut to press.</span></div></div></div>';
+            }
+            els.content.innerHTML = html;
+
+            // Button state
+            const atStart = idx === 0;
+            const atEnd = idx === total - 1;
+            els.prevBtn2.disabled = atStart;
+            els.nextBtn2.disabled = atEnd;
+            localStorage.setItem(STORAGE_KEY, String(idx));
+        }
+
+        function next() { if (idx < total - 1) { idx++; render(); } }
+        function prev() { if (idx > 0) { idx--; render(); } }
+
+        // Wire controls
+        els.prevBtn2.addEventListener('click', prev);
+        els.nextBtn2.addEventListener('click', next);
+        els.resetBtn.addEventListener('click', () => { idx = 0; render(); });
+        els.jumpToTask.addEventListener('change', (e) => {
+            if (e.target.value) {
+                idx = Number(e.target.value);
+                render();
+                e.target.value = ''; // Reset dropdown
+            }
+        });
+        window.addEventListener('keydown', (e) => {
+            if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) return;
+            if (e.key === 'ArrowRight') { next(); }
+            if (e.key === 'ArrowLeft') { prev(); }
+        });
+        render();
+    </script>
+</body>
+
+</html>
