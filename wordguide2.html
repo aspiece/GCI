@@ -1156,7 +1156,8 @@
         // Wire controls
         els.prevBtn2.addEventListener('click', prev);
         els.nextBtn2.addEventListener('click', next);
-        els.resetBtn.addEventListener('click', () => { idx = 0; render(); }); \n        els.themeSelector.addEventListener('change', (e) => { setTheme(e.target.value); });
+        els.resetBtn.addEventListener('click', () => { idx = 0; render(); });
+        els.themeSelector.addEventListener('change', (e) => { setTheme(e.target.value); });
         els.jumpToTask.addEventListener('change', (e) => {
             if (e.target.value) {
                 idx = Number(e.target.value);
