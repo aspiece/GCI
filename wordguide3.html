@@ -832,6 +832,15 @@
             font-size: 14px;
             font-style: italic;
         }
+
+        .app-required {
+            margin: 12px 0;
+            padding: 12px 16px;
+            background: rgba(79, 140, 255, 0.08);
+            border-left: 3px solid var(--primary);
+            border-radius: 6px;
+            font-size: 14px;
+        }
     </style>
 </head>
 
@@ -1312,7 +1321,7 @@
             if (page.kind === 'task') {
                 const option = document.createElement('option');
                 option.value = i;
-                option.textContent = `${page.section.replace(/Section \d+: /, '')}: ${page.title.substring(0, 50)}${page.title.length > 50 ? '...' : ''}`;
+                option.textContent = `🖥️ Word App Required • ${page.section.replace(/Section \d+: /, '')}: ${page.title.substring(0, 50)}${page.title.length > 50 ? '...' : ''}`;
                 els.jumpToTask.appendChild(option);
             }
         });
@@ -1348,6 +1357,8 @@
                 if (cur.estimatedTime) html += ` <span class="time-badge">Time: ${cur.estimatedTime}</span>`;
                 html += `</h2>`;
                 html += `<h3>${cur.title}</h3>`;
+                html += `<div class="app-required"><strong>Required app:</strong> Microsoft Word desktop app (not Word Online or browser version).</div>`;
+                html += `<p class="note"><strong>Student tip:</strong> Do one step at a time in Word, then return here and click Next.</p>`;
 
                 if (cur.contextNote) {
                     html += `<div class="context-note">${cur.contextNote}</div>`;
@@ -1365,7 +1376,7 @@
                     html += `</div>`;
                 }
                 if (cur.steps && cur.steps.length) {
-                    html += '<h3 style="margin-top: 20px;">Steps to complete in Word:</h3>';
+                    html += '<h3 style="margin-top: 20px;">Steps to complete in the Word desktop app:</h3>';
                     html += '<ol>';
                     html += cur.steps.map(step => `<li>${step}</li>`).join('');
                     html += '</ol>';
