@@ -1351,6 +1351,7 @@
     };
 
     const STORAGE_KEY = 'mos-word-p1-page';
+    const TASK_STORAGE_PREFIX = 'mos-word-p1-task-';
     let idx = Number(localStorage.getItem(STORAGE_KEY) || 0);
     if (!(idx >= 0 && idx < total)) idx = 0;
 
@@ -1368,6 +1369,17 @@
     function setTheme(theme) {
       document.documentElement.setAttribute('data-theme', theme);
       localStorage.setItem(THEME_STORAGE_KEY, theme);
+    }
+
+    function clearTaskProgress() {
+      const keysToRemove = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith(TASK_STORAGE_PREFIX)) {
+          keysToRemove.push(key);
+        }
+      }
+      keysToRemove.forEach((key) => localStorage.removeItem(key));
     }
 
     // Initialize theme
@@ -1402,7 +1414,7 @@
         }
         html += `</div>`;
       } else if (cur.kind === 'task') {
-        const taskId = `task-${idx}`;
+        const taskId = `${TASK_STORAGE_PREFIX}${idx}`;
         const isChecked = localStorage.getItem(taskId) === 'true';
 
         html += `<div class="task-checkbox">`;
@@ -1460,7 +1472,11 @@
     // Wire controls
     els.prevBtn2.addEventListener('click', prev);
     els.nextBtn2.addEventListener('click', next);
-    els.resetBtn.addEventListener('click', () => { idx = 0; render(); });
+    els.resetBtn.addEventListener('click', () => {
+      idx = 0;
+      clearTaskProgress();
+      render();
+    });
     els.themeSelector.addEventListener('change', (e) => { setTheme(e.target.value); });
     els.jumpToTask.addEventListener('change', (e) => {
       if (e.target.value) {
