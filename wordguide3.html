@@ -1236,6 +1236,104 @@
             }
         ];
 
+        const TASK_COMPATIBILITY = {
+            'Apply the Title style and text effects to the first line': {
+                requiresDesktop: false,
+                onlineGuidance: 'Can usually be completed in Word Online, though exact text effects may differ.'
+            },
+            'Apply the Subtitle style and set font size to 19': {
+                requiresDesktop: false,
+                onlineGuidance: 'Can be completed in Word Online using style and font size controls.'
+            },
+            'Insert a Next Page Section Break before "Background"': {
+                requiresDesktop: true,
+                onlineGuidance: 'Cannot be completed as written in Word Online. Section break controls are limited.'
+            },
+            'Insert logo_square.png after "Proposal Plan" with Photocopy effect': {
+                requiresDesktop: true,
+                onlineGuidance: 'Cannot be completed as written in Word Online. Artistic effect (Photocopy) requires desktop Word.'
+            },
+            'Apply Heading 2 to the title "Background"': {
+                requiresDesktop: false,
+                onlineGuidance: 'Can be completed in Word Online using Heading styles.'
+            },
+            'Use Format Painter to apply Heading 2 to other section titles': {
+                requiresDesktop: false,
+                onlineGuidance: 'Can usually be completed in Word Online with Format Painter.'
+            },
+            'Move the first paragraph into a text box and format it': {
+                requiresDesktop: true,
+                onlineGuidance: 'Cannot be completed as written in Word Online. Full text box formatting/layout controls require desktop Word.'
+            },
+            'Create a Scroll: Horizontal shape and link text from the text box': {
+                requiresDesktop: true,
+                onlineGuidance: 'Cannot be completed in Word Online. Shape text-linking workflow is desktop-only.'
+            },
+            'Insert a screen clipping of the bee and apply effects': {
+                requiresDesktop: true,
+                onlineGuidance: 'Cannot be completed in Word Online. Screen Clipping and advanced picture effects are desktop-only.'
+            },
+            'Format the Popular Flowers list into 3 columns with custom widths': {
+                requiresDesktop: true,
+                onlineGuidance: 'Cannot be completed as written in Word Online. Advanced multi-column width settings require desktop Word.'
+            },
+            'Insert column breaks before "England" and "Afghanistan"': {
+                requiresDesktop: true,
+                onlineGuidance: 'Cannot be completed as written in Word Online. Column breaks are desktop-focused.'
+            },
+            'Show breaks and set column section margins to 0.5" left/right': {
+                requiresDesktop: true,
+                onlineGuidance: 'Cannot be completed as written in Word Online. Show formatting marks and section margins are limited.'
+            },
+            'Create bookmarks for key headings': {
+                requiresDesktop: false,
+                onlineGuidance: 'Can usually be completed in Word Online if bookmark controls are available.'
+            },
+            'Link text in the Proposal Overview paragraph to the bookmarks': {
+                requiresDesktop: false,
+                onlineGuidance: 'Can usually be completed in Word Online with hyperlink to bookmarks.'
+            },
+            'Insert a Vertical Bullet List SmartArt after the Outsourcing Option paragraph': {
+                requiresDesktop: true,
+                onlineGuidance: 'Cannot be completed in Word Online. SmartArt insertion is desktop-only.'
+            },
+            'Format the SmartArt layout and colors': {
+                requiresDesktop: true,
+                onlineGuidance: 'Cannot be completed in Word Online. SmartArt layout/color tools are desktop-only.'
+            },
+            'Format Native Plants table properties': {
+                requiresDesktop: true,
+                onlineGuidance: 'Cannot be completed as written in Word Online. Detailed table property controls require desktop Word.'
+            },
+            'Insert and format a 3D model near the Native Plants table': {
+                requiresDesktop: true,
+                onlineGuidance: 'Cannot be completed in Word Online. 3D model support is desktop-only.'
+            },
+            'Insert an endnote after the third line of the Background text': {
+                requiresDesktop: true,
+                onlineGuidance: 'Cannot be completed as written in Word Online. Endnotes are desktop-focused.'
+            },
+            'Insert an endnote after the "Identified Plants and Flowers" title': {
+                requiresDesktop: true,
+                onlineGuidance: 'Cannot be completed as written in Word Online. Endnotes are desktop-focused.'
+            },
+            'Insert a footnote at the end of the Proposal Overview paragraph': {
+                requiresDesktop: false,
+                onlineGuidance: 'Can usually be completed in Word Online if footnote insertion is enabled.'
+            },
+            'Format endnote and footnote number formats': {
+                requiresDesktop: true,
+                onlineGuidance: 'Cannot be completed as written in Word Online. Advanced note number format controls are desktop-only.'
+            }
+        };
+
+        function evaluateWordOnlineSupport(title = '') {
+            return TASK_COMPATIBILITY[title] || {
+                requiresDesktop: true,
+                onlineGuidance: 'Not manually classified. Use Microsoft Word desktop app for this task.'
+            };
+        }
+
         // Flatten into a linear page list: intro + each task (with all steps visible) + outro
         function buildPages(data) {
             const pages = [];
@@ -1243,11 +1341,12 @@
                 kind: 'cover',
                 section: 'Project Overview',
                 title: 'MOS Word Project 3 - Guided Walkthrough',
-                text: '<strong>Read this overview before starting.</strong><br><br>You will complete Project 3 covering Exam MO-100: Microsoft Word (Word and Word 2019) objectives. This guide walks you through styles, page layout, graphics, columns, links, SmartArt, tables, and references.<br><br><strong>Important:</strong> Use Microsoft Word (desktop app), not Word Online or the web browser version.<br><br><strong>Quick Tips:</strong><br>• <strong>Undo:</strong> Press <span class="ui-key">Ctrl+Z</span><br>• <strong>Redo:</strong> Press <span class="ui-key">Ctrl+Y</span><br>• <strong>Save:</strong> Press <span class="ui-key">Ctrl+S</span> often<br>• <strong>Timing:</strong> Plan for 45-60 minutes to complete Project 3<br><br><strong>How to use this guide:</strong><br>• Follow each task in order using the navigation buttons or arrow keys<br>• Complete the action in Word before advancing to the next step<br>• Use the Jump to task dropdown to skip ahead<br>• Check off completed tasks using the checkbox at the top of each task<br>• Reset progress at any time using the Reset button<br><br><div class="collapsible collapsed"><div class="collapsible-header" onclick="this.parentElement.classList.toggle(\'collapsed\')">Keyboard Shortcuts Reference (click to expand)</div><div class="collapsible-content"><strong>Shortcuts you will use:</strong><br><br><span class="ui-key">Ctrl+S</span> - Save Document<br><span class="ui-key">Ctrl+W</span> - Close Document<br><span class="ui-key">Ctrl+Z</span> - Undo<br><span class="ui-key">Ctrl+Y</span> - Redo<br><span class="ui-key">Ctrl+Enter</span> - Insert Page Break<br><span class="ui-key">Tab</span> - Increase indent level (lists)<br><span class="ui-key">Shift+Tab</span> - Decrease indent level (lists)<br><br><strong>Navigation:</strong><br><span class="ui-key">&larr;</span> <span class="ui-key">&rarr;</span> - Navigate between steps</div></div><br><strong>Legend:</strong><div class="legend"><div class="legend-item"><span class="ui-btn">Button/Menu</span><span>Click this in Word.</span></div><div class="legend-item"><span class="ui-text">Text to select</span><span>Highlight or locate this text in the document.</span></div><div class="legend-item"><span class="ui-field">Field/Option</span><span>Type or choose this value.</span></div><div class="legend-item"><span class="ui-key">Ctrl+S</span><span>Keyboard shortcut to press.</span></div></div>'
+                text: '<strong>Read this overview before starting.</strong><br><br>You will complete Project 3 covering Exam MO-100: Microsoft Word (Word and Word 2019) objectives. This guide walks you through styles, page layout, graphics, columns, links, SmartArt, tables, and references.<br><br><strong>Important:</strong> Some tasks require Microsoft Word desktop app and cannot be completed in Word Online. Check each task\'s app note.<br><br><strong>Quick Tips:</strong><br>• <strong>Undo:</strong> Press <span class="ui-key">Ctrl+Z</span><br>• <strong>Redo:</strong> Press <span class="ui-key">Ctrl+Y</span><br>• <strong>Save:</strong> Press <span class="ui-key">Ctrl+S</span> often<br>• <strong>Timing:</strong> Plan for 45-60 minutes to complete Project 3<br><br><strong>How to use this guide:</strong><br>• Follow each task in order using the navigation buttons or arrow keys<br>• Complete the action in Word before advancing to the next step<br>• Use the Jump to task dropdown to skip ahead<br>• Check off completed tasks using the checkbox at the top of each task<br>• Reset progress at any time using the Reset button<br><br><div class="collapsible collapsed"><div class="collapsible-header" onclick="this.parentElement.classList.toggle(\'collapsed\')">Keyboard Shortcuts Reference (click to expand)</div><div class="collapsible-content"><strong>Shortcuts you will use:</strong><br><br><span class="ui-key">Ctrl+S</span> - Save Document<br><span class="ui-key">Ctrl+W</span> - Close Document<br><span class="ui-key">Ctrl+Z</span> - Undo<br><span class="ui-key">Ctrl+Y</span> - Redo<br><span class="ui-key">Ctrl+Enter</span> - Insert Page Break<br><span class="ui-key">Tab</span> - Increase indent level (lists)<br><span class="ui-key">Shift+Tab</span> - Decrease indent level (lists)<br><br><strong>Navigation:</strong><br><span class="ui-key">&larr;</span> <span class="ui-key">&rarr;</span> - Navigate between steps</div></div><br><strong>Legend:</strong><div class="legend"><div class="legend-item"><span class="ui-btn">Button/Menu</span><span>Click this in Word.</span></div><div class="legend-item"><span class="ui-text">Text to select</span><span>Highlight or locate this text in the document.</span></div><div class="legend-item"><span class="ui-field">Field/Option</span><span>Type or choose this value.</span></div><div class="legend-item"><span class="ui-key">Ctrl+S</span><span>Keyboard shortcut to press.</span></div></div>'
 
             });
             for (const sec of data) {
                 for (const task of sec.tasks) {
+                    const support = evaluateWordOnlineSupport(task.title || '');
                     pages.push({
                         kind: 'task',
                         section: sec.section,
@@ -1258,7 +1357,9 @@
                         successIndicators: task.successIndicators || [],
                         contextNote: task.contextNote || '',
                         resource: task.resource,
-                        extraResources: task.extraResources || []
+                        extraResources: task.extraResources || [],
+                        requiresDesktop: support.requiresDesktop,
+                        onlineGuidance: support.onlineGuidance
                     });
                 }
             }
@@ -1321,13 +1422,30 @@
             if (page.kind === 'task') {
                 const option = document.createElement('option');
                 option.value = i;
-                option.textContent = `🖥️ Word App Required • ${page.section.replace(/Section \d+: /, '')}: ${page.title.substring(0, 50)}${page.title.length > 50 ? '...' : ''}`;
+                const taskLabel = `${page.section.replace(/Section \d+: /, '')}: ${page.title.substring(0, 50)}${page.title.length > 50 ? '...' : ''}`;
+                option.textContent = `${getOnlineLabel(page)} • ${taskLabel}`;
                 els.jumpToTask.appendChild(option);
             }
         });
 
         function fmtStep(n) { return `Step ${n} of ${total}`; }
         function pct(n) { return Math.max(0, Math.min(100, Math.round(((n) / (total - 1)) * 100))); }
+        function isOnlineUiMayDiffer(page) {
+            if (page.requiresDesktop) return false;
+            const guidance = (page.onlineGuidance || '').toLowerCase().trim();
+            if (guidance.startsWith('confirmed online:')) return false;
+            if (guidance.startsWith('ui may differ:')) return true;
+            return /(usually|may|might|if |often|differ|vary|limited|tenant|version)/.test(guidance);
+        }
+        function getOnlineLabel(page) {
+            if (page.requiresDesktop) return '🖥️ Desktop Required';
+            return isOnlineUiMayDiffer(page) ? '⚠️ Online UI May Differ' : '✅ Confirmed Online';
+        }
+        function formatOnlineGuidance(page) {
+            if (page.requiresDesktop) return page.onlineGuidance || '';
+            const base = (page.onlineGuidance || '').replace(/^(Confirmed online:|UI may differ:)\s*/i, '');
+            return `${isOnlineUiMayDiffer(page) ? 'UI may differ:' : 'Confirmed online:'} ${base}`.trim();
+        }
 
         function render() {
             const cur = pages[idx];
@@ -1357,7 +1475,8 @@
                 if (cur.estimatedTime) html += ` <span class="time-badge">Time: ${cur.estimatedTime}</span>`;
                 html += `</h2>`;
                 html += `<h3>${cur.title}</h3>`;
-                html += `<div class="app-required"><strong>Required app:</strong> Microsoft Word desktop app (not Word Online or browser version).</div>`;
+                html += `<div class="app-required"><strong>${cur.requiresDesktop ? 'Required app:' : 'Word Online status:'}</strong> ${cur.requiresDesktop ? 'Microsoft Word desktop app (not Word Online or browser version).' : (isOnlineUiMayDiffer(cur) ? 'Possible in Word Online, but menu names or layout may differ.' : 'Confirmed: this task can be completed in Word Online.')}</div>`;
+                html += `<p class="note">${formatOnlineGuidance(cur)}</p>`;
                 html += `<p class="note"><strong>Student tip:</strong> Do one step at a time in Word, then return here and click Next.</p>`;
 
                 if (cur.contextNote) {
@@ -1376,7 +1495,7 @@
                     html += `</div>`;
                 }
                 if (cur.steps && cur.steps.length) {
-                    html += '<h3 style="margin-top: 20px;">Steps to complete in the Word desktop app:</h3>';
+                    html += `<h3 style="margin-top: 20px;">Steps to complete in ${cur.requiresDesktop ? 'the Word desktop app' : 'Word'}:</h3>`;
                     html += '<ol>';
                     html += cur.steps.map(step => `<li>${step}</li>`).join('');
                     html += '</ol>';

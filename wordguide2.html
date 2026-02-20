@@ -1354,6 +1354,136 @@
             }
         ];
 
+        const TASK_COMPATIBILITY = {
+            'Unlock Tracking with the password "project"': {
+                requiresDesktop: true,
+                onlineGuidance: 'Cannot be completed in Word Online. Restrict Editing and unlock-tracking controls are desktop-only.'
+            },
+            'Turn off Track Changes': {
+                requiresDesktop: false,
+                onlineGuidance: 'Can usually be completed in Word Online if Track Changes is available.'
+            },
+            'Review the Tracked Changes': {
+                requiresDesktop: false,
+                onlineGuidance: 'Can usually be completed in Word Online, though review UI may differ.'
+            },
+            'Accept all Tracked Changes': {
+                requiresDesktop: false,
+                onlineGuidance: 'Can usually be completed in Word Online if Accept controls are enabled.'
+            },
+            'Reply to the first comment with the text "Looks great!"': {
+                requiresDesktop: false,
+                onlineGuidance: 'Can be completed in Word Online using comments and replies.'
+            },
+            'Resolve the second comment': {
+                requiresDesktop: false,
+                onlineGuidance: 'Can usually be completed in Word Online with comment resolution controls.'
+            },
+            'Delete the third comment': {
+                requiresDesktop: false,
+                onlineGuidance: 'Can be completed in Word Online by deleting the comment.'
+            },
+            'Modify the Footer to include today\'s date, updated automatically and centered': {
+                requiresDesktop: true,
+                onlineGuidance: 'Cannot be completed as written in Word Online. Auto-updating date field options are limited.'
+            },
+            'Insert a Registered sign (®) after every instance of "Munson\'s Pickles and Preserves Farm"': {
+                requiresDesktop: false,
+                onlineGuidance: 'Can be completed in Word Online using symbol insertion or copy/paste.'
+            },
+            'After the heading "Identified Plants and Flowers," insert a Table that is 2 columns and 6 rows': {
+                requiresDesktop: false,
+                onlineGuidance: 'Can be completed in Word Online by inserting a table.'
+            },
+            'Split the Cell that contains "Lily of the Valley" and enter "Water Lily" in the new cell': {
+                requiresDesktop: true,
+                onlineGuidance: 'Cannot be completed as written in Word Online. Split Cell command is limited/unsupported.'
+            },
+            'Add a new row to the top of the table with "Popular Flowers by Region" and merge the cells': {
+                requiresDesktop: false,
+                onlineGuidance: 'Can usually be completed in Word Online if row insert and merge are available.'
+            },
+            'Insert the dandelion_photo.jpg after the text "Popular Flowers by Region" in the table': {
+                requiresDesktop: false,
+                onlineGuidance: 'Can be completed in Word Online by inserting a picture.'
+            },
+            'Adjust the dandelion_photo.jpg with specific size, text wrapping, and position settings': {
+                requiresDesktop: true,
+                onlineGuidance: 'Cannot be completed as written in Word Online. Precise picture layout controls require desktop Word.'
+            },
+            'Apply the Texturizer Artistic Effect to the dandelion_photo.jpg': {
+                requiresDesktop: true,
+                onlineGuidance: 'Cannot be completed as written in Word Online. Artistic Effects are desktop-only.'
+            },
+            'Add the Alt Text "Picture of a dandelion" to the dandelion_photo.jpg': {
+                requiresDesktop: false,
+                onlineGuidance: 'Can be completed in Word Online using Alt Text settings.'
+            },
+            'Split the Native Plants table between "Tuft Hairgrass" and "Fireweed" then format both tables with No Border': {
+                requiresDesktop: true,
+                onlineGuidance: 'Cannot be completed as written in Word Online. Split Table and full border controls are desktop-focused.'
+            },
+            'Format the tables in Two Columns beginning with "Miniature Hollyhock" and ending with "Goatsbeard"': {
+                requiresDesktop: true,
+                onlineGuidance: 'Cannot be completed as written in Word Online. Multi-column page layout tools are limited.'
+            },
+            'Convert the bulleted list to a Multilevel list with 1) a) i) format': {
+                requiresDesktop: true,
+                onlineGuidance: 'Cannot be completed as written in Word Online. Custom multilevel list formats are desktop-focused.'
+            },
+            'Increase the city, state items to the second level': {
+                requiresDesktop: false,
+                onlineGuidance: 'Can often be completed in Word Online by increasing list indent level.'
+            },
+            'Set the second list to continue from the first list starting with number 5': {
+                requiresDesktop: true,
+                onlineGuidance: 'Cannot be completed as written in Word Online. Continue numbering controls are limited.'
+            },
+            'Set the second level of both lists to a custom bullet using Webdings character 252': {
+                requiresDesktop: true,
+                onlineGuidance: 'Cannot be completed as written in Word Online. Custom Webdings bullet selection is desktop-only.'
+            },
+            'Insert an Austin Quote Text Box with specific text and formatting': {
+                requiresDesktop: true,
+                onlineGuidance: 'Cannot be completed as written in Word Online. Full text box formatting controls require desktop Word.'
+            },
+            'Insert an appropriate 3D Model on the first page after "Proposal Plan"': {
+                requiresDesktop: true,
+                onlineGuidance: 'Cannot be completed in Word Online. 3D model insertion is desktop-only.'
+            },
+            'Add Alt Text to the 3D Model': {
+                requiresDesktop: true,
+                onlineGuidance: 'Cannot be completed in Word Online because 3D model support is desktop-only.'
+            },
+            'Change the 3D Model View': {
+                requiresDesktop: true,
+                onlineGuidance: 'Cannot be completed in Word Online. 3D model view controls are desktop-only.'
+            },
+            'Insert a Page Break after the 3D Model': {
+                requiresDesktop: false,
+                onlineGuidance: 'Can usually be completed in Word Online with page break insertion.'
+            },
+            'Add the document title "Proposal plan" to document properties': {
+                requiresDesktop: true,
+                onlineGuidance: 'Cannot be completed as written in Word Online. Document property editing is desktop-focused.'
+            },
+            'Change Margins to Top and Bottom 1", Left and Right .5" with .5" Gutter': {
+                requiresDesktop: true,
+                onlineGuidance: 'Cannot be completed as written in Word Online. Custom margins with gutter require desktop Word.'
+            },
+            'Save and Close the document': {
+                requiresDesktop: false,
+                onlineGuidance: 'Can be completed in Word Online, though close/save options may appear in different places.'
+            }
+        };
+
+        function evaluateWordOnlineSupport(title = '') {
+            return TASK_COMPATIBILITY[title] || {
+                requiresDesktop: true,
+                onlineGuidance: 'Not manually classified. Use Microsoft Word desktop app for this task.'
+            };
+        }
+
         // Flatten into a linear page list: intro + each task (with all steps visible) + outro
         function buildPages(data) {
             const pages = [];
@@ -1361,11 +1491,12 @@
                 kind: 'cover',
                 section: 'Project Overview',
                 title: 'MOS Word Project 2 — Guided Walkthrough',
-                text: '<strong>📖 Read through this overview before starting.</strong><br><br>You will complete Project 2 covering all Exam MO-100: Microsoft Word (Word and Word 2019) objectives. This comprehensive guide walks you through document collaboration, advanced formatting, tables, lists, graphics, and more.<br><br><strong style="color: #ff6b6b;">⚠️ Important: Use Microsoft Word (desktop app on your computer), not Word Online or the web browser version.</strong><br><br><strong>💡 Quick Tips:</strong><br>• <strong>Made a mistake?</strong> Press <span class="ui-key">Ctrl+Z</span> to undo your last action<br>• <strong>Need to redo?</strong> Press <span class="ui-key">Ctrl+Y</span> to redo an undone action<br>• <strong>Save your work:</strong> Press <span class="ui-key">Ctrl+S</span> frequently to save your progress<br>• <strong>Take your time:</strong> Project 2 has more tasks than Project 1 — plan for 45-60 minutes to complete<br><br><strong>How to use this guide:</strong><br>• Follow each step in order using the navigation buttons at the bottom or arrow keys<br>• Complete the action in Word before advancing to the next step<br>• Use the "Jump to task..." dropdown above to skip to specific tasks<br>• Check off completed tasks using the checkbox at the top of each task<br>• Use the resource links provided for additional help<br>• Time estimates (⏱️) help you pace yourself<br>• Reset progress at any time using the Reset button<br><br><div class="collapsible collapsed"><div class="collapsible-header" onclick="this.parentElement.classList.toggle(\'collapsed\')">📋 Keyboard Shortcuts Reference (click to expand)</div><div class="collapsible-content"><strong>Shortcuts you\'ll use in this project:</strong><br><br><span class="ui-key">Ctrl+S</span> - Save Document<br><span class="ui-key">Ctrl+W</span> - Close Document<br><span class="ui-key">Ctrl+Z</span> - Undo<br><span class="ui-key">Ctrl+Y</span> - Redo<br><span class="ui-key">Ctrl+Enter</span> - Insert Page Break<br><span class="ui-key">Tab</span> - Increase indent level (in lists)<br><span class="ui-key">Shift+Tab</span> - Decrease indent level (in lists)<br><br><strong>Navigation shortcuts:</strong><br><span class="ui-key">←</span> <span class="ui-key">→</span> - Navigate between steps in this guide</div></div><br><strong>Legend:</strong><div class="legend"><div class="legend-item"><span class="ui-btn">Button/Menu</span><span>Click this in Word.</span></div><div class="legend-item"><span class="ui-text">Text to select</span><span>Highlight or locate this text in the document.</span></div><div class="legend-item"><span class="ui-field">Field/Option</span><span>Type or choose this value.</span></div><div class="legend-item"><span class="ui-key">Ctrl+S</span><span>Keyboard shortcut to press.</span></div></div>',
+                text: '<strong>📖 Read through this overview before starting.</strong><br><br>You will complete Project 2 covering all Exam MO-100: Microsoft Word (Word and Word 2019) objectives. This comprehensive guide walks you through document collaboration, advanced formatting, tables, lists, graphics, and more.<br><br><strong style="color: #ff6b6b;">⚠️ Important: Some tasks require Microsoft Word desktop app and cannot be completed in Word Online. Check each task\'s app note.</strong><br><br><strong>💡 Quick Tips:</strong><br>• <strong>Made a mistake?</strong> Press <span class="ui-key">Ctrl+Z</span> to undo your last action<br>• <strong>Need to redo?</strong> Press <span class="ui-key">Ctrl+Y</span> to redo an undone action<br>• <strong>Save your work:</strong> Press <span class="ui-key">Ctrl+S</span> frequently to save your progress<br>• <strong>Take your time:</strong> Project 2 has more tasks than Project 1 — plan for 45-60 minutes to complete<br><br><strong>How to use this guide:</strong><br>• Follow each step in order using the navigation buttons at the bottom or arrow keys<br>• Complete the action in Word before advancing to the next step<br>• Use the "Jump to task..." dropdown above to skip to specific tasks<br>• Check off completed tasks using the checkbox at the top of each task<br>• Use the resource links provided for additional help<br>• Time estimates (⏱️) help you pace yourself<br>• Reset progress at any time using the Reset button<br><br><div class="collapsible collapsed"><div class="collapsible-header" onclick="this.parentElement.classList.toggle(\'collapsed\')">📋 Keyboard Shortcuts Reference (click to expand)</div><div class="collapsible-content"><strong>Shortcuts you\'ll use in this project:</strong><br><br><span class="ui-key">Ctrl+S</span> - Save Document<br><span class="ui-key">Ctrl+W</span> - Close Document<br><span class="ui-key">Ctrl+Z</span> - Undo<br><span class="ui-key">Ctrl+Y</span> - Redo<br><span class="ui-key">Ctrl+Enter</span> - Insert Page Break<br><span class="ui-key">Tab</span> - Increase indent level (in lists)<br><span class="ui-key">Shift+Tab</span> - Decrease indent level (in lists)<br><br><strong>Navigation shortcuts:</strong><br><span class="ui-key">←</span> <span class="ui-key">→</span> - Navigate between steps in this guide</div></div><br><strong>Legend:</strong><div class="legend"><div class="legend-item"><span class="ui-btn">Button/Menu</span><span>Click this in Word.</span></div><div class="legend-item"><span class="ui-text">Text to select</span><span>Highlight or locate this text in the document.</span></div><div class="legend-item"><span class="ui-field">Field/Option</span><span>Type or choose this value.</span></div><div class="legend-item"><span class="ui-key">Ctrl+S</span><span>Keyboard shortcut to press.</span></div></div>',
 
             });
             for (const sec of data) {
                 for (const task of sec.tasks) {
+                    const support = evaluateWordOnlineSupport(task.title || '');
                     pages.push({
                         kind: 'task',
                         section: sec.section,
@@ -1376,7 +1507,9 @@
                         successIndicators: task.successIndicators || [],
                         contextNote: task.contextNote || '',
                         resource: task.resource,
-                        extraResources: task.extraResources || []
+                        extraResources: task.extraResources || [],
+                        requiresDesktop: support.requiresDesktop,
+                        onlineGuidance: support.onlineGuidance
                     });
                 }
             }
@@ -1439,13 +1572,30 @@
             if (page.kind === 'task') {
                 const option = document.createElement('option');
                 option.value = i;
-                option.textContent = `🖥️ Word App Required • ${page.section.replace(/Section \d+: /, '')}: ${page.title.substring(0, 50)}${page.title.length > 50 ? '...' : ''}`;
+                const taskLabel = `${page.section.replace(/Section \d+: /, '')}: ${page.title.substring(0, 50)}${page.title.length > 50 ? '...' : ''}`;
+                option.textContent = `${getOnlineLabel(page)} • ${taskLabel}`;
                 els.jumpToTask.appendChild(option);
             }
         });
 
         function fmtStep(n) { return `Step ${n} of ${total}`; }
         function pct(n) { return Math.max(0, Math.min(100, Math.round(((n) / (total - 1)) * 100))); }
+        function isOnlineUiMayDiffer(page) {
+            if (page.requiresDesktop) return false;
+            const guidance = (page.onlineGuidance || '').toLowerCase().trim();
+            if (guidance.startsWith('confirmed online:')) return false;
+            if (guidance.startsWith('ui may differ:')) return true;
+            return /(usually|may|might|if |often|differ|vary|limited|tenant|version)/.test(guidance);
+        }
+        function getOnlineLabel(page) {
+            if (page.requiresDesktop) return '🖥️ Desktop Required';
+            return isOnlineUiMayDiffer(page) ? '⚠️ Online UI May Differ' : '✅ Confirmed Online';
+        }
+        function formatOnlineGuidance(page) {
+            if (page.requiresDesktop) return page.onlineGuidance || '';
+            const base = (page.onlineGuidance || '').replace(/^(Confirmed online:|UI may differ:)\s*/i, '');
+            return `${isOnlineUiMayDiffer(page) ? 'UI may differ:' : 'Confirmed online:'} ${base}`.trim();
+        }
 
         function render() {
             const cur = pages[idx];
@@ -1475,7 +1625,8 @@
                 if (cur.estimatedTime) html += ` <span class="time-badge">⏱️ ${cur.estimatedTime}</span>`;
                 html += `</h2>`;
                 html += `<h3>${cur.title}</h3>`;
-                html += `<div class="app-required"><strong>Required app:</strong> Microsoft Word desktop app (not Word Online or browser version).</div>`;
+                html += `<div class="app-required"><strong>${cur.requiresDesktop ? 'Required app:' : 'Word Online status:'}</strong> ${cur.requiresDesktop ? 'Microsoft Word desktop app (not Word Online or browser version).' : (isOnlineUiMayDiffer(cur) ? 'Possible in Word Online, but menu names or layout may differ.' : 'Confirmed: this task can be completed in Word Online.')}</div>`;
+                html += `<p class="note">${formatOnlineGuidance(cur)}</p>`;
                 html += `<p class="note"><strong>Student tip:</strong> Do one step at a time in Word, then return here and click Next.</p>`;
 
                 if (cur.contextNote) {
@@ -1494,7 +1645,7 @@
                     html += `</div>`;
                 }
                 if (cur.steps && cur.steps.length) {
-                    html += '<h3 style="margin-top: 20px;">Steps to complete in the Word desktop app:</h3>';
+                    html += `<h3 style="margin-top: 20px;">Steps to complete in ${cur.requiresDesktop ? 'the Word desktop app' : 'Word'}:</h3>`;
                     html += '<ol>';
                     html += cur.steps.map(step => `<li>${step}</li>`).join('');
                     html += '</ol>';
