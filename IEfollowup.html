@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
     <title>Emotional Intelligence Base Camp Followup</title>
     <style>
         :root {
@@ -27,6 +28,24 @@
             font-family: Inter, Segoe UI, Roboto, Arial, sans-serif;
             background: linear-gradient(180deg, #e8f2ff 0%, var(--bg) 60%);
             color: var(--text);
+        }
+
+        .skip-link {
+            position: absolute;
+            left: 12px;
+            top: -44px;
+            background: #ffffff;
+            color: #0f172a;
+            border: 2px solid var(--accent);
+            border-radius: 8px;
+            padding: 8px 12px;
+            z-index: 1000;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .skip-link:focus {
+            top: 12px;
         }
 
         .wrap {
@@ -156,6 +175,12 @@
             font-size: 0.92rem;
         }
 
+        .card-chip.selected-chip {
+            outline: 3px solid var(--accent);
+            outline-offset: 2px;
+            background: #dbeafe;
+        }
+
         .card-chip:active {
             cursor: grabbing;
         }
@@ -184,6 +209,17 @@
 
         button.secondary {
             background: #334155;
+        }
+
+        button:focus-visible,
+        a:focus-visible,
+        input:focus-visible,
+        select:focus-visible,
+        textarea:focus-visible,
+        .card-chip:focus-visible,
+        .bucket:focus-visible {
+            outline: 3px solid var(--accent);
+            outline-offset: 2px;
         }
 
         .result {
@@ -225,29 +261,42 @@
             color: var(--muted);
             font-size: 0.9rem;
         }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
     </style>
 </head>
 
 <body>
-    <main class="wrap">
-        <h1>Emotional Intelligence: Base Camp Followup</h1>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <main id="main-content" class="wrap" aria-labelledby="page-title">
+        <h1 id="page-title">Emotional Intelligence: Base Camp Followup</h1>
         <p class="lead">Use this activity after your Base Camp day to reflect, sort examples, and create a plan for
             real-world application.</p>
 
-        <section class="card">
-            <h2>1) Watch and Notice</h2>
+        <section class="card" aria-labelledby="watch-title">
+            <h2 id="watch-title">1) Watch and Notice</h2>
             <p>As you watch, track the five ideas from the video and jot one real example from your Base Camp day.
             </p>
             <div class="video">
                 <iframe src="https://www.youtube.com/embed/n9h8fG1DKhA" title="Emotional Intelligence Video"
-                    allowfullscreen></iframe>
+                    loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
             </div>
             <p class="small">Video map: Know Yourself Emotionally (0:30), Learn Your Triggers (0:59), Empathize (1:26),
                 Own Your Emotions (2:06), Listen to Your Body (2:38).</p>
         </section>
 
-        <section class="card">
-            <h2>2) Video-Aligned EI Self Check (0–10)</h2>
+        <section class="card" aria-labelledby="selfcheck-title">
+            <h2 id="selfcheck-title">2) Video-Aligned EI Self Check (0–10)</h2>
             <p class="small">Rate yourself on each specific point from the video based on today’s team activities.</p>
             <div class="grid" id="sliderGrid">
                 <div class="slider-row">
@@ -281,63 +330,77 @@
                     <div class="small" id="bodySignalsVal">5</div>
                 </div>
             </div>
-            <div class="score" id="scoreBox">Average EI score: 5.0 — Growing and learning.</div>
+            <div class="score" id="scoreBox" role="status" aria-live="polite">Average EI score: 5.0 — Growing and
+                learning.</div>
         </section>
 
-        <section class="card">
-            <h2>3) Manipulative Activity: Sort by Video Concept</h2>
+        <section class="card" aria-labelledby="sort-title">
+            <h2 id="sort-title">3) Manipulative Activity: Sort by Video Concept</h2>
             <p>Drag each card into the exact concept from the video. Then click <strong>Check My Sort</strong>.</p>
+            <p class="small" id="sortHelp">Keyboard option: focus a card and press Enter/Space to select it, then focus
+                a category and press Enter/Space to place it.</p>
 
             <div class="sort-area">
-                <div class="bucket" data-key="know-yourself">
+                <div class="bucket" data-key="know-yourself" tabindex="0"
+                    aria-label="Know Yourself Emotionally category">
                     <h3>Know Yourself Emotionally</h3>
                 </div>
-                <div class="bucket" data-key="learn-triggers">
+                <div class="bucket" data-key="learn-triggers" tabindex="0" aria-label="Learn Your Triggers category">
                     <h3>Learn Your Triggers</h3>
                 </div>
-                <div class="bucket" data-key="empathy">
+                <div class="bucket" data-key="empathy" tabindex="0" aria-label="Empathize category">
                     <h3>Empathize</h3>
                 </div>
-                <div class="bucket" data-key="own-emotions">
+                <div class="bucket" data-key="own-emotions" tabindex="0" aria-label="Own Your Emotions category">
                     <h3>Own Your Emotions</h3>
                 </div>
-                <div class="bucket" data-key="listen-body">
+                <div class="bucket" data-key="listen-body" tabindex="0" aria-label="Listen to Your Body category">
                     <h3>Listen to Your Body</h3>
                 </div>
             </div>
 
             <div class="cards" id="sourceCards" aria-label="Draggable EI cards">
-                <span class="card-chip" draggable="true" data-answer="know-yourself">"I know I come across as defensive
+                <span class="card-chip" draggable="true" data-answer="know-yourself" tabindex="0" role="button"
+                    aria-grabbed="false" aria-describedby="sortHelp">"I know I come across as defensive
                     when I feel corrected."</span>
-                <span class="card-chip" draggable="true" data-answer="know-yourself">Asks for peer feedback about
+                <span class="card-chip" draggable="true" data-answer="know-yourself" tabindex="0" role="button"
+                    aria-grabbed="false" aria-describedby="sortHelp">Asks for peer feedback about
                     communication blind spots</span>
-                <span class="card-chip" draggable="true" data-answer="learn-triggers">Identifies time pressure as the
+                <span class="card-chip" draggable="true" data-answer="learn-triggers" tabindex="0" role="button"
+                    aria-grabbed="false" aria-describedby="sortHelp">Identifies time pressure as the
                     trigger behind snapping</span>
-                <span class="card-chip" draggable="true" data-answer="learn-triggers">Thinks: "Did this emotion help or
+                <span class="card-chip" draggable="true" data-answer="learn-triggers" tabindex="0" role="button"
+                    aria-grabbed="false" aria-describedby="sortHelp">Thinks: "Did this emotion help or
                     hinder me under pressure?"</span>
-                <span class="card-chip" draggable="true" data-answer="empathy">Asks open questions and listens without
+                <span class="card-chip" draggable="true" data-answer="empathy" tabindex="0" role="button"
+                    aria-grabbed="false" aria-describedby="sortHelp">Asks open questions and listens without
                     interrupting</span>
-                <span class="card-chip" draggable="true" data-answer="empathy">Notices crossed arms and quiet tone as
+                <span class="card-chip" draggable="true" data-answer="empathy" tabindex="0" role="button"
+                    aria-grabbed="false" aria-describedby="sortHelp">Notices crossed arms and quiet tone as
                     nonverbal clues</span>
-                <span class="card-chip" draggable="true" data-answer="own-emotions">Pauses and reflects before
+                <span class="card-chip" draggable="true" data-answer="own-emotions" tabindex="0" role="button"
+                    aria-grabbed="false" aria-describedby="sortHelp">Pauses and reflects before
                     responding to upsetting comments</span>
-                <span class="card-chip" draggable="true" data-answer="own-emotions">Owns their part in a two-way
+                <span class="card-chip" draggable="true" data-answer="own-emotions" tabindex="0" role="button"
+                    aria-grabbed="false" aria-describedby="sortHelp">Owns their part in a two-way
                     conflict conversation</span>
-                <span class="card-chip" draggable="true" data-answer="listen-body">Uses tense shoulders as a cue to slow
+                <span class="card-chip" draggable="true" data-answer="listen-body" tabindex="0" role="button"
+                    aria-grabbed="false" aria-describedby="sortHelp">Uses tense shoulders as a cue to slow
                     down</span>
-                <span class="card-chip" draggable="true" data-answer="listen-body">Treats a nervous stomach as data
+                <span class="card-chip" draggable="true" data-answer="listen-body" tabindex="0" role="button"
+                    aria-grabbed="false" aria-describedby="sortHelp">Treats a nervous stomach as data
                     before making a decision</span>
             </div>
 
             <div class="actions">
-                <button id="checkSort">Check My Sort</button>
-                <button class="secondary" id="resetSort">Reset Cards</button>
+                <button type="button" id="checkSort">Check My Sort</button>
+                <button type="button" class="secondary" id="resetSort">Reset Cards</button>
             </div>
-            <div class="result" id="sortResult" aria-live="polite"></div>
+            <div class="result" id="sortResult" role="status" aria-live="polite"></div>
         </section>
 
-        <section class="card">
-            <h2>4) Integration Plan (Exit Ticket)</h2>
+        <section class="card" aria-labelledby="plan-title">
+            <h2 id="plan-title">4) Integration Plan (Exit Ticket)</h2>
             <div class="plan-grid">
                 <div>
                     <label for="trigger">A situation that triggers me in teamwork:</label>
@@ -367,9 +430,9 @@
             <textarea id="commitment"
                 placeholder="Example: If I feel rushed, I will pause, breathe, and ask one clear question before reacting."></textarea>
             <div class="actions">
-                <button id="copyPlan">Copy My Plan</button>
+                <button type="button" id="copyPlan">Copy My Plan</button>
             </div>
-            <div class="result" id="planResult" aria-live="polite"></div>
+            <div class="result" id="planResult" role="status" aria-live="polite"></div>
         </section>
     </main>
 
@@ -406,10 +469,51 @@
         const source = document.getElementById("sourceCards");
         const sortResult = document.getElementById("sortResult");
         let dragged = null;
+        let selectedChip = null;
+
+        function setSortStatus(message, className = "result") {
+            sortResult.textContent = message;
+            sortResult.className = className;
+        }
+
+        function clearSelectedChip() {
+            chips().forEach(chip => {
+                chip.classList.remove("selected-chip");
+                chip.setAttribute("aria-grabbed", "false");
+            });
+            selectedChip = null;
+        }
+
+        function selectChip(chip) {
+            clearSelectedChip();
+            selectedChip = chip;
+            chip.classList.add("selected-chip");
+            chip.setAttribute("aria-grabbed", "true");
+            setSortStatus("Card selected. Move to a category and press Enter or Space to place it.");
+        }
+
+        function placeSelectedChip(zone) {
+            if (!selectedChip) return;
+            zone.appendChild(selectedChip);
+            const bucketName = zone.querySelector("h3")?.textContent || "selected category";
+            setSortStatus(`Placed card in ${bucketName}.`, "result");
+            clearSelectedChip();
+        }
 
         function attachDragHandlers(chip) {
             chip.addEventListener("dragstart", () => {
                 dragged = chip;
+            });
+
+            chip.addEventListener("click", () => {
+                selectChip(chip);
+            });
+
+            chip.addEventListener("keydown", (event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    selectChip(chip);
+                }
             });
         }
 
@@ -430,13 +534,21 @@
                 zone.appendChild(dragged);
                 dragged = null;
             });
+
+            if (zone.classList.contains("bucket")) {
+                zone.addEventListener("keydown", (event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        placeSelectedChip(zone);
+                    }
+                });
+            }
         });
 
         document.getElementById("checkSort").addEventListener("click", () => {
             const placed = chips().filter(chip => chip.parentElement.classList.contains("bucket"));
             if (placed.length < chips().length) {
-                sortResult.textContent = "Place all cards into categories before checking.";
-                sortResult.className = "result warn";
+                setSortStatus("Place all cards into categories before checking.", "result warn");
                 return;
             }
 
@@ -449,18 +561,16 @@
             });
 
             if (correct === chips().length) {
-                sortResult.textContent = `Excellent. You matched all ${correct}/${chips().length} cards correctly.`;
-                sortResult.className = "result good";
+                setSortStatus(`Excellent. You matched all ${correct}/${chips().length} cards correctly.`, "result good");
             } else {
-                sortResult.textContent = `You matched ${correct}/${chips().length}. Recheck the video labels and examples for each concept.`;
-                sortResult.className = "result warn";
+                setSortStatus(`You matched ${correct}/${chips().length}. Recheck the video labels and examples for each concept.`, "result warn");
             }
         });
 
         document.getElementById("resetSort").addEventListener("click", () => {
             chips().forEach(chip => source.appendChild(chip));
-            sortResult.textContent = "Cards reset. Try again.";
-            sortResult.className = "result";
+            clearSelectedChip();
+            setSortStatus("Cards reset. Try again.", "result");
         });
 
         document.getElementById("copyPlan").addEventListener("click", async () => {
