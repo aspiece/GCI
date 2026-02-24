@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Emotional Intelligence Follow-Up Activity</title>
+    <style>
+        :root {
+            --bg: #f4f9ff;
+            --card: #ffffff;
+            --text: #0f172a;
+            --muted: #475569;
+            --accent: #0b63b3;
+            --accent-soft: #dbeafe;
+            --good: #0f766e;
+            --warn: #b45309;
+            --shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Inter, Segoe UI, Roboto, Arial, sans-serif;
+            background: linear-gradient(180deg, #e8f2ff 0%, var(--bg) 60%);
+            color: var(--text);
+        }
+
+        .wrap {
+            max-width: 1050px;
+            margin: 0 auto;
+            padding: 18px;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: 1.7rem;
+        }
+
+        .lead {
+            margin: 0 0 18px;
+            color: var(--muted);
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 16px;
+            margin: 0 0 14px;
+        }
+
+        h2 {
+            font-size: 1.15rem;
+            margin: 0 0 10px;
+        }
+
+        p {
+            margin: 0 0 10px;
+            line-height: 1.45;
+        }
+
+        .video {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #0b1320;
+        }
+
+        .video iframe {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 12px;
+        }
+
+        .slider-row {
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 10px;
+            background: #fbfdff;
+        }
+
+        .slider-row label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .slider-row input[type="range"] {
+            width: 100%;
+        }
+
+        .small {
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+        .score {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 10px;
+            background: var(--accent-soft);
+            font-weight: 600;
+        }
+
+        .sort-area {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .bucket {
+            min-height: 150px;
+            border: 2px dashed #cbd5e1;
+            border-radius: 10px;
+            padding: 10px;
+            background: #f8fbff;
+        }
+
+        .bucket h3 {
+            margin: 0 0 8px;
+            font-size: 0.98rem;
+        }
+
+        .cards {
+            margin-top: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 10px;
+            background: #fcfdff;
+        }
+
+        .card-chip {
+            display: inline-block;
+            margin: 6px 6px 0 0;
+            padding: 8px 10px;
+            border-radius: 999px;
+            background: #e2e8f0;
+            border: 1px solid #cbd5e1;
+            cursor: grab;
+            user-select: none;
+            font-size: 0.92rem;
+        }
+
+        .card-chip:active {
+            cursor: grabbing;
+        }
+
+        .bucket.drag-over {
+            border-color: var(--accent);
+            background: #eef5ff;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        button {
+            border: 0;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-weight: 700;
+            background: var(--accent);
+            color: #fff;
+            cursor: pointer;
+        }
+
+        button.secondary {
+            background: #334155;
+        }
+
+        .result {
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        .good {
+            color: var(--good);
+        }
+
+        .warn {
+            color: var(--warn);
+        }
+
+        select,
+        textarea {
+            width: 100%;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 10px;
+            font: inherit;
+            background: #fff;
+        }
+
+        textarea {
+            min-height: 90px;
+            resize: vertical;
+        }
+
+        .plan-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 10px;
+        }
+
+        .footer-note {
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="wrap">
+        <h1>Emotional Intelligence: Team-Building Follow-Up</h1>
+        <p class="lead">Use this activity after your team-building day to reflect, sort examples, and create a plan for
+            real-world application.</p>
+
+        <section class="card">
+            <h2>1) Watch and Notice</h2>
+            <p>As you watch, write down one moment where emotions could either help teamwork or hurt it.</p>
+            <div class="video">
+                <iframe src="https://www.youtube.com/embed/n9h8fG1DKhA" title="Emotional Intelligence Video"
+                    allowfullscreen></iframe>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>2) Quick EI Self Check (0–10)</h2>
+            <p class="small">Slide each skill based on how you acted during team-building activities today.</p>
+            <div class="grid" id="sliderGrid">
+                <div class="slider-row">
+                    <label for="selfAware">Self-Awareness: I noticed my emotions in the moment.</label>
+                    <input id="selfAware" type="range" min="0" max="10" value="5" />
+                    <div class="small" id="selfAwareVal">5</div>
+                </div>
+                <div class="slider-row">
+                    <label for="selfManage">Self-Management: I stayed in control when stressed.</label>
+                    <input id="selfManage" type="range" min="0" max="10" value="5" />
+                    <div class="small" id="selfManageVal">5</div>
+                </div>
+                <div class="slider-row">
+                    <label for="socialAware">Social Awareness: I noticed how teammates felt.</label>
+                    <input id="socialAware" type="range" min="0" max="10" value="5" />
+                    <div class="small" id="socialAwareVal">5</div>
+                </div>
+                <div class="slider-row">
+                    <label for="relationship">Relationship Skills: I communicated in a helpful way.</label>
+                    <input id="relationship" type="range" min="0" max="10" value="5" />
+                    <div class="small" id="relationshipVal">5</div>
+                </div>
+            </div>
+            <div class="score" id="scoreBox">Average EI score: 5.0 — Growing and learning.</div>
+        </section>
+
+        <section class="card">
+            <h2>3) Manipulative Activity: Sort the Team Moves</h2>
+            <p>Drag each card into the EI category where it fits best. Then click <strong>Check My Sort</strong>.</p>
+
+            <div class="sort-area">
+                <div class="bucket" data-key="self-awareness">
+                    <h3>Self-Awareness</h3>
+                </div>
+                <div class="bucket" data-key="self-management">
+                    <h3>Self-Management</h3>
+                </div>
+                <div class="bucket" data-key="social-awareness">
+                    <h3>Social Awareness</h3>
+                </div>
+                <div class="bucket" data-key="relationship-skills">
+                    <h3>Relationship Skills</h3>
+                </div>
+            </div>
+
+            <div class="cards" id="sourceCards" aria-label="Draggable EI cards">
+                <span class="card-chip" draggable="true" data-answer="self-awareness">"I can tell I’m getting
+                    frustrated."</span>
+                <span class="card-chip" draggable="true" data-answer="self-management">Takes 3 deep breaths before
+                    replying</span>
+                <span class="card-chip" draggable="true" data-answer="social-awareness">Notices a teammate is getting
+                    quiet</span>
+                <span class="card-chip" draggable="true" data-answer="relationship-skills">Asks, "Can we combine both
+                    ideas?"</span>
+                <span class="card-chip" draggable="true" data-answer="self-management">Uses calm words after losing a
+                    round</span>
+                <span class="card-chip" draggable="true" data-answer="social-awareness">Checks in: "You good? Want
+                    support?"</span>
+                <span class="card-chip" draggable="true" data-answer="self-awareness">Admits, "I interrupted too
+                    much."</span>
+                <span class="card-chip" draggable="true" data-answer="relationship-skills">Thanks others for specific
+                    contributions</span>
+            </div>
+
+            <div class="actions">
+                <button id="checkSort">Check My Sort</button>
+                <button class="secondary" id="resetSort">Reset Cards</button>
+            </div>
+            <div class="result" id="sortResult" aria-live="polite"></div>
+        </section>
+
+        <section class="card">
+            <h2>4) Integration Plan (Exit Ticket)</h2>
+            <div class="plan-grid">
+                <div>
+                    <label for="trigger">A situation that triggers me in teamwork:</label>
+                    <select id="trigger">
+                        <option value="">Choose one...</option>
+                        <option>Not being heard</option>
+                        <option>Time pressure</option>
+                        <option>Disagreement in the group</option>
+                        <option>Someone not participating</option>
+                        <option>Making a mistake in front of others</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="strategy">EI strategy I will use next time:</label>
+                    <select id="strategy">
+                        <option value="">Choose one...</option>
+                        <option>Name my emotion before reacting</option>
+                        <option>Pause and take 3 breaths</option>
+                        <option>Ask a clarifying question</option>
+                        <option>Use "I" statements calmly</option>
+                        <option>Invite a quieter teammate to share</option>
+                    </select>
+                </div>
+            </div>
+            <p style="margin-top:10px;"><label for="commitment">My one-sentence commitment for the next team
+                    activity:</label></p>
+            <textarea id="commitment"
+                placeholder="Example: If I feel rushed, I will pause, breathe, and ask one clear question before reacting."></textarea>
+            <div class="actions">
+                <button id="copyPlan">Copy My Plan</button>
+            </div>
+            <div class="result" id="planResult" aria-live="polite"></div>
+            <p class="footer-note">Teacher tip: Ask students to share one “team move” they will repeat next class.</p>
+        </section>
+    </main>
+
+    <script>
+        const sliderIds = ["selfAware", "selfManage", "socialAware", "relationship"];
+        const scoreBox = document.getElementById("scoreBox");
+
+        function updateScores() {
+            let total = 0;
+            sliderIds.forEach(id => {
+                const slider = document.getElementById(id);
+                const value = Number(slider.value);
+                total += value;
+                document.getElementById(id + "Val").textContent = value;
+            });
+
+            const avg = (total / sliderIds.length).toFixed(1);
+            let message = "Growing and learning.";
+            if (avg >= 8) message = "Strong EI habits — keep modeling them.";
+            else if (avg >= 6) message = "Solid progress — identify one skill to raise.";
+            else if (avg >= 4) message = "Good start — practice pausing before reacting.";
+            else message = "Start small — name feelings and choose one calm action.";
+
+            scoreBox.textContent = `Average EI score: ${avg} — ${message}`;
+        }
+
+        sliderIds.forEach(id => {
+            document.getElementById(id).addEventListener("input", updateScores);
+        });
+        updateScores();
+
+        const chips = () => Array.from(document.querySelectorAll(".card-chip"));
+        const buckets = Array.from(document.querySelectorAll(".bucket"));
+        const source = document.getElementById("sourceCards");
+        const sortResult = document.getElementById("sortResult");
+        let dragged = null;
+
+        function attachDragHandlers(chip) {
+            chip.addEventListener("dragstart", () => {
+                dragged = chip;
+            });
+        }
+
+        chips().forEach(attachDragHandlers);
+
+        [source, ...buckets].forEach(zone => {
+            zone.addEventListener("dragover", (event) => {
+                event.preventDefault();
+                if (zone.classList.contains("bucket")) zone.classList.add("drag-over");
+            });
+            zone.addEventListener("dragleave", () => {
+                zone.classList.remove("drag-over");
+            });
+            zone.addEventListener("drop", (event) => {
+                event.preventDefault();
+                zone.classList.remove("drag-over");
+                if (!dragged) return;
+                zone.appendChild(dragged);
+                dragged = null;
+            });
+        });
+
+        document.getElementById("checkSort").addEventListener("click", () => {
+            const placed = chips().filter(chip => chip.parentElement.classList.contains("bucket"));
+            if (placed.length < chips().length) {
+                sortResult.textContent = "Place all cards into categories before checking.";
+                sortResult.className = "result warn";
+                return;
+            }
+
+            let correct = 0;
+            chips().forEach(chip => {
+                const parentBucket = chip.parentElement.closest(".bucket");
+                const expected = chip.dataset.answer;
+                const actual = parentBucket ? parentBucket.dataset.key : "";
+                if (expected === actual) correct += 1;
+            });
+
+            if (correct === chips().length) {
+                sortResult.textContent = `Excellent. You matched all ${correct}/${chips().length} cards correctly.`;
+                sortResult.className = "result good";
+            } else {
+                sortResult.textContent = `You matched ${correct}/${chips().length}. Review the ones connected to awareness vs management.`;
+                sortResult.className = "result warn";
+            }
+        });
+
+        document.getElementById("resetSort").addEventListener("click", () => {
+            chips().forEach(chip => source.appendChild(chip));
+            sortResult.textContent = "Cards reset. Try again.";
+            sortResult.className = "result";
+        });
+
+        document.getElementById("copyPlan").addEventListener("click", async () => {
+            const trigger = document.getElementById("trigger").value;
+            const strategy = document.getElementById("strategy").value;
+            const commitment = document.getElementById("commitment").value.trim();
+            const planResult = document.getElementById("planResult");
+
+            if (!trigger || !strategy || !commitment) {
+                planResult.textContent = "Complete all plan fields before copying.";
+                planResult.className = "result warn";
+                return;
+            }
+
+            const text = `EI Follow-Up Plan\nTrigger: ${trigger}\nStrategy: ${strategy}\nCommitment: ${commitment}`;
+
+            try {
+                await navigator.clipboard.writeText(text);
+                planResult.textContent = "Plan copied. Paste it into your class form or journal.";
+                planResult.className = "result good";
+            } catch {
+                planResult.textContent = "Clipboard unavailable. Select and copy your response manually.";
+                planResult.className = "result warn";
+            }
+        });
+    </script>
+</body>
+
+</html>
