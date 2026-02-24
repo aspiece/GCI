@@ -236,7 +236,10 @@
 
         <section class="card">
             <h2>1) Watch and Notice</h2>
-            <p>As you watch, write down one moment where emotions could either help teamwork or hurt it.</p>
+            <p>As you watch, track the five ideas from the video and jot one real example from your team-building day.
+            </p>
+            <p class="small">Video map: Know Yourself Emotionally (0:30), Learn Your Triggers (0:59), Empathize (1:26),
+                Own Your Emotions (2:06), Listen to Your Body (2:38).</p>
             <div class="video">
                 <iframe src="https://www.youtube.com/embed/n9h8fG1DKhA" title="Emotional Intelligence Video"
                     allowfullscreen></iframe>
@@ -244,69 +247,86 @@
         </section>
 
         <section class="card">
-            <h2>2) Quick EI Self Check (0–10)</h2>
-            <p class="small">Slide each skill based on how you acted during team-building activities today.</p>
+            <h2>2) Video-Aligned EI Self Check (0–10)</h2>
+            <p class="small">Rate yourself on each specific point from the video based on today’s team activities.</p>
             <div class="grid" id="sliderGrid">
                 <div class="slider-row">
-                    <label for="selfAware">Self-Awareness: I noticed my emotions in the moment.</label>
+                    <label for="selfAware">Know Yourself Emotionally (0:30): I recognized my strengths, weaknesses, and
+                        how I came across.</label>
                     <input id="selfAware" type="range" min="0" max="10" value="5" />
                     <div class="small" id="selfAwareVal">5</div>
                 </div>
                 <div class="slider-row">
-                    <label for="selfManage">Self-Management: I stayed in control when stressed.</label>
-                    <input id="selfManage" type="range" min="0" max="10" value="5" />
-                    <div class="small" id="selfManageVal">5</div>
+                    <label for="triggers">Learn Your Triggers (0:59): I noticed pressure moments and what emotions were
+                        driving my response.</label>
+                    <input id="triggers" type="range" min="0" max="10" value="5" />
+                    <div class="small" id="triggersVal">5</div>
                 </div>
                 <div class="slider-row">
-                    <label for="socialAware">Social Awareness: I noticed how teammates felt.</label>
-                    <input id="socialAware" type="range" min="0" max="10" value="5" />
-                    <div class="small" id="socialAwareVal">5</div>
+                    <label for="empathy">Empathize (1:26): I listened actively, asked open questions, and noticed
+                        nonverbal cues.</label>
+                    <input id="empathy" type="range" min="0" max="10" value="5" />
+                    <div class="small" id="empathyVal">5</div>
                 </div>
                 <div class="slider-row">
-                    <label for="relationship">Relationship Skills: I communicated in a helpful way.</label>
-                    <input id="relationship" type="range" min="0" max="10" value="5" />
-                    <div class="small" id="relationshipVal">5</div>
+                    <label for="ownEmotions">Own Your Emotions (2:06): I paused and reflected instead of reacting
+                        impulsively.</label>
+                    <input id="ownEmotions" type="range" min="0" max="10" value="5" />
+                    <div class="small" id="ownEmotionsVal">5</div>
+                </div>
+                <div class="slider-row">
+                    <label for="bodySignals">Listen to Your Body (2:38): I used body signals (tense muscles, upset
+                        stomach, etc.) as useful information.</label>
+                    <input id="bodySignals" type="range" min="0" max="10" value="5" />
+                    <div class="small" id="bodySignalsVal">5</div>
                 </div>
             </div>
             <div class="score" id="scoreBox">Average EI score: 5.0 — Growing and learning.</div>
         </section>
 
         <section class="card">
-            <h2>3) Manipulative Activity: Sort the Team Moves</h2>
-            <p>Drag each card into the EI category where it fits best. Then click <strong>Check My Sort</strong>.</p>
+            <h2>3) Manipulative Activity: Sort by Video Concept</h2>
+            <p>Drag each card into the exact concept from the video. Then click <strong>Check My Sort</strong>.</p>
 
             <div class="sort-area">
-                <div class="bucket" data-key="self-awareness">
-                    <h3>Self-Awareness</h3>
+                <div class="bucket" data-key="know-yourself">
+                    <h3>Know Yourself Emotionally</h3>
                 </div>
-                <div class="bucket" data-key="self-management">
-                    <h3>Self-Management</h3>
+                <div class="bucket" data-key="learn-triggers">
+                    <h3>Learn Your Triggers</h3>
                 </div>
-                <div class="bucket" data-key="social-awareness">
-                    <h3>Social Awareness</h3>
+                <div class="bucket" data-key="empathy">
+                    <h3>Empathize</h3>
                 </div>
-                <div class="bucket" data-key="relationship-skills">
-                    <h3>Relationship Skills</h3>
+                <div class="bucket" data-key="own-emotions">
+                    <h3>Own Your Emotions</h3>
+                </div>
+                <div class="bucket" data-key="listen-body">
+                    <h3>Listen to Your Body</h3>
                 </div>
             </div>
 
             <div class="cards" id="sourceCards" aria-label="Draggable EI cards">
-                <span class="card-chip" draggable="true" data-answer="self-awareness">"I can tell I’m getting
-                    frustrated."</span>
-                <span class="card-chip" draggable="true" data-answer="self-management">Takes 3 deep breaths before
-                    replying</span>
-                <span class="card-chip" draggable="true" data-answer="social-awareness">Notices a teammate is getting
-                    quiet</span>
-                <span class="card-chip" draggable="true" data-answer="relationship-skills">Asks, "Can we combine both
-                    ideas?"</span>
-                <span class="card-chip" draggable="true" data-answer="self-management">Uses calm words after losing a
-                    round</span>
-                <span class="card-chip" draggable="true" data-answer="social-awareness">Checks in: "You good? Want
-                    support?"</span>
-                <span class="card-chip" draggable="true" data-answer="self-awareness">Admits, "I interrupted too
-                    much."</span>
-                <span class="card-chip" draggable="true" data-answer="relationship-skills">Thanks others for specific
-                    contributions</span>
+                <span class="card-chip" draggable="true" data-answer="know-yourself">"I know I come across as defensive
+                    when I feel corrected."</span>
+                <span class="card-chip" draggable="true" data-answer="know-yourself">Asks for peer feedback about
+                    communication blind spots</span>
+                <span class="card-chip" draggable="true" data-answer="learn-triggers">Identifies time pressure as the
+                    trigger behind snapping</span>
+                <span class="card-chip" draggable="true" data-answer="learn-triggers">Thinks: "Did this emotion help or
+                    hinder me under pressure?"</span>
+                <span class="card-chip" draggable="true" data-answer="empathy">Asks open questions and listens without
+                    interrupting</span>
+                <span class="card-chip" draggable="true" data-answer="empathy">Notices crossed arms and quiet tone as
+                    nonverbal clues</span>
+                <span class="card-chip" draggable="true" data-answer="own-emotions">Pauses and reflects before
+                    responding to upsetting comments</span>
+                <span class="card-chip" draggable="true" data-answer="own-emotions">Owns their part in a two-way
+                    conflict conversation</span>
+                <span class="card-chip" draggable="true" data-answer="listen-body">Uses tense shoulders as a cue to slow
+                    down</span>
+                <span class="card-chip" draggable="true" data-answer="listen-body">Treats a nervous stomach as data
+                    before making a decision</span>
             </div>
 
             <div class="actions">
@@ -331,14 +351,14 @@
                     </select>
                 </div>
                 <div>
-                    <label for="strategy">EI strategy I will use next time:</label>
+                    <label for="strategy">Video strategy I will use next time:</label>
                     <select id="strategy">
                         <option value="">Choose one...</option>
-                        <option>Name my emotion before reacting</option>
-                        <option>Pause and take 3 breaths</option>
-                        <option>Ask a clarifying question</option>
-                        <option>Use "I" statements calmly</option>
-                        <option>Invite a quieter teammate to share</option>
+                        <option>Know myself emotionally: ask for one piece of peer feedback</option>
+                        <option>Learn triggers: name what set me off under pressure</option>
+                        <option>Empathize: ask one open question and actively listen</option>
+                        <option>Own emotions: pause, reflect, then respond</option>
+                        <option>Listen to body: use physical cues before deciding</option>
                     </select>
                 </div>
             </div>
@@ -355,7 +375,7 @@
     </main>
 
     <script>
-        const sliderIds = ["selfAware", "selfManage", "socialAware", "relationship"];
+        const sliderIds = ["selfAware", "triggers", "empathy", "ownEmotions", "bodySignals"];
         const scoreBox = document.getElementById("scoreBox");
 
         function updateScores() {
@@ -433,7 +453,7 @@
                 sortResult.textContent = `Excellent. You matched all ${correct}/${chips().length} cards correctly.`;
                 sortResult.className = "result good";
             } else {
-                sortResult.textContent = `You matched ${correct}/${chips().length}. Review the ones connected to awareness vs management.`;
+                sortResult.textContent = `You matched ${correct}/${chips().length}. Recheck the video labels and examples for each concept.`;
                 sortResult.className = "result warn";
             }
         });
