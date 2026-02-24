@@ -528,6 +528,15 @@
       font-style: italic;
     }
 
+    .app-required {
+      margin: 12px 0;
+      padding: 12px 16px;
+      background: rgba(79, 140, 255, 0.08);
+      border-left: 3px solid var(--primary);
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
     /* Light theme overrides */
     [data-theme="light"] .badge {
       background: #e3f0ff;
@@ -1305,6 +1314,164 @@
       }
     ];
 
+    const TASK_COMPATIBILITY = {
+      'Inspect the document and remove Document Properties and Personal Information and Hidden Text.': {
+        requiresDesktop: true,
+        onlineGuidance: 'Cannot be completed in Word Online. Document Inspector features are desktop-only.'
+      },
+      'Find every instance of the text “Munsons’” and replace with “Munson’s”.': {
+        requiresDesktop: false,
+        onlineGuidance: 'Can be completed in Word Online using Find and Replace.'
+      },
+      'Change the document properties: Title “Proposal Plan”, Author your name, Keywords “flowers”, “plants”, “greenhouse”, “outsourcing”.': {
+        requiresDesktop: true,
+        onlineGuidance: 'Cannot be completed in Word Online. Advanced document properties are desktop-only.'
+      },
+      'Without printing, change Print settings to Uncollated and 2 Pages Per Sheet.': {
+        requiresDesktop: true,
+        onlineGuidance: 'Cannot be completed in Word Online. Detailed print layout settings require desktop Word.'
+      },
+      'Apply Text Effect Fill: Black, Text color 1; Shadow to title, center align, and set font size to 20.': {
+        requiresDesktop: false,
+        onlineGuidance: 'Mostly possible in Word Online, but exact Text Effects options may vary.'
+      },
+      'Insert a section break that starts a new page and view it using Show/Hide.': {
+        requiresDesktop: true,
+        onlineGuidance: 'Cannot be completed as written in Word Online. Section break and formatting mark controls are limited.'
+      },
+      'Change the margins for the first section to 3 inches for top and bottom.': {
+        requiresDesktop: true,
+        onlineGuidance: 'Cannot be completed as written in Word Online. Section-specific margin settings require desktop Word.'
+      },
+      'Apply the Style Set “Casual”.': {
+        requiresDesktop: true,
+        onlineGuidance: 'Cannot be completed as written in Word Online. Style Set gallery choices are desktop-focused.'
+      },
+      'Set paragraph spacing Before and After to 6 pt.': {
+        requiresDesktop: false,
+        onlineGuidance: 'Can usually be completed in Word Online using paragraph spacing controls.'
+      },
+      'Format headings: Heading 1 for “Background,” “Proposal Overview,” and “Summary”.': {
+        requiresDesktop: false,
+        onlineGuidance: 'Can be completed in Word Online using built-in heading styles.'
+      },
+      'Format “Identified Plants and Flowers” as Heading 2.': {
+        requiresDesktop: false,
+        onlineGuidance: 'Can be completed in Word Online using Heading 2 style.'
+      },
+      'Format “Popular Flowers by Region” and “Native Plants“ as Heading 3.': {
+        requiresDesktop: false,
+        onlineGuidance: 'Can be completed in Word Online using Heading 3 style.'
+      },
+      'Use Format Painter to copy formatting of “Identified Plants and Flowers” to “Greenhouse Option” and “Outsourcing Option”.': {
+        requiresDesktop: false,
+        onlineGuidance: 'Can usually be completed in Word Online with Format Painter.'
+      },
+      'Insert bookmarks at “Background,” “Proposal Overview,” and “Summary”.': {
+        requiresDesktop: false,
+        onlineGuidance: 'Can be completed in Word Online using bookmark tools if available in your tenant/version.'
+      },
+      'Use Go To to find each bookmark.': {
+        requiresDesktop: false,
+        onlineGuidance: 'Usually possible in Word Online, but navigation UI may differ.'
+      },
+      'Add a Draft 1 watermark.': {
+        requiresDesktop: true,
+        onlineGuidance: 'Cannot be completed as written in Word Online. Watermark insertion is desktop-focused.'
+      },
+      'Add a second page and insert the Automatic Table 2 Table of Contents.': {
+        requiresDesktop: true,
+        onlineGuidance: 'Cannot be completed as written in Word Online. Automatic Table 2 option is a desktop preset.'
+      },
+      'Change the Table of Contents to show Heading levels 1–2 with underscore tab leader.': {
+        requiresDesktop: true,
+        onlineGuidance: 'Cannot be completed as written in Word Online. Advanced TOC formatting options are desktop-only.'
+      },
+      'Convert the table “Miniature Hollyhock” through “Goatsbeard” to text separated by paragraph.': {
+        requiresDesktop: true,
+        onlineGuidance: 'Cannot be completed as written in Word Online. Convert Table to Text is desktop-only.'
+      },
+      'Format the “Miniature Hollyhock” through “Goatsbeard” text as a bulleted list.': {
+        requiresDesktop: false,
+        onlineGuidance: 'Can be completed in Word Online using bullet list tools.'
+      },
+      'Change that bulleted list to solid boxes.': {
+        requiresDesktop: true,
+        onlineGuidance: 'Cannot be completed as written in Word Online. Custom bullet symbol choices are limited.'
+      },
+      'Apply two columns with 0.2 spacing and a line between for the list “Zone 3” through “Zone 9”.': {
+        requiresDesktop: true,
+        onlineGuidance: 'Cannot be completed as written in Word Online. Advanced column spacing and line settings require desktop Word.'
+      },
+      'Convert “Popular Flowers by Region … United States: Rose” to a 2‑column table separated by colon (:).': {
+        requiresDesktop: true,
+        onlineGuidance: 'Cannot be completed as written in Word Online. Convert Text to Table with separator options is desktop-focused.'
+      },
+      'Resize the first column width to 1.5” and the first row height to 0.5”.': {
+        requiresDesktop: true,
+        onlineGuidance: 'Cannot be completed as written in Word Online. Precise table row/column size controls are desktop-only.'
+      },
+      'Merge the first row of the “Popular Flowers by Region” table.': {
+        requiresDesktop: false,
+        onlineGuidance: 'Can often be completed in Word Online if table merge controls are available.'
+      },
+      'Sort the table data by the Region name.': {
+        requiresDesktop: true,
+        onlineGuidance: 'Cannot be completed as written in Word Online. Table sort controls are desktop-only.'
+      },
+      'Set default cell margins to 0.05 in the table.': {
+        requiresDesktop: true,
+        onlineGuidance: 'Cannot be completed as written in Word Online. Default cell margin settings require desktop Word.'
+      },
+      'Format the first two rows as repeating header rows.': {
+        requiresDesktop: true,
+        onlineGuidance: 'Cannot be completed as written in Word Online. Repeating header row settings are desktop-only.'
+      },
+      'On the title page, insert the image sign_illustration.png after the title “Proposal Plan”.': {
+        requiresDesktop: false,
+        onlineGuidance: 'Can be completed in Word Online by inserting an image from your device.'
+      },
+      'Remove the picture background, keeping only the jar, pickles, and garlic.': {
+        requiresDesktop: true,
+        onlineGuidance: 'Cannot be completed as written in Word Online. Background removal is a desktop feature.'
+      },
+      'Apply Glow: 5 pt; Gray, Accent color 3 to the picture.': {
+        requiresDesktop: true,
+        onlineGuidance: 'Cannot be completed as written in Word Online. Detailed picture effects like Glow are desktop-focused.'
+      },
+      'Set wrapping to Square, center horizontally relative to Page, set vertical absolute 0.5” below paragraph, width 2.5”.': {
+        requiresDesktop: true,
+        onlineGuidance: 'Cannot be completed as written in Word Online. Advanced wrap/position controls require desktop Word.'
+      },
+      'Add appropriate alternative text to the picture.': {
+        requiresDesktop: false,
+        onlineGuidance: 'Can be completed in Word Online using Alt Text settings.'
+      },
+      'Locate and correct accessibility issues.': {
+        requiresDesktop: true,
+        onlineGuidance: 'Cannot be completed as written in Word Online. Full Accessibility Checker is desktop-focused.'
+      },
+      'Check compatibility issues.': {
+        requiresDesktop: true,
+        onlineGuidance: 'Cannot be completed as written in Word Online. Compatibility Checker is desktop-only.'
+      },
+      'Hide all formatting marks.': {
+        requiresDesktop: false,
+        onlineGuidance: 'Can usually be completed in Word Online using Show/Hide formatting marks.'
+      },
+      'Save as PDF, share electronically with the instructor, and close the document.': {
+        requiresDesktop: false,
+        onlineGuidance: 'Usually possible in Word Online, but PDF export/share steps may use different menus.'
+      }
+    };
+
+    function evaluateWordOnlineSupport(title = '') {
+      return TASK_COMPATIBILITY[title] || {
+        requiresDesktop: true,
+        onlineGuidance: 'Not manually classified. Use Microsoft Word desktop app for this task.'
+      };
+    }
+
     // Flatten into a linear page list: intro + each task (with all steps visible) + outro
     function buildPages(data) {
       const pages = [];
@@ -1312,11 +1479,12 @@
         kind: 'cover',
         section: 'Project Overview',
         title: 'MOS Word Project 1 — Guided Walkthrough',
-        text: '<strong>📖 Read through this overview before starting.</strong><br><br>You will complete Project 1 for Munson\'s Pickles and Preserves Farm. This guide walks you through each task step-by-step.<br><br><strong style="color: #ff6b6b;">⚠️ Important: Use Microsoft Word (desktop app on your computer), not Word Online or the web browser version.</strong><br><br><strong>💡 Quick Tips:</strong><br>• <strong>Made a mistake?</strong> Press <span class="ui-key">Ctrl+Z</span> to undo your last action<br>• <strong>Need to redo?</strong> Press <span class="ui-key">Ctrl+Y</span> to redo an undone action<br>• <strong>Save your work:</strong> Press <span class="ui-key">Ctrl+S</span> frequently to save your progress<br><br><strong>How to use this guide:</strong><br>• Follow each step in order using the navigation buttons at the bottom or arrow keys<br>• Complete the action in Word before advancing to the next step<br>• Use the "Jump to task..." dropdown above to skip to specific tasks<br>• Check off completed tasks using the checkbox at the top of each task<br>• Use the resource links provided for additional help<br>• Time estimates (⏱️) help you pace yourself<br>• Reset progress at any time using the Reset button<br><br><div class="collapsible collapsed"><div class="collapsible-header" onclick="this.parentElement.classList.toggle(\'collapsed\')">📋 Keyboard Shortcuts Reference (click to expand)</div><div class="collapsible-content"><strong>Shortcuts you\'ll use in this project:</strong><br><br><span class="ui-key">Ctrl+H</span> - Find and Replace<br><span class="ui-key">Ctrl+A</span> - Select All<br><span class="ui-key">Ctrl+G</span> - Go To<br><span class="ui-key">Ctrl+Enter</span> - Insert Page Break<br><span class="ui-key">Ctrl+S</span> - Save Document<br><span class="ui-key">Ctrl+Z</span> - Undo<br><span class="ui-key">Ctrl+Y</span> - Redo<br><br><strong>Navigation shortcuts:</strong><br><span class="ui-key">←</span> <span class="ui-key">→</span> - Navigate between steps in this guide</div></div><br><strong>Legend:</strong><div class="legend"><div class="legend-item"><span class="ui-btn">Button/Menu</span><span>Click this in Word.</span></div><div class="legend-item"><span class="ui-text">Text to select</span><span>Highlight this text in the document.</span></div><div class="legend-item"><span class="ui-field">Field/Option</span><span>Type or choose a value.</span></div><div class="legend-item"><span class="ui-key">Ctrl+S</span><span>Keyboard shortcut to press.</span></div></div>',
+        text: '<strong>📖 Read through this overview before starting.</strong><br><br>You will complete Project 1 for Munson\'s Pickles and Preserves Farm. This guide walks you through each task step-by-step.<br><br><strong style="color: #ff6b6b;">⚠️ Important: Some tasks require Microsoft Word desktop app and cannot be completed in Word Online. Check each task\'s app note.</strong><br><br><strong>💡 Quick Tips:</strong><br>• <strong>Made a mistake?</strong> Press <span class="ui-key">Ctrl+Z</span> to undo your last action<br>• <strong>Need to redo?</strong> Press <span class="ui-key">Ctrl+Y</span> to redo an undone action<br>• <strong>Save your work:</strong> Press <span class="ui-key">Ctrl+S</span> frequently to save your progress<br><br><strong>How to use this guide:</strong><br>• Follow each step in order using the navigation buttons at the bottom or arrow keys<br>• Complete the action in Word before advancing to the next step<br>• Use the "Jump to task..." dropdown above to skip to specific tasks<br>• Check off completed tasks using the checkbox at the top of each task<br>• Use the resource links provided for additional help<br>• Time estimates (⏱️) help you pace yourself<br>• Reset progress at any time using the Reset button<br><br><div class="collapsible collapsed"><div class="collapsible-header" onclick="this.parentElement.classList.toggle(\'collapsed\')">📋 Keyboard Shortcuts Reference (click to expand)</div><div class="collapsible-content"><strong>Shortcuts you\'ll use in this project:</strong><br><br><span class="ui-key">Ctrl+H</span> - Find and Replace<br><span class="ui-key">Ctrl+A</span> - Select All<br><span class="ui-key">Ctrl+G</span> - Go To<br><span class="ui-key">Ctrl+Enter</span> - Insert Page Break<br><span class="ui-key">Ctrl+S</span> - Save Document<br><span class="ui-key">Ctrl+Z</span> - Undo<br><span class="ui-key">Ctrl+Y</span> - Redo<br><br><strong>Navigation shortcuts:</strong><br><span class="ui-key">←</span> <span class="ui-key">→</span> - Navigate between steps in this guide</div></div><br><strong>Legend:</strong><div class="legend"><div class="legend-item"><span class="ui-btn">Button/Menu</span><span>Click this in Word.</span></div><div class="legend-item"><span class="ui-text">Text to select</span><span>Highlight this text in the document.</span></div><div class="legend-item"><span class="ui-field">Field/Option</span><span>Type or choose a value.</span></div><div class="legend-item"><span class="ui-key">Ctrl+S</span><span>Keyboard shortcut to press.</span></div></div>',
 
       });
       for (const sec of data) {
         for (const task of sec.tasks) {
+          const support = evaluateWordOnlineSupport(task.title);
           pages.push({
             kind: 'task',
             section: sec.section,
@@ -1327,7 +1495,9 @@
             successIndicators: task.successIndicators || [],
             contextNote: task.contextNote || '',
             resource: task.resource,
-            extraResources: task.extraResources || []
+            extraResources: task.extraResources || [],
+            requiresDesktop: support.requiresDesktop,
+            onlineGuidance: support.onlineGuidance
           });
         }
       }
@@ -1351,6 +1521,7 @@
     };
 
     const STORAGE_KEY = 'mos-word-p1-page';
+    const TASK_STORAGE_PREFIX = 'mos-word-p1-task-';
     let idx = Number(localStorage.getItem(STORAGE_KEY) || 0);
     if (!(idx >= 0 && idx < total)) idx = 0;
 
@@ -1370,6 +1541,17 @@
       localStorage.setItem(THEME_STORAGE_KEY, theme);
     }
 
+    function clearTaskProgress() {
+      const keysToRemove = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith(TASK_STORAGE_PREFIX)) {
+          keysToRemove.push(key);
+        }
+      }
+      keysToRemove.forEach((key) => localStorage.removeItem(key));
+    }
+
     // Initialize theme
     initializeTheme();
 
@@ -1378,13 +1560,30 @@
       if (page.kind === 'task') {
         const option = document.createElement('option');
         option.value = i;
-        option.textContent = `${page.section.replace(/Section \d+: /, '')}: ${page.title.substring(0, 60)}${page.title.length > 60 ? '...' : ''}`;
+        const taskLabel = `${page.section.replace(/Section \d+: /, '')}: ${page.title.substring(0, 60)}${page.title.length > 60 ? '...' : ''}`;
+        option.textContent = `${getOnlineLabel(page)} • ${taskLabel}`;
         els.jumpToTask.appendChild(option);
       }
     });
 
     function fmtStep(n) { return `Step ${n} of ${total}`; }
     function pct(n) { return Math.max(0, Math.min(100, Math.round(((n) / (total - 1)) * 100))); }
+    function isOnlineUiMayDiffer(page) {
+      if (page.requiresDesktop) return false;
+      const guidance = (page.onlineGuidance || '').toLowerCase().trim();
+      if (guidance.startsWith('confirmed online:')) return false;
+      if (guidance.startsWith('ui may differ:')) return true;
+      return /(usually|may|might|if |often|differ|vary|limited|tenant|version)/.test(guidance);
+    }
+    function getOnlineLabel(page) {
+      if (page.requiresDesktop) return '🖥️ Desktop Required';
+      return isOnlineUiMayDiffer(page) ? '⚠️ Online UI May Differ' : '✅ Confirmed Online';
+    }
+    function formatOnlineGuidance(page) {
+      if (page.requiresDesktop) return page.onlineGuidance || '';
+      const base = (page.onlineGuidance || '').replace(/^(Confirmed online:|UI may differ:)\s*/i, '');
+      return `${isOnlineUiMayDiffer(page) ? 'UI may differ:' : 'Confirmed online:'} ${base}`.trim();
+    }
 
     function render() {
       const cur = pages[idx];
@@ -1402,7 +1601,7 @@
         }
         html += `</div>`;
       } else if (cur.kind === 'task') {
-        const taskId = `task-${idx}`;
+        const taskId = `${TASK_STORAGE_PREFIX}${idx}`;
         const isChecked = localStorage.getItem(taskId) === 'true';
 
         html += `<div class="task-checkbox">`;
@@ -1414,6 +1613,9 @@
         if (cur.estimatedTime) html += ` <span class="time-badge">⏱️ ${cur.estimatedTime}</span>`;
         html += `</h2>`;
         html += `<h3>${cur.title}</h3>`;
+        html += `<div class="app-required"><strong>${cur.requiresDesktop ? 'Required app:' : 'Word Online status:'}</strong> ${cur.requiresDesktop ? 'Microsoft Word desktop app (not Word Online or browser version).' : (isOnlineUiMayDiffer(cur) ? 'Possible in Word Online, but menu names or layout may differ.' : 'Confirmed: this task can be completed in Word Online.')}</div>`;
+        html += `<p class="note">${formatOnlineGuidance(cur)}</p>`;
+        html += `<p class="note"><strong>Student tip:</strong> Do one step at a time in Word, then return here and click Next.</p>`;
 
         if (cur.contextNote) {
           html += `<div class="context-note">${cur.contextNote}</div>`;
@@ -1431,7 +1633,7 @@
           html += `</div>`;
         }
         if (cur.steps && cur.steps.length) {
-          html += '<h3 style="margin-top: 20px;">Steps to complete in Word:</h3>';
+          html += `<h3 style="margin-top: 20px;">Steps to complete in ${cur.requiresDesktop ? 'the Word desktop app' : 'Word'}:</h3>`;
           html += '<ol>';
           html += cur.steps.map(step => `<li>${step}</li>`).join('');
           html += '</ol>';
@@ -1460,7 +1662,11 @@
     // Wire controls
     els.prevBtn2.addEventListener('click', prev);
     els.nextBtn2.addEventListener('click', next);
-    els.resetBtn.addEventListener('click', () => { idx = 0; render(); });
+    els.resetBtn.addEventListener('click', () => {
+      idx = 0;
+      clearTaskProgress();
+      render();
+    });
     els.themeSelector.addEventListener('change', (e) => { setTheme(e.target.value); });
     els.jumpToTask.addEventListener('change', (e) => {
       if (e.target.value) {
