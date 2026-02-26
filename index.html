@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GCI Project Hub</title>
+    <style>
+        :root {
+            --bg: #f5f7fb;
+            --card: #ffffff;
+            --text: #111827;
+            --muted: #4b5563;
+            --accent: #2563eb;
+            --border: #dbe3ef;
+            --shadow: 0 8px 20px rgba(17, 24, 39, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Inter, Segoe UI, Roboto, Arial, sans-serif;
+            background: linear-gradient(180deg, #ebf2ff 0%, var(--bg) 70%);
+            color: var(--text);
+        }
+
+        .wrap {
+            max-width: 1050px;
+            margin: 0 auto;
+            padding: 24px 16px 40px;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: 2rem;
+        }
+
+        .lead {
+            margin: 0 0 20px;
+            color: var(--muted);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 14px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 14px;
+        }
+
+        h2 {
+            margin: 0 0 10px;
+            font-size: 1.1rem;
+        }
+
+        ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        li+li {
+            margin-top: 8px;
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        a:hover,
+        a:focus-visible {
+            text-decoration: underline;
+        }
+
+        .small {
+            margin-top: 16px;
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="wrap">
+        <h1>GCI Project Hub</h1>
+        <p class="lead">Home page for your repo projects, activities, setup guides, and test resources.</p>
+
+        <div class="grid">
+            <section class="card" aria-labelledby="activities-title">
+                <h2 id="activities-title">Interactive Activities</h2>
+                <ul>
+                    <li><a href="AgileReview.html">Agile Review</a></li>
+                    <li><a href="AgileVocab.html">Agile Vocabulary</a></li>
+                    <li><a href="GCI_Communications.html">GCI Communications</a></li>
+                    <li><a href="GCI3Dorder.html">GCI 3D Order</a></li>
+                    <li><a href="IEfollowup.html">Emotional Intelligence Followup</a></li>
+                    <li><a href="Invoice_Generator.html">Invoice Generator</a></li>
+                    <li><a href="KPOPMath.html">KPOP Math</a></li>
+                    <li><a href="mathquest.html">Math Quest</a></li>
+                    <li><a href="No_School_Viewer.html">No School Viewer</a></li>
+                    <li><a href="OOOReview.html">Out-of-Office Review</a></li>
+                    <li><a href="ProgReview.html">Programming Review</a></li>
+                    <li><a href="wordguide1.html">Word Guide 1</a></li>
+                    <li><a href="wordguide2.html">Word Guide 2</a></li>
+                    <li><a href="wordguide3.html">Word Guide 3</a></li>
+                </ul>
+            </section>
+
+            <section class="card" aria-labelledby="docs-title">
+                <h2 id="docs-title">Docs and Setup</h2>
+                <ul>
+                    <li><a href="README.md">README</a></li>
+                    <li><a href="Google_Sheets_Setup_Guide.md">Google Sheets Setup Guide</a></li>
+                    <li><a href="Invoice_Google_Sheets_Setup.md">Invoice Google Sheets Setup</a></li>
+                    <li><a href="PLAYWRIGHT_RUN.md">Playwright Run Guide</a></li>
+                    <li><a href="LICENSE">License</a></li>
+                </ul>
+            </section>
+
+            <section class="card" aria-labelledby="dev-title">
+                <h2 id="dev-title">Scripts and Testing</h2>
+                <ul>
+                    <li><a href="Google_Apps_Script.js">Google Apps Script</a></li>
+                    <li><a href="Invoice_Logger_Apps_Script.js">Invoice Logger Apps Script</a></li>
+                    <li><a href="helpdeskchecklist.py">Helpdesk Checklist Script</a></li>
+                    <li><a href="HArdware%20Lab%20Manual.py">Hardware Lab Manual Script</a></li>
+                    <li><a href="test_ooo_smoke.js">OOO Smoke Test</a></li>
+                    <li><a href="tests/playwright/accessibility.spec.mjs">Playwright Accessibility Test</a></li>
+                    <li><a href="tools/ooo_ui_smoke.js">OOO UI Smoke Tool</a></li>
+                    <li><a href="tools/expr_stress_test.js">Expression Stress Test Tool</a></li>
+                    <li><a href="package.json">package.json</a></li>
+                </ul>
+            </section>
+        </div>
+
+        <p class="small">Tip: Set this file as your browser start page while working in this repo.</p>
+    </main>
+</body>
+
+</html>

@@ -2,6 +2,10 @@
 
 Tools Built for the Genesee Career Institute
 
+## Project Hub (Recommended Start)
+
+- Open `index.html` in a browser to access all projects, guides, scripts, and tests from one page.
+
 ## App status
 
 - Production
