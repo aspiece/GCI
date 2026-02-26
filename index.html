@@ -4,7 +4,26 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description"
+        content="Genesee Career Institute Computer Science instructional hub with classroom activities, review tools, and curriculum-aligned student practice resources." />
+    <meta name="keywords"
+        content="education, K-12, classroom, computer science, curriculum, Genesee Career Institute, instructional resources" />
+    <meta name="author" content="Genesee Career Institute" />
     <title>GCI Project Hub</title>
+    <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "EducationalOrganization",
+          "name": "Genesee Career Institute",
+          "department": "Computer Science",
+          "description": "Instructional hub for classroom-ready computer science activities and practice resources.",
+          "educationalRole": "teacher",
+          "audience": {
+            "@type": "EducationalAudience",
+            "educationalRole": "student"
+          }
+        }
+    </script>
     <style>
         :root {
             --bg: #f5f7fb;
@@ -120,6 +139,25 @@
             color: #92400e;
             border-color: #fcd34d;
         }
+
+        .instructional-note {
+            margin-top: 14px;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #f8fbff;
+        }
+
+        .instructional-note p {
+            margin: 0 0 8px;
+            color: var(--muted);
+            font-size: 0.94rem;
+            line-height: 1.45;
+        }
+
+        .instructional-note p:last-child {
+            margin-bottom: 0;
+        }
     </style>
 </head>
 
@@ -190,6 +228,15 @@
                             walkthrough for MOS Word Project 3.<span class="status-pill status-prod">In
                                 Production</span></span></li>
                 </ul>
+
+                <div class="instructional-note" aria-label="Instructional use notice">
+                    <p><strong>Instructional Use:</strong> This page is maintained for classroom instruction in
+                        Genesee Career Institute Computer Science courses.</p>
+                    <p>Resources are curriculum-aligned student practice activities and teacher-created instructional
+                        materials.</p>
+                    <p>For content review or allowlist requests, contact your district instructional technology team and
+                        reference this page as an educational resource hub.</p>
+                </div>
             </section>
 
         </div>
