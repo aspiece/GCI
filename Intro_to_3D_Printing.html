@@ -395,11 +395,14 @@
                     <li>Identify key parts of the printer (nozzle, bed, AMS, touchscreen, frame/gantry).</li>
                     <li>Observe a demonstration print in action and note what you see.</li>
                     <li>Complete the Day 1 worksheet and reflection questions.</li>
+                    <li>Complete the Beginner Bambu Lab course module.</li>
                 </ol>
                 <h3>Resources</h3>
                 <ul>
                     <li><a href="https://www.youtube.com/watch?v=HlvK6DLwCz4" target="_blank"
                             rel="noopener noreferrer">Step 1: How 3D Printers Work – Lesson Kickoff Video</a></li>
+                    <li><a href="https://bambulab.com/en-us/support/academy/4" target="_blank"
+                            rel="noopener noreferrer">Beginner Bambu Lab Course</a></li>
                     <li><a href="https://bambulab.com/en-us/support/academy/4/course/987021628962332672/chapter/60"
                             target="_blank" rel="noopener noreferrer">Bambu Academy: Printer Components Reference</a>
                     </li>
@@ -461,6 +464,10 @@
                             <tr>
                                 <td>Name two materials or real-world products mentioned in the video.</td>
                                 <td><input type="text" aria-label="Day 1 materials or products from video" /></td>
+                            </tr>
+                            <tr>
+                                <td>What is the AMS on a Bambu printer, and how can it help during a print job?</td>
+                                <td><input type="text" aria-label="Day 1 AMS purpose and benefit response" /></td>
                             </tr>
                         </tbody>
                     </table>
@@ -528,6 +535,10 @@
                                 stop a print from the touchscreen.</label></li>
                         <li><input type="checkbox" id="day1-safe-complete" /><label for="day1-safe-complete">I can
                                 identify when a print is complete and ready to remove.</label></li>
+                        <li><input type="checkbox" id="day1-course-complete" /><label for="day1-course-complete">I
+                                acknowledge that I completed the <a href="https://bambulab.com/en-us/support/academy/4"
+                                    target="_blank" rel="noopener noreferrer">Beginner Bambu Lab course</a>.</label>
+                        </li>
                     </ul>
 
                     <h3>Reflection</h3>
@@ -929,40 +940,8 @@
                 setDay(currentDay + 1);
             });
 
-            function getControlLabel(control) {
-                if (control.id) {
-                    const attachedLabel = document.querySelector(`label[for="${control.id}"]`);
-                    if (attachedLabel) {
-                        return attachedLabel.textContent.trim();
-                    }
-                }
-
-                const tableCell = control.closest('td');
-                if (tableCell && tableCell.previousElementSibling) {
-                    const rowLabel = tableCell.previousElementSibling.textContent.trim();
-                    if (rowLabel) {
-                        return rowLabel;
-                    }
-                }
-
-                const ariaLabel = control.getAttribute('aria-label');
-                if (ariaLabel) {
-                    return ariaLabel;
-                }
-
-                const previousPrompt = control.previousElementSibling;
-                if (previousPrompt && previousPrompt.tagName === 'P') {
-                    const prompt = previousPrompt.textContent.trim();
-                    if (prompt) {
-                        return prompt;
-                    }
-                }
-
-                return 'Response';
-            }
-
             function buildWorksheetText() {
-                const lines = [];
+                const sections = [];
 
                 dayCards.forEach((card) => {
                     const dayTitle = card.querySelector('.day-title')?.textContent.trim() || 'Day';
@@ -971,21 +950,47 @@
                         return;
                     }
 
-                    lines.push(dayTitle);
-                    const controls = worksheet.querySelectorAll('input[type="text"], textarea, input[type="checkbox"]');
+                    const selector = 'input[type="text"], textarea, input[type="checkbox"], select';
+                    const originalControls = Array.from(worksheet.querySelectorAll(selector));
+                    const worksheetClone = worksheet.cloneNode(true);
+                    const cloneControls = Array.from(worksheetClone.querySelectorAll(selector));
 
-                    controls.forEach((control) => {
-                        const label = getControlLabel(control);
-                        const value = control.type === 'checkbox'
-                            ? (control.checked ? 'Yes' : 'No')
-                            : (control.value.trim() || '[blank]');
-                        lines.push(`- ${label}: ${value}`);
+                    cloneControls.forEach((cloneControl, index) => {
+                        const originalControl = originalControls[index];
+                        const replacement = document.createElement('span');
+
+                        if (!originalControl) {
+                            replacement.textContent = ' [blank] ';
+                            cloneControl.replaceWith(replacement);
+                            return;
+                        }
+
+                        if (originalControl.type === 'checkbox') {
+                            replacement.textContent = originalControl.checked ? '[x] ' : '[ ] ';
+                        } else {
+                            const value = (originalControl.value || '').trim();
+                            replacement.textContent = value || '[blank]';
+                        }
+
+                        cloneControl.replaceWith(replacement);
                     });
 
-                    lines.push('');
+                    worksheetClone.querySelectorAll('a').forEach((link) => {
+                        const linkReplacement = document.createElement('span');
+                        const text = (link.textContent || '').trim();
+                        linkReplacement.textContent = text ? `${text} (${link.href})` : link.href;
+                        link.replaceWith(linkReplacement);
+                    });
+
+                    const bodyText = (worksheetClone.innerText || '')
+                        .replace(/\u00a0/g, ' ')
+                        .replace(/\n{3,}/g, '\n\n')
+                        .trim();
+
+                    sections.push(`${dayTitle}\n${bodyText}`);
                 });
 
-                return lines.join('\n').trim();
+                return sections.join('\n\n====================\n\n').trim();
             }
 
             async function copyWorksheetNotes() {
