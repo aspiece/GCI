@@ -255,6 +255,51 @@
             margin: 6px 0;
         }
 
+        .worksheet-actions {
+            margin: 8px 0 14px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .copy-btn {
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--text);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font: inherit;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .copy-btn:hover,
+        .copy-btn:focus-visible {
+            border-color: #93c5fd;
+            outline: none;
+        }
+
+        .copy-status {
+            color: var(--muted);
+            font-size: 0.92rem;
+            font-weight: 600;
+        }
+
+        .guidance {
+            margin: 6px 0 10px;
+            color: var(--muted);
+            font-size: 0.92rem;
+            line-height: 1.4;
+        }
+
+        .hint-list {
+            margin: 0 0 8px;
+            padding-left: 18px;
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
         .media-embed {
             margin-top: 10px;
             display: grid;
@@ -342,6 +387,11 @@
             <button class="pager-btn" type="button" id="next-day">Next</button>
         </div>
 
+        <div class="worksheet-actions" aria-label="Worksheet copy tools">
+            <button class="copy-btn" type="button" id="copy-worksheet">Copy Worksheet Notes</button>
+            <span class="copy-status" id="copy-status">Copies all worksheet prompts and responses for Days 1–5.</span>
+        </div>
+
         <section class="day-list" aria-label="5-day 3D printing lab guide">
             <article class="day-card" data-day="1">
                 <div class="day-header">
@@ -363,8 +413,7 @@
                             rel="noopener noreferrer">Bambu A1 Overview Video</a></li>
                     <li><a href="https://youtu.be/q4EoRZ0bVxQ" target="_blank" rel="noopener noreferrer">How 3D
                             Printers Work – Simple Explanation</a></li>
-                    <li><a href="Digital_3D_Printing_Notebook_Bambu_A1.html">Printer Anatomy &amp; Reflection
-                            Worksheet</a></li>
+                    <li>Printer Anatomy &amp; Reflection Worksheet (included below)</li>
                     <li><a href="https://makerworld.com/en/models/807526-original-rubber-ducky?from=search#profileId-748243"
                             target="_blank" rel="noopener noreferrer">Rubber Duck Model</a></li>
                 </ul>
@@ -387,7 +436,13 @@
 
                 <div class="worksheet" aria-label="Day 1 worksheet">
                     <h3 class="worksheet-title">Day 1 Worksheet</h3>
+                    <p class="guidance">Guidance: Use complete sentences. Try to include one safety detail and one
+                        real observation from class in your answers.</p>
                     <h3>Printer Anatomy Worksheet</h3>
+                    <ul class="hint-list">
+                        <li>State what each part does.</li>
+                        <li>Add one note about how the part affects print quality or safety.</li>
+                    </ul>
                     <table>
                         <thead>
                             <tr>
@@ -438,9 +493,11 @@
 
                     <h3>Reflection</h3>
                     <p>1. What surprised you most about how the printer works?</p>
-                    <textarea class="short" aria-label="Day 1 reflection question 1"></textarea>
+                    <textarea class="short" aria-label="Day 1 reflection question 1"
+                        placeholder="Example: I was surprised by..., because..."></textarea>
                     <p>2. Which part of the printer do you think is most important and why?</p>
-                    <textarea class="short" aria-label="Day 1 reflection question 2"></textarea>
+                    <textarea class="short" aria-label="Day 1 reflection question 2"
+                        placeholder="Name the part and explain how it impacts success/safety."></textarea>
                 </div>
             </article>
 
@@ -462,7 +519,8 @@
                 </ol>
                 <h3>Resources</h3>
                 <ul>
-                    <li>Tinkercad Tutorial</li>
+                    <li><a href="https://www.tinkercad.com" target="_blank" rel="noopener noreferrer">Tinkercad
+                            Tutorial</a></li>
                     <li>How to Make a Keychain in Tinkercad</li>
                     <li>Example Keychain STL File</li>
                     <li>Google Classroom Assignment</li>
@@ -471,14 +529,18 @@
 
                 <div class="worksheet" aria-label="Day 2 worksheet">
                     <h3 class="worksheet-title">Day 2 Worksheet</h3>
+                    <p class="guidance">Guidance: Focus on print-ready design choices. Mention size, thickness, and
+                        readability of text/details.</p>
                     <label for="day2-project-name"><strong>Project Name:</strong></label>
                     <input id="day2-project-name" type="text" class="field" />
 
                     <h3>Describe your design idea</h3>
-                    <textarea aria-label="Day 2 design idea description"></textarea>
+                    <textarea aria-label="Day 2 design idea description"
+                        placeholder="Describe the purpose, audience, shape, and any text/icons you included."></textarea>
 
                     <h3>Sketch or outline your idea (you can draw here or attach an image)</h3>
-                    <textarea aria-label="Day 2 sketch or outline" style="min-height: 160px;"></textarea>
+                    <textarea aria-label="Day 2 sketch or outline" style="min-height: 160px;"
+                        placeholder="If you are not drawing, describe top view, side view, and key dimensions."></textarea>
 
                     <h3>Design Checklist</h3>
                     <ul class="checklist">
@@ -498,9 +560,11 @@
 
                     <h3>Reflection</h3>
                     <p>1. What was the hardest part of designing your model?</p>
-                    <textarea class="short" aria-label="Day 2 reflection question 1"></textarea>
+                    <textarea class="short" aria-label="Day 2 reflection question 1"
+                        placeholder="Identify the challenge and what you did to solve it."></textarea>
                     <p>2. What are you most excited to see when it prints?</p>
-                    <textarea class="short" aria-label="Day 2 reflection question 2"></textarea>
+                    <textarea class="short" aria-label="Day 2 reflection question 2"
+                        placeholder="Describe one feature you hope prints clearly."></textarea>
                 </div>
             </article>
 
@@ -529,6 +593,8 @@
 
                 <div class="worksheet" aria-label="Day 3 worksheet">
                     <h3 class="worksheet-title">Day 3 Worksheet</h3>
+                    <p class="guidance">Guidance: Enter actual slicer values, not guesses. Use units when possible
+                        (mm, %, minutes).</p>
                     <h3>Slicing Settings Log</h3>
                     <table>
                         <thead>
@@ -562,13 +628,16 @@
                     </table>
 
                     <p><strong>Prediction:</strong> What do you expect your print to look like?</p>
-                    <textarea class="short" aria-label="Day 3 prediction"></textarea>
+                    <textarea class="short" aria-label="Day 3 prediction"
+                        placeholder="Predict surface quality, text clarity, and potential weak spots."></textarea>
 
                     <h3>Reflection</h3>
                     <p>1. How does slicing translate your design into printer instructions?</p>
-                    <textarea class="short" aria-label="Day 3 reflection question 1"></textarea>
+                    <textarea class="short" aria-label="Day 3 reflection question 1"
+                        placeholder="Mention layer paths, movement, and extrusion instructions."></textarea>
                     <p>2. What setting do you think affects print quality the most? Why?</p>
-                    <textarea class="short" aria-label="Day 3 reflection question 2"></textarea>
+                    <textarea class="short" aria-label="Day 3 reflection question 2"
+                        placeholder="Choose one setting and explain its visible effect."></textarea>
                 </div>
             </article>
 
@@ -597,6 +666,8 @@
 
                 <div class="worksheet" aria-label="Day 4 worksheet">
                     <h3 class="worksheet-title">Day 4 Worksheet</h3>
+                    <p class="guidance">Guidance: Use evidence from your print (photo, edges, text, first layer).
+                        Be specific about what worked and what needs improvement.</p>
                     <h3>Print Log</h3>
                     <table>
                         <thead>
@@ -673,9 +744,11 @@
 
                     <h3>Reflection</h3>
                     <p>1. What went well with your print?</p>
-                    <textarea class="short" aria-label="Day 4 reflection question 1"></textarea>
+                    <textarea class="short" aria-label="Day 4 reflection question 1"
+                        placeholder="List 2 strengths and what settings/design choices helped."></textarea>
                     <p>2. What issue do you want to fix next time?</p>
-                    <textarea class="short" aria-label="Day 4 reflection question 2"></textarea>
+                    <textarea class="short" aria-label="Day 4 reflection question 2"
+                        placeholder="Name one issue, likely cause, and your next adjustment."></textarea>
                 </div>
             </article>
 
@@ -706,6 +779,8 @@
 
                 <div class="worksheet" aria-label="Day 5 worksheet">
                     <h3 class="worksheet-title">Day 5 Worksheet</h3>
+                    <p class="guidance">Guidance: Show growth from your first design. Explain what changed and why
+                        those changes improve function or quality.</p>
                     <h3>List three changes or remix ideas</h3>
                     <div class="line-input"><input type="text" aria-label="Day 5 remix idea 1" placeholder="1." /></div>
                     <div class="line-input"><input type="text" aria-label="Day 5 remix idea 2" placeholder="2." /></div>
@@ -737,9 +812,11 @@
 
                     <h3>Final Reflection</h3>
                     <p>1. What did you learn about design and problem-solving through this process?</p>
-                    <textarea class="short" aria-label="Day 5 final reflection question 1"></textarea>
+                    <textarea class="short" aria-label="Day 5 final reflection question 1"
+                        placeholder="Include one design lesson and one troubleshooting lesson."></textarea>
                     <p>2. If you had one more week, what would you create next and why?</p>
-                    <textarea class="short" aria-label="Day 5 final reflection question 2"></textarea>
+                    <textarea class="short" aria-label="Day 5 final reflection question 2"
+                        placeholder="Describe your next project idea and why it matters to you."></textarea>
                 </div>
             </article>
         </section>
@@ -749,11 +826,13 @@
 
     <script>
         (function () {
-            const dayCards = Array.from(document.querySelectorAll('.day-card'));
+            const dayCards = Array.from(document.querySelectorAll('.day-card[data-day]'));
             const dayButtons = Array.from(document.querySelectorAll('.day-nav-btn'));
             const prevButton = document.getElementById('prev-day');
             const nextButton = document.getElementById('next-day');
             const status = document.getElementById('day-status');
+            const copyButton = document.getElementById('copy-worksheet');
+            const copyStatus = document.getElementById('copy-status');
             const maxDay = dayCards.length;
             let currentDay = 1;
 
@@ -789,6 +868,88 @@
             nextButton.addEventListener('click', function () {
                 setDay(currentDay + 1);
             });
+
+            function getControlLabel(control) {
+                if (control.id) {
+                    const attachedLabel = document.querySelector(`label[for="${control.id}"]`);
+                    if (attachedLabel) {
+                        return attachedLabel.textContent.trim();
+                    }
+                }
+
+                const tableCell = control.closest('td');
+                if (tableCell && tableCell.previousElementSibling) {
+                    const rowLabel = tableCell.previousElementSibling.textContent.trim();
+                    if (rowLabel) {
+                        return rowLabel;
+                    }
+                }
+
+                const ariaLabel = control.getAttribute('aria-label');
+                if (ariaLabel) {
+                    return ariaLabel;
+                }
+
+                const previousPrompt = control.previousElementSibling;
+                if (previousPrompt && previousPrompt.tagName === 'P') {
+                    const prompt = previousPrompt.textContent.trim();
+                    if (prompt) {
+                        return prompt;
+                    }
+                }
+
+                return 'Response';
+            }
+
+            function buildWorksheetText() {
+                const lines = [];
+
+                dayCards.forEach((card) => {
+                    const dayTitle = card.querySelector('.day-title')?.textContent.trim() || 'Day';
+                    const worksheet = card.querySelector('.worksheet');
+                    if (!worksheet) {
+                        return;
+                    }
+
+                    lines.push(dayTitle);
+                    const controls = worksheet.querySelectorAll('input[type="text"], textarea, input[type="checkbox"]');
+
+                    controls.forEach((control) => {
+                        const label = getControlLabel(control);
+                        const value = control.type === 'checkbox'
+                            ? (control.checked ? 'Yes' : 'No')
+                            : (control.value.trim() || '[blank]');
+                        lines.push(`- ${label}: ${value}`);
+                    });
+
+                    lines.push('');
+                });
+
+                return lines.join('\n').trim();
+            }
+
+            async function copyWorksheetNotes() {
+                const worksheetText = buildWorksheetText();
+                if (!worksheetText) {
+                    copyStatus.textContent = 'Nothing found to copy yet.';
+                    return;
+                }
+
+                try {
+                    await navigator.clipboard.writeText(worksheetText);
+                    copyStatus.textContent = 'Worksheet notes copied. You can paste into your document.';
+                } catch (error) {
+                    const fallback = document.createElement('textarea');
+                    fallback.value = worksheetText;
+                    document.body.appendChild(fallback);
+                    fallback.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(fallback);
+                    copyStatus.textContent = 'Worksheet notes copied. You can paste into your document.';
+                }
+            }
+
+            copyButton.addEventListener('click', copyWorksheetNotes);
 
             setDay(1);
         })();
