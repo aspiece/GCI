@@ -418,11 +418,13 @@
         <p class="lead">A 5-Day Student Guide for High School Computer Science Programs</p>
         <p class="meta"><strong>Classroom Note:</strong> Complete each day in order. Add screenshots, photos, and file
             details to your Digital Notebook entry so your teacher can review your progress.</p>
-        <p class="meta"><strong>Worksheet:</strong> Each day now includes its matching worksheet directly below the
-            instructions.</p>
         <p class="meta"><strong>Digital Notebook:</strong> Your Digital Notebook is your daily learning log. At the end
             of each class, click <strong>Copy Worksheet Notes</strong> and paste your responses into that day’s notebook
             entry (Day 1, Day 2, etc.) so you can track your growth and submit complete evidence of learning.</p>
+        <p class="meta"><strong>File Note:</strong> If a file type cannot be inserted into a Google Doc (such as
+            <strong>.STL</strong> or <strong>.3MF</strong>), upload that file to Google Classroom and include the
+            filename/link in your Digital Notebook entry.
+        </p>
 
         <div class="sticky-mini-nav" aria-label="Sticky day navigation">
             <nav class="day-nav" aria-label="Select lab day">
@@ -851,10 +853,11 @@
                         base, readable details, and size limits).</li>
                     <li><strong>(5 min)</strong> Export your model as an STL file.</li>
                     <li><strong>(7 min)</strong> Insert your STL filename/link and a screenshot of your model into your
-                        Digital Notebook Day 2 entry.</li>
+                        Digital Notebook Day 2 entry. If the STL file cannot be inserted into your Google Doc, upload
+                        the STL to Google Classroom.</li>
                 </ol>
-                <p class="deliverable"><strong>Deliverable:</strong> STL filename/link and screenshot inserted in your
-                    Digital Notebook.</p>
+                <p class="deliverable"><strong>Deliverable:</strong> STL filename/link and screenshot in your Digital
+                    Notebook; upload STL to Google Classroom if it cannot be inserted in your Google Doc.</p>
 
                 <div class="worksheet" aria-label="Day 2 worksheet">
                     <h3 class="worksheet-title">Day 2 Worksheet</h3>
@@ -898,7 +901,8 @@
                     <h3>Before You Submit Checklist</h3>
                     <ul class="checklist">
                         <li><input type="checkbox" id="day2-evidence-stl" /><label for="day2-evidence-stl">I
-                                inserted my STL filename/link into my Digital Notebook Day 2 entry.</label></li>
+                                inserted my STL filename/link into my Digital Notebook Day 2 entry, and I uploaded
+                                the STL to Google Classroom if it could not be inserted in my Google Doc.</label></li>
                         <li><input type="checkbox" id="day2-evidence-screen" /><label for="day2-evidence-screen">I
                                 inserted a screenshot of my model into my Digital Notebook Day 2 entry.</label></li>
                         <li><input type="checkbox" id="day2-evidence-copy" /><label for="day2-evidence-copy">I used
@@ -941,12 +945,14 @@
                     <li><strong>(10 min)</strong> Adjust settings: Layer Height 0.2 mm, Infill 15%, No Supports.</li>
                     <li><strong>(7 min)</strong> Preview the print layers and save your 3MF file.</li>
                     <li><strong>(5 min)</strong> Insert your 3MF filename/link in your Digital Notebook Day 3 entry for
-                        teacher review before printing.</li>
+                        teacher review before printing. If the 3MF file cannot be inserted into your Google Doc,
+                        upload the 3MF to Google Classroom.</li>
                     <li><strong>(5 min)</strong> After teacher approval, start your print and record estimated time.
                     </li>
                 </ol>
                 <p class="deliverable"><strong>Deliverable:</strong> 3MF filename/link documented in your Digital
-                    Notebook, approved, and print started.
+                    Notebook, approved, and print started; upload 3MF to Google Classroom if it cannot be inserted in
+                    your Google Doc.
                 </p>
 
                 <div class="worksheet" aria-label="Day 3 worksheet">
@@ -1001,7 +1007,8 @@
                     <ul class="checklist">
                         <li><input type="checkbox" id="day3-evidence-3mf" /><label for="day3-evidence-3mf">I
                                 inserted my 3MF filename/link for teacher review in my Digital Notebook Day 3
-                                entry.</label></li>
+                                entry, and I uploaded the 3MF to Google Classroom if it could not be inserted in my
+                                Google Doc.</label></li>
                         <li><input type="checkbox" id="day3-evidence-settings" /><label for="day3-evidence-settings">I
                                 recorded my final slicing settings.</label></li>
                         <li><input type="checkbox" id="day3-evidence-started" /><label for="day3-evidence-started">I
@@ -1183,10 +1190,12 @@
                     <li><strong>(8 min)</strong> Export the final STL file, then take a screenshot of your new model.
                     </li>
                     <li><strong>(10 min)</strong> Write your reflection and insert your final STL filename/link plus
-                        screenshot into your Digital Notebook Day 5 entry.</li>
+                        screenshot into your Digital Notebook Day 5 entry. If the STL file cannot be inserted into
+                        your Google Doc, upload the STL to Google Classroom.</li>
                 </ol>
                 <p class="deliverable"><strong>Deliverable:</strong> Final STL filename/link, screenshot, and
-                    reflection paragraph in your Digital Notebook.</p>
+                    reflection paragraph in your Digital Notebook; upload STL to Google Classroom if it cannot be
+                    inserted in your Google Doc.</p>
 
                 <div class="worksheet" aria-label="Day 5 worksheet">
                     <h3 class="worksheet-title">Day 5 Worksheet</h3>
@@ -1234,7 +1243,8 @@
                     <h3>Before You Submit Checklist</h3>
                     <ul class="checklist">
                         <li><input type="checkbox" id="day5-evidence-stl" /><label for="day5-evidence-stl">I inserted
-                                my final STL filename/link into my Digital Notebook Day 5 entry.</label></li>
+                                my final STL filename/link into my Digital Notebook Day 5 entry, and I uploaded the
+                                STL to Google Classroom if it could not be inserted in my Google Doc.</label></li>
                         <li><input type="checkbox" id="day5-evidence-screen" /><label for="day5-evidence-screen">I
                                 inserted a screenshot of my final model into my Digital Notebook Day 5 entry.</label>
                         </li>
@@ -1376,12 +1386,29 @@
                 }
             }
 
-            function setDay(day) {
+            function parseDayFromHash() {
+                const hash = (window.location.hash || '').toLowerCase();
+                const match = hash.match(/^#day-(\d+)$/);
+                if (!match) {
+                    return null;
+                }
+
+                const parsed = Number(match[1]);
+                if (!Number.isFinite(parsed) || parsed < 1 || parsed > maxDay) {
+                    return null;
+                }
+
+                return parsed;
+            }
+
+            function setDay(day, options = {}) {
+                const { updateHash = true } = options;
                 currentDay = Math.max(1, Math.min(maxDay, day));
 
                 dayCards.forEach((card) => {
                     const cardDay = Number(card.dataset.day);
                     card.hidden = cardDay !== currentDay;
+                    card.id = `day-${cardDay}`;
                 });
 
                 dayButtons.forEach((button) => {
@@ -1393,6 +1420,13 @@
                 status.textContent = `Showing Day ${currentDay} of ${maxDay}`;
                 prevButton.disabled = currentDay === 1;
                 nextButton.disabled = currentDay === maxDay;
+
+                if (updateHash) {
+                    const newHash = `#day-${currentDay}`;
+                    if (window.location.hash !== newHash) {
+                        history.replaceState(null, '', newHash);
+                    }
+                }
             }
 
             dayButtons.forEach((button) => {
@@ -1422,6 +1456,13 @@
                 } else if (event.key === 'ArrowRight') {
                     event.preventDefault();
                     setDay(currentDay + 1);
+                }
+            });
+
+            window.addEventListener('hashchange', function () {
+                const dayFromHash = parseDayFromHash();
+                if (dayFromHash !== null) {
+                    setDay(dayFromHash, { updateHash: false });
                 }
             });
 
@@ -1512,7 +1553,8 @@
             injectCardUtilityButtons();
             restoreAutosaveData();
             updateCompletionMarkers();
-            setDay(1);
+            const dayFromHash = parseDayFromHash();
+            setDay(dayFromHash ?? 1, { updateHash: dayFromHash === null });
         })();
     </script>
 </body>
