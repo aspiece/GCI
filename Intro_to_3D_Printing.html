@@ -219,19 +219,20 @@
             width: 100%;
             border: 1px solid #cfd9ea;
             border-radius: 8px;
-            padding: 8px 10px;
+            padding: 12px 12px;
+            min-height: 46px;
             font: inherit;
             color: inherit;
             background: #fff;
         }
 
         textarea {
-            min-height: 92px;
+            min-height: 128px;
             resize: vertical;
         }
 
         .short {
-            min-height: 64px;
+            min-height: 96px;
         }
 
         .checklist {
@@ -300,6 +301,31 @@
             font-size: 0.92rem;
         }
 
+        .diagram {
+            margin: 10px 0 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px;
+            background: #f8fbff;
+        }
+
+        .diagram img {
+            display: block;
+            width: 100%;
+            max-width: 780px;
+            height: auto;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: #fff;
+        }
+
+        .diagram-note {
+            margin: 8px 0 0;
+            color: var(--muted);
+            font-size: 0.9rem;
+            line-height: 1.35;
+        }
+
         .media-embed {
             margin-top: 10px;
             display: grid;
@@ -355,11 +381,6 @@
             <button class="pager-btn" type="button" id="next-day">Next</button>
         </div>
 
-        <div class="worksheet-actions" aria-label="Worksheet copy tools">
-            <button class="copy-btn" type="button" id="copy-worksheet">Copy Worksheet Notes</button>
-            <span class="copy-status" id="copy-status">Copies all worksheet prompts and responses for Days 1–5.</span>
-        </div>
-
         <section class="day-list" aria-label="5-day 3D printing lab guide">
             <article class="day-card" data-day="1">
                 <div class="day-header">
@@ -379,6 +400,11 @@
                 <ul>
                     <li><a href="https://www.youtube.com/watch?v=HlvK6DLwCz4" target="_blank"
                             rel="noopener noreferrer">Step 1: How 3D Printers Work – Lesson Kickoff Video</a></li>
+                    <li><a href="https://bambulab.com/en-us/support/academy/4/course/987021628962332672/chapter/60"
+                            target="_blank" rel="noopener noreferrer">Bambu Academy: Printer Components Reference</a>
+                    </li>
+                    <li><a href="https://bambulab.com/en-us/support/academy/4/course/987021628962332672/chapter/64"
+                            target="_blank" rel="noopener noreferrer">Bambu Academy: AMS Guide</a></li>
                     <li>Printer Anatomy &amp; Reflection Worksheet (included below)</li>
                     <li><a href="https://makerworld.com/en/models/807526-original-rubber-ducky?from=search#profileId-748243"
                             target="_blank" rel="noopener noreferrer">Rubber Duck Model</a></li>
@@ -445,6 +471,15 @@
                         <li>Connect at least one part to the transcript (for example: nozzle extrudes material,
                             slicer tells where each layer goes).</li>
                     </ul>
+                    <div class="diagram" aria-label="Bambu printer parts diagram">
+                        <img src="https://wiki.bambulab.com/glossary/p1_series_glossary.jpg"
+                            alt="Diagram of Bambu printer parts for labeling and function reference" loading="lazy" />
+                        <p class="diagram-note">Use this diagram to identify parts and explain each part’s function in
+                            your own words. If the image does not load, open it directly:
+                            <a href="https://wiki.bambulab.com/glossary/p1_series_glossary.jpg" target="_blank"
+                                rel="noopener noreferrer">Bambu Parts Diagram</a>.
+                        </p>
+                    </div>
                     <table>
                         <thead>
                             <tr>
@@ -484,7 +519,9 @@
                     <ul class="checklist">
                         <li><input type="checkbox" id="day1-safe-load" /><label for="day1-safe-load">I know how to
                                 safely
-                                load and unload filament.</label></li>
+                                load and unload filament (<a
+                                    href="https://bambulab.com/en-us/support/academy/4/course/987021628962332672/chapter/63"
+                                    target="_blank" rel="noopener noreferrer">Load a Spool Guide</a>).</label></li>
                         <li><input type="checkbox" id="day1-safe-heat" /><label for="day1-safe-heat">I understand not to
                                 touch the nozzle or bed while heated.</label></li>
                         <li><input type="checkbox" id="day1-safe-start" /><label for="day1-safe-start">I can start and
@@ -827,15 +864,22 @@
                     </table>
 
                     <h3>Final Reflection</h3>
-                    <p>1. What did you learn about design and problem-solving through this process?</p>
+                    <p>1. What is one design decision you changed during this project, and how did that improve your
+                        final print?</p>
                     <textarea class="short" aria-label="Day 5 final reflection question 1"
-                        placeholder="Include one design lesson and one troubleshooting lesson."></textarea>
-                    <p>2. If you had one more week, what would you create next and why?</p>
+                        placeholder="Explain the original choice, what you changed, and the result."></textarea>
+                    <p>2. What would your next version include, and what steps would you take to make it print
+                        successfully?</p>
                     <textarea class="short" aria-label="Day 5 final reflection question 2"
-                        placeholder="Describe your next project idea and why it matters to you."></textarea>
+                        placeholder="List at least two improvements and one slicing or setup setting you would adjust."></textarea>
                 </div>
             </article>
         </section>
+
+        <div class="worksheet-actions" aria-label="Worksheet copy tools">
+            <button class="copy-btn" type="button" id="copy-worksheet">Copy Worksheet Notes</button>
+            <span class="copy-status" id="copy-status">Copies all worksheet prompts and responses for Days 1–5.</span>
+        </div>
 
         <a class="back-link" href="index.html">← Back to GCI Project Hub</a>
     </main>
