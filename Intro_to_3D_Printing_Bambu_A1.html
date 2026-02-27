@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description"
+        content="Intro to 3D Printing with Bambu A1: a 5-day student guide for high school computer science programs." />
+    <title>Intro to 3D Printing with Bambu A1 | GCI</title>
+    <style>
+        :root {
+            --bg: #f5f7fb;
+            --card: #ffffff;
+            --text: #111827;
+            --muted: #4b5563;
+            --accent: #2563eb;
+            --border: #dbe3ef;
+            --shadow: 0 8px 20px rgba(17, 24, 39, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Inter, Segoe UI, Roboto, Arial, sans-serif;
+            background: linear-gradient(180deg, #ebf2ff 0%, var(--bg) 70%);
+            color: var(--text);
+        }
+
+        .wrap {
+            max-width: 1050px;
+            margin: 0 auto;
+            padding: 24px 16px 44px;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: 2rem;
+        }
+
+        .lead {
+            margin: 0 0 18px;
+            color: var(--muted);
+            line-height: 1.45;
+        }
+
+        .meta {
+            margin: 0 0 20px;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #f8fbff;
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .day-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+
+        .day-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 16px;
+        }
+
+        .day-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .day-title {
+            margin: 0;
+            font-size: 1.18rem;
+        }
+
+        .pill {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 999px;
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #93c5fd;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .goal {
+            margin: 0 0 10px;
+            color: var(--text);
+            font-size: 0.98rem;
+        }
+
+        h3 {
+            margin: 12px 0 7px;
+            font-size: 1rem;
+        }
+
+        ol,
+        ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 6px;
+            line-height: 1.35;
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        a:hover,
+        a:focus-visible {
+            text-decoration: underline;
+        }
+
+        .deliverable {
+            margin-top: 12px;
+            padding: 10px;
+            border-radius: 8px;
+            background: #f3f7ff;
+            border: 1px solid #d8e6ff;
+            font-size: 0.95rem;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            font-weight: 700;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="wrap">
+        <h1>Intro to 3D Printing with Bambu A1</h1>
+        <p class="lead">A 5-Day Student Guide for High School Computer Science Programs</p>
+        <p class="meta"><strong>Classroom Note:</strong> Complete each day in order. Save screenshots and files in your
+            class folder so your teacher can review your progress.</p>
+        <p class="meta"><strong>Worksheet:</strong> Open the <a
+                href="Digital_3D_Printing_Notebook_Bambu_A1.html">Digital
+                3D Printing Notebook (Bambu A1 Edition)</a> to complete daily worksheets and reflections.</p>
+
+        <section class="day-list" aria-label="5-day 3D printing lab guide">
+            <article class="day-card">
+                <div class="day-header">
+                    <h2 class="day-title">Day 1 – Getting to Know the Bambu A1</h2>
+                    <span class="pill">Intro &amp; Setup</span>
+                </div>
+                <p class="goal"><strong>Goal:</strong> Understand how the Bambu A1 works and complete your first demo
+                    print.</p>
+                <h3>Steps</h3>
+                <ol>
+                    <li>Watch the Bambu A1 overview video.</li>
+                    <li>Identify key parts of the printer (nozzle, bed, AMS, touchscreen).</li>
+                    <li>Observe the demonstration print in action.</li>
+                    <li>Complete the Printer Anatomy &amp; Reflection worksheet.</li>
+                </ol>
+                <h3>Resources</h3>
+                <ul>
+                    <li>Bambu A1 Overview Video</li>
+                    <li>How 3D Printers Work – Simple Explanation</li>
+                    <li><a href="Digital_3D_Printing_Notebook_Bambu_A1.html">Printer Anatomy &amp; Reflection
+                            Worksheet</a></li>
+                    <li>Rubber duck</li>
+                </ul>
+                <p class="deliverable"><strong>Deliverable:</strong> Completed worksheet and labeled photo of printer
+                    setup.</p>
+            </article>
+
+            <article class="day-card">
+                <div class="day-header">
+                    <h2 class="day-title">Day 2 – Design Your First Model</h2>
+                    <span class="pill">Design</span>
+                </div>
+                <p class="goal"><strong>Goal:</strong> Create a custom 3D model using Tinkercad and prepare it for
+                    slicing.</p>
+                <h3>Steps</h3>
+                <ol>
+                    <li>Go to <a href="https://www.tinkercad.com" target="_blank"
+                            rel="noopener noreferrer">Tinkercad.com</a> and
+                        log in with your school Google account.</li>
+                    <li>Create a name tag or keychain (3 mm thick, text raised at least 1 mm).</li>
+                    <li>Export your model as an STL file.</li>
+                    <li>Upload your STL to your class folder or assignment in Google Classroom.</li>
+                </ol>
+                <h3>Resources</h3>
+                <ul>
+                    <li>Tinkercad Tutorial</li>
+                    <li>How to Make a Keychain in Tinkercad</li>
+                    <li>Example Keychain STL File</li>
+                    <li>Google Classroom Assignment</li>
+                </ul>
+                <p class="deliverable"><strong>Deliverable:</strong> STL file upload and screenshot of your model.</p>
+            </article>
+
+            <article class="day-card">
+                <div class="day-header">
+                    <h2 class="day-title">Day 3 – Slice and Start Your Print</h2>
+                    <span class="pill">Slicing</span>
+                </div>
+                <p class="goal"><strong>Goal:</strong> Learn slicing basics and prepare your design for printing in
+                    Bambu Studio.</p>
+                <h3>Steps</h3>
+                <ol>
+                    <li>Open Bambu Studio.</li>
+                    <li>Import your STL file.</li>
+                    <li>Adjust settings: Layer Height 0.2 mm, Infill 15%, No Supports.</li>
+                    <li>Preview the print layers and save your 3MF file.</li>
+                    <li>Upload your 3MF file for teacher review before printing.</li>
+                </ol>
+                <h3>Resources</h3>
+                <ul>
+                    <li>Bambu Studio Software</li>
+                    <li>Slicing Tutorial Video</li>
+                    <li>Example Project 3MF File</li>
+                </ul>
+                <p class="deliverable"><strong>Deliverable:</strong> 3MF file uploaded and ready for printing.</p>
+            </article>
+
+            <article class="day-card">
+                <div class="day-header">
+                    <h2 class="day-title">Day 4 – Troubleshooting and Reflection</h2>
+                    <span class="pill">Quality Check</span>
+                </div>
+                <p class="goal"><strong>Goal:</strong> Analyze your print results and document any issues or
+                    improvements.</p>
+                <h3>Steps</h3>
+                <ol>
+                    <li>Carefully remove your print from the bed.</li>
+                    <li>Inspect the surface quality, edges, and lettering.</li>
+                    <li>Take a photo of your print.</li>
+                    <li>Complete the Print Log Reflection.</li>
+                </ol>
+                <h3>Resources</h3>
+                <ul>
+                    <li>Print Log Reflection Form</li>
+                    <li>Example Print Fail Gallery</li>
+                    <li>Cleanup Tools</li>
+                </ul>
+                <p class="deliverable"><strong>Deliverable:</strong> Photo of your finished print and completed
+                    reflection form.</p>
+            </article>
+
+            <article class="day-card">
+                <div class="day-header">
+                    <h2 class="day-title">Day 5 – Remix and Improve</h2>
+                    <span class="pill">Capstone</span>
+                </div>
+                <p class="goal"><strong>Goal:</strong> Apply your learning by remixing or improving your model.</p>
+                <h3>Steps</h3>
+                <ol>
+                    <li>Choose one: remix a model from <a href="https://www.printables.com" target="_blank"
+                            rel="noopener noreferrer">Printables.com</a> or improve your previous design.</li>
+                    <li>Modify or redesign in Tinkercad.</li>
+                    <li>Export the final STL file and take a screenshot of your new model.</li>
+                    <li>Write a short paragraph about what you learned and submit both files.</li>
+                </ol>
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="https://www.printables.com" target="_blank" rel="noopener noreferrer">Printables.com
+                            Resource</a>
+                    </li>
+                    <li>Example Remix STL File</li>
+                    <li>Reflection Template</li>
+                </ul>
+                <p class="deliverable"><strong>Deliverable:</strong> Final STL file, screenshot, and reflection
+                    paragraph.</p>
+            </article>
+        </section>
+
+        <a class="back-link" href="index.html">← Back to GCI Project Hub</a>
+    </main>
+</body>
+
+</html>
