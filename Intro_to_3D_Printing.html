@@ -66,7 +66,26 @@
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
+            margin: 0 0 10px;
+        }
+
+        .sticky-mini-nav {
+            position: sticky;
+            top: 8px;
+            z-index: 20;
             margin: 0 0 14px;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: rgba(248, 251, 255, 0.96);
+            backdrop-filter: blur(4px);
+        }
+
+        .shortcut-hint {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.88rem;
+            font-weight: 600;
         }
 
         .day-nav-btn,
@@ -95,6 +114,12 @@
             border-color: #93c5fd;
         }
 
+        .day-nav-btn.is-complete::after {
+            content: ' ✓';
+            color: #166534;
+            font-weight: 800;
+        }
+
         .day-pager {
             display: flex;
             align-items: center;
@@ -114,6 +139,35 @@
             border-radius: 12px;
             box-shadow: var(--shadow);
             padding: 16px;
+        }
+
+        .day-card-tools {
+            display: flex;
+            gap: 8px;
+            margin: 6px 0 10px;
+            flex-wrap: wrap;
+        }
+
+        .card-tool-btn {
+            border: 1px solid var(--border);
+            background: #f8fbff;
+            color: var(--text);
+            border-radius: 8px;
+            padding: 7px 10px;
+            font: inherit;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .card-tool-btn:hover,
+        .card-tool-btn:focus-visible {
+            border-color: #93c5fd;
+            outline: none;
+        }
+
+        .back-top-wrap {
+            margin-top: 12px;
         }
 
         .day-header {
@@ -366,19 +420,25 @@
             class folder so your teacher can review your progress.</p>
         <p class="meta"><strong>Worksheet:</strong> Each day now includes its matching worksheet directly below the
             instructions.</p>
+        <p class="meta"><strong>Digital Notebook:</strong> Your Digital Notebook is your daily learning log. At the end
+            of each class, click <strong>Copy Worksheet Notes</strong> and paste your responses into that day’s notebook
+            entry (Day 1, Day 2, etc.) so you can track your growth and submit complete evidence of learning.</p>
 
-        <nav class="day-nav" aria-label="Select lab day">
-            <button class="day-nav-btn is-active" type="button" data-day-target="1">Day 1</button>
-            <button class="day-nav-btn" type="button" data-day-target="2">Day 2</button>
-            <button class="day-nav-btn" type="button" data-day-target="3">Day 3</button>
-            <button class="day-nav-btn" type="button" data-day-target="4">Day 4</button>
-            <button class="day-nav-btn" type="button" data-day-target="5">Day 5</button>
-        </nav>
+        <div class="sticky-mini-nav" aria-label="Sticky day navigation">
+            <nav class="day-nav" aria-label="Select lab day">
+                <button class="day-nav-btn is-active" type="button" data-day-target="1">Day 1</button>
+                <button class="day-nav-btn" type="button" data-day-target="2">Day 2</button>
+                <button class="day-nav-btn" type="button" data-day-target="3">Day 3</button>
+                <button class="day-nav-btn" type="button" data-day-target="4">Day 4</button>
+                <button class="day-nav-btn" type="button" data-day-target="5">Day 5</button>
+            </nav>
 
-        <div class="day-pager" aria-label="Day navigation controls">
-            <button class="pager-btn" type="button" id="prev-day">Previous</button>
-            <span class="pager-status" id="day-status">Showing Day 1 of 5</span>
-            <button class="pager-btn" type="button" id="next-day">Next</button>
+            <div class="day-pager" aria-label="Day navigation controls">
+                <button class="pager-btn" type="button" id="prev-day">Previous</button>
+                <span class="pager-status" id="day-status">Showing Day 1 of 5</span>
+                <button class="pager-btn" type="button" id="next-day">Next</button>
+            </div>
+            <p class="shortcut-hint">Keyboard shortcuts: ← Previous day, → Next day</p>
         </div>
 
         <section class="day-list" aria-label="5-day 3D printing lab guide">
@@ -389,13 +449,24 @@
                 </div>
                 <p class="goal"><strong>Goal:</strong> Build a strong foundation of how 3D printing works, then connect
                     that knowledge to the Bambu A1 printer you will use in class.</p>
+                <h3>Learning Objectives</h3>
+                <ul>
+                    <li>Explain the difference between additive and subtractive manufacturing in your own words.</li>
+                    <li>Identify major Bambu printer components and describe each part’s function.</li>
+                    <li>Describe how a digital model is sliced and printed layer by layer.</li>
+                    <li>Document observations and reflections clearly in your Day 1 worksheet.</li>
+                </ul>
                 <h3>Steps</h3>
                 <ol>
                     <li>Watch the “How 3D Printers Work” warm-up video first.</li>
+                    <li>Complete the timed Component Hunt (3–5 minutes): physically point to each major printer part
+                        before writing any function notes.</li>
                     <li>Identify key parts of the printer (nozzle, bed, AMS, touchscreen, frame/gantry).</li>
                     <li>Observe a demonstration print in action and note what you see.</li>
                     <li>Complete the Day 1 worksheet and reflection questions.</li>
                     <li>Complete the Beginner Bambu Lab course module.</li>
+                    <li>At the end of Day 1, click <strong>Copy Worksheet Notes</strong> (bottom of page) and paste
+                        the copied content into your Digital Notebook for Day 1.</li>
                 </ol>
                 <h3>Resources</h3>
                 <ul>
@@ -430,6 +501,83 @@
                     <h3 class="worksheet-title">Day 1 Worksheet</h3>
                     <p class="guidance">Guidance: Use complete sentences. Try to include one safety detail and one
                         real observation from class in your answers.</p>
+
+                    <h3>Vocabulary Box (In Your Own Words)</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Term</th>
+                                <th>Your Definition</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Additive Manufacturing</td>
+                                <td><input type="text" aria-label="Day 1 additive manufacturing definition" /></td>
+                            </tr>
+                            <tr>
+                                <td>Subtractive Manufacturing</td>
+                                <td><input type="text" aria-label="Day 1 subtractive manufacturing definition" /></td>
+                            </tr>
+                            <tr>
+                                <td>Slicing</td>
+                                <td><input type="text" aria-label="Day 1 slicing definition" /></td>
+                            </tr>
+                            <tr>
+                                <td>Nozzle</td>
+                                <td><input type="text" aria-label="Day 1 nozzle definition" /></td>
+                            </tr>
+                            <tr>
+                                <td>AMS</td>
+                                <td><input type="text" aria-label="Day 1 AMS definition" /></td>
+                            </tr>
+                            <tr>
+                                <td>Gantry</td>
+                                <td><input type="text" aria-label="Day 1 gantry definition" /></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Timed Component Hunt (3–5 Minutes)</h3>
+                    <p class="guidance">Before writing part functions, physically point to each part on the printer.
+                        Have a partner or teacher initial when complete.</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Part</th>
+                                <th>Located? (Yes/No)</th>
+                                <th>Partner/Teacher Initials</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Nozzle</td>
+                                <td><input type="text" aria-label="Day 1 component hunt nozzle located" /></td>
+                                <td><input type="text" aria-label="Day 1 component hunt nozzle initials" /></td>
+                            </tr>
+                            <tr>
+                                <td>Print Bed</td>
+                                <td><input type="text" aria-label="Day 1 component hunt bed located" /></td>
+                                <td><input type="text" aria-label="Day 1 component hunt bed initials" /></td>
+                            </tr>
+                            <tr>
+                                <td>AMS</td>
+                                <td><input type="text" aria-label="Day 1 component hunt AMS located" /></td>
+                                <td><input type="text" aria-label="Day 1 component hunt AMS initials" /></td>
+                            </tr>
+                            <tr>
+                                <td>Touchscreen</td>
+                                <td><input type="text" aria-label="Day 1 component hunt touchscreen located" /></td>
+                                <td><input type="text" aria-label="Day 1 component hunt touchscreen initials" /></td>
+                            </tr>
+                            <tr>
+                                <td>Frame / Gantry</td>
+                                <td><input type="text" aria-label="Day 1 component hunt gantry located" /></td>
+                                <td><input type="text" aria-label="Day 1 component hunt gantry initials" /></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
                     <h3>Transcript Connection Prompts</h3>
                     <ul class="hint-list">
                         <li>Use key terms from the video: <strong>additive</strong>, <strong>subtractive</strong>,
@@ -468,6 +616,34 @@
                             <tr>
                                 <td>What is the AMS on a Bambu printer, and how can it help during a print job?</td>
                                 <td><input type="text" aria-label="Day 1 AMS purpose and benefit response" /></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Demo Observation Log</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>What I Observed</th>
+                                <th>Why It Matters</th>
+                                <th>Question I Still Have</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="text" aria-label="Day 1 observation row 1" /></td>
+                                <td><input type="text" aria-label="Day 1 why it matters row 1" /></td>
+                                <td><input type="text" aria-label="Day 1 remaining question row 1" /></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" aria-label="Day 1 observation row 2" /></td>
+                                <td><input type="text" aria-label="Day 1 why it matters row 2" /></td>
+                                <td><input type="text" aria-label="Day 1 remaining question row 2" /></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" aria-label="Day 1 observation row 3" /></td>
+                                <td><input type="text" aria-label="Day 1 why it matters row 3" /></td>
+                                <td><input type="text" aria-label="Day 1 remaining question row 3" /></td>
                             </tr>
                         </tbody>
                     </table>
@@ -541,6 +717,18 @@
                         </li>
                     </ul>
 
+                    <h3>Common Mistakes to Avoid</h3>
+                    <ul class="checklist">
+                        <li><input type="checkbox" id="day1-mistake-hot" /><label for="day1-mistake-hot">I will not
+                                touch the nozzle or bed while they are hot.</label></li>
+                        <li><input type="checkbox" id="day1-mistake-remove" /><label for="day1-mistake-remove">I will
+                                wait for teacher approval before removing a print.</label></li>
+                        <li><input type="checkbox" id="day1-mistake-load" /><label for="day1-mistake-load">I will
+                                verify filament is loaded correctly before starting a print.</label></li>
+                        <li><input type="checkbox" id="day1-mistake-ack" /><label for="day1-mistake-ack">I
+                                acknowledge these safety and quality reminders.</label></li>
+                    </ul>
+
                     <h3>Reflection</h3>
                     <p>1. What idea from the intro video helped you understand 3D printing the most, and why?</p>
                     <textarea class="short" aria-label="Day 1 reflection question 1"
@@ -549,6 +737,75 @@
                         model.</p>
                     <textarea class="short" aria-label="Day 1 reflection question 2"
                         placeholder="Start with: First the model is sliced..., then the nozzle..."></textarea>
+                    <p>3. What is one misconception you had about 3D printing, and how did today’s lesson correct it?
+                    </p>
+                    <textarea class="short" aria-label="Day 1 reflection misconception"
+                        placeholder="Example: I used to think..., now I understand..."></textarea>
+
+                    <h3>Success Criteria (I Can...)</h3>
+                    <ul class="checklist">
+                        <li><input type="checkbox" id="day1-success-additive" /><label for="day1-success-additive">I can
+                                explain additive vs. subtractive manufacturing in my own words.</label></li>
+                        <li><input type="checkbox" id="day1-success-parts" /><label for="day1-success-parts">I can
+                                identify key Bambu printer parts and describe what they do.</label></li>
+                        <li><input type="checkbox" id="day1-success-slicing" /><label for="day1-success-slicing">I can
+                                explain how slicing turns a model into printable layers.</label></li>
+                        <li><input type="checkbox" id="day1-success-safety" /><label for="day1-success-safety">I can
+                                follow core Day 1 safety expectations during printer use.</label></li>
+                    </ul>
+
+                    <h3>Quick Exit Check (End of Day 1)</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Exit Question</th>
+                                <th>Your Answer</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>In one sentence, define additive manufacturing.</td>
+                                <td><input type="text" aria-label="Day 1 exit additive definition" /></td>
+                            </tr>
+                            <tr>
+                                <td>What does slicing do before a print starts?</td>
+                                <td><input type="text" aria-label="Day 1 exit slicing role" /></td>
+                            </tr>
+                            <tr>
+                                <td>Name one printer part and describe its job.</td>
+                                <td><input type="text" aria-label="Day 1 exit part and job" /></td>
+                            </tr>
+                            <tr>
+                                <td>What is one safety rule you followed today?</td>
+                                <td><input type="text" aria-label="Day 1 exit safety rule" /></td>
+                            </tr>
+                            <tr>
+                                <td>What is one thing you can do better on Day 2?</td>
+                                <td><input type="text" aria-label="Day 1 exit improvement for day 2" /></td>
+                            </tr>
+                            <tr>
+                                <td>Confidence rating (1–5): How confident are you explaining how a 3D printer works?
+                                </td>
+                                <td><input type="text" aria-label="Day 1 exit confidence rating" /></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Evidence Upload Checklist</h3>
+                    <ul class="checklist">
+                        <li><input type="checkbox" id="day1-evidence-photo" /><label for="day1-evidence-photo">I
+                                captured a labeled photo of the printer setup.</label></li>
+                        <li><label for="day1-evidence-filename">Photo filename uploaded:</label>
+                            <input type="text" id="day1-evidence-filename"
+                                aria-label="Day 1 evidence uploaded photo filename"
+                                placeholder="Example: Day1_Printer_Label_YourName.jpg" />
+                        </li>
+                        <li><input type="checkbox" id="day1-evidence-copy" /><label for="day1-evidence-copy">I used
+                                <strong>Copy Worksheet Notes</strong> and pasted Day 1 responses into my Digital
+                                Notebook.</label></li>
+                        <li><input type="checkbox" id="day1-evidence-course" /><label for="day1-evidence-course">I
+                                have proof/screenshot of Beginner Bambu Lab course completion.</label></li>
+                    </ul>
                 </div>
             </article>
 
@@ -904,8 +1161,116 @@
             const status = document.getElementById('day-status');
             const copyButton = document.getElementById('copy-worksheet');
             const copyStatus = document.getElementById('copy-status');
+            const pageTopAnchor = document.querySelector('.wrap');
             const maxDay = dayCards.length;
+            const autosaveKey = 'gci-3d-printing-autosave-v1';
             let currentDay = 1;
+
+            function updateCompletionMarkers() {
+                dayCards.forEach((card) => {
+                    const dayNumber = Number(card.dataset.day);
+                    const button = dayButtons.find((item) => Number(item.dataset.dayTarget) === dayNumber);
+                    if (!button) {
+                        return;
+                    }
+
+                    const checklistBoxes = Array.from(card.querySelectorAll('.worksheet input[type="checkbox"]'));
+                    const hasRequired = checklistBoxes.length > 0;
+                    const complete = hasRequired && checklistBoxes.every((box) => box.checked);
+                    button.classList.toggle('is-complete', complete);
+                    button.setAttribute('aria-label', complete ? `Day ${dayNumber} complete` : `Day ${dayNumber}`);
+                });
+            }
+
+            function injectCardUtilityButtons() {
+                dayCards.forEach((card) => {
+                    const dayNumber = Number(card.dataset.day);
+                    const worksheet = card.querySelector('.worksheet');
+                    if (!worksheet) {
+                        return;
+                    }
+
+                    const worksheetId = worksheet.id || `day-${dayNumber}-worksheet`;
+                    worksheet.id = worksheetId;
+
+                    const goal = card.querySelector('.goal');
+                    if (goal && !card.querySelector('.day-card-tools')) {
+                        const tools = document.createElement('div');
+                        tools.className = 'day-card-tools';
+
+                        const jumpButton = document.createElement('button');
+                        jumpButton.type = 'button';
+                        jumpButton.className = 'card-tool-btn';
+                        jumpButton.textContent = 'Jump to Worksheet';
+                        jumpButton.addEventListener('click', () => {
+                            worksheet.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        });
+
+                        tools.appendChild(jumpButton);
+                        goal.insertAdjacentElement('afterend', tools);
+                    }
+
+                    if (!card.querySelector('.back-top-wrap')) {
+                        const wrap = document.createElement('div');
+                        wrap.className = 'back-top-wrap';
+
+                        const backTopButton = document.createElement('button');
+                        backTopButton.type = 'button';
+                        backTopButton.className = 'card-tool-btn';
+                        backTopButton.textContent = 'Back to Top';
+                        backTopButton.addEventListener('click', () => {
+                            pageTopAnchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        });
+
+                        wrap.appendChild(backTopButton);
+                        card.appendChild(wrap);
+                    }
+                });
+            }
+
+            function getControlStorageId(control, index) {
+                return control.id || control.name || control.getAttribute('aria-label') || `field-${index}`;
+            }
+
+            function restoreAutosaveData() {
+                try {
+                    const raw = localStorage.getItem(autosaveKey);
+                    if (!raw) {
+                        return;
+                    }
+
+                    const saved = JSON.parse(raw);
+                    const controls = Array.from(document.querySelectorAll('input[type="text"], textarea, input[type="checkbox"], select'));
+                    controls.forEach((control, index) => {
+                        const key = getControlStorageId(control, index);
+                        if (!(key in saved)) {
+                            return;
+                        }
+
+                        if (control.type === 'checkbox') {
+                            control.checked = Boolean(saved[key]);
+                        } else {
+                            control.value = saved[key] ?? '';
+                        }
+                    });
+                } catch (error) {
+                    console.warn('Unable to restore autosave data.', error);
+                }
+            }
+
+            function persistAutosaveData() {
+                try {
+                    const payload = {};
+                    const controls = Array.from(document.querySelectorAll('input[type="text"], textarea, input[type="checkbox"], select'));
+                    controls.forEach((control, index) => {
+                        const key = getControlStorageId(control, index);
+                        payload[key] = control.type === 'checkbox' ? control.checked : control.value;
+                    });
+                    localStorage.setItem(autosaveKey, JSON.stringify(payload));
+                } catch (error) {
+                    console.warn('Unable to save autosave data.', error);
+                }
+            }
 
             function setDay(day) {
                 currentDay = Math.max(1, Math.min(maxDay, day));
@@ -938,6 +1303,22 @@
 
             nextButton.addEventListener('click', function () {
                 setDay(currentDay + 1);
+            });
+
+            document.addEventListener('keydown', function (event) {
+                const target = event.target;
+                const typing = target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT' || target.isContentEditable);
+                if (typing) {
+                    return;
+                }
+
+                if (event.key === 'ArrowLeft') {
+                    event.preventDefault();
+                    setDay(currentDay - 1);
+                } else if (event.key === 'ArrowRight') {
+                    event.preventDefault();
+                    setDay(currentDay + 1);
+                }
             });
 
             function buildWorksheetText() {
@@ -1016,6 +1397,18 @@
 
             copyButton.addEventListener('click', copyWorksheetNotes);
 
+            const autosaveControls = Array.from(document.querySelectorAll('input[type="text"], textarea, input[type="checkbox"], select'));
+            autosaveControls.forEach((control) => {
+                const eventName = control.type === 'checkbox' ? 'change' : 'input';
+                control.addEventListener(eventName, persistAutosaveData);
+                if (control.type === 'checkbox') {
+                    control.addEventListener('change', updateCompletionMarkers);
+                }
+            });
+
+            injectCardUtilityButtons();
+            restoreAutosaveData();
+            updateCompletionMarkers();
             setDay(1);
         })();
     </script>
