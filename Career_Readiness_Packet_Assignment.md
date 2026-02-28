@@ -26,17 +26,14 @@ If your LMS blocks embedded videos, use the direct YouTube links above.
 
 ---
 
-## Learning Goals
+## Learning Objectives
 
 By completing this project, you will be able to:
 
-- Use heading styles and consistent formatting
-- Build and format tables and lists
-- Insert and format images with alt text
-- Use page/section layout intentionally
-- Add navigation features (bookmarks/hyperlinks)
-- Apply accessibility and final quality checks
-- Export and share professional documents
+- Create a clear, one-page resume tailored to a specific internship or job posting.
+- Write a focused cover letter that connects your skills and experience to the role.
+- Apply ATS-friendly formatting and accurate job-description keywords.
+- Export and submit professional final files in both .docx and .pdf formats.
 
 ---
 
@@ -209,42 +206,27 @@ Reflection prompt (150–250 words):
 
 ---
 
-## Grading Rubric (100 points)
+## Grading Rubric (50 points)
 
-## 1) Document Structure & Completeness (25 pts)
+## 1) Structure & Completeness (10 pts)
 
-- 25: All required sections/pages complete and professional
-- 18–24: Most sections complete; minor missing elements
-- 10–17: Several missing sections or weak development
-- 0–9: Incomplete packet
+- Includes all required sections on both pages and follows the two-page packet format.
 
-## 2) Word Skills & Formatting Accuracy (30 pts)
+## 2) Word Skills & Formatting (10 pts)
 
-- 30: Excellent use of headings, lists, table, spacing, and layout
-- 22–29: Solid formatting with minor inconsistencies
-- 12–21: Basic formatting; multiple errors
-- 0–11: Limited or incorrect formatting
+- Uses consistent fonts, spacing, headings, and clean ATS-friendly layout choices.
 
-## 3) Professional Writing Quality (20 pts)
+## 3) Professional Writing (10 pts)
 
-- 20: Clear, polished, audience-appropriate writing
-- 15–19: Mostly clear; minor issues in tone/clarity
-- 8–14: Frequent issues in clarity or organization
-- 0–7: Writing not professional or difficult to follow
+- Uses clear, specific, role-relevant language with minimal grammar/spelling errors.
 
-## 4) Accessibility & Usability (15 pts)
+## 4) Accessibility & Usability (10 pts)
 
-- 15: Alt text, readable structure, and accessibility checks completed
-- 10–14: Most accessibility elements present
-- 5–9: Limited accessibility effort
-- 0–4: Accessibility missing
+- Applies readability and accessibility best practices, including helpful alt text when needed.
 
-## 5) Submission Quality & Reflection (10 pts)
+## 5) Submission & Reflection (10 pts)
 
-- 10: Correct file names, formats, and thoughtful reflection
-- 7–9: Minor submission or reflection issues
-- 4–6: Multiple missing/incorrect submission pieces
-- 0–3: Submission incomplete
+- Submits required file types and includes a complete 150–250 word reflection.
 
 ## Teacher Notes (Optional)
 
