@@ -2265,30 +2265,6 @@
                 // badge shape selector removed; badges are fixed to shield shape
             } catch (e) { }
 
-            // Expose a simple smoke-test function for the generator in the console for quick checks
-            window.__ooo_smoke_test__ = function (iterations = 200) {
-                const failures = [];
-                const lvl = difficulty ? difficulty.value : 'medium';
-                const maxAbs = rngSelect ? parseInt(rngSelect.value, 10) : 9;
-                for (let i = 0; i < iterations; i++) {
-                    try {
-                        const ex = generateExpression(lvl, maxAbs);
-                        const val = evaluateExpr(ex);
-                        if (!Number.isFinite(val) || !Number.isInteger(val)) {
-                            failures.push({ expr: ex, value: val });
-                        }
-                    } catch (e) {
-                        failures.push({ error: e && e.message ? e.message : String(e) });
-                    }
-                }
-                if (!failures.length) {
-                    console.log(`SMOKE OK: ${iterations} integer results generated`);
-                } else {
-                    console.warn(`SMOKE FAIL: ${failures.length} failures`, failures.slice(0, 10));
-                }
-                return failures;
-            };
-
             function showProblem(i) {
                 if (i >= problems.length) {
                     problemEl.textContent = 'All done! Click Start to begin a new set.';
