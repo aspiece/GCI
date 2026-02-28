@@ -1,0 +1,679 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Career Readiness Packet — Student Assignment</title>
+    <style>
+        :root {
+            --bg: #0b0c0f;
+            --card: #12141a;
+            --muted: #aab2c0;
+            --text: #e8ecf2;
+            --primary: #4f8cff;
+            --primary-weak: #2a5bd7;
+            --accent: #22b07d;
+            --danger: #ff6b6b;
+            --border: #1e2230;
+            --shadow: 0 6px 24px rgba(0, 0, 0, 0.35), 0 2px 6px rgba(0, 0, 0, 0.25);
+        }
+
+        [data-theme="light"] {
+            --bg: #f5f5f5;
+            --card: #ffffff;
+            --muted: #666666;
+            --text: #1a1a1a;
+            --primary: #0052cc;
+            --primary-weak: #003fa3;
+            --accent: #28a745;
+            --danger: #dc3545;
+            --border: #d0d0d0;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        [data-theme="high-contrast"] {
+            --bg: #000000;
+            --card: #ffffff;
+            --muted: #333333;
+            --text: #ffffff;
+            --primary: #00ffff;
+            --primary-weak: #00ccff;
+            --accent: #00cc00;
+            --danger: #ff0000;
+            --border: #000000;
+            --shadow: 0 2px 4px rgba(255, 255, 255, 0.3);
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+            background: radial-gradient(1200px 800px at 90% -10%, #1a2235 0%, var(--bg) 35%), radial-gradient(1000px 600px at -10% 110%, #16202e 0%, transparent 40%) var(--bg);
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        [data-theme="light"] body {
+            background: #f5f5f5;
+        }
+
+        [data-theme="high-contrast"] body {
+            background: #000000;
+        }
+
+        .wrap {
+            max-width: 960px;
+            margin: 32px auto;
+            padding: 0 16px;
+        }
+
+        header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .title {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .title h1 {
+            font-size: 22px;
+            margin: 0;
+            letter-spacing: 0.2px;
+        }
+
+        .title p {
+            margin: 0;
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: flex-start;
+            justify-content: flex-end;
+            flex: 1;
+        }
+
+        select,
+        button {
+            background: var(--card);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 14px;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        button.primary {
+            background: linear-gradient(180deg, var(--primary) 0%, var(--primary-weak) 100%);
+            border: none;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .card {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.0));
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 14px;
+        }
+
+        .section-title {
+            margin: 8px 0 6px;
+            font-size: 18px;
+        }
+
+        p,
+        li {
+            line-height: 1.55;
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
+        .grid {
+            display: grid;
+            gap: 14px;
+            grid-template-columns: 1fr;
+            margin-bottom: 14px;
+        }
+
+        @media (min-width: 860px) {
+            .grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .badge {
+            padding: 3px 8px;
+            border-radius: 999px;
+            background: #1a2332;
+            border: 1px solid #213147;
+            color: #a8c1ff;
+            display: inline-block;
+            font-size: 12px;
+        }
+
+        .progress {
+            height: 8px;
+            background: #0f1117;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            margin: 16px 0 12px;
+        }
+
+        .progress>div {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #5fa8ff, #22b07d);
+        }
+
+        .checklist {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0 0;
+        }
+
+        .checklist li {
+            margin: 8px 0;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.02);
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .checklist input[type="checkbox"] {
+            margin-top: 3px;
+            transform: scale(1.1);
+        }
+
+        iframe {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-top: 8px;
+            background: #000;
+        }
+
+        .quiz-q {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .quiz-q legend {
+            font-weight: 600;
+            padding: 0 4px;
+        }
+
+        .quiz-feedback {
+            margin-top: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+            background: rgba(79, 140, 255, 0.12);
+            display: none;
+        }
+
+        .quiz-feedback.pass {
+            border-left-color: var(--accent);
+            background: rgba(34, 176, 125, 0.12);
+        }
+
+        .quiz-feedback.fail {
+            border-left-color: var(--danger);
+            background: rgba(255, 107, 107, 0.12);
+        }
+
+        .pill {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            padding: 2px 7px;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.03);
+            font-size: 12px;
+        }
+
+        .rubric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 10px;
+        }
+
+        .rubric-item {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        a {
+            color: #9fcbff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        [data-theme="light"] .badge {
+            background: #e3f0ff;
+            border: 1px solid #b3d9ff;
+            color: #0052cc;
+        }
+
+        [data-theme="light"] .card {
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.0));
+        }
+
+        [data-theme="light"] .progress {
+            background: #e0e0e0;
+            border: 1px solid #d0d0d0;
+        }
+
+        [data-theme="light"] .progress>div {
+            background: linear-gradient(90deg, #0052cc, #28a745);
+        }
+
+        [data-theme="light"] a {
+            color: #0052cc;
+        }
+
+        [data-theme="high-contrast"] .card {
+            background: #000000;
+            border: 2px solid #ffffff;
+        }
+
+        [data-theme="high-contrast"] .badge {
+            background: #000000;
+            border: 2px solid #00ffff;
+            color: #00ffff;
+        }
+
+        [data-theme="high-contrast"] .progress {
+            background: #ffffff;
+            border: 2px solid #000000;
+        }
+
+        [data-theme="high-contrast"] .progress>div {
+            background: #00ffff;
+        }
+
+        [data-theme="high-contrast"] select,
+        [data-theme="high-contrast"] button {
+            background: #ffffff;
+            color: #000000;
+            border: 2px solid #000000;
+        }
+
+        [data-theme="high-contrast"] a {
+            color: #0000ff;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <header>
+            <div class="title">
+                <h1>Career Readiness Packet</h1>
+                <p>Student Assignment • Independent + Virtual</p>
+            </div>
+            <div class="controls">
+                <select id="themeSelector" title="Theme">
+                    <option value="dark">Dark</option>
+                    <option value="light">Light</option>
+                    <option value="high-contrast">High Contrast</option>
+                </select>
+                <button id="resetProgress">Reset Progress</button>
+            </div>
+        </header>
+        <div class="card">
+            <div class="badge">Project Goal</div>
+            <p>Create one polished 3-page packet for an internship application: a cover page, resume-style profile, and
+                one-page cover letter.</p>
+            <p class="muted">Estimated time: 90–150 minutes total</p>
+            <p class="muted">Submit: <span class="pill">.docx</span> + <span class="pill">.pdf</span> + <span
+                    class="pill">150–250 word reflection</span></p>
+        </div>
+
+        <div class="card">
+            <h2 class="section-title">Your Completion Progress</h2>
+            <div class="progress" aria-label="Progress">
+                <div id="progressBar"></div>
+            </div>
+            <p id="progressText" class="muted">0% complete</p>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h2 class="section-title">Page Requirements</h2>
+                <ul>
+                    <li><strong>Page 1:</strong> Cover page with title, name, class/date, tagline, relevant image + alt
+                        text</li>
+                    <li><strong>Page 2:</strong> Resume-style profile with summary, skills, education, and experience
+                    </li>
+                    <li><strong>Page 3:</strong> One-page cover letter to a fictional employer</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2 class="section-title">Must-Show Word Skills</h2>
+                <ul>
+                    <li>Heading styles and clear section labels</li>
+                    <li>Bulleted list + at least one table</li>
+                    <li>Image inserted with alt text</li>
+                    <li>ATS-friendly formatting (simple layout, readable text)</li>
+                    <li>Accessibility review + PDF export</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 class="section-title">Success Criteria (What Proficient Looks Like)</h2>
+            <ul>
+                <li><strong>Page 1:</strong> clear visual hierarchy, clean spacing, relevant image, and purposeful alt
+                    text.</li>
+                <li><strong>Page 2:</strong> easy-to-scan sections, specific action-oriented bullets, ATS-friendly
+                    formatting, and a readable table.</li>
+                <li><strong>Page 3:</strong> professional tone, concise paragraphing, and complete closing/signature.
+                </li>
+            </ul>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h2 class="section-title">Suggested Pacing (Asynchronous)</h2>
+                <ul>
+                    <li><strong>Block 1 (30–45 min):</strong> Watch videos, take notes, build Page 1.</li>
+                    <li><strong>Block 2 (30–45 min):</strong> Build Page 2 with ATS-friendly formatting.</li>
+                    <li><strong>Block 3 (30–60 min):</strong> Draft Page 3, run checks, export, submit.</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2 class="section-title">Example Quality Benchmarks</h2>
+                <p><strong>ATS-friendly summary example:</strong></p>
+                <p class="muted">High school student seeking internship opportunities with strengths in communication,
+                    spreadsheet organization, and project support. Experienced through class projects and volunteer
+                    service, with consistent on-time completion and attention to detail.</p>
+                <p><strong>Weak vs. strong bullet:</strong></p>
+                <p class="muted">Weak: Helped with school event.<br />Strong: Coordinated sign-in and materials for a
+                    120-student school event, improving check-in flow and reducing delays.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 class="section-title">Videos to Watch</h2>
+            <p><strong>1) Resume Tips</strong></p>
+            <iframe src="https://www.youtube.com/embed/NRTs4HsICI8" title="Resume Tips Video"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen></iframe>
+            <p><a href="https://youtu.be/NRTs4HsICI8?si=euoYnZ9CRxK3GwKi" target="_blank" rel="noopener">Open video in
+                    YouTube</a></p>
+
+            <p style="margin-top:16px;"><strong>2) ATS (Applicant Tracking System) Tips</strong></p>
+            <iframe src="https://www.youtube.com/embed/DksA_vF84JA" title="ATS Tips Video"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen></iframe>
+            <p><a href="https://youtu.be/DksA_vF84JA?si=sclhCHE9EIZbfsQH" target="_blank" rel="noopener">Open video in
+                    YouTube</a></p>
+            <p class="muted">If your LMS/browser blocks embedded playback, use the YouTube links above.</p>
+        </div>
+
+        <div class="card">
+            <h2 class="section-title">Check for Understanding (After Watching Videos)</h2>
+            <p class="muted">Answer all questions, then click <strong>Grade Quiz</strong>. Passing score is 4/5.</p>
+
+            <form id="quizForm">
+                <fieldset class="quiz-q">
+                    <legend>1) Which resume format is generally most ATS-friendly?</legend>
+                    <label><input type="radio" name="q1" value="a" /> A two-column design with icons and
+                        graphics</label><br />
+                    <label><input type="radio" name="q1" value="b" /> A simple one-column layout with clear
+                        headings</label><br />
+                    <label><input type="radio" name="q1" value="c" /> A design with text embedded in images</label>
+                </fieldset>
+
+                <fieldset class="quiz-q">
+                    <legend>2) Why should students include keywords from a job posting?</legend>
+                    <label><input type="radio" name="q2" value="a" /> To improve ATS matching and
+                        relevance</label><br />
+                    <label><input type="radio" name="q2" value="b" /> To make the resume longer</label><br />
+                    <label><input type="radio" name="q2" value="c" /> To avoid describing their real skills</label>
+                </fieldset>
+
+                <fieldset class="quiz-q">
+                    <legend>3) Which is best practice for section titles?</legend>
+                    <label><input type="radio" name="q3" value="a" /> Use decorative symbols instead of standard
+                        labels</label><br />
+                    <label><input type="radio" name="q3" value="b" /> Use standard headings like Education, Skills,
+                        Experience</label><br />
+                    <label><input type="radio" name="q3" value="c" /> Put section titles only in images</label>
+                </fieldset>
+
+                <fieldset class="quiz-q">
+                    <legend>4) What is one key action after drafting the packet?</legend>
+                    <label><input type="radio" name="q4" value="a" /> Skip review and submit immediately</label><br />
+                    <label><input type="radio" name="q4" value="b" /> Run accessibility and formatting
+                        checks</label><br />
+                    <label><input type="radio" name="q4" value="c" /> Remove all headings to make it shorter</label>
+                </fieldset>
+
+                <fieldset class="quiz-q">
+                    <legend>5) Which content is strongest for a student resume?</legend>
+                    <label><input type="radio" name="q5" value="a" /> Vague descriptions without examples</label><br />
+                    <label><input type="radio" name="q5" value="b" /> Specific skills and experience from classes,
+                        clubs, or volunteer work</label><br />
+                    <label><input type="radio" name="q5" value="c" /> Mostly unrelated personal details</label>
+                </fieldset>
+
+                <button type="button" id="gradeQuiz" class="primary">Grade Quiz</button>
+            </form>
+
+            <div id="quizFeedback" class="quiz-feedback"></div>
+        </div>
+
+        <div class="card">
+            <h2 class="section-title">Student Self-Checklist</h2>
+            <ul class="checklist" id="studentChecklist">
+                <li><input type="checkbox" data-key="watch_resume" /> <label>I watched the Resume Tips video.</label>
+                </li>
+                <li><input type="checkbox" data-key="watch_ats" /> <label>I watched the ATS video.</label></li>
+                <li><input type="checkbox" data-key="apply_resume" /> <label>I applied at least 2 resume tips in my
+                        document.</label></li>
+                <li><input type="checkbox" data-key="apply_ats" /> <label>I applied at least 2 ATS-friendly
+                        choices.</label></li>
+                <li><input type="checkbox" data-key="doc_three_pages" /> <label>My packet is 3+ pages in one
+                        document.</label></li>
+                <li><input type="checkbox" data-key="has_table" /> <label>I included at least one table.</label></li>
+                <li><input type="checkbox" data-key="has_alt" /> <label>I added alt text to my image.</label></li>
+                <li><input type="checkbox" data-key="has_accessibility" /> <label>I completed accessibility checks and
+                        fixed major issues.</label></li>
+                <li><input type="checkbox" data-key="export_pdf" /> <label>I exported my final packet to PDF.</label>
+                </li>
+                <li><input type="checkbox" data-key="quiz_passed" id="quizPassedBox" disabled /> <label>I passed the
+                        video quiz (auto-checked).</label></li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2 class="section-title">Rubric Summary (100 points)</h2>
+            <div class="rubric-grid">
+                <div class="rubric-item"><strong>Structure & Completeness</strong><br />25 pts</div>
+                <div class="rubric-item"><strong>Word Skills & Formatting</strong><br />30 pts</div>
+                <div class="rubric-item"><strong>Professional Writing</strong><br />20 pts</div>
+                <div class="rubric-item"><strong>Accessibility & Usability</strong><br />15 pts</div>
+                <div class="rubric-item"><strong>Submission & Reflection</strong><br />10 pts</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 class="section-title">Submission</h2>
+            <ol>
+                <li><span class="pill">Lastname_Firstname_CareerPacket.docx</span></li>
+                <li><span class="pill">Lastname_Firstname_CareerPacket.pdf</span></li>
+                <li><span class="pill">Lastname_Firstname_Reflection.txt</span> (150–250 words)</li>
+            </ol>
+            <p class="muted">Reflection prompt: What did you do best? What challenged you most? What would you improve
+                for a real application?</p>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_PREFIX = 'career-packet-web-';
+        const THEME_KEY = STORAGE_PREFIX + 'theme';
+        const QUIZ_KEY = STORAGE_PREFIX + 'quiz-passed';
+
+        const themeSelector = document.getElementById('themeSelector');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        const resetButton = document.getElementById('resetProgress');
+        const checklistInputs = Array.from(document.querySelectorAll('#studentChecklist input[type="checkbox"]'));
+        const quizPassedBox = document.getElementById('quizPassedBox');
+        const gradeQuizButton = document.getElementById('gradeQuiz');
+        const quizFeedback = document.getElementById('quizFeedback');
+
+        const answerMeta = {
+            q1: { correct: 'b', note: 'ATS parsers work best with simple one-column layouts and standard headings.' },
+            q2: { correct: 'a', note: 'Keywords improve alignment between resume content and job requirements.' },
+            q3: { correct: 'b', note: 'Standard section labels help both recruiters and ATS tools parse content.' },
+            q4: { correct: 'b', note: 'Quality and accessibility checks prevent avoidable submission issues.' },
+            q5: { correct: 'b', note: 'Specific, relevant examples are stronger than vague statements.' }
+        };
+
+        function loadTheme() {
+            const saved = localStorage.getItem(THEME_KEY) || 'dark';
+            document.documentElement.setAttribute('data-theme', saved);
+            themeSelector.value = saved;
+        }
+
+        function saveTheme(value) {
+            document.documentElement.setAttribute('data-theme', value);
+            localStorage.setItem(THEME_KEY, value);
+        }
+
+        function loadChecklist() {
+            checklistInputs.forEach((input) => {
+                const key = STORAGE_PREFIX + input.dataset.key;
+                if (input.id === 'quizPassedBox') return;
+                input.checked = localStorage.getItem(key) === 'true';
+            });
+
+            const quizPassed = localStorage.getItem(QUIZ_KEY) === 'true';
+            quizPassedBox.checked = quizPassed;
+            updateProgress();
+        }
+
+        function saveChecklist(input) {
+            if (input.id === 'quizPassedBox') return;
+            const key = STORAGE_PREFIX + input.dataset.key;
+            localStorage.setItem(key, String(input.checked));
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const total = checklistInputs.length;
+            const done = checklistInputs.filter((input) => input.checked).length;
+            const percent = Math.round((done / total) * 100);
+            progressBar.style.width = percent + '%';
+            progressText.textContent = `${percent}% complete (${done}/${total} checklist items)`;
+        }
+
+        function gradeQuiz() {
+            const form = document.getElementById('quizForm');
+            const data = new FormData(form);
+            let score = 0;
+            let answered = 0;
+            const misses = [];
+
+            Object.keys(answerMeta).forEach((key, index) => {
+                const value = data.get(key);
+                if (value) answered++;
+                if (value === answerMeta[key].correct) {
+                    score++;
+                } else {
+                    misses.push({ question: index + 1, note: answerMeta[key].note });
+                }
+            });
+
+            if (answered < Object.keys(answerMeta).length) {
+                quizFeedback.className = 'quiz-feedback fail';
+                quizFeedback.style.display = 'block';
+                quizFeedback.textContent = 'Please answer all 5 questions before grading.';
+                return;
+            }
+
+            const passed = score >= 4;
+            quizFeedback.className = 'quiz-feedback ' + (passed ? 'pass' : 'fail');
+            quizFeedback.style.display = 'block';
+            let details = '';
+            if (misses.length) {
+                details = '<ul>' + misses.map((item) => `<li><strong>Q${item.question}:</strong> ${item.note}</li>`).join('') + '</ul>';
+            }
+
+            quizFeedback.innerHTML = passed
+                ? `<strong>Great work!</strong> You scored ${score}/5 and passed. The checklist item was marked complete.${details}`
+                : `<strong>Keep going.</strong> You scored ${score}/5. You need 4/5 to pass. Review the notes below and try again.${details}`;
+
+            localStorage.setItem(QUIZ_KEY, String(passed));
+            quizPassedBox.checked = passed;
+            updateProgress();
+        }
+
+        function resetAll() {
+            Object.keys(localStorage).forEach((key) => {
+                if (key.startsWith(STORAGE_PREFIX)) {
+                    localStorage.removeItem(key);
+                }
+            });
+            quizFeedback.style.display = 'none';
+            loadTheme();
+            loadChecklist();
+            document.getElementById('quizForm').reset();
+        }
+
+        themeSelector.addEventListener('change', (event) => saveTheme(event.target.value));
+        checklistInputs.forEach((input) => input.addEventListener('change', () => saveChecklist(input)));
+        gradeQuizButton.addEventListener('click', gradeQuiz);
+        resetButton.addEventListener('click', resetAll);
+
+        loadTheme();
+        loadChecklist();
+    </script>
+</body>
+
+</html>

@@ -12,17 +12,17 @@ You will submit:
 
 This project is designed for **independent, asynchronous completion**.
 
+Estimated time: **90–150 minutes total**.
+
 Resume tips video for this assignment:
 
 - <https://youtu.be/NRTs4HsICI8?si=euoYnZ9CRxK3GwKi>
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/NRTs4HsICI8" title="Resume Tips Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ATS (Applicant Tracking System) video for this assignment:
 
 - <https://youtu.be/DksA_vF84JA?si=sclhCHE9EIZbfsQH>
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/DksA_vF84JA" title="ATS Tips Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+If your LMS blocks embedded videos, use the direct YouTube links above.
 
 ---
 
@@ -112,6 +112,25 @@ Required skills to show:
 - Consistent margins
 - Proper tone and formatting
 
+## Success Criteria by Page
+
+Use this to self-check quality before submitting:
+
+- **Page 1 (Cover Page) Proficient:** visual hierarchy is clear, spacing is clean, image is relevant, and alt text describes the image purpose.
+- **Page 2 (Resume Page) Proficient:** sections are easy to scan, bullets are specific and impact-focused, ATS-friendly formatting is used, and at least one table is readable.
+- **Page 3 (Cover Letter) Proficient:** writing is professional and targeted, paragraphs are concise, and closing is complete and audience-appropriate.
+
+## Example Quality Benchmarks
+
+Use these models to strengthen your writing:
+
+- **ATS-friendly summary example:**
+  - `High school student seeking internship opportunities with strengths in communication, spreadsheet organization, and project support. Experienced through class projects and volunteer service, with consistent on-time completion and attention to detail.`
+
+- **Weak vs. strong bullet example:**
+  - Weak: `Helped with school event.`
+  - Strong: `Coordinated sign-in and materials for a 120-student school event, improving check-in flow and reducing delays.`
+
 ---
 
 ## Required Technical Checklist (Must Include)
@@ -147,24 +166,30 @@ Complete this after watching both videos and before submitting:
 ## Virtual/Independent Workflow (Student Directions)
 
 1. Review this assignment and create your document.
+2. Watch both videos and take quick notes.
 
-- Watch both videos and take quick notes.
-  - Resume tips video: identify 2 ideas to apply.
-  - ATS video: identify 2 ATS-friendly choices to apply.
+- Resume tips video: identify 2 ideas to apply.
+- ATS video: identify 2 ATS-friendly choices to apply.
 
 1. Complete Page 1, then Page 2, then Page 3.
-2. Run a quality check:
+1. Run a quality check:
    - spelling/grammar
    - formatting consistency
    - heading structure
-3. Run accessibility checks and fix major issues.
-4. Export to PDF.
-5. Submit all required files.
+1. Run accessibility checks and fix major issues.
+1. Export to PDF.
+1. Submit all required files.
 
 Tip: Save often and use version names during drafting:
 
 - `CareerPacket_draft1.docx`
 - `CareerPacket_final.docx`
+
+## Suggested Pacing Plan (Asynchronous)
+
+- **Block 1 (30–45 min):** Watch both videos, take notes, and build Page 1.
+- **Block 2 (30–45 min):** Build Page 2 using ATS-friendly formatting and strong bullets.
+- **Block 3 (30–60 min):** Draft Page 3, run checks, export PDF, and submit.
 
 ---
 
