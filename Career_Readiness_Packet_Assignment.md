@@ -246,19 +246,6 @@ Reflection prompt (150–250 words):
 - 4–6: Multiple missing/incorrect submission pieces
 - 0–3: Submission incomplete
 
----
-
-## Optional Extension (Bonus +5)
-
-Add one advanced feature:
-
-- Custom header/footer with page number
-- Clickable mini table of contents
-- Personal branding style set (consistent visual system)
-- QR code linking to a portfolio (if available)
-
----
-
 ## Teacher Notes (Optional)
 
 - Suggested duration: 2–3 class periods or 1 week asynchronous

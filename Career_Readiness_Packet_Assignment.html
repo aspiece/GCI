@@ -279,6 +279,38 @@
             background: rgba(255, 255, 255, 0.02);
         }
 
+        .video-check {
+            margin-top: 10px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .video-check h3 {
+            margin: 0 0 8px;
+            font-size: 15px;
+        }
+
+        .video-check .quick-feedback {
+            margin-top: 8px;
+            padding: 8px 10px;
+            border-left: 4px solid var(--primary);
+            border-radius: 6px;
+            background: rgba(79, 140, 255, 0.12);
+            display: none;
+        }
+
+        .video-check .quick-feedback.pass {
+            border-left-color: var(--accent);
+            background: rgba(34, 176, 125, 0.12);
+        }
+
+        .video-check .quick-feedback.fail {
+            border-left-color: var(--danger);
+            background: rgba(255, 107, 107, 0.12);
+        }
+
         a {
             color: #9fcbff;
             text-decoration: none;
@@ -341,6 +373,16 @@
         [data-theme="high-contrast"] a {
             color: #0000ff;
             text-decoration: underline;
+        }
+
+        [data-theme="high-contrast"] .video-check {
+            background: #ffffff;
+            border: 2px solid #000000;
+            color: #000000;
+        }
+
+        [data-theme="high-contrast"] .video-check .quick-feedback {
+            color: #000000;
         }
     </style>
 </head>
@@ -445,12 +487,75 @@
             <p><a href="https://youtu.be/NRTs4HsICI8?si=euoYnZ9CRxK3GwKi" target="_blank" rel="noopener">Open video in
                     YouTube</a></p>
 
+            <div class="video-check" aria-label="Resume video quick check">
+                <h3>Quick Check: Resume Tips</h3>
+                <form id="resumeQuickCheck">
+                    <label><strong>1)</strong> About how long did the video say many recruiters spend on an initial
+                        resume scan?</label><br />
+                    <label><input type="radio" name="rq1" value="a" /> Around 10 seconds.</label><br />
+                    <label><input type="radio" name="rq1" value="b" /> Around 2 minutes.</label><br /><br />
+
+                    <label><strong>2)</strong> Which formatting choice matches the video guidance?</label><br />
+                    <label><input type="radio" name="rq2" value="a" /> Add photos and colorful graphics to stand
+                        out.</label><br />
+                    <label><input type="radio" name="rq2" value="b" /> Keep it clean: standard fonts, consistent
+                        headings, no graphics/photos.</label><br /><br />
+
+                    <label><strong>3)</strong> If you have little or no paid experience, what should you
+                        include?</label><br />
+                    <label><input type="radio" name="rq3" value="a" /> Only paid jobs.</label><br />
+                    <label><input type="radio" name="rq3" value="b" /> Volunteer work, projects, extracurriculars, and
+                        part-time/freelance work.</label><br /><br />
+
+                    <label><strong>4)</strong> How should you tailor skills from a job description?</label><br />
+                    <label><input type="radio" name="rq4" value="a" /> Use the same language from the posting when it
+                        accurately matches your skills.</label><br />
+                    <label><input type="radio" name="rq4" value="b" /> Keep one generic resume with no wording
+                        changes.</label><br /><br />
+
+                    <button type="button" id="gradeResumeQuick" class="primary">Check Answers</button>
+                </form>
+                <div id="resumeQuickFeedback" class="quick-feedback"></div>
+            </div>
+
             <p style="margin-top:16px;"><strong>2) ATS (Applicant Tracking System) Tips</strong></p>
             <iframe src="https://www.youtube.com/embed/DksA_vF84JA" title="ATS Tips Video"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowfullscreen></iframe>
             <p><a href="https://youtu.be/DksA_vF84JA?si=sclhCHE9EIZbfsQH" target="_blank" rel="noopener">Open video in
                     YouTube</a></p>
+
+            <div class="video-check" aria-label="ATS video quick check">
+                <h3>Quick Check: ATS Basics</h3>
+                <form id="atsQuickCheck">
+                    <label><strong>1)</strong> In the hiring flow, where does ATS primarily operate?</label><br />
+                    <label><input type="radio" name="aq1" value="a" /> Between applying and recruiter screening, by
+                        scanning and ranking resumes.</label><br />
+                    <label><input type="radio" name="aq1" value="b" /> Only after interviews are
+                        completed.</label><br /><br />
+
+                    <label><strong>2)</strong> Which formatting choice is most ATS-friendly?</label><br />
+                    <label><input type="radio" name="aq2" value="a" /> Heavy formatting with tables, columns, icons, and
+                        images.</label><br />
+                    <label><input type="radio" name="aq2" value="b" /> Simple text-forward layout with clearly labeled
+                        sections (Experience, Skills, Education).</label><br /><br />
+
+                    <label><strong>3)</strong> According to the video, which file types are generally safe for ATS
+                        submission?</label><br />
+                    <label><input type="radio" name="aq3" value="a" /> Word document or PDF.</label><br />
+                    <label><input type="radio" name="aq3" value="b" /> InDesign or Photoshop native
+                        files.</label><br /><br />
+
+                    <label><strong>4)</strong> How should you use job-description keywords?</label><br />
+                    <label><input type="radio" name="aq4" value="a" /> Add matching keywords only when true, and show
+                        them in skills plus experience context.</label><br />
+                    <label><input type="radio" name="aq4" value="b" /> Add every keyword even if you do not have the
+                        skill.</label><br /><br />
+
+                    <button type="button" id="gradeAtsQuick" class="primary">Check Answers</button>
+                </form>
+                <div id="atsQuickFeedback" class="quick-feedback"></div>
+            </div>
             <p class="muted">If your LMS/browser blocks embedded playback, use the YouTube links above.</p>
         </div>
 
@@ -566,6 +671,8 @@
         const quizPassedBox = document.getElementById('quizPassedBox');
         const gradeQuizButton = document.getElementById('gradeQuiz');
         const quizFeedback = document.getElementById('quizFeedback');
+        const gradeResumeQuickButton = document.getElementById('gradeResumeQuick');
+        const gradeAtsQuickButton = document.getElementById('gradeAtsQuick');
 
         const answerMeta = {
             q1: { correct: 'b', note: 'ATS parsers work best with simple one-column layouts and standard headings.' },
@@ -573,6 +680,31 @@
             q3: { correct: 'b', note: 'Standard section labels help both recruiters and ATS tools parse content.' },
             q4: { correct: 'b', note: 'Quality and accessibility checks prevent avoidable submission issues.' },
             q5: { correct: 'b', note: 'Specific, relevant examples are stronger than vague statements.' }
+        };
+
+        const quickChecks = {
+            resume: {
+                formId: 'resumeQuickCheck',
+                feedbackId: 'resumeQuickFeedback',
+                answers: { rq1: 'a', rq2: 'b', rq3: 'b', rq4: 'a' },
+                notes: {
+                    rq1: 'The video emphasizes that many recruiters scan resumes in about 10 seconds.',
+                    rq2: 'The guidance is to use clean, consistent formatting and avoid graphics/photos.',
+                    rq3: 'The presenter explicitly says volunteer, projects, extracurriculars, and related work count.',
+                    rq4: 'Tailoring includes using exact job-description language when it truthfully matches your qualifications.'
+                }
+            },
+            ats: {
+                formId: 'atsQuickCheck',
+                feedbackId: 'atsQuickFeedback',
+                answers: { aq1: 'a', aq2: 'b', aq3: 'a', aq4: 'a' },
+                notes: {
+                    aq1: 'The video places ATS between application and recruiter screening, where it scans, categorizes, and ranks resumes.',
+                    aq2: 'The presenter warns that heavy formatting (icons/tables/columns/images) can reduce ATS readability.',
+                    aq3: 'The guidance is to submit a Word doc or PDF; design-tool native files should be converted.',
+                    aq4: 'Use keywords honestly: include only real qualifications and demonstrate them in your experience, not just a list.'
+                }
+            }
         };
 
         function loadTheme() {
@@ -654,6 +786,41 @@
             updateProgress();
         }
 
+        function gradeQuickCheck(config) {
+            const form = document.getElementById(config.formId);
+            const feedback = document.getElementById(config.feedbackId);
+            const data = new FormData(form);
+            const keys = Object.keys(config.answers);
+            let score = 0;
+            let answered = 0;
+            const misses = [];
+
+            keys.forEach((key) => {
+                const value = data.get(key);
+                if (value) answered++;
+                if (value === config.answers[key]) {
+                    score++;
+                } else if (config.notes && config.notes[key]) {
+                    misses.push(config.notes[key]);
+                }
+            });
+
+            if (answered < keys.length) {
+                feedback.className = 'quick-feedback fail';
+                feedback.style.display = 'block';
+                feedback.textContent = 'Please answer all quick-check questions.';
+                return;
+            }
+
+            const passed = score === keys.length;
+            feedback.className = 'quick-feedback ' + (passed ? 'pass' : 'fail');
+            feedback.style.display = 'block';
+            const details = misses.length ? '<ul>' + misses.map((note) => `<li>${note}</li>`).join('') + '</ul>' : '';
+            feedback.innerHTML = passed
+                ? `Nice work! You got ${score}/${keys.length}.`
+                : `You got ${score}/${keys.length}. Rewatch key points and try again.${details}`;
+        }
+
         function resetAll() {
             Object.keys(localStorage).forEach((key) => {
                 if (key.startsWith(STORAGE_PREFIX)) {
@@ -669,6 +836,8 @@
         themeSelector.addEventListener('change', (event) => saveTheme(event.target.value));
         checklistInputs.forEach((input) => input.addEventListener('change', () => saveChecklist(input)));
         gradeQuizButton.addEventListener('click', gradeQuiz);
+        gradeResumeQuickButton.addEventListener('click', () => gradeQuickCheck(quickChecks.resume));
+        gradeAtsQuickButton.addEventListener('click', () => gradeQuickCheck(quickChecks.ats));
         resetButton.addEventListener('click', resetAll);
 
         loadTheme();
