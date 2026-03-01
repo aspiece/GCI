@@ -9,7 +9,7 @@
         :root {
             --bg: #0b0c0f;
             --card: #12141a;
-            --muted: #aab2c0;
+            --muted: #c4ccda;
             --text: #e8ecf2;
             --primary: #4f8cff;
             --primary-weak: #2a5bd7;
@@ -22,7 +22,7 @@
         [data-theme="light"] {
             --bg: #f5f5f5;
             --card: #ffffff;
-            --muted: #666666;
+            --muted: #4a4a4a;
             --text: #1a1a1a;
             --primary: #0052cc;
             --primary-weak: #003fa3;
@@ -34,14 +34,14 @@
 
         [data-theme="high-contrast"] {
             --bg: #000000;
-            --card: #ffffff;
-            --muted: #333333;
+            --card: #000000;
+            --muted: #f2f2f2;
             --text: #ffffff;
             --primary: #00ffff;
             --primary-weak: #00ccff;
             --accent: #00cc00;
             --danger: #ff0000;
-            --border: #000000;
+            --border: #ffffff;
             --shadow: 0 2px 4px rgba(255, 255, 255, 0.3);
         }
 
@@ -72,6 +72,35 @@
             max-width: 960px;
             margin: 32px auto;
             padding: 0 16px;
+        }
+
+        .skip-link {
+            position: absolute;
+            left: 12px;
+            top: -48px;
+            background: var(--card);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 10px;
+            z-index: 2000;
+            text-decoration: none;
+        }
+
+        .skip-link:focus {
+            top: 12px;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
         }
 
         header {
@@ -118,10 +147,19 @@
             border-radius: 10px;
             padding: 10px 12px;
             font-size: 14px;
+            min-height: 44px;
         }
 
         button {
             cursor: pointer;
+        }
+
+        button:focus-visible,
+        select:focus-visible,
+        a:focus-visible,
+        input:focus-visible {
+            outline: 3px solid var(--primary);
+            outline-offset: 2px;
         }
 
         button.primary {
@@ -167,6 +205,12 @@
             font-size: 12px;
         }
 
+        [data-theme="high-contrast"] .badge {
+            background: #000000;
+            border-color: #ffffff;
+            color: #ffffff;
+        }
+
         .progress {
             height: 8px;
             background: #0f1117;
@@ -203,7 +247,14 @@
             transform: translateY(-50%);
             z-index: 1000;
             min-width: 96px;
+            min-height: 44px;
             box-shadow: var(--shadow);
+        }
+
+        input[type="checkbox"],
+        input[type="radio"] {
+            width: 18px;
+            height: 18px;
         }
 
         #projectPrevBtn {
@@ -220,6 +271,10 @@
 
         .project-page.active {
             display: block;
+        }
+
+        .project-page[hidden] {
+            display: none;
         }
 
         iframe {
@@ -373,11 +428,23 @@
             display: flex;
             gap: 10px;
             align-items: flex-start;
+            transition: background-color 0.15s ease, border-color 0.15s ease;
+        }
+
+        .checklist li:hover,
+        .checklist li:focus-within {
+            background: rgba(79, 140, 255, 0.10);
+            border-color: var(--primary);
         }
 
         .checklist input[type="checkbox"] {
-            margin-top: 3px;
-            transform: scale(1.1);
+            margin-top: 1px;
+            transform: none;
+        }
+
+        .checklist label {
+            cursor: pointer;
+            flex: 1;
         }
 
         .example-block {
@@ -451,9 +518,25 @@
             }
         }
 
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
         a {
-            color: #9fcbff;
+            color: var(--primary);
             text-decoration: none;
+        }
+
+        [data-theme="high-contrast"] a {
+            text-decoration: underline;
         }
 
         a:hover {
@@ -463,12 +546,14 @@
 </head>
 
 <body>
+    <a class="skip-link" href="#mainContent">Skip to main content</a>
     <div class="wrap">
         <header>
             <div class="title">
                 <h1>Career Essentials: Applying for a job</h1>
             </div>
             <div class="controls">
+                <label for="themeSelector" class="sr-only">Choose theme</label>
                 <select id="themeSelector" title="Theme">
                     <option value="dark">Dark</option>
                     <option value="light">Light</option>
@@ -478,532 +563,591 @@
             </div>
         </header>
 
-        <div class="card">
-            <div class="top-nav">
-                <div class="left">
-                    <span class="badge" id="projectStepCounter">Part 1 of 5</span>
-                    <span class="muted">Use the side Back/Next buttons or keyboard arrows (← →).</span>
-                </div>
-            </div>
-            <div class="progress">
-                <div id="projectProgressBar"></div>
-            </div>
-            <p id="projectProgressText" class="muted">Progress: 0/5 pages completed</p>
-        </div>
-
-        <button id="projectPrevBtn" class="edge-nav-btn" aria-label="Previous page">◀ Back</button>
-        <button id="projectNextBtn" class="edge-nav-btn primary" aria-label="Next page">Next ▶</button>
-
-        <section class="project-page active" data-project-page="1" aria-label="Starter Page">
+        <main id="mainContent" tabindex="-1">
             <div class="card">
-                <div class="badge">Part 1: Starter</div>
-                <h2 class="section-title">Project Scenario and Expectations</h2>
-                <p>You are preparing a real-world job application packet for a position you are genuinely interested in.
-                </p>
-                <h3>Step 1: Choose a Job Posting First</h3>
-                <ul>
-                    <li>Find one internship or entry-level job posting you want to target.</li>
-                    <li>Copy/save the posting link and identify key skills, qualifications, and keywords.</li>
-                    <li>Use that posting to tailor your resume and cover letter in the next sections.</li>
-                </ul>
-                <p class="muted"><strong>Time guide:</strong> Job posting selection + keyword extraction (8–10 min),
-                    resume draft (15–18 min), ATS revision (8–10 min), cover letter draft (10–12 min), final export and
-                    checks (4–6 min).</p>
-                <div class="example-block">
-                    <h3 style="margin-top:0;">Before You Click Next</h3>
-                    <ul>
-                        <li>Record the exact <strong>job title</strong>.</li>
-                        <li>Record the <strong>company name</strong>.</li>
-                        <li>Save the <strong>job posting link</strong> so you can reference it while writing.</li>
-                    </ul>
-                    <p class="muted" style="margin-bottom:0;"><strong>Keyword example:</strong> If the posting says
-                        “customer communication,” include that exact phrase where it truthfully matches your experience.
+                <div class="top-nav">
+                    <div class="left">
+                        <span class="badge" id="projectStepCounter" aria-live="polite">Part 1 of 5</span>
+                        <span class="muted">Use the side Back/Next buttons or keyboard arrows (← →).</span>
+                    </div>
+                </div>
+                <div class="progress">
+                    <div id="projectProgressBar" role="progressbar" aria-label="Project completion progress"
+                        aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+                </div>
+                <p id="projectProgressText" class="muted" aria-live="polite">Progress: 0/5 pages completed</p>
+            </div>
+
+            <button id="projectPrevBtn" class="edge-nav-btn" aria-label="Previous page" aria-controls="mainContent">◀
+                Back</button>
+            <button id="projectNextBtn" class="edge-nav-btn primary" aria-label="Next page"
+                aria-controls="mainContent">Next ▶</button>
+
+            <section class="project-page active" data-project-page="1" aria-label="Starter Page">
+                <div class="card">
+                    <div class="badge">Part 1: Starter</div>
+                    <h2 class="section-title">Project Scenario and Expectations</h2>
+                    <p>You are preparing a real-world job application packet for a position you are genuinely interested
+                        in.
                     </p>
-                </div>
-                <h3>Project Expectations</h3>
-                <ul>
-                    <li>Create one polished 2-page packet: resume (page 1) and cover letter (page 2).</li>
-                    <li>Tailor both documents to your selected posting.</li>
-                    <li>Submit both `.docx` and `.pdf` versions of your final packet.</li>
-                </ul>
-                <p class="muted">Estimated time: 45 minutes total.</p>
-                <h3>Suggested Websites to Find a Job Posting</h3>
-                <ul>
-                    <li><a href="https://www.indeed.com" target="_blank" rel="noopener">Indeed</a></li>
-                    <li><a href="https://www.linkedin.com/jobs" target="_blank" rel="noopener">LinkedIn Jobs</a></li>
-                    <li><a href="https://www.glassdoor.com/Job" target="_blank" rel="noopener">Glassdoor</a></li>
-                    <li><a href="https://www.ziprecruiter.com/jobs-search" target="_blank"
-                            rel="noopener">ZipRecruiter</a></li>
-                    <li><a href="https://www.google.com/search?q=internships+near+me" target="_blank"
-                            rel="noopener">Google Job Search</a></li>
-                </ul>
-            </div>
-
-            <div class="card">
-                <h3>Starter Checklist</h3>
-                <ul class="checklist student-checklist">
-                    <li><input type="checkbox" data-key="job_post_selected" /> <label>I selected a real job posting to
-                            target.</label></li>
-                    <li><input type="checkbox" data-key="job_post_keywords" /> <label>I identified key skills/keywords
-                            from that posting.</label></li>
-                    <li><input type="checkbox" class="page-complete-checkbox" data-key="page_complete_1" /> <label>I
-                            completed this page.</label></li>
-                </ul>
-                <div class="page-image-wrap">
-                    <img class="page-image" src="assets/career-starter-hero.svg"
-                        alt="Professional career planning workspace illustration for the project starter page." />
-                </div>
-                <p class="page-image-caption">Project kickoff: use one real posting as your reference for every section.
-                </p>
-            </div>
-        </section>
-
-        <section class="project-page" data-project-page="2" aria-label="Resume Page">
-            <div class="card">
-                <div class="badge">Part 2: Resume</div>
-                <h2 class="section-title">Resume Learning + Application</h2>
-                <p class="muted">Build a clear, one-page resume tailored to your selected job posting.</p>
-            </div>
-
-            <div class="card">
-                <h3>Resume Video</h3>
-                <div class="video-embed" data-video-id="NRTs4HsICI8" data-video-title="Resume Tips Video">
-                    <button type="button" class="video-poster" aria-label="Play Resume Tips Video">
-                        <img src="https://img.youtube.com/vi/NRTs4HsICI8/maxresdefault.jpg"
-                            alt="Resume Tips Video preview" loading="lazy" />
-                        <span class="video-play" aria-hidden="true">▶</span>
-                        <span class="video-watch" aria-hidden="true">Watch video</span>
-                    </button>
-                </div>
-                <p><a href="https://youtu.be/NRTs4HsICI8?si=euoYnZ9CRxK3GwKi" target="_blank" rel="noopener">Open video
-                        in YouTube</a></p>
-
-                <div class="video-check" aria-label="Resume video quick check">
-                    <h3>Quick Check: Resume Tips</h3>
-                    <form id="resumeQuickCheck">
-                        <fieldset class="quiz-q resume-step">
-                            <legend>1) About how long did the video say many recruiters spend on an initial resume scan?
-                            </legend>
-                            <label><input type="radio" name="rq1" value="a" /> Around 10 seconds.</label><br />
-                            <label><input type="radio" name="rq1" value="b" /> Around 2 minutes.</label>
-                        </fieldset>
-                        <fieldset class="quiz-q resume-step">
-                            <legend>2) Which formatting choice matches the video guidance?</legend>
-                            <label><input type="radio" name="rq2" value="a" /> Add photos and colorful graphics to stand
-                                out.</label><br />
-                            <label><input type="radio" name="rq2" value="b" /> Keep it clean: standard fonts, consistent
-                                headings, no graphics/photos.</label>
-                        </fieldset>
-                        <fieldset class="quiz-q resume-step">
-                            <legend>3) If you have little or no paid experience, what should you include?</legend>
-                            <label><input type="radio" name="rq3" value="a" /> Only paid jobs.</label><br />
-                            <label><input type="radio" name="rq3" value="b" /> Volunteer work, projects,
-                                extracurriculars, and part-time/freelance work.</label>
-                        </fieldset>
-                        <fieldset class="quiz-q resume-step">
-                            <legend>4) How should you tailor skills from a job description?</legend>
-                            <label><input type="radio" name="rq4" value="a" /> Use the same language from the posting
-                                when it accurately matches your skills.</label><br />
-                            <label><input type="radio" name="rq4" value="b" /> Keep one generic resume with no wording
-                                changes.</label>
-                        </fieldset>
-                        <div class="controls" style="margin-top:8px;justify-content:flex-start;">
-                            <button type="button" id="resumePrev">Previous</button>
-                            <button type="button" id="resumeNext">Next</button>
-                            <button type="button" id="gradeResumeQuick" class="primary">Check Answers</button>
-                            <span class="muted" id="resumeCounter"></span>
-                        </div>
-                    </form>
-                    <div id="resumeQuickFeedback" class="quick-feedback"></div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3>Resume Application Requirements</h3>
-                <ul>
-                    <li>Name and contact information (email, phone, city/state).</li>
-                    <li>Education section with school, program/grade level, and relevant coursework.</li>
-                    <li>Skills section tailored to the target posting.</li>
-                    <li>Experience section (paid work, volunteer work, projects, activities, or leadership).</li>
-                </ul>
-                <h3>Resume Example (Fictional)</h3>
-                <p><a href="wordprojectfiles/Lastname_Firstname_Resume_Template.docx" download>Download Resume
-                        Template with Example Content (.docx)</a></p>
-                <p class="muted">Replace all sample text with your own information before submitting.</p>
-                <div class="example-block">
-                    <p><strong>Maya Johnson</strong> | maya.johnson@email.com | (555) 018-2034 | Charlotte, NC</p>
-                    <p><strong>Target Role:</strong> Customer Support Intern</p>
-                    <p><strong>Professional Summary:</strong> Service-focused high school senior seeking a Customer
-                        Support Intern role. Strong in customer communication, ticket documentation, and issue
-                        resolution with experience supporting students in a fast-paced school help desk environment.</p>
-                    <p><strong>Core Skills:</strong> Customer Communication, Technical Troubleshooting, Ticket
-                        Documentation, Google Workspace, Data Entry, Time Management, Team Collaboration, Problem
-                        Solving</p>
-                    <p><strong>Education:</strong> Westbrook High School, Charlotte, NC — Expected Graduation 2027</p>
-                    <p><strong>Relevant Coursework:</strong> Business Technology, Computer Applications, Professional
-                        Communication</p>
-                    <p><strong>Experience:</strong></p>
+                    <h3>Step 1: Choose a Job Posting First</h3>
                     <ul>
-                        <li><strong>Student Tech Help Desk Volunteer</strong> | Westbrook High School | 2025–Present
-                            <ul>
-                                <li>Assisted 40+ students and staff with login, Chromebook, and account-access issues,
-                                    improving same-day resolution times during peak periods.</li>
-                                <li>Logged support requests and fixes in a shared tracker to keep records accurate and
-                                    improve handoff between team members.</li>
-                                <li>Explained technical steps in clear, user-friendly language and maintained a
-                                    professional, calm tone during high-volume support periods.</li>
-                            </ul>
+                        <li>Find one internship or entry-level job posting you want to target.</li>
+                        <li>Copy/save the posting link and identify key skills, qualifications, and keywords.</li>
+                        <li>Use that posting to tailor your resume and cover letter in the next sections.</li>
+                    </ul>
+                    <p class="muted"><strong>Time guide:</strong> Job posting selection + keyword extraction (8–10 min),
+                        resume draft (15–18 min), ATS revision (8–10 min), cover letter draft (10–12 min), final export
+                        and
+                        checks (4–6 min).</p>
+                    <div class="example-block">
+                        <h3 style="margin-top:0;">Before You Click Next</h3>
+                        <ul>
+                            <li>Record the exact <strong>job title</strong>.</li>
+                            <li>Record the <strong>company name</strong>.</li>
+                            <li>Save the <strong>job posting link</strong> so you can reference it while writing.</li>
+                        </ul>
+                        <p class="muted" style="margin-bottom:0;"><strong>Keyword example:</strong> If the posting says
+                            “customer communication,” include that exact phrase where it truthfully matches your
+                            experience.
+                        </p>
+                    </div>
+                    <h3>Project Expectations</h3>
+                    <ul>
+                        <li>Create one polished 2-page packet: resume (page 1) and cover letter (page 2).</li>
+                        <li>Tailor both documents to your selected posting.</li>
+                        <li>Submit both `.docx` and `.pdf` versions of your final packet.</li>
+                    </ul>
+                    <p class="muted">Estimated time: 45 minutes total.</p>
+                    <h3>Suggested Websites to Find a Job Posting</h3>
+                    <ul>
+                        <li><a href="https://www.indeed.com" target="_blank" rel="noopener">Indeed</a></li>
+                        <li><a href="https://www.linkedin.com/jobs" target="_blank" rel="noopener">LinkedIn Jobs</a>
                         </li>
-                        <li><strong>School Event Team Member</strong> | Westbrook HS Activities Office | 2024–2025
-                            <ul>
-                                <li>Coordinated check-in for a 120-student event and reduced wait times by organizing
-                                    alphabetical lines and digital attendance verification.</li>
-                                <li>Collaborated with 6 team members to manage setup, attendee support, and post-event
-                                    follow-up communications.</li>
-                            </ul>
-                        </li>
-                        <li><strong>Community Volunteer Tutor</strong> | Charlotte Youth Center | 2024–Present
-                            <ul>
-                                <li>Supported middle-school students with weekly homework and basic computer-skills
-                                    practice in one-on-one and small-group sessions.</li>
-                                <li>Tracked attendance and progress notes to provide clear updates to program staff.
-                                </li>
-                            </ul>
-                        </li>
+                        <li><a href="https://www.glassdoor.com/Job" target="_blank" rel="noopener">Glassdoor</a></li>
+                        <li><a href="https://www.ziprecruiter.com/jobs-search" target="_blank"
+                                rel="noopener">ZipRecruiter</a></li>
+                        <li><a href="https://www.google.com/search?q=internships+near+me" target="_blank"
+                                rel="noopener">Google Job Search</a></li>
                     </ul>
                 </div>
-            </div>
 
-            <div class="card">
-                <h3>Resume Checklist</h3>
-                <ul class="checklist student-checklist">
-                    <li><input type="checkbox" data-key="watch_resume" /> <label>I watched the Resume Tips
-                            video.</label></li>
-                    <li><input type="checkbox" data-key="apply_resume" /> <label>I applied at least 2 resume tips in my
-                            resume page.</label></li>
-                    <li><input type="checkbox" class="page-complete-checkbox" data-key="page_complete_2" /> <label>I
-                            completed this page.</label></li>
-                </ul>
-            </div>
-        </section>
-
-        <section class="project-page" data-project-page="3" aria-label="ATS Page">
-            <div class="card">
-                <div class="badge">Part 3: ATS</div>
-                <h2 class="section-title">ATS Learning + Application</h2>
-                <p class="muted">Use ATS-friendly structure and language to improve readability and match quality.</p>
-            </div>
-
-            <div class="card">
-                <h3>ATS Video</h3>
-                <div class="video-embed" data-video-id="DksA_vF84JA" data-video-title="ATS Tips Video">
-                    <button type="button" class="video-poster" aria-label="Play ATS Tips Video">
-                        <img src="https://img.youtube.com/vi/DksA_vF84JA/maxresdefault.jpg" alt="ATS Tips Video preview"
-                            loading="lazy" />
-                        <span class="video-play" aria-hidden="true">▶</span>
-                        <span class="video-watch" aria-hidden="true">Watch video</span>
-                    </button>
-                </div>
-                <p><a href="https://youtu.be/DksA_vF84JA?si=sclhCHE9EIZbfsQH" target="_blank" rel="noopener">Open video
-                        in YouTube</a></p>
-
-                <div class="video-check" aria-label="ATS video quick check">
-                    <h3>Quick Check: ATS Basics</h3>
-                    <form id="atsQuickCheck">
-                        <fieldset class="quiz-q ats-step">
-                            <legend>1) In the hiring flow, where does ATS primarily operate?</legend>
-                            <label><input type="radio" name="aq1" value="a" /> Between applying and recruiter screening,
-                                by scanning and ranking resumes.</label><br />
-                            <label><input type="radio" name="aq1" value="b" /> Only after interviews are
-                                completed.</label>
-                        </fieldset>
-                        <fieldset class="quiz-q ats-step">
-                            <legend>2) Which formatting choice is most ATS-friendly?</legend>
-                            <label><input type="radio" name="aq2" value="a" /> Heavy formatting with tables, columns,
-                                icons, and images.</label><br />
-                            <label><input type="radio" name="aq2" value="b" /> Simple text-forward layout with clearly
-                                labeled sections (Experience, Skills, Education).</label>
-                        </fieldset>
-                        <fieldset class="quiz-q ats-step">
-                            <legend>3) According to the video, which file types are generally safe for ATS submission?
-                            </legend>
-                            <label><input type="radio" name="aq3" value="a" /> Word document or PDF.</label><br />
-                            <label><input type="radio" name="aq3" value="b" /> InDesign or Photoshop native
-                                files.</label>
-                        </fieldset>
-                        <fieldset class="quiz-q ats-step">
-                            <legend>4) How should you use job-description keywords?</legend>
-                            <label><input type="radio" name="aq4" value="a" /> Add matching keywords only when true, and
-                                show them in skills plus experience context.</label><br />
-                            <label><input type="radio" name="aq4" value="b" /> Add every keyword even if you do not have
-                                the skill.</label>
-                        </fieldset>
-                        <div class="controls" style="margin-top:8px;justify-content:flex-start;">
-                            <button type="button" id="atsPrev">Previous</button>
-                            <button type="button" id="atsNext">Next</button>
-                            <button type="button" id="gradeAtsQuick" class="primary">Check Answers</button>
-                            <span class="muted" id="atsCounter"></span>
-                        </div>
-                    </form>
-                    <div id="atsQuickFeedback" class="quick-feedback"></div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3>ATS Application Requirements</h3>
-                <ul>
-                    <li>Use clear section headings and a simple, text-forward layout.</li>
-                    <li>Avoid graphics, icons, columns, and image-based text.</li>
-                    <li>Apply truthful job-description keywords in both skills and experience sections.</li>
-                    <li>Save in a standard format for submission (.docx and .pdf).</li>
-                </ul>
-            </div>
-
-            <div class="card">
-                <h3>ATS Checklist</h3>
-                <ul class="checklist student-checklist">
-                    <li><input type="checkbox" data-key="watch_ats" /> <label>I watched the ATS video.</label></li>
-                    <li><input type="checkbox" data-key="apply_ats" /> <label>I applied at least 2 ATS-friendly choices
-                            in my resume page.</label></li>
-                    <li><input type="checkbox" class="page-complete-checkbox" data-key="page_complete_3" /> <label>I
-                            completed this page.</label></li>
-                </ul>
-            </div>
-        </section>
-
-        <section class="project-page" data-project-page="4" aria-label="Cover Letter Page">
-            <div class="card">
-                <div class="badge">Part 4: Cover Letter</div>
-                <h2 class="section-title">Cover Letter Learning + Application</h2>
-                <p class="muted">Write a focused cover letter that connects your background to this specific role.</p>
-            </div>
-
-            <div class="card">
-                <h3>Cover Letter Video</h3>
-                <div class="video-embed" data-video-id="EcFOr9Jo0OA" data-video-title="Cover Letter Tips Video">
-                    <button type="button" class="video-poster" aria-label="Play Cover Letter Tips Video">
-                        <img src="https://img.youtube.com/vi/EcFOr9Jo0OA/maxresdefault.jpg"
-                            alt="Cover Letter Tips Video preview" loading="lazy" />
-                        <span class="video-play" aria-hidden="true">▶</span>
-                        <span class="video-watch" aria-hidden="true">Watch video</span>
-                    </button>
-                </div>
-                <p><a href="https://youtu.be/EcFOr9Jo0OA?si=L5FiRAjiwQylcmFe" target="_blank" rel="noopener">Open video
-                        in YouTube</a></p>
-
-                <div class="video-check" aria-label="Cover letter video quick check">
-                    <h3>Quick Check: Cover Letter Strategy</h3>
-                    <form id="coverQuickCheck">
-                        <fieldset class="quiz-q cover-step">
-                            <legend>1) According to the video, what is a strong cover letter mainly supposed to do?
-                            </legend>
-                            <label><input type="radio" name="cq1" value="a" /> Repeat your resume line by
-                                line.</label><br />
-                            <label><input type="radio" name="cq1" value="b" /> Connect your experience to the role and
-                                make a focused case for why you are a strong fit.</label>
-                        </fieldset>
-                        <fieldset class="quiz-q cover-step">
-                            <legend>2) If a job says “cover letter optional,” what did the video suggest?</legend>
-                            <label><input type="radio" name="cq2" value="a" /> Always submit one, even if generic and
-                                rushed.</label><br />
-                            <label><input type="radio" name="cq2" value="b" /> Submit one only if it is tailored and
-                                polished; a weak generic letter can hurt more than help.</label>
-                        </fieldset>
-                        <fieldset class="quiz-q cover-step">
-                            <legend>3) Which greeting approach is most aligned with the video guidance?</legend>
-                            <label><input type="radio" name="cq3" value="a" /> Use "To Whom It May Concern" for every
-                                application.</label><br />
-                            <label><input type="radio" name="cq3" value="b" /> Use a specific name when possible,
-                                otherwise use "Dear Hiring Manager."</label>
-                        </fieldset>
-                        <fieldset class="quiz-q cover-step">
-                            <legend>4) Which strategy best shows true tailoring for a specific role?</legend>
-                            <label><input type="radio" name="cq4" value="a" /> Use one universal letter and just change
-                                the company name.</label><br />
-                            <label><input type="radio" name="cq4" value="b" /> Reference exact phrases from the job
-                                description and connect them to your evidence.</label>
-                        </fieldset>
-                        <div class="controls" style="margin-top:8px;justify-content:flex-start;">
-                            <button type="button" id="coverPrev">Previous</button>
-                            <button type="button" id="coverNext">Next</button>
-                            <button type="button" id="gradeCoverQuick" class="primary">Check Answers</button>
-                            <span class="muted" id="coverCounter"></span>
-                        </div>
-                    </form>
-                    <div id="coverQuickFeedback" class="quick-feedback"></div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3>Cover Letter Application Requirements</h3>
-                <ul>
-                    <li>Professional greeting and opening paragraph naming the role.</li>
-                    <li>One body paragraph connecting your skills and experience to job needs.</li>
-                    <li>Closing paragraph with appreciation and a professional sign-off.</li>
-                    <li>Clear, concise writing with correct spelling and grammar.</li>
-                </ul>
-                <h3>Cover Letter Example (Fictional)</h3>
-                <p><a href="wordprojectfiles/Lastname_Firstname_CoverLetter_Template.docx" download>Download Cover
-                        Letter Template with Example Content (.docx)</a></p>
-                <p class="muted">Replace all sample text with your own information before submitting.</p>
-                <div class="example-block">
-                    <p>Dear Hiring Manager,</p>
-                    <p>I am excited to apply for the Customer Support Intern position at BrightPath Solutions. In my
-                        student tech help desk role, I support over 40 students and staff with account and device
-                        issues while maintaining clear communication and accurate documentation. I am especially
-                        interested in this role because your posting emphasizes customer communication,
-                        troubleshooting, and teamwork—areas I use every week.</p>
-                    <p>Your posting highlights the need for someone who can “work effectively in a fast-paced team
-                        environment” and “communicate clearly with users.” Through event support and peer tech
-                        assistance, I have built those exact skills while staying calm under pressure and solving
-                        problems quickly. For example, during our school technology rollout, I helped triage login
-                        problems, documented recurring issues, and shared patterns with staff so we could prevent repeat
-                        errors.</p>
-                    <p>In addition to technical support, I bring strong organization and follow-through. As a school
-                        event team member, I helped coordinate check-in for a 120-student event, which required
-                        accurate tracking, clear directions for participants, and consistent communication across our
-                        team. I would bring the same reliability, customer-first mindset, and attention to detail to
-                        BrightPath Solutions.</p>
-                    <p>I would welcome the opportunity to bring my organization, communication, and service mindset to
-                        your team. Thank you for your time and consideration. I look forward to discussing next steps.
+                <div class="card">
+                    <h3>Starter Checklist</h3>
+                    <ul class="checklist student-checklist">
+                        <li><input type="checkbox" data-key="job_post_selected" /> <label>I selected a real job posting
+                                to
+                                target.</label></li>
+                        <li><input type="checkbox" data-key="job_post_keywords" /> <label>I identified key
+                                skills/keywords
+                                from that posting.</label></li>
+                        <li><input type="checkbox" class="page-complete-checkbox" data-key="page_complete_1" /> <label>I
+                                completed this page.</label></li>
+                    </ul>
+                    <div class="page-image-wrap">
+                        <img class="page-image" src="assets/career-starter-hero.svg"
+                            alt="Professional career planning workspace illustration for the project starter page." />
+                    </div>
+                    <p class="page-image-caption">Project kickoff: use one real posting as your reference for every
+                        section.
                     </p>
-                    <p>Sincerely,<br />Maya Johnson</p>
                 </div>
-            </div>
+            </section>
 
-            <div class="card">
-                <h3>Cover Letter Checklist</h3>
-                <ul class="checklist student-checklist">
-                    <li><input type="checkbox" data-key="watch_coverletter" /> <label>I watched the Cover Letter
-                            video.</label></li>
-                    <li><input type="checkbox" data-key="apply_coverletter" /> <label>I tailored my cover letter to this
-                            role and used role-specific evidence.</label></li>
-                    <li><input type="checkbox" data-key="proofread_coverletter" /> <label>I proofread my cover letter
-                            for tone, grammar, and clarity.</label></li>
-                    <li><input type="checkbox" class="page-complete-checkbox" data-key="page_complete_4" /> <label>I
-                            completed this page.</label></li>
-                </ul>
-            </div>
-        </section>
-
-        <section class="project-page" data-project-page="5" aria-label="Finished Page">
-            <div class="card">
-                <div class="badge">Part 5: Finished</div>
-                <h2 class="section-title">Congratulations — You Finished!</h2>
-                <p>You completed the Career Essentials: Applying for a job project flow.</p>
-                <p class="muted">Final check: confirm your files are named correctly and submitted.</p>
-                <div class="page-image-wrap">
-                    <img class="page-image" src="assets/career-complete-badge.svg"
-                        alt="Completion badge graphic celebrating successful project completion." />
+            <section class="project-page" data-project-page="2" aria-label="Resume Page">
+                <div class="card">
+                    <div class="badge">Part 2: Resume</div>
+                    <h2 class="section-title">Resume Learning + Application</h2>
+                    <p class="muted">Build a clear, one-page resume tailored to your selected job posting.</p>
                 </div>
-                <p class="page-image-caption">Project complete: you are ready for final quality and submission checks.
-                </p>
-            </div>
 
-            <div class="card">
-                <h3>Submission Ready Check</h3>
-                <ul>
-                    <li>Your packet is exactly 2 pages (resume page + cover letter page in one document).</li>
-                    <li>Your final content matches the selected posting and uses truthful role keywords.</li>
-                    <li>Your layout is ATS-friendly (no heavy graphics/tables/columns in the resume).</li>
-                    <li>You completed proofreading for grammar, clarity, and professional tone.</li>
-                </ul>
-                <h3 style="margin-top:12px;">Common Reasons Points Are Lost</h3>
-                <ul>
-                    <li>Generic wording that is not clearly tailored to the selected role.</li>
-                    <li>Formatting inconsistency (spacing, headers, alignment, or visual clutter).</li>
-                    <li>Missing required file type, incorrect filename, or incomplete final export.</li>
-                </ul>
-            </div>
+                <div class="card">
+                    <h3>Resume Video</h3>
+                    <div class="video-embed" data-video-id="NRTs4HsICI8" data-video-title="Resume Tips Video">
+                        <button type="button" class="video-poster" aria-label="Play Resume Tips Video">
+                            <img src="https://img.youtube.com/vi/NRTs4HsICI8/maxresdefault.jpg"
+                                alt="Resume Tips Video preview" loading="lazy" />
+                            <span class="video-play" aria-hidden="true">▶</span>
+                            <span class="video-watch" aria-hidden="true">Watch video</span>
+                        </button>
+                    </div>
+                    <p><a href="https://youtu.be/NRTs4HsICI8?si=euoYnZ9CRxK3GwKi" target="_blank" rel="noopener">Open
+                            video
+                            in YouTube</a></p>
 
-            <div class="card">
-                <h3>Rubric Summary (50 points)</h3>
-                <p class="muted">Each category is scored on four levels: <strong>Exceeds (9–10)</strong>,
-                    <strong>Meets (7–8)</strong>, <strong>Developing (5–6)</strong>,
-                    <strong>Beginning (0–4)</strong>.
-                </p>
-                <div class="rubric-grid">
-                    <div class="rubric-item"><strong>Structure & Completeness (10 pts)</strong>
-                        <ul>
-                            <li><strong>Exceeds (9–10):</strong> All required sections are complete, targeted to the
-                                selected job, and clearly organized across the 2-page packet.</li>
-                            <li><strong>Meets (7–8):</strong> Most required sections are complete and appropriately
-                                organized with minor gaps.</li>
-                            <li><strong>Developing (5–6):</strong> Some required sections are missing, thin, or not
-                                clearly aligned to the posting.</li>
-                            <li><strong>Beginning (0–4):</strong> Major sections are missing or the packet does not
-                                follow the assignment structure.</li>
-                        </ul>
-                    </div>
-                    <div class="rubric-item"><strong>Word Skills & Formatting (10 pts)</strong>
-                        <ul>
-                            <li><strong>Exceeds (9–10):</strong> Clean, ATS-friendly formatting with consistent fonts,
-                                spacing, headings, and strong visual polish.</li>
-                            <li><strong>Meets (7–8):</strong> Mostly consistent formatting with only small issues that
-                                do not hurt readability.</li>
-                            <li><strong>Developing (5–6):</strong> Inconsistent spacing/font choices or formatting that
-                                occasionally reduces clarity.</li>
-                            <li><strong>Beginning (0–4):</strong> Formatting is difficult to read or includes multiple
-                                ATS-unfriendly choices (heavy graphics/tables/columns).</li>
-                        </ul>
-                    </div>
-                    <div class="rubric-item"><strong>Professional Writing (10 pts)</strong>
-                        <ul>
-                            <li><strong>Exceeds (9–10):</strong> Writing is specific, professional, role-focused, and
-                                mostly error-free with strong evidence of fit.</li>
-                            <li><strong>Meets (7–8):</strong> Writing is clear and mostly professional with minor
-                                grammar or specificity issues.</li>
-                            <li><strong>Developing (5–6):</strong> Writing is somewhat generic or repetitive with
-                                noticeable grammar/mechanics issues.</li>
-                            <li><strong>Beginning (0–4):</strong> Writing lacks professionalism, clarity, or relevance
-                                to the selected role.</li>
-                        </ul>
-                    </div>
-                    <div class="rubric-item"><strong>Accessibility & Usability (10 pts)</strong>
-                        <ul>
-                            <li><strong>Exceeds (9–10):</strong> Strong readability and accessibility choices are
-                                applied consistently throughout the packet.</li>
-                            <li><strong>Meets (7–8):</strong> Accessibility/readability is mostly strong with minor
-                                opportunities to improve.</li>
-                            <li><strong>Developing (5–6):</strong> Some readability or accessibility issues interfere
-                                with ease of use.</li>
-                            <li><strong>Beginning (0–4):</strong> Accessibility and readability needs are largely not
-                                addressed.</li>
-                        </ul>
-                    </div>
-                    <div class="rubric-item"><strong>Submission Quality (10 pts)</strong>
-                        <ul>
-                            <li><strong>Exceeds (9–10):</strong> Both required file types are complete, correctly named,
-                                and submission-ready.</li>
-                            <li><strong>Meets (7–8):</strong> Required files are submitted with minor naming or
-                                completeness issues.</li>
-                            <li><strong>Developing (5–6):</strong> One required file type is missing or files are only
-                                partially complete.</li>
-                            <li><strong>Beginning (0–4):</strong> Submission is incomplete, incorrectly formatted, or
-                                not aligned to requirements.</li>
-                        </ul>
+                    <div class="video-check" aria-label="Resume video quick check">
+                        <h3>Quick Check: Resume Tips</h3>
+                        <form id="resumeQuickCheck">
+                            <fieldset class="quiz-q resume-step">
+                                <legend>1) About how long did the video say many recruiters spend on an initial resume
+                                    scan?
+                                </legend>
+                                <label><input type="radio" name="rq1" value="a" /> Around 10 seconds.</label><br />
+                                <label><input type="radio" name="rq1" value="b" /> Around 2 minutes.</label>
+                            </fieldset>
+                            <fieldset class="quiz-q resume-step">
+                                <legend>2) Which formatting choice matches the video guidance?</legend>
+                                <label><input type="radio" name="rq2" value="a" /> Add photos and colorful graphics to
+                                    stand
+                                    out.</label><br />
+                                <label><input type="radio" name="rq2" value="b" /> Keep it clean: standard fonts,
+                                    consistent
+                                    headings, no graphics/photos.</label>
+                            </fieldset>
+                            <fieldset class="quiz-q resume-step">
+                                <legend>3) If you have little or no paid experience, what should you include?</legend>
+                                <label><input type="radio" name="rq3" value="a" /> Only paid jobs.</label><br />
+                                <label><input type="radio" name="rq3" value="b" /> Volunteer work, projects,
+                                    extracurriculars, and part-time/freelance work.</label>
+                            </fieldset>
+                            <fieldset class="quiz-q resume-step">
+                                <legend>4) How should you tailor skills from a job description?</legend>
+                                <label><input type="radio" name="rq4" value="a" /> Use the same language from the
+                                    posting
+                                    when it accurately matches your skills.</label><br />
+                                <label><input type="radio" name="rq4" value="b" /> Keep one generic resume with no
+                                    wording
+                                    changes.</label>
+                            </fieldset>
+                            <div class="controls" style="margin-top:8px;justify-content:flex-start;">
+                                <button type="button" id="resumePrev">Previous</button>
+                                <button type="button" id="resumeNext">Next</button>
+                                <button type="button" id="gradeResumeQuick" class="primary">Check Answers</button>
+                                <span class="muted" id="resumeCounter"></span>
+                            </div>
+                        </form>
+                        <div id="resumeQuickFeedback" class="quick-feedback"></div>
                     </div>
                 </div>
-                <h3 style="margin-top:14px;">Submission</h3>
-                <p class="muted">Use these filenames exactly as shown:</p>
-                <ol>
-                    <li><span class="pill">Lastname_Firstname_JobApplication.docx</span></li>
-                    <li><span class="pill">Lastname_Firstname_JobApplication.pdf</span></li>
-                </ol>
-            </div>
 
-            <div class="card">
-                <h3>Final Checklist</h3>
-                <ul class="checklist student-checklist">
-                    <li><input type="checkbox" data-key="doc_two_pages" /> <label>My packet is 2 pages in one
-                            document.</label></li>
-                    <li><input type="checkbox" data-key="export_pdf" /> <label>I exported my final packet to
-                            PDF.</label></li>
-                    <li><input type="checkbox" class="page-complete-checkbox" data-key="page_complete_5" /> <label>I
-                            reviewed my submission package and completed this page.</label></li>
-                </ul>
-            </div>
-        </section>
+                <div class="card">
+                    <h3>Resume Application Requirements</h3>
+                    <ul>
+                        <li>Name and contact information (email, phone, city/state).</li>
+                        <li>Education section with school, program/grade level, and relevant coursework.</li>
+                        <li>Skills section tailored to the target posting.</li>
+                        <li>Experience section (paid work, volunteer work, projects, activities, or leadership).</li>
+                    </ul>
+                    <h3>Resume Example (Fictional)</h3>
+                    <p><a href="wordprojectfiles/Lastname_Firstname_Resume_Template.docx" download>Download Resume
+                            Template with Example Content (.docx)</a></p>
+                    <p class="muted">Replace all sample text with your own information before submitting.</p>
+                    <div class="example-block">
+                        <p><strong>Maya Johnson</strong> | maya.johnson@email.com | (555) 018-2034 | Charlotte, NC</p>
+                        <p><strong>Target Role:</strong> Customer Support Intern</p>
+                        <p><strong>Professional Summary:</strong> Service-focused high school senior seeking a Customer
+                            Support Intern role. Strong in customer communication, ticket documentation, and issue
+                            resolution with experience supporting students in a fast-paced school help desk environment.
+                        </p>
+                        <p><strong>Core Skills:</strong> Customer Communication, Technical Troubleshooting, Ticket
+                            Documentation, Google Workspace, Data Entry, Time Management, Team Collaboration, Problem
+                            Solving</p>
+                        <p><strong>Education:</strong> Westbrook High School, Charlotte, NC — Expected Graduation 2027
+                        </p>
+                        <p><strong>Relevant Coursework:</strong> Business Technology, Computer Applications,
+                            Professional
+                            Communication</p>
+                        <p><strong>Experience:</strong></p>
+                        <ul>
+                            <li><strong>Student Tech Help Desk Volunteer</strong> | Westbrook High School | 2025–Present
+                                <ul>
+                                    <li>Assisted 40+ students and staff with login, Chromebook, and account-access
+                                        issues,
+                                        improving same-day resolution times during peak periods.</li>
+                                    <li>Logged support requests and fixes in a shared tracker to keep records accurate
+                                        and
+                                        improve handoff between team members.</li>
+                                    <li>Explained technical steps in clear, user-friendly language and maintained a
+                                        professional, calm tone during high-volume support periods.</li>
+                                </ul>
+                            </li>
+                            <li><strong>School Event Team Member</strong> | Westbrook HS Activities Office | 2024–2025
+                                <ul>
+                                    <li>Coordinated check-in for a 120-student event and reduced wait times by
+                                        organizing
+                                        alphabetical lines and digital attendance verification.</li>
+                                    <li>Collaborated with 6 team members to manage setup, attendee support, and
+                                        post-event
+                                        follow-up communications.</li>
+                                </ul>
+                            </li>
+                            <li><strong>Community Volunteer Tutor</strong> | Charlotte Youth Center | 2024–Present
+                                <ul>
+                                    <li>Supported middle-school students with weekly homework and basic computer-skills
+                                        practice in one-on-one and small-group sessions.</li>
+                                    <li>Tracked attendance and progress notes to provide clear updates to program staff.
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Resume Checklist</h3>
+                    <ul class="checklist student-checklist">
+                        <li><input type="checkbox" data-key="watch_resume" /> <label>I watched the Resume Tips
+                                video.</label></li>
+                        <li><input type="checkbox" data-key="apply_resume" /> <label>I applied at least 2 resume tips in
+                                my
+                                resume page.</label></li>
+                        <li><input type="checkbox" class="page-complete-checkbox" data-key="page_complete_2" /> <label>I
+                                completed this page.</label></li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="project-page" data-project-page="3" aria-label="ATS Page">
+                <div class="card">
+                    <div class="badge">Part 3: ATS</div>
+                    <h2 class="section-title">ATS Learning + Application</h2>
+                    <p class="muted">Use ATS-friendly structure and language to improve readability and match quality.
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>ATS Video</h3>
+                    <div class="video-embed" data-video-id="DksA_vF84JA" data-video-title="ATS Tips Video">
+                        <button type="button" class="video-poster" aria-label="Play ATS Tips Video">
+                            <img src="https://img.youtube.com/vi/DksA_vF84JA/maxresdefault.jpg"
+                                alt="ATS Tips Video preview" loading="lazy" />
+                            <span class="video-play" aria-hidden="true">▶</span>
+                            <span class="video-watch" aria-hidden="true">Watch video</span>
+                        </button>
+                    </div>
+                    <p><a href="https://youtu.be/DksA_vF84JA?si=sclhCHE9EIZbfsQH" target="_blank" rel="noopener">Open
+                            video
+                            in YouTube</a></p>
+
+                    <div class="video-check" aria-label="ATS video quick check">
+                        <h3>Quick Check: ATS Basics</h3>
+                        <form id="atsQuickCheck">
+                            <fieldset class="quiz-q ats-step">
+                                <legend>1) In the hiring flow, where does ATS primarily operate?</legend>
+                                <label><input type="radio" name="aq1" value="a" /> Between applying and recruiter
+                                    screening,
+                                    by scanning and ranking resumes.</label><br />
+                                <label><input type="radio" name="aq1" value="b" /> Only after interviews are
+                                    completed.</label>
+                            </fieldset>
+                            <fieldset class="quiz-q ats-step">
+                                <legend>2) Which formatting choice is most ATS-friendly?</legend>
+                                <label><input type="radio" name="aq2" value="a" /> Heavy formatting with tables,
+                                    columns,
+                                    icons, and images.</label><br />
+                                <label><input type="radio" name="aq2" value="b" /> Simple text-forward layout with
+                                    clearly
+                                    labeled sections (Experience, Skills, Education).</label>
+                            </fieldset>
+                            <fieldset class="quiz-q ats-step">
+                                <legend>3) According to the video, which file types are generally safe for ATS
+                                    submission?
+                                </legend>
+                                <label><input type="radio" name="aq3" value="a" /> Word document or PDF.</label><br />
+                                <label><input type="radio" name="aq3" value="b" /> InDesign or Photoshop native
+                                    files.</label>
+                            </fieldset>
+                            <fieldset class="quiz-q ats-step">
+                                <legend>4) How should you use job-description keywords?</legend>
+                                <label><input type="radio" name="aq4" value="a" /> Add matching keywords only when true,
+                                    and
+                                    show them in skills plus experience context.</label><br />
+                                <label><input type="radio" name="aq4" value="b" /> Add every keyword even if you do not
+                                    have
+                                    the skill.</label>
+                            </fieldset>
+                            <div class="controls" style="margin-top:8px;justify-content:flex-start;">
+                                <button type="button" id="atsPrev">Previous</button>
+                                <button type="button" id="atsNext">Next</button>
+                                <button type="button" id="gradeAtsQuick" class="primary">Check Answers</button>
+                                <span class="muted" id="atsCounter"></span>
+                            </div>
+                        </form>
+                        <div id="atsQuickFeedback" class="quick-feedback"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>ATS Application Requirements</h3>
+                    <ul>
+                        <li>Use clear section headings and a simple, text-forward layout.</li>
+                        <li>Avoid graphics, icons, columns, and image-based text.</li>
+                        <li>Apply truthful job-description keywords in both skills and experience sections.</li>
+                        <li>Save in a standard format for submission (.docx and .pdf).</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>ATS Checklist</h3>
+                    <ul class="checklist student-checklist">
+                        <li><input type="checkbox" data-key="watch_ats" /> <label>I watched the ATS video.</label></li>
+                        <li><input type="checkbox" data-key="apply_ats" /> <label>I applied at least 2 ATS-friendly
+                                choices
+                                in my resume page.</label></li>
+                        <li><input type="checkbox" class="page-complete-checkbox" data-key="page_complete_3" /> <label>I
+                                completed this page.</label></li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="project-page" data-project-page="4" aria-label="Cover Letter Page">
+                <div class="card">
+                    <div class="badge">Part 4: Cover Letter</div>
+                    <h2 class="section-title">Cover Letter Learning + Application</h2>
+                    <p class="muted">Write a focused cover letter that connects your background to this specific role.
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>Cover Letter Video</h3>
+                    <div class="video-embed" data-video-id="EcFOr9Jo0OA" data-video-title="Cover Letter Tips Video">
+                        <button type="button" class="video-poster" aria-label="Play Cover Letter Tips Video">
+                            <img src="https://img.youtube.com/vi/EcFOr9Jo0OA/maxresdefault.jpg"
+                                alt="Cover Letter Tips Video preview" loading="lazy" />
+                            <span class="video-play" aria-hidden="true">▶</span>
+                            <span class="video-watch" aria-hidden="true">Watch video</span>
+                        </button>
+                    </div>
+                    <p><a href="https://youtu.be/EcFOr9Jo0OA?si=L5FiRAjiwQylcmFe" target="_blank" rel="noopener">Open
+                            video
+                            in YouTube</a></p>
+
+                    <div class="video-check" aria-label="Cover letter video quick check">
+                        <h3>Quick Check: Cover Letter Strategy</h3>
+                        <form id="coverQuickCheck">
+                            <fieldset class="quiz-q cover-step">
+                                <legend>1) According to the video, what is a strong cover letter mainly supposed to do?
+                                </legend>
+                                <label><input type="radio" name="cq1" value="a" /> Repeat your resume line by
+                                    line.</label><br />
+                                <label><input type="radio" name="cq1" value="b" /> Connect your experience to the role
+                                    and
+                                    make a focused case for why you are a strong fit.</label>
+                            </fieldset>
+                            <fieldset class="quiz-q cover-step">
+                                <legend>2) If a job says “cover letter optional,” what did the video suggest?</legend>
+                                <label><input type="radio" name="cq2" value="a" /> Always submit one, even if generic
+                                    and
+                                    rushed.</label><br />
+                                <label><input type="radio" name="cq2" value="b" /> Submit one only if it is tailored and
+                                    polished; a weak generic letter can hurt more than help.</label>
+                            </fieldset>
+                            <fieldset class="quiz-q cover-step">
+                                <legend>3) Which greeting approach is most aligned with the video guidance?</legend>
+                                <label><input type="radio" name="cq3" value="a" /> Use "To Whom It May Concern" for
+                                    every
+                                    application.</label><br />
+                                <label><input type="radio" name="cq3" value="b" /> Use a specific name when possible,
+                                    otherwise use "Dear Hiring Manager."</label>
+                            </fieldset>
+                            <fieldset class="quiz-q cover-step">
+                                <legend>4) Which strategy best shows true tailoring for a specific role?</legend>
+                                <label><input type="radio" name="cq4" value="a" /> Use one universal letter and just
+                                    change
+                                    the company name.</label><br />
+                                <label><input type="radio" name="cq4" value="b" /> Reference exact phrases from the job
+                                    description and connect them to your evidence.</label>
+                            </fieldset>
+                            <div class="controls" style="margin-top:8px;justify-content:flex-start;">
+                                <button type="button" id="coverPrev">Previous</button>
+                                <button type="button" id="coverNext">Next</button>
+                                <button type="button" id="gradeCoverQuick" class="primary">Check Answers</button>
+                                <span class="muted" id="coverCounter"></span>
+                            </div>
+                        </form>
+                        <div id="coverQuickFeedback" class="quick-feedback"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Cover Letter Application Requirements</h3>
+                    <ul>
+                        <li>Professional greeting and opening paragraph naming the role.</li>
+                        <li>One body paragraph connecting your skills and experience to job needs.</li>
+                        <li>Closing paragraph with appreciation and a professional sign-off.</li>
+                        <li>Clear, concise writing with correct spelling and grammar.</li>
+                    </ul>
+                    <h3>Cover Letter Example (Fictional)</h3>
+                    <p><a href="wordprojectfiles/Lastname_Firstname_CoverLetter_Template.docx" download>Download Cover
+                            Letter Template with Example Content (.docx)</a></p>
+                    <p class="muted">Replace all sample text with your own information before submitting.</p>
+                    <div class="example-block">
+                        <p>Dear Hiring Manager,</p>
+                        <p>I am excited to apply for the Customer Support Intern position at BrightPath Solutions. In my
+                            student tech help desk role, I support over 40 students and staff with account and device
+                            issues while maintaining clear communication and accurate documentation. I am especially
+                            interested in this role because your posting emphasizes customer communication,
+                            troubleshooting, and teamwork—areas I use every week.</p>
+                        <p>Your posting highlights the need for someone who can “work effectively in a fast-paced team
+                            environment” and “communicate clearly with users.” Through event support and peer tech
+                            assistance, I have built those exact skills while staying calm under pressure and solving
+                            problems quickly. For example, during our school technology rollout, I helped triage login
+                            problems, documented recurring issues, and shared patterns with staff so we could prevent
+                            repeat
+                            errors.</p>
+                        <p>In addition to technical support, I bring strong organization and follow-through. As a school
+                            event team member, I helped coordinate check-in for a 120-student event, which required
+                            accurate tracking, clear directions for participants, and consistent communication across
+                            our
+                            team. I would bring the same reliability, customer-first mindset, and attention to detail to
+                            BrightPath Solutions.</p>
+                        <p>I would welcome the opportunity to bring my organization, communication, and service mindset
+                            to
+                            your team. Thank you for your time and consideration. I look forward to discussing next
+                            steps.
+                        </p>
+                        <p>Sincerely,<br />Maya Johnson</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Cover Letter Checklist</h3>
+                    <ul class="checklist student-checklist">
+                        <li><input type="checkbox" data-key="watch_coverletter" /> <label>I watched the Cover Letter
+                                video.</label></li>
+                        <li><input type="checkbox" data-key="apply_coverletter" /> <label>I tailored my cover letter to
+                                this
+                                role and used role-specific evidence.</label></li>
+                        <li><input type="checkbox" data-key="proofread_coverletter" /> <label>I proofread my cover
+                                letter
+                                for tone, grammar, and clarity.</label></li>
+                        <li><input type="checkbox" class="page-complete-checkbox" data-key="page_complete_4" /> <label>I
+                                completed this page.</label></li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="project-page" data-project-page="5" aria-label="Finished Page">
+                <div class="card">
+                    <div class="badge">Part 5: Finished</div>
+                    <h2 class="section-title">Congratulations — You Finished!</h2>
+                    <p>You completed the Career Essentials: Applying for a job project flow.</p>
+                    <p class="muted">Final check: confirm your files are named correctly and submitted.</p>
+                    <div class="page-image-wrap">
+                        <img class="page-image" src="assets/career-complete-badge.svg"
+                            alt="Completion badge graphic celebrating successful project completion." />
+                    </div>
+                    <p class="page-image-caption">Project complete: you are ready for final quality and submission
+                        checks.
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>Submission Ready Check</h3>
+                    <ul>
+                        <li>Your packet is exactly 2 pages (resume page + cover letter page in one document).</li>
+                        <li>Your final content matches the selected posting and uses truthful role keywords.</li>
+                        <li>Your layout is ATS-friendly (no heavy graphics/tables/columns in the resume).</li>
+                        <li>You completed proofreading for grammar, clarity, and professional tone.</li>
+                    </ul>
+                    <h3 style="margin-top:12px;">Common Reasons Points Are Lost</h3>
+                    <ul>
+                        <li>Generic wording that is not clearly tailored to the selected role.</li>
+                        <li>Formatting inconsistency (spacing, headers, alignment, or visual clutter).</li>
+                        <li>Missing required file type, incorrect filename, or incomplete final export.</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>Rubric Summary (50 points)</h3>
+                    <p class="muted">Each category is scored on four levels: <strong>Exceeds (9–10)</strong>,
+                        <strong>Meets (7–8)</strong>, <strong>Developing (5–6)</strong>,
+                        <strong>Beginning (0–4)</strong>.
+                    </p>
+                    <div class="rubric-grid">
+                        <div class="rubric-item"><strong>Structure & Completeness (10 pts)</strong>
+                            <ul>
+                                <li><strong>Exceeds (9–10):</strong> All required sections are complete, targeted to the
+                                    selected job, and clearly organized across the 2-page packet.</li>
+                                <li><strong>Meets (7–8):</strong> Most required sections are complete and appropriately
+                                    organized with minor gaps.</li>
+                                <li><strong>Developing (5–6):</strong> Some required sections are missing, thin, or not
+                                    clearly aligned to the posting.</li>
+                                <li><strong>Beginning (0–4):</strong> Major sections are missing or the packet does not
+                                    follow the assignment structure.</li>
+                            </ul>
+                        </div>
+                        <div class="rubric-item"><strong>Word Skills & Formatting (10 pts)</strong>
+                            <ul>
+                                <li><strong>Exceeds (9–10):</strong> Clean, ATS-friendly formatting with consistent
+                                    fonts,
+                                    spacing, headings, and strong visual polish.</li>
+                                <li><strong>Meets (7–8):</strong> Mostly consistent formatting with only small issues
+                                    that
+                                    do not hurt readability.</li>
+                                <li><strong>Developing (5–6):</strong> Inconsistent spacing/font choices or formatting
+                                    that
+                                    occasionally reduces clarity.</li>
+                                <li><strong>Beginning (0–4):</strong> Formatting is difficult to read or includes
+                                    multiple
+                                    ATS-unfriendly choices (heavy graphics/tables/columns).</li>
+                            </ul>
+                        </div>
+                        <div class="rubric-item"><strong>Professional Writing (10 pts)</strong>
+                            <ul>
+                                <li><strong>Exceeds (9–10):</strong> Writing is specific, professional, role-focused,
+                                    and
+                                    mostly error-free with strong evidence of fit.</li>
+                                <li><strong>Meets (7–8):</strong> Writing is clear and mostly professional with minor
+                                    grammar or specificity issues.</li>
+                                <li><strong>Developing (5–6):</strong> Writing is somewhat generic or repetitive with
+                                    noticeable grammar/mechanics issues.</li>
+                                <li><strong>Beginning (0–4):</strong> Writing lacks professionalism, clarity, or
+                                    relevance
+                                    to the selected role.</li>
+                            </ul>
+                        </div>
+                        <div class="rubric-item"><strong>Accessibility & Usability (10 pts)</strong>
+                            <ul>
+                                <li><strong>Exceeds (9–10):</strong> Strong readability and accessibility choices are
+                                    applied consistently throughout the packet.</li>
+                                <li><strong>Meets (7–8):</strong> Accessibility/readability is mostly strong with minor
+                                    opportunities to improve.</li>
+                                <li><strong>Developing (5–6):</strong> Some readability or accessibility issues
+                                    interfere
+                                    with ease of use.</li>
+                                <li><strong>Beginning (0–4):</strong> Accessibility and readability needs are largely
+                                    not
+                                    addressed.</li>
+                            </ul>
+                        </div>
+                        <div class="rubric-item"><strong>Submission Quality (10 pts)</strong>
+                            <ul>
+                                <li><strong>Exceeds (9–10):</strong> Both required file types are complete, correctly
+                                    named,
+                                    and submission-ready.</li>
+                                <li><strong>Meets (7–8):</strong> Required files are submitted with minor naming or
+                                    completeness issues.</li>
+                                <li><strong>Developing (5–6):</strong> One required file type is missing or files are
+                                    only
+                                    partially complete.</li>
+                                <li><strong>Beginning (0–4):</strong> Submission is incomplete, incorrectly formatted,
+                                    or
+                                    not aligned to requirements.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <h3 style="margin-top:14px;">Submission</h3>
+                    <p class="muted">Use these filenames exactly as shown:</p>
+                    <ol>
+                        <li><span class="pill">Lastname_Firstname_JobApplication.docx</span></li>
+                        <li><span class="pill">Lastname_Firstname_JobApplication.pdf</span></li>
+                    </ol>
+                </div>
+
+                <div class="card">
+                    <h3>Final Checklist</h3>
+                    <ul class="checklist student-checklist">
+                        <li><input type="checkbox" data-key="doc_two_pages" /> <label>My packet is 2 pages in one
+                                document.</label></li>
+                        <li><input type="checkbox" data-key="export_pdf" /> <label>I exported my final packet to
+                                PDF.</label></li>
+                        <li><input type="checkbox" class="page-complete-checkbox" data-key="page_complete_5" /> <label>I
+                                reviewed my submission package and completed this page.</label></li>
+                    </ul>
+                </div>
+            </section>
+        </main>
     </div>
 
     <script>
@@ -1021,6 +1165,7 @@
         const projectNextBtn = document.getElementById('projectNextBtn');
         const projectProgressBar = document.getElementById('projectProgressBar');
         const projectProgressText = document.getElementById('projectProgressText');
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
         const gradeResumeQuickButton = document.getElementById('gradeResumeQuick');
         const gradeAtsQuickButton = document.getElementById('gradeAtsQuick');
@@ -1122,6 +1267,24 @@
             localStorage.setItem(THEME_KEY, value);
         }
 
+        function initChecklistLabelAssociations() {
+            checklistInputs.forEach((input, index) => {
+                if (!input.id) {
+                    const key = input.dataset.key || `check_${index + 1}`;
+                    const normalized = `${STORAGE_PREFIX}${key}`.replace(/[^a-zA-Z0-9_-]/g, '_');
+                    input.id = normalized;
+                }
+
+                const listItem = input.closest('li');
+                if (!listItem) return;
+
+                const label = listItem.querySelector('label');
+                if (label && !label.getAttribute('for')) {
+                    label.setAttribute('for', input.id);
+                }
+            });
+        }
+
         function initVideoEmbeds() {
             const embeds = Array.from(document.querySelectorAll('.video-embed'));
 
@@ -1158,6 +1321,7 @@
             const completed = pageCompleteInputs.filter((input) => input.checked).length;
             const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
             projectProgressBar.style.width = `${percent}%`;
+            projectProgressBar.setAttribute('aria-valuenow', String(percent));
             projectProgressText.textContent = `Progress: ${completed}/${total} pages completed`;
         }
 
@@ -1169,6 +1333,8 @@
             projectPages.forEach((page) => {
                 const isActive = Number(page.dataset.projectPage) === targetPage;
                 page.classList.toggle('active', isActive);
+                page.hidden = !isActive;
+                page.setAttribute('aria-hidden', String(!isActive));
             });
 
             projectStepCounter.textContent = `Part ${targetPage} of ${totalPages}`;
@@ -1176,7 +1342,7 @@
             projectNextBtn.disabled = targetPage === totalPages;
             projectNextBtn.textContent = targetPage === totalPages ? 'Completed ✓' : 'Next ▶';
             localStorage.setItem(PROJECT_PAGE_KEY, String(targetPage));
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
         }
 
         function loadProjectPage() {
@@ -1307,6 +1473,7 @@
         });
 
         loadTheme();
+        initChecklistLabelAssociations();
         loadChecklist();
         loadProjectPage();
         initVideoEmbeds();

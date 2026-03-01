@@ -9,12 +9,16 @@ cover_letter_out_path = Path(
 
 try:
     from docx import Document
+    from docx.shared import Pt
+    from docx.enum.text import WD_LINE_SPACING
 except ImportError:
     import subprocess
     import sys
 
     subprocess.check_call([sys.executable, "-m", "pip", "install", "python-docx"])
     from docx import Document
+    from docx.shared import Pt
+    from docx.enum.text import WD_LINE_SPACING
 
 
 def add_heading_and_text(document, heading, text):
@@ -22,7 +26,35 @@ def add_heading_and_text(document, heading, text):
     document.add_paragraph(text)
 
 
+def apply_accessible_template_formatting(document):
+    for section in document.sections:
+        section.top_margin = Pt(36)
+        section.bottom_margin = Pt(36)
+        section.left_margin = Pt(36)
+        section.right_margin = Pt(36)
+
+    normal_style = document.styles["Normal"]
+    normal_style.font.name = "Calibri"
+    normal_style.font.size = Pt(11)
+
+    normal_paragraph = normal_style.paragraph_format
+    normal_paragraph.line_spacing_rule = WD_LINE_SPACING.MULTIPLE
+    normal_paragraph.line_spacing = 1.15
+    normal_paragraph.space_after = Pt(6)
+
+    heading1_style = document.styles["Heading 1"]
+    heading1_style.font.name = "Calibri"
+    heading1_style.font.size = Pt(14)
+    heading1_style.paragraph_format.space_before = Pt(10)
+    heading1_style.paragraph_format.space_after = Pt(4)
+
+    title_style = document.styles["Title"]
+    title_style.font.name = "Calibri"
+    title_style.font.size = Pt(18)
+
+
 resume = Document()
+apply_accessible_template_formatting(resume)
 resume.add_heading("Career Essentials Resume Template", level=0)
 resume.add_paragraph("Replace this sample text with your own real information.")
 
@@ -87,6 +119,7 @@ resume.save(resume_out_path)
 print(f"Updated: {resume_out_path}")
 
 cover = Document()
+apply_accessible_template_formatting(cover)
 cover.add_heading("Career Essentials Cover Letter Template", level=0)
 cover.add_paragraph("Replace this sample text with your own real information.")
 cover.add_paragraph("Date: ________________________________")
