@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Career Essentials: Job Application — Student Assignment</title>
+    <title>Career Essentials: Applying for a job — Student Assignment</title>
     <style>
         :root {
             --bg: #0b0c0f;
@@ -195,6 +195,23 @@
             align-items: center;
             gap: 8px;
             flex-wrap: wrap;
+        }
+
+        .edge-nav-btn {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1000;
+            min-width: 96px;
+            box-shadow: var(--shadow);
+        }
+
+        #projectPrevBtn {
+            left: 12px;
+        }
+
+        #projectNextBtn {
+            right: 12px;
         }
 
         .project-page {
@@ -394,7 +411,7 @@
         }
 
         .page-image-wrap {
-            margin-top: 14px;
+            margin-top: 10px;
             border: 1px solid var(--border);
             border-radius: 12px;
             overflow: hidden;
@@ -407,11 +424,30 @@
             height: auto;
         }
 
+        .page-image-caption {
+            margin-top: 6px;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
         @media (max-width: 640px) {
             .page-image {
                 max-height: 220px;
                 object-fit: cover;
                 object-position: center;
+            }
+
+            .edge-nav-btn {
+                min-width: 78px;
+                padding: 8px 10px;
+            }
+
+            #projectPrevBtn {
+                left: 8px;
+            }
+
+            #projectNextBtn {
+                right: 8px;
             }
         }
 
@@ -430,7 +466,7 @@
     <div class="wrap">
         <header>
             <div class="title">
-                <h1>Career Essentials: Job Application</h1>
+                <h1>Career Essentials: Applying for a job</h1>
             </div>
             <div class="controls">
                 <select id="themeSelector" title="Theme">
@@ -446,11 +482,7 @@
             <div class="top-nav">
                 <div class="left">
                     <span class="badge" id="projectStepCounter">Part 1 of 5</span>
-                    <span class="muted">Use Back/Next or keyboard arrows (← →).</span>
-                </div>
-                <div>
-                    <button id="projectPrevBtn">◀ Back</button>
-                    <button id="projectNextBtn" class="primary">Next ▶</button>
+                    <span class="muted">Use the side Back/Next buttons or keyboard arrows (← →).</span>
                 </div>
             </div>
             <div class="progress">
@@ -458,6 +490,9 @@
             </div>
             <p id="projectProgressText" class="muted">Progress: 0/5 pages completed</p>
         </div>
+
+        <button id="projectPrevBtn" class="edge-nav-btn" aria-label="Previous page">◀ Back</button>
+        <button id="projectNextBtn" class="edge-nav-btn primary" aria-label="Next page">Next ▶</button>
 
         <section class="project-page active" data-project-page="1" aria-label="Starter Page">
             <div class="card">
@@ -471,6 +506,20 @@
                     <li>Copy/save the posting link and identify key skills, qualifications, and keywords.</li>
                     <li>Use that posting to tailor your resume and cover letter in the next sections.</li>
                 </ul>
+                <p class="muted"><strong>Time guide:</strong> Job posting selection + keyword extraction (8–10 min),
+                    resume draft (15–18 min), ATS revision (8–10 min), cover letter draft (10–12 min), final export and
+                    checks (4–6 min).</p>
+                <div class="example-block">
+                    <h3 style="margin-top:0;">Before You Click Next</h3>
+                    <ul>
+                        <li>Record the exact <strong>job title</strong>.</li>
+                        <li>Record the <strong>company name</strong>.</li>
+                        <li>Save the <strong>job posting link</strong> so you can reference it while writing.</li>
+                    </ul>
+                    <p class="muted" style="margin-bottom:0;"><strong>Keyword example:</strong> If the posting says
+                        “customer communication,” include that exact phrase where it truthfully matches your experience.
+                    </p>
+                </div>
                 <h3>Project Expectations</h3>
                 <ul>
                     <li>Create one polished 2-page packet: resume (page 1) and cover letter (page 2).</li>
@@ -488,10 +537,6 @@
                     <li><a href="https://www.google.com/search?q=internships+near+me" target="_blank"
                             rel="noopener">Google Job Search</a></li>
                 </ul>
-                <div class="page-image-wrap">
-                    <img class="page-image" src="assets/career-starter-hero.svg"
-                        alt="Professional career planning workspace illustration for the project starter page." />
-                </div>
             </div>
 
             <div class="card">
@@ -504,6 +549,12 @@
                     <li><input type="checkbox" class="page-complete-checkbox" data-key="page_complete_1" /> <label>I
                             completed this page.</label></li>
                 </ul>
+                <div class="page-image-wrap">
+                    <img class="page-image" src="assets/career-starter-hero.svg"
+                        alt="Professional career planning workspace illustration for the project starter page." />
+                </div>
+                <p class="page-image-caption">Project kickoff: use one real posting as your reference for every section.
+                </p>
             </div>
         </section>
 
@@ -512,8 +563,6 @@
                 <div class="badge">Part 2: Resume</div>
                 <h2 class="section-title">Resume Learning + Application</h2>
                 <p class="muted">Build a clear, one-page resume tailored to your selected job posting.</p>
-                <p><a href="wordprojectfiles/Lastname_Firstname_CareerPacket_Template.docx" download>Download Resume
-                        Template (.docx)</a></p>
             </div>
 
             <div class="card">
@@ -578,6 +627,9 @@
                     <li>Experience section (paid work, volunteer work, projects, activities, or leadership).</li>
                 </ul>
                 <h3>Resume Example (Fictional)</h3>
+                <p><a href="wordprojectfiles/Lastname_Firstname_Resume_Template.docx" download>Download Resume
+                        Template with Example Content (.docx)</a></p>
+                <p class="muted">Replace all sample text with your own information before submitting.</p>
                 <div class="example-block">
                     <p><strong>Maya Johnson</strong> | maya.johnson@email.com | (555) 018-2034 | Charlotte, NC</p>
                     <p><strong>Target Role:</strong> Customer Support Intern</p>
@@ -587,9 +639,6 @@
                     <p><strong>Core Skills:</strong> Customer Communication, Technical Troubleshooting, Ticket
                         Documentation, Google Workspace, Data Entry, Time Management, Team Collaboration, Problem
                         Solving</p>
-                    <p><strong>Relevant Keywords from Posting:</strong> customer support, troubleshooting,
-                        communication,
-                        documentation, fast-paced environment, teamwork</p>
                     <p><strong>Education:</strong> Westbrook High School, Charlotte, NC — Expected Graduation 2027</p>
                     <p><strong>Relevant Coursework:</strong> Business Technology, Computer Applications, Professional
                         Communication</p>
@@ -727,8 +776,6 @@
                 <div class="badge">Part 4: Cover Letter</div>
                 <h2 class="section-title">Cover Letter Learning + Application</h2>
                 <p class="muted">Write a focused cover letter that connects your background to this specific role.</p>
-                <p><a href="wordprojectfiles/Lastname_Firstname_CareerPacket_CoverLetter_Template.docx"
-                        download>Download Cover Letter Template (.docx)</a></p>
             </div>
 
             <div class="card">
@@ -796,6 +843,9 @@
                     <li>Clear, concise writing with correct spelling and grammar.</li>
                 </ul>
                 <h3>Cover Letter Example (Fictional)</h3>
+                <p><a href="wordprojectfiles/Lastname_Firstname_CoverLetter_Template.docx" download>Download Cover
+                        Letter Template with Example Content (.docx)</a></p>
+                <p class="muted">Replace all sample text with your own information before submitting.</p>
                 <div class="example-block">
                     <p>Dear Hiring Manager,</p>
                     <p>I am excited to apply for the Customer Support Intern position at BrightPath Solutions. In my
@@ -840,12 +890,30 @@
             <div class="card">
                 <div class="badge">Part 5: Finished</div>
                 <h2 class="section-title">Congratulations — You Finished!</h2>
-                <p>You completed the Career Essentials: Job Application project flow.</p>
+                <p>You completed the Career Essentials: Applying for a job project flow.</p>
                 <p class="muted">Final check: confirm your files are named correctly and submitted.</p>
                 <div class="page-image-wrap">
                     <img class="page-image" src="assets/career-complete-badge.svg"
                         alt="Completion badge graphic celebrating successful project completion." />
                 </div>
+                <p class="page-image-caption">Project complete: you are ready for final quality and submission checks.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>Submission Ready Check</h3>
+                <ul>
+                    <li>Your packet is exactly 2 pages (resume page + cover letter page in one document).</li>
+                    <li>Your final content matches the selected posting and uses truthful role keywords.</li>
+                    <li>Your layout is ATS-friendly (no heavy graphics/tables/columns in the resume).</li>
+                    <li>You completed proofreading for grammar, clarity, and professional tone.</li>
+                </ul>
+                <h3 style="margin-top:12px;">Common Reasons Points Are Lost</h3>
+                <ul>
+                    <li>Generic wording that is not clearly tailored to the selected role.</li>
+                    <li>Formatting inconsistency (spacing, headers, alignment, or visual clutter).</li>
+                    <li>Missing required file type, incorrect filename, or incomplete final export.</li>
+                </ul>
             </div>
 
             <div class="card">
@@ -917,9 +985,10 @@
                     </div>
                 </div>
                 <h3 style="margin-top:14px;">Submission</h3>
+                <p class="muted">Use these filenames exactly as shown:</p>
                 <ol>
-                    <li><span class="pill">Lastname_Firstname_CareerPacket.docx</span></li>
-                    <li><span class="pill">Lastname_Firstname_CareerPacket.pdf</span></li>
+                    <li><span class="pill">Lastname_Firstname_JobApplication.docx</span></li>
+                    <li><span class="pill">Lastname_Firstname_JobApplication.pdf</span></li>
                 </ol>
             </div>
 

@@ -1,10 +1,10 @@
 from pathlib import Path
 
 resume_out_path = Path(
-    r"c:\github\GCI\wordprojectfiles\Lastname_Firstname_CareerPacket_Template.docx"
+    r"c:\github\GCI\wordprojectfiles\Lastname_Firstname_Resume_Template.docx"
 )
 cover_letter_out_path = Path(
-    r"c:\github\GCI\wordprojectfiles\Lastname_Firstname_CareerPacket_CoverLetter_Template.docx"
+    r"c:\github\GCI\wordprojectfiles\Lastname_Firstname_CoverLetter_Template.docx"
 )
 
 try:
@@ -17,50 +17,100 @@ except ImportError:
     from docx import Document
 
 
-doc = Document()
+def add_heading_and_text(document, heading, text):
+    document.add_heading(heading, level=1)
+    document.add_paragraph(text)
 
-doc.add_heading("Career Essentials Resume Template", level=0)
 
-doc.add_paragraph("Name: ________________________________")
-doc.add_paragraph("City, State: __________________________")
-doc.add_paragraph("Phone: _______________________________")
-doc.add_paragraph("Email: _______________________________")
-doc.add_paragraph("")
+resume = Document()
+resume.add_heading("Career Essentials Resume Template", level=0)
+resume.add_paragraph("Replace this sample text with your own real information.")
 
-doc.add_heading("Professional Summary", level=1)
-doc.add_paragraph(
-    "Write 2–3 sentences that highlight your strengths and goals for this role."
+resume.add_paragraph(
+    "Maya Johnson | maya.johnson@email.com | (555) 018-2034 | Charlotte, NC"
+)
+resume.add_paragraph("Target Role: Customer Support Intern")
+
+add_heading_and_text(
+    resume,
+    "Professional Summary",
+    "Service-focused high school senior seeking a Customer Support Intern role. Strong in customer communication, ticket documentation, and issue resolution with experience supporting students in a fast-paced school help desk environment.",
 )
 
-doc.add_heading("Skills", level=1)
-doc.add_paragraph("• Skill 1\n• Skill 2\n• Skill 3\n• Skill 4")
+add_heading_and_text(
+    resume,
+    "Core Skills",
+    "Customer Communication; Technical Troubleshooting; Ticket Documentation; Google Workspace; Data Entry; Time Management; Team Collaboration; Problem Solving",
+)
 
-doc.add_heading("Education", level=1)
-doc.add_paragraph("School Name, City, State")
-doc.add_paragraph("Expected Graduation: ________")
-doc.add_paragraph("Relevant Coursework or Honors: ________________________________")
+add_heading_and_text(
+    resume,
+    "Education",
+    "Westbrook High School, Charlotte, NC — Expected Graduation 2027\nRelevant Coursework: Business Technology, Computer Applications, Professional Communication",
+)
 
-doc.add_heading("Experience", level=1)
-doc.add_paragraph("Role/Project/Activity Name — Dates")
-doc.add_paragraph("• Action + result bullet 1")
-doc.add_paragraph("• Action + result bullet 2")
+resume.add_heading("Experience", level=1)
+resume.add_paragraph(
+    "Student Tech Help Desk Volunteer | Westbrook High School | 2025–Present"
+)
+resume.add_paragraph(
+    "• Assisted 40+ students and staff with login, Chromebook, and account-access issues, improving same-day resolution times during peak periods."
+)
+resume.add_paragraph(
+    "• Logged support requests and fixes in a shared tracker to keep records accurate and improve handoff between team members."
+)
+resume.add_paragraph(
+    "• Explained technical steps in clear, user-friendly language and maintained a professional, calm tone during high-volume support periods."
+)
 
-doc.save(resume_out_path)
-print(f"Created: {resume_out_path}")
+resume.add_paragraph(
+    "School Event Team Member | Westbrook HS Activities Office | 2024–2025"
+)
+resume.add_paragraph(
+    "• Coordinated check-in for a 120-student event and reduced wait times by organizing alphabetical lines and digital attendance verification."
+)
+resume.add_paragraph(
+    "• Collaborated with 6 team members to manage setup, attendee support, and post-event follow-up communications."
+)
+
+resume.add_paragraph(
+    "Community Volunteer Tutor | Charlotte Youth Center | 2024–Present"
+)
+resume.add_paragraph(
+    "• Supported middle-school students with weekly homework and basic computer-skills practice in one-on-one and small-group sessions."
+)
+resume.add_paragraph(
+    "• Tracked attendance and progress notes to provide clear updates to program staff."
+)
+
+resume.save(resume_out_path)
+print(f"Updated: {resume_out_path}")
 
 cover = Document()
 cover.add_heading("Career Essentials Cover Letter Template", level=0)
+cover.add_paragraph("Replace this sample text with your own real information.")
 cover.add_paragraph("Date: ________________________________")
 cover.add_paragraph("Hiring Manager")
 cover.add_paragraph("Company Name")
 cover.add_paragraph("Company Address")
 cover.add_paragraph("")
+
 cover.add_paragraph("Dear Hiring Manager,")
 cover.add_paragraph(
-    "Write one focused paragraph that explains who you are, why you are interested, and how your strengths match the role."
+    "I am excited to apply for the Customer Support Intern position at BrightPath Solutions. In my student tech help desk role, I support over 40 students and staff with account and device issues while maintaining clear communication and accurate documentation. I am especially interested in this role because your posting emphasizes customer communication, troubleshooting, and teamwork—areas I use every week."
+)
+cover.add_paragraph(
+    "Your posting highlights the need for someone who can work effectively in a fast-paced team environment and communicate clearly with users. Through event support and peer tech assistance, I have built those exact skills while staying calm under pressure and solving problems quickly. For example, during our school technology rollout, I helped triage login problems, documented recurring issues, and shared patterns with staff so we could prevent repeat errors."
+)
+cover.add_paragraph(
+    "In addition to technical support, I bring strong organization and follow-through. As a school event team member, I helped coordinate check-in for a 120-student event, which required accurate tracking, clear directions for participants, and consistent communication across our team. I would bring the same reliability, customer-first mindset, and attention to detail to BrightPath Solutions."
+)
+cover.add_paragraph(
+    "I would welcome the opportunity to bring my organization, communication, and service mindset to your team. Thank you for your time and consideration. I look forward to discussing next steps."
 )
 cover.add_paragraph("")
 cover.add_paragraph("Sincerely,")
-cover.add_paragraph("Your Name")
+cover.add_paragraph("Maya Johnson")
+
 cover.save(cover_letter_out_path)
-print(f"Created: {cover_letter_out_path}")
+print(f"Updated: {cover_letter_out_path}")
