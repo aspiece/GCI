@@ -311,6 +311,39 @@
             background: rgba(255, 107, 107, 0.12);
         }
 
+        .lesson-part {
+            display: none;
+        }
+
+        .lesson-part.active {
+            display: block;
+        }
+
+        .part-nav {
+            margin-top: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .part-nav.single {
+            justify-content: flex-end;
+        }
+
+        .part-label {
+            display: inline-block;
+            margin-bottom: 8px;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .flow-indicator {
+            margin: 0 0 10px;
+            font-size: 13px;
+            color: var(--muted);
+        }
+
         a {
             color: #9fcbff;
             text-decoration: none;
@@ -427,107 +460,164 @@
         </div>
 
         <div class="card">
-            <h2 class="section-title">Videos to Watch</h2>
-            <p><strong>1) Resume Tips</strong></p>
-            <iframe src="https://www.youtube.com/embed/NRTs4HsICI8" title="Resume Tips Video"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowfullscreen></iframe>
-            <p><a href="https://youtu.be/NRTs4HsICI8?si=euoYnZ9CRxK3GwKi" target="_blank" rel="noopener">Open video in
-                    YouTube</a></p>
+            <h2 class="section-title">Part-by-Part Learning Flow</h2>
+            <p id="flowIndicator" class="flow-indicator" aria-live="polite">Part 1 of 3</p>
 
-            <div class="video-check" aria-label="Resume video quick check">
-                <h3>Quick Check: Resume Tips</h3>
-                <form id="resumeQuickCheck">
-                    <fieldset class="quiz-q resume-step">
-                        <legend>1) About how long did the video say many recruiters spend on an initial resume scan?
-                        </legend>
-                        <label><input type="radio" name="rq1" value="a" /> Around 10 seconds.</label><br />
-                        <label><input type="radio" name="rq1" value="b" /> Around 2 minutes.</label>
-                    </fieldset>
+            <section class="lesson-part active" data-part="1" aria-label="Part 1 Resume">
+                <span class="part-label">Part 1 of 3</span>
+                <h3>Resume</h3>
+                <p><strong>What to do:</strong> Watch the resume video, complete the quick check, and apply the tips to
+                    your resume page.</p>
+                <iframe src="https://www.youtube.com/embed/NRTs4HsICI8" title="Resume Tips Video"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen></iframe>
+                <p><a href="https://youtu.be/NRTs4HsICI8?si=euoYnZ9CRxK3GwKi" target="_blank" rel="noopener">Open video
+                        in
+                        YouTube</a></p>
 
-                    <fieldset class="quiz-q resume-step">
-                        <legend>2) Which formatting choice matches the video guidance?</legend>
-                        <label><input type="radio" name="rq2" value="a" /> Add photos and colorful graphics to stand
-                            out.</label><br />
-                        <label><input type="radio" name="rq2" value="b" /> Keep it clean: standard fonts, consistent
-                            headings, no graphics/photos.</label>
-                    </fieldset>
+                <div class="video-check" aria-label="Resume video quick check">
+                    <h3>Quick Check: Resume Tips</h3>
+                    <form id="resumeQuickCheck">
+                        <fieldset class="quiz-q resume-step">
+                            <legend>1) About how long did the video say many recruiters spend on an initial resume scan?
+                            </legend>
+                            <label><input type="radio" name="rq1" value="a" /> Around 10 seconds.</label><br />
+                            <label><input type="radio" name="rq1" value="b" /> Around 2 minutes.</label>
+                        </fieldset>
 
-                    <fieldset class="quiz-q resume-step">
-                        <legend>3) If you have little or no paid experience, what should you include?</legend>
-                        <label><input type="radio" name="rq3" value="a" /> Only paid jobs.</label><br />
-                        <label><input type="radio" name="rq3" value="b" /> Volunteer work, projects, extracurriculars,
-                            and part-time/freelance work.</label>
-                    </fieldset>
+                        <fieldset class="quiz-q resume-step">
+                            <legend>2) Which formatting choice matches the video guidance?</legend>
+                            <label><input type="radio" name="rq2" value="a" /> Add photos and colorful graphics to stand
+                                out.</label><br />
+                            <label><input type="radio" name="rq2" value="b" /> Keep it clean: standard fonts, consistent
+                                headings, no graphics/photos.</label>
+                        </fieldset>
 
-                    <fieldset class="quiz-q resume-step">
-                        <legend>4) How should you tailor skills from a job description?</legend>
-                        <label><input type="radio" name="rq4" value="a" /> Use the same language from the posting when
-                            it accurately matches your skills.</label><br />
-                        <label><input type="radio" name="rq4" value="b" /> Keep one generic resume with no wording
-                            changes.</label>
-                    </fieldset>
+                        <fieldset class="quiz-q resume-step">
+                            <legend>3) If you have little or no paid experience, what should you include?</legend>
+                            <label><input type="radio" name="rq3" value="a" /> Only paid jobs.</label><br />
+                            <label><input type="radio" name="rq3" value="b" /> Volunteer work, projects,
+                                extracurriculars,
+                                and part-time/freelance work.</label>
+                        </fieldset>
 
-                    <div class="controls" style="margin-top:8px;justify-content:flex-start;">
-                        <button type="button" id="resumePrev">Previous</button>
-                        <button type="button" id="resumeNext">Next</button>
-                        <button type="button" id="gradeResumeQuick" class="primary">Check Answers</button>
-                        <span class="muted" id="resumeCounter"></span>
-                    </div>
-                </form>
-                <div id="resumeQuickFeedback" class="quick-feedback"></div>
-            </div>
+                        <fieldset class="quiz-q resume-step">
+                            <legend>4) How should you tailor skills from a job description?</legend>
+                            <label><input type="radio" name="rq4" value="a" /> Use the same language from the posting
+                                when
+                                it accurately matches your skills.</label><br />
+                            <label><input type="radio" name="rq4" value="b" /> Keep one generic resume with no wording
+                                changes.</label>
+                        </fieldset>
 
-            <p style="margin-top:16px;"><strong>2) ATS (Applicant Tracking System) Tips</strong></p>
-            <iframe src="https://www.youtube.com/embed/DksA_vF84JA" title="ATS Tips Video"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowfullscreen></iframe>
-            <p><a href="https://youtu.be/DksA_vF84JA?si=sclhCHE9EIZbfsQH" target="_blank" rel="noopener">Open video in
-                    YouTube</a></p>
+                        <div class="controls" style="margin-top:8px;justify-content:flex-start;">
+                            <button type="button" id="resumePrev">Previous</button>
+                            <button type="button" id="resumeNext">Next</button>
+                            <button type="button" id="gradeResumeQuick" class="primary">Check Answers</button>
+                            <span class="muted" id="resumeCounter"></span>
+                        </div>
+                    </form>
+                    <div id="resumeQuickFeedback" class="quick-feedback"></div>
+                </div>
 
-            <div class="video-check" aria-label="ATS video quick check">
-                <h3>Quick Check: ATS Basics</h3>
-                <form id="atsQuickCheck">
-                    <fieldset class="quiz-q ats-step">
-                        <legend>1) In the hiring flow, where does ATS primarily operate?</legend>
-                        <label><input type="radio" name="aq1" value="a" /> Between applying and recruiter screening, by
-                            scanning and ranking resumes.</label><br />
-                        <label><input type="radio" name="aq1" value="b" /> Only after interviews are completed.</label>
-                    </fieldset>
+                <div class="part-nav single">
+                    <button type="button" class="primary part-jump" data-go-to="2">Next: ATS</button>
+                </div>
+            </section>
 
-                    <fieldset class="quiz-q ats-step">
-                        <legend>2) Which formatting choice is most ATS-friendly?</legend>
-                        <label><input type="radio" name="aq2" value="a" /> Heavy formatting with tables, columns, icons,
-                            and images.</label><br />
-                        <label><input type="radio" name="aq2" value="b" /> Simple text-forward layout with clearly
-                            labeled sections (Experience, Skills, Education).</label>
-                    </fieldset>
+            <section class="lesson-part" data-part="2" aria-label="Part 2 ATS">
+                <span class="part-label">Part 2 of 3</span>
+                <h3>ATS (Applicant Tracking System)</h3>
+                <p><strong>What to do:</strong> Watch the ATS video, complete the quick check, and update your resume
+                    formatting and keywords.</p>
+                <iframe src="https://www.youtube.com/embed/DksA_vF84JA" title="ATS Tips Video"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen></iframe>
+                <p><a href="https://youtu.be/DksA_vF84JA?si=sclhCHE9EIZbfsQH" target="_blank" rel="noopener">Open video
+                        in
+                        YouTube</a></p>
 
-                    <fieldset class="quiz-q ats-step">
-                        <legend>3) According to the video, which file types are generally safe for ATS submission?
-                        </legend>
-                        <label><input type="radio" name="aq3" value="a" /> Word document or PDF.</label><br />
-                        <label><input type="radio" name="aq3" value="b" /> InDesign or Photoshop native files.</label>
-                    </fieldset>
+                <div class="video-check" aria-label="ATS video quick check">
+                    <h3>Quick Check: ATS Basics</h3>
+                    <form id="atsQuickCheck">
+                        <fieldset class="quiz-q ats-step">
+                            <legend>1) In the hiring flow, where does ATS primarily operate?</legend>
+                            <label><input type="radio" name="aq1" value="a" /> Between applying and recruiter screening,
+                                by
+                                scanning and ranking resumes.</label><br />
+                            <label><input type="radio" name="aq1" value="b" /> Only after interviews are
+                                completed.</label>
+                        </fieldset>
 
-                    <fieldset class="quiz-q ats-step">
-                        <legend>4) How should you use job-description keywords?</legend>
-                        <label><input type="radio" name="aq4" value="a" /> Add matching keywords only when true, and
-                            show them in skills plus experience context.</label><br />
-                        <label><input type="radio" name="aq4" value="b" /> Add every keyword even if you do not have the
-                            skill.</label>
-                    </fieldset>
+                        <fieldset class="quiz-q ats-step">
+                            <legend>2) Which formatting choice is most ATS-friendly?</legend>
+                            <label><input type="radio" name="aq2" value="a" /> Heavy formatting with tables, columns,
+                                icons,
+                                and images.</label><br />
+                            <label><input type="radio" name="aq2" value="b" /> Simple text-forward layout with clearly
+                                labeled sections (Experience, Skills, Education).</label>
+                        </fieldset>
 
-                    <div class="controls" style="margin-top:8px;justify-content:flex-start;">
-                        <button type="button" id="atsPrev">Previous</button>
-                        <button type="button" id="atsNext">Next</button>
-                        <button type="button" id="gradeAtsQuick" class="primary">Check Answers</button>
-                        <span class="muted" id="atsCounter"></span>
-                    </div>
-                </form>
-                <div id="atsQuickFeedback" class="quick-feedback"></div>
-            </div>
-            <p class="muted">If your LMS/browser blocks embedded playback, use the YouTube links above.</p>
+                        <fieldset class="quiz-q ats-step">
+                            <legend>3) According to the video, which file types are generally safe for ATS submission?
+                            </legend>
+                            <label><input type="radio" name="aq3" value="a" /> Word document or PDF.</label><br />
+                            <label><input type="radio" name="aq3" value="b" /> InDesign or Photoshop native
+                                files.</label>
+                        </fieldset>
+
+                        <fieldset class="quiz-q ats-step">
+                            <legend>4) How should you use job-description keywords?</legend>
+                            <label><input type="radio" name="aq4" value="a" /> Add matching keywords only when true, and
+                                show them in skills plus experience context.</label><br />
+                            <label><input type="radio" name="aq4" value="b" /> Add every keyword even if you do not have
+                                the
+                                skill.</label>
+                        </fieldset>
+
+                        <div class="controls" style="margin-top:8px;justify-content:flex-start;">
+                            <button type="button" id="atsPrev">Previous</button>
+                            <button type="button" id="atsNext">Next</button>
+                            <button type="button" id="gradeAtsQuick" class="primary">Check Answers</button>
+                            <span class="muted" id="atsCounter"></span>
+                        </div>
+                    </form>
+                    <div id="atsQuickFeedback" class="quick-feedback"></div>
+                </div>
+
+                <div class="part-nav">
+                    <button type="button" class="part-jump" data-go-to="1">Back: Resume</button>
+                    <button type="button" class="primary part-jump" data-go-to="3">Next: Cover Letter</button>
+                </div>
+            </section>
+
+            <section class="lesson-part" data-part="3" aria-label="Part 3 Cover Letter">
+                <span class="part-label">Part 3 of 3</span>
+                <h3>Cover Letter</h3>
+                <p><strong>What to do:</strong> Watch the cover letter video, then draft and revise your one-page cover
+                    letter.</p>
+                <iframe src="https://www.youtube.com/embed/EcFOr9Jo0OA" title="Cover Letter Tips Video"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen></iframe>
+                <p><a href="https://youtu.be/EcFOr9Jo0OA?si=L5FiRAjiwQylcmFe" target="_blank" rel="noopener">Open video
+                        in
+                        YouTube</a></p>
+
+                <div class="video-check" aria-label="Cover letter instructions">
+                    <h3>Apply These Steps</h3>
+                    <ul>
+                        <li>Write a professional greeting and opening that names the role.</li>
+                        <li>Connect 2–3 of your strongest qualifications to the position.</li>
+                        <li>Use a professional closing and proofread for grammar and tone.</li>
+                    </ul>
+                </div>
+
+                <div class="part-nav single">
+                    <button type="button" class="part-jump" data-go-to="2">Back: ATS</button>
+                </div>
+
+                <p class="muted">If your LMS/browser blocks embedded playback, use the YouTube links above.</p>
+            </section>
         </div>
 
         <div class="grid">
@@ -560,6 +650,8 @@
                             video.</label>
                     </li>
                     <li><input type="checkbox" data-key="watch_ats" /> <label>I watched the ATS video.</label></li>
+                    <li><input type="checkbox" data-key="watch_coverletter" /> <label>I watched the Cover Letter
+                            video.</label></li>
                     <li><input type="checkbox" data-key="apply_resume" /> <label>I applied at least 2 resume tips in my
                             document.</label></li>
                     <li><input type="checkbox" data-key="apply_ats" /> <label>I applied at least 2 ATS-friendly
@@ -605,10 +697,14 @@
         <script>
             const STORAGE_PREFIX = 'career-packet-web-';
             const THEME_KEY = STORAGE_PREFIX + 'theme';
+            const PART_KEY = STORAGE_PREFIX + 'current-part';
 
             const themeSelector = document.getElementById('themeSelector');
             const resetButton = document.getElementById('resetProgress');
             const checklistInputs = Array.from(document.querySelectorAll('#studentChecklist input[type="checkbox"]'));
+            const lessonParts = Array.from(document.querySelectorAll('.lesson-part'));
+            const flowIndicator = document.getElementById('flowIndicator');
+            const partJumpButtons = Array.from(document.querySelectorAll('.part-jump'));
             const gradeResumeQuickButton = document.getElementById('gradeResumeQuick');
             const gradeAtsQuickButton = document.getElementById('gradeAtsQuick');
             const resumeQuickFeedback = document.getElementById('resumeQuickFeedback');
@@ -693,6 +789,26 @@
                 localStorage.setItem(THEME_KEY, value);
             }
 
+            function showPart(partNumber) {
+                const totalParts = lessonParts.length;
+                const targetPart = partNumber >= 1 && partNumber <= totalParts ? partNumber : 1;
+                lessonParts.forEach((part) => {
+                    const isActive = Number(part.dataset.part) === Number(targetPart);
+                    part.classList.toggle('active', isActive);
+                });
+                if (flowIndicator) {
+                    flowIndicator.textContent = `Part ${targetPart} of ${totalParts}`;
+                }
+                localStorage.setItem(PART_KEY, String(targetPart));
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            function loadPart() {
+                const saved = Number(localStorage.getItem(PART_KEY) || '1');
+                const totalParts = lessonParts.length;
+                showPart(saved >= 1 && saved <= totalParts ? saved : 1);
+            }
+
             function loadChecklist() {
                 checklistInputs.forEach((input) => {
                     const key = STORAGE_PREFIX + input.dataset.key;
@@ -750,6 +866,7 @@
                 atsQuickFeedback.style.display = 'none';
                 loadTheme();
                 loadChecklist();
+                showPart(1);
                 document.getElementById('resumeQuickCheck').reset();
                 document.getElementById('atsQuickCheck').reset();
                 stepperResets.forEach((resetFn) => resetFn());
@@ -757,6 +874,11 @@
 
             themeSelector.addEventListener('change', (event) => saveTheme(event.target.value));
             checklistInputs.forEach((input) => input.addEventListener('change', () => saveChecklist(input)));
+            partJumpButtons.forEach((button) => {
+                button.addEventListener('click', () => {
+                    showPart(Number(button.dataset.goTo));
+                });
+            });
             gradeResumeQuickButton.addEventListener('click', () => gradeQuickCheck(quickChecks.resume));
             gradeAtsQuickButton.addEventListener('click', () => gradeQuickCheck(quickChecks.ats));
             resetButton.addEventListener('click', resetAll);
@@ -781,6 +903,7 @@
 
             loadTheme();
             loadChecklist();
+            loadPart();
         </script>
 </body>
 
