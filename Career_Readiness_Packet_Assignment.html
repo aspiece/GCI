@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Career Readiness Packet — Student Assignment</title>
+    <title>Career Essentials: Job Application — Student Assignment</title>
     <style>
         :root {
             --bg: #0b0c0f;
@@ -157,19 +157,6 @@
             color: var(--muted);
         }
 
-        .grid {
-            display: grid;
-            gap: 14px;
-            grid-template-columns: 1fr;
-            margin-bottom: 14px;
-        }
-
-        @media (min-width: 860px) {
-            .grid {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
         .badge {
             padding: 3px 8px;
             border-radius: 999px;
@@ -186,7 +173,7 @@
             border-radius: 999px;
             border: 1px solid var(--border);
             overflow: hidden;
-            margin: 16px 0 12px;
+            margin: 16px 0 10px;
         }
 
         .progress>div {
@@ -195,26 +182,27 @@
             background: linear-gradient(90deg, #5fa8ff, #22b07d);
         }
 
-        .checklist {
-            list-style: none;
-            padding: 0;
-            margin: 10px 0 0;
-        }
-
-        .checklist li {
-            margin: 8px 0;
-            padding: 10px 12px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.02);
+        .top-nav {
             display: flex;
-            gap: 10px;
-            align-items: flex-start;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
-        .checklist input[type="checkbox"] {
-            margin-top: 3px;
-            transform: scale(1.1);
+        .top-nav .left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .project-page {
+            display: none;
+        }
+
+        .project-page.active {
+            display: block;
         }
 
         iframe {
@@ -236,47 +224,6 @@
         .quiz-q legend {
             font-weight: 600;
             padding: 0 4px;
-        }
-
-        .quiz-feedback {
-            margin-top: 10px;
-            padding: 10px 12px;
-            border-radius: 8px;
-            border-left: 4px solid var(--primary);
-            background: rgba(79, 140, 255, 0.12);
-            display: none;
-        }
-
-        .quiz-feedback.pass {
-            border-left-color: var(--accent);
-            background: rgba(34, 176, 125, 0.12);
-        }
-
-        .quiz-feedback.fail {
-            border-left-color: var(--danger);
-            background: rgba(255, 107, 107, 0.12);
-        }
-
-        .pill {
-            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-            padding: 2px 7px;
-            border: 1px solid var(--border);
-            border-radius: 999px;
-            background: rgba(255, 255, 255, 0.03);
-            font-size: 12px;
-        }
-
-        .rubric-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 10px;
-        }
-
-        .rubric-item {
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.02);
         }
 
         .video-check {
@@ -311,31 +258,56 @@
             background: rgba(255, 107, 107, 0.12);
         }
 
-        .flow-indicator {
-            margin: 0 0 10px;
-            font-size: 13px;
-            color: var(--muted);
+        .checklist {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0 0;
         }
 
-        .project-page {
-            display: none;
-        }
-
-        .project-page.active {
-            display: block;
-        }
-
-        .top-nav {
+        .checklist li {
+            margin: 8px 0;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.02);
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 8px;
+            gap: 10px;
+            align-items: flex-start;
         }
 
-        .top-nav .left {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .checklist input[type="checkbox"] {
+            margin-top: 3px;
+            transform: scale(1.1);
+        }
+
+        .example-block {
+            margin-top: 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .pill {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            padding: 2px 7px;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.03);
+            font-size: 12px;
+        }
+
+        .rubric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 10px;
+        }
+
+        .rubric-item {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.02);
         }
 
         a {
@@ -346,71 +318,6 @@
         a:hover {
             text-decoration: underline;
         }
-
-        [data-theme="light"] .badge {
-            background: #e3f0ff;
-            border: 1px solid #b3d9ff;
-            color: #0052cc;
-        }
-
-        [data-theme="light"] .card {
-            background: linear-gradient(180deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.0));
-        }
-
-        [data-theme="light"] .progress {
-            background: #e0e0e0;
-            border: 1px solid #d0d0d0;
-        }
-
-        [data-theme="light"] .progress>div {
-            background: linear-gradient(90deg, #0052cc, #28a745);
-        }
-
-        [data-theme="light"] a {
-            color: #0052cc;
-        }
-
-        [data-theme="high-contrast"] .card {
-            background: #000000;
-            border: 2px solid #ffffff;
-        }
-
-        [data-theme="high-contrast"] .badge {
-            background: #000000;
-            border: 2px solid #00ffff;
-            color: #00ffff;
-        }
-
-        [data-theme="high-contrast"] .progress {
-            background: #ffffff;
-            border: 2px solid #000000;
-        }
-
-        [data-theme="high-contrast"] .progress>div {
-            background: #00ffff;
-        }
-
-        [data-theme="high-contrast"] select,
-        [data-theme="high-contrast"] button {
-            background: #ffffff;
-            color: #000000;
-            border: 2px solid #000000;
-        }
-
-        [data-theme="high-contrast"] a {
-            color: #0000ff;
-            text-decoration: underline;
-        }
-
-        [data-theme="high-contrast"] .video-check {
-            background: #ffffff;
-            border: 2px solid #000000;
-            color: #000000;
-        }
-
-        [data-theme="high-contrast"] .video-check .quick-feedback {
-            color: #000000;
-        }
     </style>
 </head>
 
@@ -418,7 +325,7 @@
     <div class="wrap">
         <header>
             <div class="title">
-                <h1>Career Readiness Packet</h1>
+                <h1>Career Essentials: Job Application</h1>
                 <p>Student Assignment • Independent + Virtual</p>
             </div>
             <div class="controls">
@@ -434,21 +341,64 @@
         <div class="card">
             <div class="top-nav">
                 <div class="left">
-                    <span class="badge" id="projectStepCounter">Part 1 of 3</span>
-                    <span class="muted">Use Back/Next to move between full pages.</span>
+                    <span class="badge" id="projectStepCounter">Part 1 of 5</span>
+                    <span class="muted">Use Back/Next or keyboard arrows (← →).</span>
                 </div>
                 <div>
                     <button id="projectPrevBtn">◀ Back</button>
                     <button id="projectNextBtn" class="primary">Next ▶</button>
                 </div>
             </div>
+            <div class="progress">
+                <div id="projectProgressBar"></div>
+            </div>
+            <p id="projectProgressText" class="muted">Progress: 0/5 pages completed</p>
         </div>
 
-        <section class="project-page active" data-project-page="1" aria-label="Resume Page">
+        <section class="project-page active" data-project-page="1" aria-label="Starter Page">
             <div class="card">
-                <div class="badge">Part 1: Resume</div>
+                <div class="badge">Part 1: Starter</div>
+                <h2 class="section-title">Project Scenario and Expectations</h2>
+                <p>You are preparing a real-world job application packet for a position you are genuinely interested in.
+                </p>
+                <h3>Step 1: Choose a Job Posting First</h3>
+                <ul>
+                    <li>Find one internship or entry-level job posting you want to target.</li>
+                    <li>Copy/save the posting link and identify key skills, qualifications, and keywords.</li>
+                    <li>Use that posting to tailor your resume and cover letter in the next sections.</li>
+                </ul>
+                <h3>Project Expectations</h3>
+                <ul>
+                    <li>Create one polished 2-page packet: resume (page 1) and cover letter (page 2).</li>
+                    <li>Tailor both documents to your selected posting.</li>
+                    <li>Submit both `.docx` and `.pdf`, plus a 150–250 word reflection.</li>
+                </ul>
+                <p class="muted">Estimated time: 45 minutes total.</p>
+                <p class="muted">Download starter templates: <a
+                        href="wordprojectfiles/Lastname_Firstname_CareerPacket_Template.docx" download>Resume Template
+                        (.docx)</a>
+                    • <a href="wordprojectfiles/Lastname_Firstname_CareerPacket_CoverLetter_Template.docx"
+                        download>Cover Letter Template (.docx)</a></p>
+            </div>
+
+            <div class="card">
+                <h3>Starter Checklist</h3>
+                <ul class="checklist student-checklist">
+                    <li><input type="checkbox" data-key="job_post_selected" /> <label>I selected a real job posting to
+                            target.</label></li>
+                    <li><input type="checkbox" data-key="job_post_keywords" /> <label>I identified key skills/keywords
+                            from that posting.</label></li>
+                    <li><input type="checkbox" class="page-complete-checkbox" data-key="page_complete_1" /> <label>I
+                            completed this page.</label></li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="project-page" data-project-page="2" aria-label="Resume Page">
+            <div class="card">
+                <div class="badge">Part 2: Resume</div>
                 <h2 class="section-title">Resume Learning + Application</h2>
-                <p class="muted">Build a clear, one-page resume tailored to a specific internship or job posting.</p>
+                <p class="muted">Build a clear, one-page resume tailored to your selected job posting.</p>
                 <p><a href="wordprojectfiles/Lastname_Firstname_CareerPacket_Template.docx" download>Download Resume
                         Template (.docx)</a></p>
             </div>
@@ -506,22 +456,44 @@
                 <ul>
                     <li>Name and contact information (email, phone, city/state).</li>
                     <li>Education section with school, program/grade level, and relevant coursework.</li>
-                    <li>Skills section tailored to the target internship/job posting.</li>
+                    <li>Skills section tailored to the target posting.</li>
                     <li>Experience section (paid work, volunteer work, projects, activities, or leadership).</li>
                 </ul>
+                <h3>Resume Example (Fictional)</h3>
+                <div class="example-block">
+                    <p><strong>Maya Johnson</strong> | maya.johnson@email.com | (555) 018-2034 | Charlotte, NC</p>
+                    <p><strong>Professional Summary:</strong> Organized and service-focused high school senior seeking a
+                        customer support internship. Experienced in team projects, event coordination, and digital
+                        communication.</p>
+                    <p><strong>Skills:</strong> Customer Communication, Google Workspace, Canva, Spreadsheet Tracking,
+                        Team Collaboration, Problem Solving</p>
+                    <p><strong>Education:</strong> Westbrook High School, Expected Graduation 2027</p>
+                    <p><strong>Experience:</strong></p>
+                    <ul>
+                        <li><strong>Student Tech Help Desk Volunteer</strong> — Supported 40+ students with login/device
+                            issues and documented fixes.</li>
+                        <li><strong>School Event Team Member</strong> — Coordinated check-in for a 120-student event and
+                            reduced wait times.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
                 <h3>Resume Checklist</h3>
                 <ul class="checklist student-checklist">
                     <li><input type="checkbox" data-key="watch_resume" /> <label>I watched the Resume Tips
                             video.</label></li>
                     <li><input type="checkbox" data-key="apply_resume" /> <label>I applied at least 2 resume tips in my
                             resume page.</label></li>
+                    <li><input type="checkbox" class="page-complete-checkbox" data-key="page_complete_2" /> <label>I
+                            completed this page.</label></li>
                 </ul>
             </div>
         </section>
 
-        <section class="project-page" data-project-page="2" aria-label="ATS Page">
+        <section class="project-page" data-project-page="3" aria-label="ATS Page">
             <div class="card">
-                <div class="badge">Part 2: ATS</div>
+                <div class="badge">Part 3: ATS</div>
                 <h2 class="section-title">ATS Learning + Application</h2>
                 <p class="muted">Use ATS-friendly structure and language to improve readability and match quality.</p>
             </div>
@@ -584,18 +556,23 @@
                     <li>Apply truthful job-description keywords in both skills and experience sections.</li>
                     <li>Save in a standard format for submission (.docx and .pdf).</li>
                 </ul>
+            </div>
+
+            <div class="card">
                 <h3>ATS Checklist</h3>
                 <ul class="checklist student-checklist">
                     <li><input type="checkbox" data-key="watch_ats" /> <label>I watched the ATS video.</label></li>
                     <li><input type="checkbox" data-key="apply_ats" /> <label>I applied at least 2 ATS-friendly choices
                             in my resume page.</label></li>
+                    <li><input type="checkbox" class="page-complete-checkbox" data-key="page_complete_3" /> <label>I
+                            completed this page.</label></li>
                 </ul>
             </div>
         </section>
 
-        <section class="project-page" data-project-page="3" aria-label="Cover Letter Page">
+        <section class="project-page" data-project-page="4" aria-label="Cover Letter Page">
             <div class="card">
-                <div class="badge">Part 3: Cover Letter</div>
+                <div class="badge">Part 4: Cover Letter</div>
                 <h2 class="section-title">Cover Letter Learning + Application</h2>
                 <p class="muted">Write a focused cover letter that connects your background to this specific role.</p>
                 <p><a href="wordprojectfiles/Lastname_Firstname_CareerPacket_CoverLetter_Template.docx"
@@ -661,6 +638,24 @@
                     <li>Closing paragraph with appreciation and a professional sign-off.</li>
                     <li>Clear, concise writing with correct spelling and grammar.</li>
                 </ul>
+                <h3>Cover Letter Example (Fictional)</h3>
+                <div class="example-block">
+                    <p>Dear Hiring Manager,</p>
+                    <p>I am excited to apply for the Customer Support Intern position at BrightPath Solutions. In my
+                        student tech help desk role, I supported over 40 students with account and device issues while
+                        maintaining clear communication and accurate documentation.</p>
+                    <p>Your posting highlights the need for someone who can “work effectively in a fast-paced team
+                        environment” and “communicate clearly with users.” Through event support and peer tech
+                        assistance, I have built those exact skills while staying calm under pressure and solving
+                        problems quickly.</p>
+                    <p>I would welcome the opportunity to bring my organization, communication, and service mindset to
+                        your team. Thank you for your time and consideration. I look forward to discussing next steps.
+                    </p>
+                    <p>Sincerely,<br />Maya Johnson</p>
+                </div>
+            </div>
+
+            <div class="card">
                 <h3>Cover Letter Checklist</h3>
                 <ul class="checklist student-checklist">
                     <li><input type="checkbox" data-key="watch_coverletter" /> <label>I watched the Cover Letter
@@ -669,11 +664,18 @@
                             role and used role-specific evidence.</label></li>
                     <li><input type="checkbox" data-key="proofread_coverletter" /> <label>I proofread my cover letter
                             for tone, grammar, and clarity.</label></li>
-                    <li><input type="checkbox" data-key="doc_two_pages" /> <label>My packet is 2 pages in one
-                            document.</label></li>
-                    <li><input type="checkbox" data-key="export_pdf" /> <label>I exported my final packet to
-                            PDF.</label></li>
+                    <li><input type="checkbox" class="page-complete-checkbox" data-key="page_complete_4" /> <label>I
+                            completed this page.</label></li>
                 </ul>
+            </div>
+        </section>
+
+        <section class="project-page" data-project-page="5" aria-label="Finished Page">
+            <div class="card">
+                <div class="badge">Part 5: Finished</div>
+                <h2 class="section-title">Congratulations — You Finished!</h2>
+                <p>You completed the Career Essentials: Job Application project flow.</p>
+                <p class="muted">Final check: confirm your files are named correctly and submitted.</p>
             </div>
 
             <div class="card">
@@ -697,6 +699,18 @@
                     <li><span class="pill">Lastname_Firstname_Reflection.txt</span> (150–250 words)</li>
                 </ol>
             </div>
+
+            <div class="card">
+                <h3>Final Checklist</h3>
+                <ul class="checklist student-checklist">
+                    <li><input type="checkbox" data-key="doc_two_pages" /> <label>My packet is 2 pages in one
+                            document.</label></li>
+                    <li><input type="checkbox" data-key="export_pdf" /> <label>I exported my final packet to
+                            PDF.</label></li>
+                    <li><input type="checkbox" class="page-complete-checkbox" data-key="page_complete_5" /> <label>I
+                            reviewed my submission package and completed this page.</label></li>
+                </ul>
+            </div>
         </section>
     </div>
 
@@ -708,10 +722,13 @@
         const themeSelector = document.getElementById('themeSelector');
         const resetButton = document.getElementById('resetProgress');
         const checklistInputs = Array.from(document.querySelectorAll('.student-checklist input[type="checkbox"]'));
+        const pageCompleteInputs = Array.from(document.querySelectorAll('.page-complete-checkbox'));
         const projectPages = Array.from(document.querySelectorAll('.project-page'));
         const projectStepCounter = document.getElementById('projectStepCounter');
         const projectPrevBtn = document.getElementById('projectPrevBtn');
         const projectNextBtn = document.getElementById('projectNextBtn');
+        const projectProgressBar = document.getElementById('projectProgressBar');
+        const projectProgressText = document.getElementById('projectProgressText');
 
         const gradeResumeQuickButton = document.getElementById('gradeResumeQuick');
         const gradeAtsQuickButton = document.getElementById('gradeAtsQuick');
@@ -774,6 +791,7 @@
                 steps.forEach((step, stepIndex) => {
                     step.style.display = stepIndex === index ? 'block' : 'none';
                 });
+
                 prevBtn.disabled = index === 0;
                 nextBtn.style.display = index === steps.length - 1 ? 'none' : 'inline-block';
                 submitBtn.style.display = index === steps.length - 1 ? 'inline-block' : 'none';
@@ -812,6 +830,14 @@
             localStorage.setItem(THEME_KEY, value);
         }
 
+        function updateProgress() {
+            const total = pageCompleteInputs.length;
+            const completed = pageCompleteInputs.filter((input) => input.checked).length;
+            const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
+            projectProgressBar.style.width = `${percent}%`;
+            projectProgressText.textContent = `Progress: ${completed}/${total} pages completed`;
+        }
+
         function showProjectPage(pageNumber) {
             const totalPages = projectPages.length;
             const targetPage = Math.min(Math.max(pageNumber, 1), totalPages);
@@ -824,7 +850,8 @@
 
             projectStepCounter.textContent = `Part ${targetPage} of ${totalPages}`;
             projectPrevBtn.disabled = targetPage === 1;
-            projectNextBtn.textContent = targetPage === totalPages ? 'Finish' : 'Next ▶';
+            projectNextBtn.disabled = targetPage === totalPages;
+            projectNextBtn.textContent = targetPage === totalPages ? 'Completed ✓' : 'Next ▶';
             localStorage.setItem(PROJECT_PAGE_KEY, String(targetPage));
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -839,11 +866,13 @@
                 const key = STORAGE_PREFIX + input.dataset.key;
                 input.checked = localStorage.getItem(key) === 'true';
             });
+            updateProgress();
         }
 
         function saveChecklist(input) {
             const key = STORAGE_PREFIX + input.dataset.key;
             localStorage.setItem(key, String(input.checked));
+            updateProgress();
         }
 
         function gradeQuickCheck(config) {
@@ -900,12 +929,28 @@
             document.getElementById('atsQuickCheck').reset();
             document.getElementById('coverQuickCheck').reset();
             stepperResets.forEach((resetFn) => resetFn());
+            updateProgress();
         }
 
         themeSelector.addEventListener('change', (event) => saveTheme(event.target.value));
         checklistInputs.forEach((input) => input.addEventListener('change', () => saveChecklist(input)));
         projectPrevBtn.addEventListener('click', () => showProjectPage(currentProjectPage - 1));
         projectNextBtn.addEventListener('click', () => showProjectPage(currentProjectPage + 1));
+
+        document.addEventListener('keydown', (event) => {
+            const tag = event.target && event.target.tagName ? event.target.tagName.toLowerCase() : '';
+            const isEditable = tag === 'input' || tag === 'textarea' || tag === 'select';
+            if (isEditable || event.ctrlKey || event.metaKey || event.altKey) return;
+
+            if (event.key === 'ArrowLeft') {
+                event.preventDefault();
+                showProjectPage(currentProjectPage - 1);
+            } else if (event.key === 'ArrowRight') {
+                event.preventDefault();
+                showProjectPage(currentProjectPage + 1);
+            }
+        });
+
         gradeResumeQuickButton.addEventListener('click', () => gradeQuickCheck(quickChecks.resume));
         gradeAtsQuickButton.addEventListener('click', () => gradeQuickCheck(quickChecks.ats));
         gradeCoverQuickButton.addEventListener('click', () => gradeQuickCheck(quickChecks.cover));
