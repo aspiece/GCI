@@ -311,45 +311,31 @@
             background: rgba(255, 107, 107, 0.12);
         }
 
-        .lesson-part {
-            display: none;
-        }
-
-        .lesson-part.active {
-            display: block;
-        }
-
-        .part-nav {
-            margin-top: 14px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .part-nav.single {
-            justify-content: flex-end;
-        }
-
-        .part-label {
-            display: inline-block;
-            margin-bottom: 8px;
-            font-size: 12px;
-            color: var(--muted);
-        }
-
         .flow-indicator {
             margin: 0 0 10px;
             font-size: 13px;
             color: var(--muted);
         }
 
-        .app-part {
+        .project-page {
             display: none;
         }
 
-        .app-part.active {
+        .project-page.active {
             display: block;
+        }
+
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .top-nav .left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         a {
@@ -446,42 +432,34 @@
         </header>
 
         <div class="card">
-            <div class="badge">Project Goal</div>
-            <p>You are preparing application materials for a real internship opportunity. Create one polished
-                2-page packet: a resume page and a short cover letter page.</p>
-            <h2 class="section-title">Learning Objectives</h2>
-            <ul>
-                <li>Create a clear, one-page resume tailored to a specific internship or job posting.</li>
-                <li>Write a focused cover letter that connects your skills and experience to the role.</li>
-                <li>Apply ATS-friendly formatting and accurate job-description keywords.</li>
-                <li>Export and submit professional final files in both .docx and .pdf formats.</li>
-            </ul>
-            <p class="muted">Estimated time: 45 minutes total</p>
-            <p class="muted">Submit: <span class="pill">.docx</span> + <span class="pill">.pdf</span> + <span
-                    class="pill">150–250 word reflection</span></p>
-            <p class="muted">Download starter templates: <a
-                    href="wordprojectfiles/Lastname_Firstname_CareerPacket_Template.docx" download>Resume Template
-                    (.docx)</a>
-                • <a href="wordprojectfiles/Lastname_Firstname_CareerPacket_CoverLetter_Template.docx" download>Cover
-                    Letter Template
-                    (.docx)</a></p>
+            <div class="top-nav">
+                <div class="left">
+                    <span class="badge" id="projectStepCounter">Part 1 of 3</span>
+                    <span class="muted">Use Back/Next to move between full pages.</span>
+                </div>
+                <div>
+                    <button id="projectPrevBtn">◀ Back</button>
+                    <button id="projectNextBtn" class="primary">Next ▶</button>
+                </div>
+            </div>
         </div>
 
-        <div class="card">
-            <h2 class="section-title">Part-by-Part Learning Flow</h2>
-            <p id="flowIndicator" class="flow-indicator" aria-live="polite">Part 1 of 3</p>
+        <section class="project-page active" data-project-page="1" aria-label="Resume Page">
+            <div class="card">
+                <div class="badge">Part 1: Resume</div>
+                <h2 class="section-title">Resume Learning + Application</h2>
+                <p class="muted">Build a clear, one-page resume tailored to a specific internship or job posting.</p>
+                <p><a href="wordprojectfiles/Lastname_Firstname_CareerPacket_Template.docx" download>Download Resume
+                        Template (.docx)</a></p>
+            </div>
 
-            <section class="lesson-part active" data-part="1" aria-label="Part 1 Resume">
-                <span class="part-label">Part 1 of 3</span>
-                <h3>Resume</h3>
-                <p><strong>What to do:</strong> Watch the resume video, complete the quick check, and apply the tips to
-                    your resume page.</p>
+            <div class="card">
+                <h3>Resume Video</h3>
                 <iframe src="https://www.youtube.com/embed/NRTs4HsICI8" title="Resume Tips Video"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowfullscreen></iframe>
                 <p><a href="https://youtu.be/NRTs4HsICI8?si=euoYnZ9CRxK3GwKi" target="_blank" rel="noopener">Open video
-                        in
-                        YouTube</a></p>
+                        in YouTube</a></p>
 
                 <div class="video-check" aria-label="Resume video quick check">
                     <h3>Quick Check: Resume Tips</h3>
@@ -492,7 +470,6 @@
                             <label><input type="radio" name="rq1" value="a" /> Around 10 seconds.</label><br />
                             <label><input type="radio" name="rq1" value="b" /> Around 2 minutes.</label>
                         </fieldset>
-
                         <fieldset class="quiz-q resume-step">
                             <legend>2) Which formatting choice matches the video guidance?</legend>
                             <label><input type="radio" name="rq2" value="a" /> Add photos and colorful graphics to stand
@@ -500,24 +477,19 @@
                             <label><input type="radio" name="rq2" value="b" /> Keep it clean: standard fonts, consistent
                                 headings, no graphics/photos.</label>
                         </fieldset>
-
                         <fieldset class="quiz-q resume-step">
                             <legend>3) If you have little or no paid experience, what should you include?</legend>
                             <label><input type="radio" name="rq3" value="a" /> Only paid jobs.</label><br />
                             <label><input type="radio" name="rq3" value="b" /> Volunteer work, projects,
-                                extracurriculars,
-                                and part-time/freelance work.</label>
+                                extracurriculars, and part-time/freelance work.</label>
                         </fieldset>
-
                         <fieldset class="quiz-q resume-step">
                             <legend>4) How should you tailor skills from a job description?</legend>
                             <label><input type="radio" name="rq4" value="a" /> Use the same language from the posting
-                                when
-                                it accurately matches your skills.</label><br />
+                                when it accurately matches your skills.</label><br />
                             <label><input type="radio" name="rq4" value="b" /> Keep one generic resume with no wording
                                 changes.</label>
                         </fieldset>
-
                         <div class="controls" style="margin-top:8px;justify-content:flex-start;">
                             <button type="button" id="resumePrev">Previous</button>
                             <button type="button" id="resumeNext">Next</button>
@@ -527,23 +499,40 @@
                     </form>
                     <div id="resumeQuickFeedback" class="quick-feedback"></div>
                 </div>
+            </div>
 
-                <div class="part-nav single">
-                    <button type="button" class="primary part-jump" data-go-to="2">Next: ATS</button>
-                </div>
-            </section>
+            <div class="card">
+                <h3>Resume Application Requirements</h3>
+                <ul>
+                    <li>Name and contact information (email, phone, city/state).</li>
+                    <li>Education section with school, program/grade level, and relevant coursework.</li>
+                    <li>Skills section tailored to the target internship/job posting.</li>
+                    <li>Experience section (paid work, volunteer work, projects, activities, or leadership).</li>
+                </ul>
+                <h3>Resume Checklist</h3>
+                <ul class="checklist student-checklist">
+                    <li><input type="checkbox" data-key="watch_resume" /> <label>I watched the Resume Tips
+                            video.</label></li>
+                    <li><input type="checkbox" data-key="apply_resume" /> <label>I applied at least 2 resume tips in my
+                            resume page.</label></li>
+                </ul>
+            </div>
+        </section>
 
-            <section class="lesson-part" data-part="2" aria-label="Part 2 ATS">
-                <span class="part-label">Part 2 of 3</span>
-                <h3>ATS (Applicant Tracking System)</h3>
-                <p><strong>What to do:</strong> Watch the ATS video, complete the quick check, and update your resume
-                    formatting and keywords.</p>
+        <section class="project-page" data-project-page="2" aria-label="ATS Page">
+            <div class="card">
+                <div class="badge">Part 2: ATS</div>
+                <h2 class="section-title">ATS Learning + Application</h2>
+                <p class="muted">Use ATS-friendly structure and language to improve readability and match quality.</p>
+            </div>
+
+            <div class="card">
+                <h3>ATS Video</h3>
                 <iframe src="https://www.youtube.com/embed/DksA_vF84JA" title="ATS Tips Video"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowfullscreen></iframe>
                 <p><a href="https://youtu.be/DksA_vF84JA?si=sclhCHE9EIZbfsQH" target="_blank" rel="noopener">Open video
-                        in
-                        YouTube</a></p>
+                        in YouTube</a></p>
 
                 <div class="video-check" aria-label="ATS video quick check">
                     <h3>Quick Check: ATS Basics</h3>
@@ -551,21 +540,17 @@
                         <fieldset class="quiz-q ats-step">
                             <legend>1) In the hiring flow, where does ATS primarily operate?</legend>
                             <label><input type="radio" name="aq1" value="a" /> Between applying and recruiter screening,
-                                by
-                                scanning and ranking resumes.</label><br />
+                                by scanning and ranking resumes.</label><br />
                             <label><input type="radio" name="aq1" value="b" /> Only after interviews are
                                 completed.</label>
                         </fieldset>
-
                         <fieldset class="quiz-q ats-step">
                             <legend>2) Which formatting choice is most ATS-friendly?</legend>
                             <label><input type="radio" name="aq2" value="a" /> Heavy formatting with tables, columns,
-                                icons,
-                                and images.</label><br />
+                                icons, and images.</label><br />
                             <label><input type="radio" name="aq2" value="b" /> Simple text-forward layout with clearly
                                 labeled sections (Experience, Skills, Education).</label>
                         </fieldset>
-
                         <fieldset class="quiz-q ats-step">
                             <legend>3) According to the video, which file types are generally safe for ATS submission?
                             </legend>
@@ -573,16 +558,13 @@
                             <label><input type="radio" name="aq3" value="b" /> InDesign or Photoshop native
                                 files.</label>
                         </fieldset>
-
                         <fieldset class="quiz-q ats-step">
                             <legend>4) How should you use job-description keywords?</legend>
                             <label><input type="radio" name="aq4" value="a" /> Add matching keywords only when true, and
                                 show them in skills plus experience context.</label><br />
                             <label><input type="radio" name="aq4" value="b" /> Add every keyword even if you do not have
-                                the
-                                skill.</label>
+                                the skill.</label>
                         </fieldset>
-
                         <div class="controls" style="margin-top:8px;justify-content:flex-start;">
                             <button type="button" id="atsPrev">Previous</button>
                             <button type="button" id="atsNext">Next</button>
@@ -592,24 +574,41 @@
                     </form>
                     <div id="atsQuickFeedback" class="quick-feedback"></div>
                 </div>
+            </div>
 
-                <div class="part-nav">
-                    <button type="button" class="part-jump" data-go-to="1">Back: Resume</button>
-                    <button type="button" class="primary part-jump" data-go-to="3">Next: Cover Letter</button>
-                </div>
-            </section>
+            <div class="card">
+                <h3>ATS Application Requirements</h3>
+                <ul>
+                    <li>Use clear section headings and a simple, text-forward layout.</li>
+                    <li>Avoid graphics, icons, columns, and image-based text.</li>
+                    <li>Apply truthful job-description keywords in both skills and experience sections.</li>
+                    <li>Save in a standard format for submission (.docx and .pdf).</li>
+                </ul>
+                <h3>ATS Checklist</h3>
+                <ul class="checklist student-checklist">
+                    <li><input type="checkbox" data-key="watch_ats" /> <label>I watched the ATS video.</label></li>
+                    <li><input type="checkbox" data-key="apply_ats" /> <label>I applied at least 2 ATS-friendly choices
+                            in my resume page.</label></li>
+                </ul>
+            </div>
+        </section>
 
-            <section class="lesson-part" data-part="3" aria-label="Part 3 Cover Letter">
-                <span class="part-label">Part 3 of 3</span>
-                <h3>Cover Letter</h3>
-                <p><strong>What to do:</strong> Watch the cover letter video, then draft and revise your one-page cover
-                    letter.</p>
+        <section class="project-page" data-project-page="3" aria-label="Cover Letter Page">
+            <div class="card">
+                <div class="badge">Part 3: Cover Letter</div>
+                <h2 class="section-title">Cover Letter Learning + Application</h2>
+                <p class="muted">Write a focused cover letter that connects your background to this specific role.</p>
+                <p><a href="wordprojectfiles/Lastname_Firstname_CareerPacket_CoverLetter_Template.docx"
+                        download>Download Cover Letter Template (.docx)</a></p>
+            </div>
+
+            <div class="card">
+                <h3>Cover Letter Video</h3>
                 <iframe src="https://www.youtube.com/embed/EcFOr9Jo0OA" title="Cover Letter Tips Video"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowfullscreen></iframe>
                 <p><a href="https://youtu.be/EcFOr9Jo0OA?si=L5FiRAjiwQylcmFe" target="_blank" rel="noopener">Open video
-                        in
-                        YouTube</a></p>
+                        in YouTube</a></p>
 
                 <div class="video-check" aria-label="Cover letter video quick check">
                     <h3>Quick Check: Cover Letter Strategy</h3>
@@ -622,7 +621,6 @@
                             <label><input type="radio" name="cq1" value="b" /> Connect your experience to the role and
                                 make a focused case for why you are a strong fit.</label>
                         </fieldset>
-
                         <fieldset class="quiz-q cover-step">
                             <legend>2) If a job says “cover letter optional,” what did the video suggest?</legend>
                             <label><input type="radio" name="cq2" value="a" /> Always submit one, even if generic and
@@ -630,7 +628,6 @@
                             <label><input type="radio" name="cq2" value="b" /> Submit one only if it is tailored and
                                 polished; a weak generic letter can hurt more than help.</label>
                         </fieldset>
-
                         <fieldset class="quiz-q cover-step">
                             <legend>3) Which greeting approach is most aligned with the video guidance?</legend>
                             <label><input type="radio" name="cq3" value="a" /> Use "To Whom It May Concern" for every
@@ -638,7 +635,6 @@
                             <label><input type="radio" name="cq3" value="b" /> Use a specific name when possible,
                                 otherwise use "Dear Hiring Manager."</label>
                         </fieldset>
-
                         <fieldset class="quiz-q cover-step">
                             <legend>4) Which strategy best shows true tailoring for a specific role?</legend>
                             <label><input type="radio" name="cq4" value="a" /> Use one universal letter and just change
@@ -646,7 +642,6 @@
                             <label><input type="radio" name="cq4" value="b" /> Reference exact phrases from the job
                                 description and connect them to your evidence.</label>
                         </fieldset>
-
                         <div class="controls" style="margin-top:8px;justify-content:flex-start;">
                             <button type="button" id="coverPrev">Previous</button>
                             <button type="button" id="coverNext">Next</button>
@@ -656,113 +651,33 @@
                     </form>
                     <div id="coverQuickFeedback" class="quick-feedback"></div>
                 </div>
-
-                <div class="video-check" aria-label="Cover letter apply steps">
-                    <h3>Apply These Steps</h3>
-                    <ul>
-                        <li>Write a professional greeting and opening that names the role and hooks attention.</li>
-                        <li>Connect 2–3 key accomplishments to the exact needs in the job description.</li>
-                        <li>Close with motivation, fit, and a brief call to action; then proofread carefully.</li>
-                    </ul>
-                </div>
-
-                <div class="part-nav single">
-                    <button type="button" class="part-jump" data-go-to="2">Back: ATS</button>
-                </div>
-
-                <p class="muted">If your LMS/browser blocks embedded playback, use the YouTube links above.</p>
-            </section>
-        </div>
-
-        <div class="grid">
-            <div class="card">
-                <h2 class="section-title">Application Build Flow</h2>
-                <p id="appFlowIndicator" class="flow-indicator" aria-live="polite">Application Step 1 of 3</p>
-
-                <section class="app-part active" data-app-part="1" aria-label="Application Step 1 Resume">
-                    <span class="part-label">Application Step 1 of 3</span>
-                    <h3>Resume Application (Page 1)</h3>
-                    <ul>
-                        <li>Name and contact information (email, phone, city/state).</li>
-                        <li>Education section with school, program/grade level, and relevant coursework (if applicable).
-                        </li>
-                        <li>Skills section tailored to the target internship/job posting.</li>
-                        <li>Experience section (paid work, volunteer work, projects, activities, or leadership).</li>
-                    </ul>
-                    <div class="part-nav single">
-                        <button type="button" class="primary app-part-jump" data-app-go-to="2">Next: ATS
-                            Application</button>
-                    </div>
-                </section>
-
-                <section class="app-part" data-app-part="2" aria-label="Application Step 2 ATS">
-                    <span class="part-label">Application Step 2 of 3</span>
-                    <h3>ATS Application (Page 1)</h3>
-                    <ul>
-                        <li>Use clear section headings and a simple, text-forward layout.</li>
-                        <li>Avoid graphics, icons, columns, and image-based text.</li>
-                        <li>Apply truthful job-description keywords in both skills and experience sections.</li>
-                        <li>Save in a standard format for submission (.docx and .pdf).</li>
-                    </ul>
-                    <div class="part-nav">
-                        <button type="button" class="app-part-jump" data-app-go-to="1">Back: Resume Application</button>
-                        <button type="button" class="primary app-part-jump" data-app-go-to="3">Next: Cover Letter
-                            Application</button>
-                    </div>
-                </section>
-
-                <section class="app-part" data-app-part="3" aria-label="Application Step 3 Cover Letter">
-                    <span class="part-label">Application Step 3 of 3</span>
-                    <h3>Cover Letter Application (Page 2)</h3>
-                    <ul>
-                        <li>Professional greeting and opening paragraph naming the role.</li>
-                        <li>One body paragraph connecting your skills and experience to job needs.</li>
-                        <li>Closing paragraph with appreciation and a professional sign-off.</li>
-                        <li>Clear, concise writing with correct spelling and grammar.</li>
-                    </ul>
-                    <p class="muted">Keep both pages in one document, then export to PDF for submission.</p>
-                    <div class="part-nav single">
-                        <button type="button" class="app-part-jump" data-app-go-to="2">Back: ATS Application</button>
-                    </div>
-                </section>
             </div>
 
-
             <div class="card">
-                <h2 class="section-title">Student Self-Checklist</h2>
-                <ul class="checklist" id="studentChecklist">
-                    <li><strong>Resume (Page 1)</strong></li>
-                    <li><input type="checkbox" data-key="watch_resume" /> <label>I watched the Resume Tips
-                            video.</label>
-                    </li>
-                    <li><input type="checkbox" data-key="apply_resume" /> <label>I applied at least 2 resume tips in my
-                            resume page.</label></li>
-
-                    <li><strong>ATS (Page 1)</strong></li>
-                    <li><input type="checkbox" data-key="watch_ats" /> <label>I watched the ATS video.</label></li>
-                    <li><input type="checkbox" data-key="apply_ats" /> <label>I applied at least 2 ATS-friendly choices
-                            in my resume page.</label></li>
-
-                    <li><strong>Cover Letter (Page 2)</strong></li>
+                <h3>Cover Letter Application Requirements</h3>
+                <ul>
+                    <li>Professional greeting and opening paragraph naming the role.</li>
+                    <li>One body paragraph connecting your skills and experience to job needs.</li>
+                    <li>Closing paragraph with appreciation and a professional sign-off.</li>
+                    <li>Clear, concise writing with correct spelling and grammar.</li>
+                </ul>
+                <h3>Cover Letter Checklist</h3>
+                <ul class="checklist student-checklist">
                     <li><input type="checkbox" data-key="watch_coverletter" /> <label>I watched the Cover Letter
                             video.</label></li>
                     <li><input type="checkbox" data-key="apply_coverletter" /> <label>I tailored my cover letter to this
                             role and used role-specific evidence.</label></li>
                     <li><input type="checkbox" data-key="proofread_coverletter" /> <label>I proofread my cover letter
-                            for
-                            tone, grammar, and clarity.</label></li>
-
-                    <li><strong>Final Submission</strong></li>
+                            for tone, grammar, and clarity.</label></li>
                     <li><input type="checkbox" data-key="doc_two_pages" /> <label>My packet is 2 pages in one
                             document.</label></li>
                     <li><input type="checkbox" data-key="export_pdf" /> <label>I exported my final packet to
-                            PDF.</label>
-                    </li>
+                            PDF.</label></li>
                 </ul>
             </div>
 
             <div class="card">
-                <h2 class="section-title">Rubric Summary (50 points)</h2>
+                <h3>Rubric Summary (50 points)</h3>
                 <div class="rubric-grid">
                     <div class="rubric-item"><strong>Structure & Completeness (10 pts)</strong><br />Includes all
                         required sections on both pages and follows the two-page packet format.</div>
@@ -775,287 +690,258 @@
                     <div class="rubric-item"><strong>Submission & Reflection (10 pts)</strong><br />Submits required
                         file types and includes a complete 150–250 word reflection.</div>
                 </div>
-            </div>
-
-            <div class="card">
-                <h2 class="section-title">Submission</h2>
+                <h3 style="margin-top:14px;">Submission</h3>
                 <ol>
                     <li><span class="pill">Lastname_Firstname_CareerPacket.docx</span></li>
                     <li><span class="pill">Lastname_Firstname_CareerPacket.pdf</span></li>
                     <li><span class="pill">Lastname_Firstname_Reflection.txt</span> (150–250 words)</li>
                 </ol>
-                <p class="muted">Reflection prompt: What did you do best? What challenged you most? What would you
-                    improve
-                    for a real application?</p>
             </div>
-        </div>
+        </section>
+    </div>
 
-        <script>
-            const STORAGE_PREFIX = 'career-packet-web-';
-            const THEME_KEY = STORAGE_PREFIX + 'theme';
-            const PART_KEY = STORAGE_PREFIX + 'current-part';
-            const APP_PART_KEY = STORAGE_PREFIX + 'app-current-part';
+    <script>
+        const STORAGE_PREFIX = 'career-packet-web-';
+        const THEME_KEY = STORAGE_PREFIX + 'theme';
+        const PROJECT_PAGE_KEY = STORAGE_PREFIX + 'project-page';
 
-            const themeSelector = document.getElementById('themeSelector');
-            const resetButton = document.getElementById('resetProgress');
-            const checklistInputs = Array.from(document.querySelectorAll('#studentChecklist input[type="checkbox"]'));
-            const lessonParts = Array.from(document.querySelectorAll('.lesson-part'));
-            const flowIndicator = document.getElementById('flowIndicator');
-            const partJumpButtons = Array.from(document.querySelectorAll('.part-jump'));
-            const appParts = Array.from(document.querySelectorAll('.app-part'));
-            const appFlowIndicator = document.getElementById('appFlowIndicator');
-            const appPartJumpButtons = Array.from(document.querySelectorAll('.app-part-jump'));
-            const gradeResumeQuickButton = document.getElementById('gradeResumeQuick');
-            const gradeAtsQuickButton = document.getElementById('gradeAtsQuick');
-            const gradeCoverQuickButton = document.getElementById('gradeCoverQuick');
-            const resumeQuickFeedback = document.getElementById('resumeQuickFeedback');
-            const atsQuickFeedback = document.getElementById('atsQuickFeedback');
-            const coverQuickFeedback = document.getElementById('coverQuickFeedback');
+        const themeSelector = document.getElementById('themeSelector');
+        const resetButton = document.getElementById('resetProgress');
+        const checklistInputs = Array.from(document.querySelectorAll('.student-checklist input[type="checkbox"]'));
+        const projectPages = Array.from(document.querySelectorAll('.project-page'));
+        const projectStepCounter = document.getElementById('projectStepCounter');
+        const projectPrevBtn = document.getElementById('projectPrevBtn');
+        const projectNextBtn = document.getElementById('projectNextBtn');
 
-            const quickChecks = {
-                resume: {
-                    formId: 'resumeQuickCheck',
-                    feedbackId: 'resumeQuickFeedback',
-                    answers: { rq1: 'a', rq2: 'b', rq3: 'b', rq4: 'a' },
-                    notes: {
-                        rq1: 'The video emphasizes that many recruiters scan resumes in about 10 seconds.',
-                        rq2: 'The guidance is to use clean, consistent formatting and avoid graphics/photos.',
-                        rq3: 'The presenter explicitly says volunteer, projects, extracurriculars, and related work count.',
-                        rq4: 'Tailoring includes using exact job-description language when it truthfully matches your qualifications.'
-                    }
-                },
-                ats: {
-                    formId: 'atsQuickCheck',
-                    feedbackId: 'atsQuickFeedback',
-                    answers: { aq1: 'a', aq2: 'b', aq3: 'a', aq4: 'a' },
-                    notes: {
-                        aq1: 'The video places ATS between application and recruiter screening, where it scans, categorizes, and ranks resumes.',
-                        aq2: 'The presenter warns that heavy formatting (icons/tables/columns/images) can reduce ATS readability.',
-                        aq3: 'The guidance is to submit a Word doc or PDF; design-tool native files should be converted.',
-                        aq4: 'Use keywords honestly: include only real qualifications and demonstrate them in your experience, not just a list.'
-                    }
-                },
-                cover: {
-                    formId: 'coverQuickCheck',
-                    feedbackId: 'coverQuickFeedback',
-                    answers: { cq1: 'b', cq2: 'b', cq3: 'b', cq4: 'b' },
-                    notes: {
-                        cq1: 'The video frames a cover letter as both a professional introduction and a persuasive case for fit.',
-                        cq2: 'For optional letters, quality matters: a rushed generic letter can weaken your application.',
-                        cq3: 'Best practice is a specific name when possible; if not, use "Dear Hiring Manager" rather than outdated generic greetings.',
-                        cq4: 'Tailoring includes using exact job-description phrases and showing evidence that you meet those specific needs.'
-                    }
-                }
-            };
+        const gradeResumeQuickButton = document.getElementById('gradeResumeQuick');
+        const gradeAtsQuickButton = document.getElementById('gradeAtsQuick');
+        const gradeCoverQuickButton = document.getElementById('gradeCoverQuick');
+        const resumeQuickFeedback = document.getElementById('resumeQuickFeedback');
+        const atsQuickFeedback = document.getElementById('atsQuickFeedback');
+        const coverQuickFeedback = document.getElementById('coverQuickFeedback');
 
-            const stepperResets = [];
-
-            function initOneQuestionFlow({ formId, stepSelector, prevId, nextId, counterId, submitId }) {
-                const form = document.getElementById(formId);
-                const steps = Array.from(form.querySelectorAll(stepSelector));
-                const prevBtn = document.getElementById(prevId);
-                const nextBtn = document.getElementById(nextId);
-                const counter = document.getElementById(counterId);
-                const submitBtn = document.getElementById(submitId);
-                let index = 0;
-
-                function render() {
-                    steps.forEach((step, stepIndex) => {
-                        step.style.display = stepIndex === index ? 'block' : 'none';
-                    });
-
-                    prevBtn.disabled = index === 0;
-                    nextBtn.style.display = index === steps.length - 1 ? 'none' : 'inline-block';
-                    submitBtn.style.display = index === steps.length - 1 ? 'inline-block' : 'none';
-                    counter.textContent = `Question ${index + 1} of ${steps.length}`;
-                }
-
-                prevBtn.addEventListener('click', () => {
-                    if (index > 0) {
-                        index--;
-                        render();
-                    }
-                });
-
-                nextBtn.addEventListener('click', () => {
-                    if (index < steps.length - 1) {
-                        index++;
-                        render();
-                    }
-                });
-
-                render();
-                stepperResets.push(() => {
-                    index = 0;
-                    render();
-                });
-            }
-
-            function loadTheme() {
-                const saved = localStorage.getItem(THEME_KEY) || 'dark';
-                document.documentElement.setAttribute('data-theme', saved);
-                themeSelector.value = saved;
-            }
-
-            function saveTheme(value) {
-                document.documentElement.setAttribute('data-theme', value);
-                localStorage.setItem(THEME_KEY, value);
-            }
-
-            function showPart(partNumber) {
-                const totalParts = lessonParts.length;
-                const targetPart = partNumber >= 1 && partNumber <= totalParts ? partNumber : 1;
-                lessonParts.forEach((part) => {
-                    const isActive = Number(part.dataset.part) === Number(targetPart);
-                    part.classList.toggle('active', isActive);
-                });
-                if (flowIndicator) {
-                    flowIndicator.textContent = `Part ${targetPart} of ${totalParts}`;
-                }
-                localStorage.setItem(PART_KEY, String(targetPart));
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-
-            function loadPart() {
-                const saved = Number(localStorage.getItem(PART_KEY) || '1');
-                const totalParts = lessonParts.length;
-                showPart(saved >= 1 && saved <= totalParts ? saved : 1);
-            }
-
-            function showAppPart(partNumber) {
-                const totalParts = appParts.length;
-                const targetPart = partNumber >= 1 && partNumber <= totalParts ? partNumber : 1;
-                appParts.forEach((part) => {
-                    const isActive = Number(part.dataset.appPart) === Number(targetPart);
-                    part.classList.toggle('active', isActive);
-                });
-                if (appFlowIndicator) {
-                    appFlowIndicator.textContent = `Application Step ${targetPart} of ${totalParts}`;
-                }
-                localStorage.setItem(APP_PART_KEY, String(targetPart));
-            }
-
-            function loadAppPart() {
-                const saved = Number(localStorage.getItem(APP_PART_KEY) || '1');
-                const totalParts = appParts.length;
-                showAppPart(saved >= 1 && saved <= totalParts ? saved : 1);
-            }
-
-            function loadChecklist() {
-                checklistInputs.forEach((input) => {
-                    const key = STORAGE_PREFIX + input.dataset.key;
-                    input.checked = localStorage.getItem(key) === 'true';
-                });
-            }
-
-            function saveChecklist(input) {
-                const key = STORAGE_PREFIX + input.dataset.key;
-                localStorage.setItem(key, String(input.checked));
-            }
-
-            function gradeQuickCheck(config) {
-                const form = document.getElementById(config.formId);
-                const feedback = document.getElementById(config.feedbackId);
-                const data = new FormData(form);
-                const keys = Object.keys(config.answers);
-                let score = 0;
-                let answered = 0;
-                const misses = [];
-
-                keys.forEach((key) => {
-                    const value = data.get(key);
-                    if (value) answered++;
-                    if (value === config.answers[key]) {
-                        score++;
-                    } else if (config.notes && config.notes[key]) {
-                        misses.push(config.notes[key]);
-                    }
-                });
-
-                if (answered < keys.length) {
-                    feedback.className = 'quick-feedback fail';
-                    feedback.style.display = 'block';
-                    feedback.textContent = 'Please answer all quick-check questions.';
-                    return;
-                }
-
-                const passed = score === keys.length;
-                feedback.className = 'quick-feedback ' + (passed ? 'pass' : 'fail');
-                feedback.style.display = 'block';
-                const details = misses.length ? '<ul>' + misses.map((note) => `<li>${note}</li>`).join('') + '</ul>' : '';
-                feedback.innerHTML = passed
-                    ? `Nice work! You got ${score}/${keys.length}.`
-                    : `You got ${score}/${keys.length}. Rewatch key points and try again.${details}`;
-            }
-
-            function resetAll() {
-                Object.keys(localStorage).forEach((key) => {
-                    if (key.startsWith(STORAGE_PREFIX)) {
-                        localStorage.removeItem(key);
-                    }
-                });
-                resumeQuickFeedback.style.display = 'none';
-                atsQuickFeedback.style.display = 'none';
-                coverQuickFeedback.style.display = 'none';
-                loadTheme();
-                loadChecklist();
-                showPart(1);
-                showAppPart(1);
-                document.getElementById('resumeQuickCheck').reset();
-                document.getElementById('atsQuickCheck').reset();
-                document.getElementById('coverQuickCheck').reset();
-                stepperResets.forEach((resetFn) => resetFn());
-            }
-
-            themeSelector.addEventListener('change', (event) => saveTheme(event.target.value));
-            checklistInputs.forEach((input) => input.addEventListener('change', () => saveChecklist(input)));
-            partJumpButtons.forEach((button) => {
-                button.addEventListener('click', () => {
-                    showPart(Number(button.dataset.goTo));
-                });
-            });
-            appPartJumpButtons.forEach((button) => {
-                button.addEventListener('click', () => {
-                    showAppPart(Number(button.dataset.appGoTo));
-                });
-            });
-            gradeResumeQuickButton.addEventListener('click', () => gradeQuickCheck(quickChecks.resume));
-            gradeAtsQuickButton.addEventListener('click', () => gradeQuickCheck(quickChecks.ats));
-            gradeCoverQuickButton.addEventListener('click', () => gradeQuickCheck(quickChecks.cover));
-            resetButton.addEventListener('click', resetAll);
-
-            initOneQuestionFlow({
+        const quickChecks = {
+            resume: {
                 formId: 'resumeQuickCheck',
-                stepSelector: '.resume-step',
-                prevId: 'resumePrev',
-                nextId: 'resumeNext',
-                counterId: 'resumeCounter',
-                submitId: 'gradeResumeQuick'
-            });
-
-            initOneQuestionFlow({
+                feedbackId: 'resumeQuickFeedback',
+                answers: { rq1: 'a', rq2: 'b', rq3: 'b', rq4: 'a' },
+                notes: {
+                    rq1: 'The video emphasizes that many recruiters scan resumes in about 10 seconds.',
+                    rq2: 'The guidance is to use clean, consistent formatting and avoid graphics/photos.',
+                    rq3: 'The presenter explicitly says volunteer, projects, extracurriculars, and related work count.',
+                    rq4: 'Tailoring includes using exact job-description language when it truthfully matches your qualifications.'
+                }
+            },
+            ats: {
                 formId: 'atsQuickCheck',
-                stepSelector: '.ats-step',
-                prevId: 'atsPrev',
-                nextId: 'atsNext',
-                counterId: 'atsCounter',
-                submitId: 'gradeAtsQuick'
+                feedbackId: 'atsQuickFeedback',
+                answers: { aq1: 'a', aq2: 'b', aq3: 'a', aq4: 'a' },
+                notes: {
+                    aq1: 'The video places ATS between application and recruiter screening, where it scans, categorizes, and ranks resumes.',
+                    aq2: 'The presenter warns that heavy formatting (icons/tables/columns/images) can reduce ATS readability.',
+                    aq3: 'The guidance is to submit a Word doc or PDF; design-tool native files should be converted.',
+                    aq4: 'Use keywords honestly: include only real qualifications and demonstrate them in your experience, not just a list.'
+                }
+            },
+            cover: {
+                formId: 'coverQuickCheck',
+                feedbackId: 'coverQuickFeedback',
+                answers: { cq1: 'b', cq2: 'b', cq3: 'b', cq4: 'b' },
+                notes: {
+                    cq1: 'A strong cover letter connects your background to the role and sells your fit.',
+                    cq2: 'Optional does not mean submit low quality; generic/rushed letters can hurt your application.',
+                    cq3: 'Use a specific name when possible, otherwise use "Dear Hiring Manager."',
+                    cq4: 'Strong tailoring includes exact job-description language plus evidence from your experience.'
+                }
+            }
+        };
+
+        let currentProjectPage = 1;
+        const stepperResets = [];
+
+        function initOneQuestionFlow({ formId, stepSelector, prevId, nextId, counterId, submitId }) {
+            const form = document.getElementById(formId);
+            if (!form) return;
+
+            const steps = Array.from(form.querySelectorAll(stepSelector));
+            const prevBtn = document.getElementById(prevId);
+            const nextBtn = document.getElementById(nextId);
+            const counter = document.getElementById(counterId);
+            const submitBtn = document.getElementById(submitId);
+            let index = 0;
+
+            function render() {
+                steps.forEach((step, stepIndex) => {
+                    step.style.display = stepIndex === index ? 'block' : 'none';
+                });
+                prevBtn.disabled = index === 0;
+                nextBtn.style.display = index === steps.length - 1 ? 'none' : 'inline-block';
+                submitBtn.style.display = index === steps.length - 1 ? 'inline-block' : 'none';
+                counter.textContent = `Question ${index + 1} of ${steps.length}`;
+            }
+
+            prevBtn.addEventListener('click', () => {
+                if (index > 0) {
+                    index--;
+                    render();
+                }
             });
 
-            initOneQuestionFlow({
-                formId: 'coverQuickCheck',
-                stepSelector: '.cover-step',
-                prevId: 'coverPrev',
-                nextId: 'coverNext',
-                counterId: 'coverCounter',
-                submitId: 'gradeCoverQuick'
+            nextBtn.addEventListener('click', () => {
+                if (index < steps.length - 1) {
+                    index++;
+                    render();
+                }
             });
+
+            render();
+            stepperResets.push(() => {
+                index = 0;
+                render();
+            });
+        }
+
+        function loadTheme() {
+            const saved = localStorage.getItem(THEME_KEY) || 'dark';
+            document.documentElement.setAttribute('data-theme', saved);
+            themeSelector.value = saved;
+        }
+
+        function saveTheme(value) {
+            document.documentElement.setAttribute('data-theme', value);
+            localStorage.setItem(THEME_KEY, value);
+        }
+
+        function showProjectPage(pageNumber) {
+            const totalPages = projectPages.length;
+            const targetPage = Math.min(Math.max(pageNumber, 1), totalPages);
+            currentProjectPage = targetPage;
+
+            projectPages.forEach((page) => {
+                const isActive = Number(page.dataset.projectPage) === targetPage;
+                page.classList.toggle('active', isActive);
+            });
+
+            projectStepCounter.textContent = `Part ${targetPage} of ${totalPages}`;
+            projectPrevBtn.disabled = targetPage === 1;
+            projectNextBtn.textContent = targetPage === totalPages ? 'Finish' : 'Next ▶';
+            localStorage.setItem(PROJECT_PAGE_KEY, String(targetPage));
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function loadProjectPage() {
+            const saved = Number(localStorage.getItem(PROJECT_PAGE_KEY) || '1');
+            showProjectPage(saved);
+        }
+
+        function loadChecklist() {
+            checklistInputs.forEach((input) => {
+                const key = STORAGE_PREFIX + input.dataset.key;
+                input.checked = localStorage.getItem(key) === 'true';
+            });
+        }
+
+        function saveChecklist(input) {
+            const key = STORAGE_PREFIX + input.dataset.key;
+            localStorage.setItem(key, String(input.checked));
+        }
+
+        function gradeQuickCheck(config) {
+            const form = document.getElementById(config.formId);
+            const feedback = document.getElementById(config.feedbackId);
+            const data = new FormData(form);
+            const keys = Object.keys(config.answers);
+            let score = 0;
+            let answered = 0;
+            const misses = [];
+
+            keys.forEach((key) => {
+                const value = data.get(key);
+                if (value) answered++;
+                if (value === config.answers[key]) {
+                    score++;
+                } else if (config.notes && config.notes[key]) {
+                    misses.push(config.notes[key]);
+                }
+            });
+
+            if (answered < keys.length) {
+                feedback.className = 'quick-feedback fail';
+                feedback.style.display = 'block';
+                feedback.textContent = 'Please answer all quick-check questions.';
+                return;
+            }
+
+            const passed = score === keys.length;
+            feedback.className = 'quick-feedback ' + (passed ? 'pass' : 'fail');
+            feedback.style.display = 'block';
+            const details = misses.length ? '<ul>' + misses.map((note) => `<li>${note}</li>`).join('') + '</ul>' : '';
+            feedback.innerHTML = passed
+                ? `Nice work! You got ${score}/${keys.length}.`
+                : `You got ${score}/${keys.length}. Rewatch key points and try again.${details}`;
+        }
+
+        function resetAll() {
+            Object.keys(localStorage).forEach((key) => {
+                if (key.startsWith(STORAGE_PREFIX)) {
+                    localStorage.removeItem(key);
+                }
+            });
+
+            resumeQuickFeedback.style.display = 'none';
+            atsQuickFeedback.style.display = 'none';
+            coverQuickFeedback.style.display = 'none';
 
             loadTheme();
             loadChecklist();
-            loadPart();
-            loadAppPart();
-        </script>
+            showProjectPage(1);
+
+            document.getElementById('resumeQuickCheck').reset();
+            document.getElementById('atsQuickCheck').reset();
+            document.getElementById('coverQuickCheck').reset();
+            stepperResets.forEach((resetFn) => resetFn());
+        }
+
+        themeSelector.addEventListener('change', (event) => saveTheme(event.target.value));
+        checklistInputs.forEach((input) => input.addEventListener('change', () => saveChecklist(input)));
+        projectPrevBtn.addEventListener('click', () => showProjectPage(currentProjectPage - 1));
+        projectNextBtn.addEventListener('click', () => showProjectPage(currentProjectPage + 1));
+        gradeResumeQuickButton.addEventListener('click', () => gradeQuickCheck(quickChecks.resume));
+        gradeAtsQuickButton.addEventListener('click', () => gradeQuickCheck(quickChecks.ats));
+        gradeCoverQuickButton.addEventListener('click', () => gradeQuickCheck(quickChecks.cover));
+        resetButton.addEventListener('click', resetAll);
+
+        initOneQuestionFlow({
+            formId: 'resumeQuickCheck',
+            stepSelector: '.resume-step',
+            prevId: 'resumePrev',
+            nextId: 'resumeNext',
+            counterId: 'resumeCounter',
+            submitId: 'gradeResumeQuick'
+        });
+
+        initOneQuestionFlow({
+            formId: 'atsQuickCheck',
+            stepSelector: '.ats-step',
+            prevId: 'atsPrev',
+            nextId: 'atsNext',
+            counterId: 'atsCounter',
+            submitId: 'gradeAtsQuick'
+        });
+
+        initOneQuestionFlow({
+            formId: 'coverQuickCheck',
+            stepSelector: '.cover-step',
+            prevId: 'coverPrev',
+            nextId: 'coverNext',
+            counterId: 'coverCounter',
+            submitId: 'gradeCoverQuick'
+        });
+
+        loadTheme();
+        loadChecklist();
+        loadProjectPage();
+    </script>
 </body>
 
 </html>
