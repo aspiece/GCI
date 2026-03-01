@@ -393,6 +393,28 @@
             background: rgba(255, 255, 255, 0.02);
         }
 
+        .page-image-wrap {
+            margin-top: 14px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .page-image {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        @media (max-width: 640px) {
+            .page-image {
+                max-height: 220px;
+                object-fit: cover;
+                object-position: center;
+            }
+        }
+
         a {
             color: #9fcbff;
             text-decoration: none;
@@ -466,6 +488,10 @@
                     <li><a href="https://www.google.com/search?q=internships+near+me" target="_blank"
                             rel="noopener">Google Job Search</a></li>
                 </ul>
+                <div class="page-image-wrap">
+                    <img class="page-image" src="assets/career-starter-hero.svg"
+                        alt="Professional career planning workspace illustration for the project starter page." />
+                </div>
             </div>
 
             <div class="card">
@@ -816,6 +842,10 @@
                 <h2 class="section-title">Congratulations — You Finished!</h2>
                 <p>You completed the Career Essentials: Job Application project flow.</p>
                 <p class="muted">Final check: confirm your files are named correctly and submitted.</p>
+                <div class="page-image-wrap">
+                    <img class="page-image" src="assets/career-complete-badge.svg"
+                        alt="Completion badge graphic celebrating successful project completion." />
+                </div>
             </div>
 
             <div class="card">
