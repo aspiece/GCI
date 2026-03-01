@@ -214,6 +214,89 @@
             background: #000;
         }
 
+        .video-embed {
+            margin-top: 8px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .video-poster {
+            position: relative;
+            width: 100%;
+            padding: 0;
+            border: 0;
+            border-radius: 0;
+            background: #000;
+            cursor: pointer;
+            display: block;
+        }
+
+        .video-poster img {
+            display: block;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+        }
+
+        .video-play {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 70px;
+            height: 50px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.72);
+            color: #fff;
+            display: grid;
+            place-items: center;
+            font-size: 26px;
+            line-height: 1;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .video-watch {
+            position: absolute;
+            left: 50%;
+            bottom: 12px;
+            transform: translateX(-50%);
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.24);
+            background: rgba(0, 0, 0, 0.68);
+            color: #fff;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            pointer-events: none;
+        }
+
+        .video-poster:hover .video-watch,
+        .video-poster:focus-visible .video-watch {
+            opacity: 1;
+        }
+
+        .video-poster:hover .video-play,
+        .video-poster:focus-visible .video-play {
+            transform: translate(-50%, -50%) scale(1.05);
+            background: rgba(0, 0, 0, 0.84);
+        }
+
+        @media (hover: none),
+        (pointer: coarse) {
+            .video-watch {
+                opacity: 1;
+                font-size: 13px;
+                padding: 8px 12px;
+                font-weight: 700;
+            }
+        }
+
         .quiz-q {
             border: 1px solid var(--border);
             border-radius: 10px;
@@ -410,9 +493,14 @@
 
             <div class="card">
                 <h3>Resume Video</h3>
-                <iframe src="https://www.youtube.com/embed/NRTs4HsICI8" title="Resume Tips Video"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowfullscreen></iframe>
+                <div class="video-embed" data-video-id="NRTs4HsICI8" data-video-title="Resume Tips Video">
+                    <button type="button" class="video-poster" aria-label="Play Resume Tips Video">
+                        <img src="https://img.youtube.com/vi/NRTs4HsICI8/maxresdefault.jpg"
+                            alt="Resume Tips Video preview" loading="lazy" />
+                        <span class="video-play" aria-hidden="true">▶</span>
+                        <span class="video-watch" aria-hidden="true">Watch video</span>
+                    </button>
+                </div>
                 <p><a href="https://youtu.be/NRTs4HsICI8?si=euoYnZ9CRxK3GwKi" target="_blank" rel="noopener">Open video
                         in YouTube</a></p>
 
@@ -505,9 +593,14 @@
 
             <div class="card">
                 <h3>ATS Video</h3>
-                <iframe src="https://www.youtube.com/embed/DksA_vF84JA" title="ATS Tips Video"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowfullscreen></iframe>
+                <div class="video-embed" data-video-id="DksA_vF84JA" data-video-title="ATS Tips Video">
+                    <button type="button" class="video-poster" aria-label="Play ATS Tips Video">
+                        <img src="https://img.youtube.com/vi/DksA_vF84JA/maxresdefault.jpg" alt="ATS Tips Video preview"
+                            loading="lazy" />
+                        <span class="video-play" aria-hidden="true">▶</span>
+                        <span class="video-watch" aria-hidden="true">Watch video</span>
+                    </button>
+                </div>
                 <p><a href="https://youtu.be/DksA_vF84JA?si=sclhCHE9EIZbfsQH" target="_blank" rel="noopener">Open video
                         in YouTube</a></p>
 
@@ -586,9 +679,14 @@
 
             <div class="card">
                 <h3>Cover Letter Video</h3>
-                <iframe src="https://www.youtube.com/embed/EcFOr9Jo0OA" title="Cover Letter Tips Video"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowfullscreen></iframe>
+                <div class="video-embed" data-video-id="EcFOr9Jo0OA" data-video-title="Cover Letter Tips Video">
+                    <button type="button" class="video-poster" aria-label="Play Cover Letter Tips Video">
+                        <img src="https://img.youtube.com/vi/EcFOr9Jo0OA/maxresdefault.jpg"
+                            alt="Cover Letter Tips Video preview" loading="lazy" />
+                        <span class="video-play" aria-hidden="true">▶</span>
+                        <span class="video-watch" aria-hidden="true">Watch video</span>
+                    </button>
+                </div>
                 <p><a href="https://youtu.be/EcFOr9Jo0OA?si=L5FiRAjiwQylcmFe" target="_blank" rel="noopener">Open video
                         in YouTube</a></p>
 
@@ -834,6 +932,37 @@
             localStorage.setItem(THEME_KEY, value);
         }
 
+        function initVideoEmbeds() {
+            const embeds = Array.from(document.querySelectorAll('.video-embed'));
+
+            embeds.forEach((embed) => {
+                const videoId = embed.dataset.videoId;
+                const videoTitle = embed.dataset.videoTitle || 'YouTube video';
+                const posterImage = embed.querySelector('img');
+
+                if (posterImage) {
+                    posterImage.addEventListener('error', () => {
+                        if (!posterImage.dataset.fallbackApplied) {
+                            posterImage.dataset.fallbackApplied = 'true';
+                            posterImage.src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+                        }
+                    });
+                }
+
+                const posterButton = embed.querySelector('.video-poster');
+                if (!posterButton) return;
+
+                posterButton.addEventListener('click', () => {
+                    embed.innerHTML = `
+                        <iframe src="https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1"
+                            title="${videoTitle}"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowfullscreen></iframe>
+                    `;
+                });
+            });
+        }
+
         function updateProgress() {
             const total = pageCompleteInputs.length;
             const completed = pageCompleteInputs.filter((input) => input.checked).length;
@@ -990,6 +1119,7 @@
         loadTheme();
         loadChecklist();
         loadProjectPage();
+        initVideoEmbeds();
     </script>
 </body>
 
