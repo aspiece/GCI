@@ -1213,6 +1213,66 @@
         let currentProjectPage = 1;
         const stepperResets = [];
 
+        function slugify(value) {
+            return (value || '')
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '')
+                .replace(/-{2,}/g, '-');
+        }
+
+        function initCardBookmarks() {
+            const cards = Array.from(document.querySelectorAll('main .card'));
+            const usedIds = new Set();
+
+            cards.forEach((card, index) => {
+                if (card.id) {
+                    usedIds.add(card.id);
+                    return;
+                }
+
+                const parentPage = card.closest('.project-page');
+                const pagePrefix = parentPage ? `p${parentPage.dataset.projectPage}` : 'overview';
+                const heading = card.querySelector('h2, h3');
+                const headingSlug = slugify(heading ? heading.textContent : '') || `card-${index + 1}`;
+                const baseId = `${pagePrefix}-${headingSlug}`;
+
+                let nextId = baseId;
+                let suffix = 2;
+                while (usedIds.has(nextId)) {
+                    nextId = `${baseId}-${suffix}`;
+                    suffix++;
+                }
+
+                card.id = nextId;
+                usedIds.add(nextId);
+            });
+        }
+
+        function openCardFromHash() {
+            const rawHash = window.location.hash.replace(/^#/, '');
+            if (!rawHash) return false;
+
+            const targetId = decodeURIComponent(rawHash);
+            const target = document.getElementById(targetId);
+            if (!target || !target.classList.contains('card')) return false;
+
+            const targetPage = target.closest('.project-page');
+            if (targetPage) {
+                showProjectPage(Number(targetPage.dataset.projectPage), {
+                    updateHash: false,
+                    scrollToTop: false
+                });
+            }
+
+            target.scrollIntoView({
+                behavior: prefersReducedMotion ? 'auto' : 'smooth',
+                block: 'start'
+            });
+
+            return true;
+        }
+
         function initOneQuestionFlow({ formId, stepSelector, prevId, nextId, counterId, submitId }) {
             const form = document.getElementById(formId);
             if (!form) return;
@@ -1325,7 +1385,8 @@
             projectProgressText.textContent = `Progress: ${completed}/${total} pages completed`;
         }
 
-        function showProjectPage(pageNumber) {
+        function showProjectPage(pageNumber, options = {}) {
+            const { updateHash = true, scrollToTop = true } = options;
             const totalPages = projectPages.length;
             const targetPage = Math.min(Math.max(pageNumber, 1), totalPages);
             currentProjectPage = targetPage;
@@ -1342,7 +1403,18 @@
             projectNextBtn.disabled = targetPage === totalPages;
             projectNextBtn.textContent = targetPage === totalPages ? 'Completed ✓' : 'Next ▶';
             localStorage.setItem(PROJECT_PAGE_KEY, String(targetPage));
-            window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+
+            if (updateHash) {
+                const activePage = projectPages.find((page) => Number(page.dataset.projectPage) === targetPage);
+                const firstCard = activePage ? activePage.querySelector('.card') : null;
+                if (firstCard && firstCard.id) {
+                    history.replaceState(null, '', `#${encodeURIComponent(firstCard.id)}`);
+                }
+            }
+
+            if (scrollToTop) {
+                window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+            }
         }
 
         function loadProjectPage() {
@@ -1474,9 +1546,16 @@
 
         loadTheme();
         initChecklistLabelAssociations();
+        initCardBookmarks();
         loadChecklist();
-        loadProjectPage();
+        if (!openCardFromHash()) {
+            loadProjectPage();
+        }
         initVideoEmbeds();
+
+        window.addEventListener('hashchange', () => {
+            openCardFromHash();
+        });
     </script>
 </body>
 
