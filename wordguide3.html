@@ -382,6 +382,15 @@
             color: #000000;
         }
 
+        [data-theme="high-contrast"] .footer .kbd a {
+            color: #000000;
+            text-decoration: underline;
+        }
+
+        [data-theme="high-contrast"] .footer .kbd a:hover {
+            color: #000000;
+        }
+
         html,
         body {
             height: 100%;
@@ -605,16 +614,24 @@
             font-size: 12px;
             display: flex;
             align-items: center;
+            flex-wrap: wrap;
             gap: 8px;
         }
 
         .footer .kbd a {
-            color: #0000ff;
+            color: var(--primary);
         }
 
         .footer .kbd a:hover {
-            color: #0000ff;
+            color: var(--primary-weak);
             text-decoration: underline;
+        }
+
+        .footer-note {
+            width: 100%;
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 2px;
         }
 
         .hint {
@@ -888,6 +905,12 @@
                         download>Project3_datafile.docx</a></span>
                 <span class="kbd"><a href="wordprojectfiles/Bee.docx" download>Bee.docx</a></span>
                 <span class="kbd"><a href="wordprojectfiles/logo_square.png" download>logo_square.png</a></span>
+                <span class="footer-note">Download all files before Step 1. Open <strong>Project3_datafile.docx</strong>
+                    first, then save it to your <strong>OneDrive</strong> (recommended:
+                    <strong>Word Assignments</strong> folder) before editing; use <strong>Bee.docx</strong> and
+                    <strong>logo_square.png</strong> when the matching tasks call for them. Need help signing in?
+                    <a href="https://support.microsoft.com/en-us/office/sync-files-with-onedrive-in-windows-615391c4-2bd3-4aae-a42a-858262e42a49"
+                        target="_blank" rel="noopener noreferrer">Microsoft Support: Sign in to OneDrive</a>.</span>
             </div>
         </div>
     </div>
@@ -1341,7 +1364,7 @@
                 kind: 'cover',
                 section: 'Project Overview',
                 title: 'MOS Word Project 3 - Guided Walkthrough',
-                text: '<strong>Read this overview before starting.</strong><br><br>You will complete Project 3 aligned to Exam MO-110: Microsoft Word (Microsoft 365 Apps) objectives. This guide walks you through styles, page layout, graphics, columns, links, SmartArt, tables, and references.<br><br><strong>Important:</strong> Some tasks require Microsoft Word desktop app and cannot be completed in Word for the web. Check each task\'s app note.<br><br><strong>Quick Tips:</strong><br>• <strong>Undo:</strong> Press <span class="ui-key">Ctrl+Z</span><br>• <strong>Redo:</strong> Press <span class="ui-key">Ctrl+Y</span><br>• <strong>Save:</strong> Press <span class="ui-key">Ctrl+S</span> often<br>• <strong>Timing:</strong> Plan for 45-60 minutes to complete Project 3<br><br><strong>How to use this guide:</strong><br>• Follow each task in order using the navigation buttons or arrow keys<br>• Complete the action in Word before advancing to the next step<br>• Use the Jump to task dropdown to skip ahead<br>• Check off completed tasks using the checkbox at the top of each task<br>• Reset progress at any time using the Reset button<br><br><div class="collapsible collapsed"><div class="collapsible-header" onclick="this.parentElement.classList.toggle(\'collapsed\')">Keyboard Shortcuts Reference (click to expand)</div><div class="collapsible-content"><strong>Shortcuts you will use:</strong><br><br><span class="ui-key">Ctrl+S</span> - Save Document<br><span class="ui-key">Ctrl+W</span> - Close Document<br><span class="ui-key">Ctrl+Z</span> - Undo<br><span class="ui-key">Ctrl+Y</span> - Redo<br><span class="ui-key">Ctrl+Enter</span> - Insert Page Break<br><span class="ui-key">Tab</span> - Increase indent level (lists)<br><span class="ui-key">Shift+Tab</span> - Decrease indent level (lists)<br><br><strong>Navigation:</strong><br><span class="ui-key">&larr;</span> <span class="ui-key">&rarr;</span> - Navigate between steps</div></div><br><strong>Legend:</strong><div class="legend"><div class="legend-item"><span class="ui-btn">Button/Menu</span><span>Click this in Word.</span></div><div class="legend-item"><span class="ui-text">Text to select</span><span>Highlight or locate this text in the document.</span></div><div class="legend-item"><span class="ui-field">Field/Option</span><span>Type or choose this value.</span></div><div class="legend-item"><span class="ui-key">Ctrl+S</span><span>Keyboard shortcut to press.</span></div></div>'
+                text: '<strong>Read this overview before starting.</strong><br><br>You will complete Project 3 aligned to Exam MO-110: Microsoft Word (Microsoft 365 Apps) objectives. This guide walks you through styles, page layout, graphics, columns, links, SmartArt, tables, and references.<br><br><strong>Important:</strong> Some tasks require Microsoft Word desktop app and cannot be completed in Word for the web. Check each task\'s app note.<br><br><strong>Quick Tips:</strong><br>• <strong>Undo:</strong> Press <span class="ui-key">Ctrl+Z</span><br>• <strong>Redo:</strong> Press <span class="ui-key">Ctrl+Y</span><br>• <strong>Save:</strong> Press <span class="ui-key">Ctrl+S</span> often<br>• <strong>Timing:</strong> Plan for 45-60 minutes to complete Project 3<br><br><strong>How to use this guide:</strong><br>• Download the required files listed at the bottom of this page before you begin<br>• Open <span class="ui-field">Project3_datafile.docx</span> before Step 1, then use <span class="ui-btn">File</span> > <span class="ui-btn">Save As</span> and save your working copy in <span class="ui-field">OneDrive</span> (recommended: <span class="ui-field">Word Assignments</span> folder)<br>• OneDrive sign-in help: <a href="https://support.microsoft.com/en-us/office/sync-files-with-onedrive-in-windows-615391c4-2bd3-4aae-a42a-858262e42a49" target="_blank" rel="noopener noreferrer">Microsoft Support: Sign in to OneDrive</a><br>• Use <span class="ui-field">Bee.docx</span> and <span class="ui-field">logo_square.png</span> when matching tasks request them<br>• Follow each task in order using the navigation buttons or arrow keys<br>• Complete the action in Word before advancing to the next step<br>• Use the Jump to task dropdown to skip ahead<br>• Check off completed tasks using the checkbox at the top of each task<br>• Reset progress at any time using the Reset button<br><br><div class="collapsible collapsed"><div class="collapsible-header" onclick="this.parentElement.classList.toggle(\'collapsed\')">Keyboard Shortcuts Reference (click to expand)</div><div class="collapsible-content"><strong>Shortcuts you will use:</strong><br><br><span class="ui-key">Ctrl+S</span> - Save Document<br><span class="ui-key">Ctrl+W</span> - Close Document<br><span class="ui-key">Ctrl+Z</span> - Undo<br><span class="ui-key">Ctrl+Y</span> - Redo<br><span class="ui-key">Ctrl+Enter</span> - Insert Page Break<br><span class="ui-key">Tab</span> - Increase indent level (lists)<br><span class="ui-key">Shift+Tab</span> - Decrease indent level (lists)<br><br><strong>Navigation:</strong><br><span class="ui-key">&larr;</span> <span class="ui-key">&rarr;</span> - Navigate between steps</div></div><br><strong>Legend:</strong><div class="legend"><div class="legend-item"><span class="ui-btn">Button/Menu</span><span>Click this in Word.</span></div><div class="legend-item"><span class="ui-text">Text to select</span><span>Highlight or locate this text in the document.</span></div><div class="legend-item"><span class="ui-field">Field/Option</span><span>Type or choose this value.</span></div><div class="legend-item"><span class="ui-key">Ctrl+S</span><span>Keyboard shortcut to press.</span></div></div>'
 
             });
             for (const sec of data) {
