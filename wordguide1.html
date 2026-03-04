@@ -72,7 +72,7 @@
 
     .wrap {
       max-width: 960px;
-      margin: 14px auto;
+      margin: 8px auto;
       padding: 0 16px;
     }
 
@@ -81,7 +81,7 @@
       align-items: flex-start;
       justify-content: space-between;
       gap: 12px;
-      margin-bottom: 8px;
+      margin-bottom: 4px;
       flex-wrap: wrap;
     }
 
@@ -1753,9 +1753,19 @@
       if (cur.kind === 'cover') {
         html += `<div class="cover">`;
         html += `<h2>${cur.title}</h2>`;
-        if (cur.text) html += `<p>${cur.text}</p>`;
-        if (cur.coverImages && cur.coverImages.length) {
-          html += renderImageGallery(cur.coverImages, 'Decorative preview of required image(s)');
+        if (cur.text) {
+          const quickTipsMarker = '<br><br><strong>💡 Quick Tips:</strong>';
+          if (cur.coverImages && cur.coverImages.length && cur.text.includes(quickTipsMarker)) {
+            const parts = cur.text.split(quickTipsMarker);
+            html += `<p>${parts[0]}</p>`;
+            html += renderImageGallery(cur.coverImages, 'Decorative preview of required image(s)');
+            html += `<p><strong>💡 Quick Tips:</strong>${parts[1]}</p>`;
+          } else {
+            html += `<p>${cur.text}</p>`;
+            if (cur.coverImages && cur.coverImages.length) {
+              html += renderImageGallery(cur.coverImages, 'Decorative preview of required image(s)');
+            }
+          }
         }
         if (cur.points && cur.points.length) {
           html += '<ul>' + cur.points.map(p => `<li>${p}</li>`).join('') + '</ul>';
