@@ -722,6 +722,37 @@
             word-break: break-word;
         }
 
+        .required-files {
+            margin: 8px 0 12px;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--card);
+        }
+
+        .required-files strong {
+            display: inline-block;
+            margin-bottom: 6px;
+        }
+
+        .required-files a {
+            color: var(--primary);
+            text-decoration: none;
+            margin-right: 10px;
+            display: inline-block;
+            margin-bottom: 4px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            background: rgba(79, 140, 255, 0.12);
+            font-size: 12px;
+        }
+
+        .required-files a:hover {
+            color: var(--primary-weak);
+            background: rgba(79, 140, 255, 0.2);
+        }
+
         .content::after {
             content: "";
             display: table;
@@ -1591,6 +1622,7 @@
                 kind: 'cover',
                 section: 'Project Overview',
                 title: 'MOS Word Project 2 — Guided Walkthrough',
+                requiredFiles: ['Project2_datafile.docx', 'dandelion_photo.jpg'],
                 coverImages: ['dandelion_photo.jpg'],
                 text: '<strong>📖 Read through this overview before starting.</strong><br><br>You will complete Project 2 aligned to Exam MO-110: Microsoft Word (Microsoft 365 Apps) objectives. This comprehensive guide walks you through document collaboration, advanced formatting, tables, lists, graphics, and more.<br><br><strong style="color: #ff6b6b;">⚠️ Important: Some tasks require Microsoft Word desktop app and cannot be completed in Word for the web. Check each task\'s app note.</strong><br><br><strong>💡 Quick Tips:</strong><br>• <strong>Made a mistake?</strong> Press <span class="ui-key">Ctrl+Z</span> to undo your last action<br>• <strong>Need to redo?</strong> Press <span class="ui-key">Ctrl+Y</span> to redo an undone action<br>• <strong>Save your work:</strong> Press <span class="ui-key">Ctrl+S</span> frequently to save your progress<br>• <strong>Take your time:</strong> Project 2 has more tasks than Project 1 — plan for 45-60 minutes to complete<br><br><strong>How to use this guide:</strong><br>• Download the required files listed at the bottom of this page before you begin<br>• Open <span class="ui-field">Project2_datafile.docx</span> before Step 1, then use <span class="ui-btn">File</span> > <span class="ui-btn">Save As</span> and save your working copy in <span class="ui-field">OneDrive</span> (recommended: <span class="ui-field">Word Assignments</span> folder)<br>• OneDrive sign-in help: <a href="https://support.microsoft.com/en-us/office/sync-files-with-onedrive-in-windows-615391c4-2bd3-4aae-a42a-858262e42a49" target="_blank" rel="noopener noreferrer">Microsoft Support: Sign in to OneDrive</a><br>• Use <span class="ui-field">dandelion_photo.jpg</span> when picture tasks request it<br>• Follow each step in order using the navigation buttons at the bottom or arrow keys<br>• Complete the action in Word before advancing to the next step<br>• Use the "Jump to task..." dropdown above to skip to specific tasks<br>• Check off completed tasks using the checkbox at the top of each task<br>• Use the resource links provided for additional help<br>• Time estimates (⏱️) help you pace yourself<br>• Reset progress at any time using the Reset button<br><br><div class="collapsible collapsed"><div class="collapsible-header" onclick="this.parentElement.classList.toggle(\'collapsed\')">📋 Keyboard Shortcuts Reference (click to expand)</div><div class="collapsible-content"><strong>Shortcuts you\'ll use in this project:</strong><br><br><span class="ui-key">Ctrl+S</span> - Save Document<br><span class="ui-key">Ctrl+W</span> - Close Document<br><span class="ui-key">Ctrl+Z</span> - Undo<br><span class="ui-key">Ctrl+Y</span> - Redo<br><span class="ui-key">Ctrl+Enter</span> - Insert Page Break<br><span class="ui-key">Tab</span> - Increase indent level (in lists)<br><span class="ui-key">Shift+Tab</span> - Decrease indent level (in lists)<br><br><strong>Navigation shortcuts:</strong><br><span class="ui-key">←</span> <span class="ui-key">→</span> - Navigate between steps in this guide</div></div><br><strong>Legend:</strong><div class="legend"><div class="legend-item"><span class="ui-btn">Button/Menu</span><span>Click this in Word.</span></div><div class="legend-item"><span class="ui-text">Text to select</span><span>Highlight or locate this text in the document.</span></div><div class="legend-item"><span class="ui-field">Field/Option</span><span>Type or choose this value.</span></div><div class="legend-item"><span class="ui-key">Ctrl+S</span><span>Keyboard shortcut to press.</span></div></div>',
 
@@ -1600,6 +1632,7 @@
                 section: 'Setup',
                 title: 'Download and set up your project files',
                 estimatedTime: '2-3 min',
+                requiredFiles: ['Project2_datafile.docx', 'dandelion_photo.jpg'],
                 steps: [
                     'At the bottom of this page, download <span class="ui-text">Project2_datafile.docx</span> and <span class="ui-text">dandelion_photo.jpg</span>.',
                     'Open <span class="ui-text">Project2_datafile.docx</span> in Microsoft Word desktop app.',
@@ -1751,6 +1784,12 @@
             return `<div class="asset-gallery"><h4>${heading}</h4><div class="asset-grid">${cards}</div></div>`;
         }
 
+        function renderRequiredFiles(files) {
+            if (!files || !files.length) return '';
+            const links = files.map((file) => `<a href="wordprojectfiles/${encodeURIComponent(file)}" download>↓ ${file}</a>`).join('');
+            return `<div class="required-files"><strong>Required files:</strong><br>${links}</div>`;
+        }
+
         function render() {
             const cur = pages[idx];
             els.stepCounter.textContent = fmtStep(idx + 1);
@@ -1762,8 +1801,9 @@
                 html += `<div class="cover">`;
                 html += `<h2>${cur.title}</h2>`;
                 if (cur.text) html += `<p>${cur.text}</p>`;
+                html += renderRequiredFiles(cur.requiredFiles);
                 if (cur.coverImages && cur.coverImages.length) {
-                    html += renderImageGallery(cur.coverImages, 'Required image file preview');
+                    html += renderImageGallery(cur.coverImages, 'Decorative preview of required image(s)');
                 }
                 if (cur.points && cur.points.length) {
                     html += '<ul>' + cur.points.map(p => `<li>${p}</li>`).join('') + '</ul>';
@@ -1785,10 +1825,11 @@
                 html += `<div class="app-required"><strong>${cur.requiresDesktop ? 'Required app:' : 'Word for the web status:'}</strong> ${cur.requiresDesktop ? 'Microsoft Word desktop app (not Word for the web/browser version).' : (isOnlineUiMayDiffer(cur) ? 'Possible in Word for the web, but menu names or layout may differ.' : 'Confirmed: this task can be completed in Word for the web.')}</div>`;
                 html += `<p class="note">${formatOnlineGuidance(cur)}</p>`;
                 html += `<p class="note"><strong>Student tip:</strong> Do one step at a time in Word, then return here and click Next.</p>`;
+                html += renderRequiredFiles(cur.requiredFiles);
 
                 const mentionedImages = getMentionedImageFiles(cur);
                 if (mentionedImages.length) {
-                    html += renderImageGallery(mentionedImages, 'Image file preview for this task');
+                    html += renderImageGallery(mentionedImages, 'Decorative image preview for this task');
                 }
 
                 if (cur.contextNote) {
