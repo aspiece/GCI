@@ -722,36 +722,6 @@
             word-break: break-word;
         }
 
-        .required-files {
-            margin: 8px 0 12px;
-            padding: 10px;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            background: var(--card);
-        }
-
-        .required-files strong {
-            display: inline-block;
-            margin-bottom: 6px;
-        }
-
-        .required-files a {
-            color: var(--primary);
-            text-decoration: none;
-            margin-right: 10px;
-            display: inline-block;
-            margin-bottom: 4px;
-            padding: 4px 10px;
-            border-radius: 999px;
-            border: 1px solid var(--border);
-            background: rgba(79, 140, 255, 0.12);
-            font-size: 12px;
-        }
-
-        .required-files a:hover {
-            color: var(--primary-weak);
-            background: rgba(79, 140, 255, 0.2);
-        }
 
         .content::after {
             content: "";
@@ -1472,7 +1442,6 @@
                 kind: 'cover',
                 section: 'Project Overview',
                 title: 'MOS Word Project 3 — Guided Walkthrough',
-                requiredFiles: ['Project3_datafile.docx', 'Bee.docx', 'logo_square.png'],
                 coverImages: ['logo_square.png'],
                 text: '<strong>📖 Read through this overview before starting.</strong><br><br>You will complete Project 3 aligned to Exam MO-110: Microsoft Word (Microsoft 365 Apps) objectives. This guide walks you through styles, page layout, graphics, columns, links, SmartArt, tables, and references.<br><br><strong style="color: #ff6b6b;">⚠️ Important: Some tasks require Microsoft Word desktop app and cannot be completed in Word for the web. Check each task\'s app note.</strong><br><br><strong>💡 Quick Tips:</strong><br>• <strong>Undo:</strong> Press <span class="ui-key">Ctrl+Z</span><br>• <strong>Redo:</strong> Press <span class="ui-key">Ctrl+Y</span><br>• <strong>Save:</strong> Press <span class="ui-key">Ctrl+S</span> often<br>• <strong>Timing:</strong> Plan for 45-60 minutes to complete Project 3<br><br><strong>How to use this guide:</strong><br>• Open <span class="ui-field">Project3_datafile.docx</span> before Step 1, then use <span class="ui-btn">File</span> > <span class="ui-btn">Save As</span> and save your working copy in <span class="ui-field">OneDrive</span> (recommended: <span class="ui-field">Word Assignments</span> folder)<br>• OneDrive sign-in help: <a href="https://support.microsoft.com/en-us/office/sync-files-with-onedrive-in-windows-615391c4-2bd3-4aae-a42a-858262e42a49" target="_blank" rel="noopener noreferrer">Microsoft Support: Sign in to OneDrive</a><br>• Use <span class="ui-field">Bee.docx</span> and <span class="ui-field">logo_square.png</span> when matching tasks request them<br>• Follow each task in order using the navigation buttons or arrow keys<br>• Complete the action in Word before advancing to the next step<br>• Use the Jump to task dropdown to skip ahead<br>• Check off completed tasks using the checkbox at the top of each task<br>• Reset progress at any time using the Reset button<br><br><div class="collapsible collapsed"><div class="collapsible-header" onclick="this.parentElement.classList.toggle(\'collapsed\')">📋 Keyboard Shortcuts Reference (click to expand)</div><div class="collapsible-content"><strong>Shortcuts you\'ll use in this project:</strong><br><br><span class="ui-key">Ctrl+S</span> - Save Document<br><span class="ui-key">Ctrl+W</span> - Close Document<br><span class="ui-key">Ctrl+Z</span> - Undo<br><span class="ui-key">Ctrl+Y</span> - Redo<br><span class="ui-key">Ctrl+Enter</span> - Insert Page Break<br><span class="ui-key">Tab</span> - Increase indent level (lists)<br><span class="ui-key">Shift+Tab</span> - Decrease indent level (lists)<br><br><strong>Navigation shortcuts:</strong><br><span class="ui-key">&larr;</span> <span class="ui-key">&rarr;</span> - Navigate between steps</div></div><br><strong>Legend:</strong><div class="legend"><div class="legend-item"><span class="ui-btn">Button/Menu</span><span>Click this in Word.</span></div><div class="legend-item"><span class="ui-text">Text to select</span><span>Highlight or locate this text in the document.</span></div><div class="legend-item"><span class="ui-field">Field/Option</span><span>Type or choose this value.</span></div><div class="legend-item"><span class="ui-key">Ctrl+S</span><span>Keyboard shortcut to press.</span></div></div>'
 
@@ -1482,9 +1451,8 @@
                 section: 'Setup',
                 title: 'Download and set up your project files',
                 estimatedTime: '2-3 min',
-                requiredFiles: ['Project3_datafile.docx', 'Bee.docx', 'logo_square.png'],
                 steps: [
-                    'At the bottom of this page, download <span class="ui-text">Project3_datafile.docx</span>, <span class="ui-text">Bee.docx</span>, and <span class="ui-text">logo_square.png</span>.',
+                    'Download your required files: <a href="wordprojectfiles/Project3_datafile.docx" download>↓ Project3_datafile.docx</a>, <a href="wordprojectfiles/Bee.docx" download>↓ Bee.docx</a>, and <a href="wordprojectfiles/logo_square.png" download>↓ logo_square.png</a>.',
                     'Open <span class="ui-text">Project3_datafile.docx</span> in Microsoft Word desktop app.',
                     'Select <span class="ui-btn">File</span> > <span class="ui-btn">Save As</span>, choose <span class="ui-text">OneDrive</span>, and save into your <span class="ui-text">Word Assignments</span> folder.',
                     'Keep <span class="ui-text">Bee.docx</span> and <span class="ui-text">logo_square.png</span> available for matching tasks later in the project.'
@@ -1620,7 +1588,7 @@
 
         function getImageInlineStyle(file) {
             const fit = getImageFit(file);
-            const neutralBackground = 'var(--surface)';
+            const neutralBackground = '#ffffff';
             const padding = '8px';
             return `object-fit:${fit};background:${neutralBackground};padding:${padding};box-sizing:border-box;`;
         }
@@ -1634,12 +1602,6 @@
             return `<div class="asset-gallery"><h4>${heading}</h4><div class="asset-grid">${cards}</div></div>`;
         }
 
-        function renderRequiredFiles(files) {
-            if (!files || !files.length) return '';
-            const links = files.map((file) => `<a href="wordprojectfiles/${encodeURIComponent(file)}" download>↓ ${file}</a>`).join('');
-            return `<div class="required-files"><strong>Required files:</strong><br>${links}</div>`;
-        }
-
         function render() {
             const cur = pages[idx];
             els.stepCounter.textContent = fmtStep(idx + 1);
@@ -1651,7 +1613,6 @@
                 html += `<div class="cover">`;
                 html += `<h2>${cur.title}</h2>`;
                 if (cur.text) html += `<p>${cur.text}</p>`;
-                html += renderRequiredFiles(cur.requiredFiles);
                 if (cur.coverImages && cur.coverImages.length) {
                     html += renderImageGallery(cur.coverImages, 'Decorative preview of required image(s)');
                 }
@@ -1675,8 +1636,6 @@
                 html += `<div class="app-required"><strong>${cur.requiresDesktop ? 'Required app:' : 'Word for the web status:'}</strong> ${cur.requiresDesktop ? 'Microsoft Word desktop app (not Word for the web/browser version).' : (isOnlineUiMayDiffer(cur) ? 'Possible in Word for the web, but menu names or layout may differ.' : 'Confirmed: this task can be completed in Word for the web.')}</div>`;
                 html += `<p class="note">${formatOnlineGuidance(cur)}</p>`;
                 html += `<p class="note"><strong>Student tip:</strong> Do one step at a time in Word, then return here and click Next.</p>`;
-                html += renderRequiredFiles(cur.requiredFiles);
-
                 const mentionedImages = getMentionedImageFiles(cur);
                 if (mentionedImages.length) {
                     html += renderImageGallery(mentionedImages, 'Decorative image preview for this task');
