@@ -687,12 +687,6 @@
             width: 290px;
         }
 
-        .asset-gallery h4 {
-            margin: 0 0 8px;
-            font-size: 14px;
-            color: var(--text);
-        }
-
         .asset-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -715,13 +709,9 @@
             background: #0f1117;
         }
 
-        .asset-card figcaption {
-            padding: 6px 8px;
-            font-size: 12px;
-            color: var(--muted);
-            word-break: break-word;
+        .asset-gallery.cover-preview .asset-card img {
+            height: 180px;
         }
-
 
         .content::after {
             content: "";
@@ -1002,12 +992,6 @@
                         download>Project3_datafile.docx</a></span>
                 <span class="kbd"><a href="wordprojectfiles/Bee.docx" download>Bee.docx</a></span>
                 <span class="kbd"><a href="wordprojectfiles/logo_square.png" download>logo_square.png</a></span>
-                <span class="footer-note">Download all files before Step 1. Open <strong>Project3_datafile.docx</strong>
-                    first, then save it to your <strong>OneDrive</strong> (recommended:
-                    <strong>Word Assignments</strong> folder) before editing; use <strong>Bee.docx</strong> and
-                    <strong>logo_square.png</strong> when the matching tasks call for them. Need help signing in?
-                    <a href="https://support.microsoft.com/en-us/office/sync-files-with-onedrive-in-windows-615391c4-2bd3-4aae-a42a-858262e42a49"
-                        target="_blank" rel="noopener noreferrer">Microsoft Support: Sign in to OneDrive</a>.</span>
             </div>
         </div>
     </div>
@@ -1612,13 +1596,14 @@
             return `object-fit:${fit};background:${neutralBackground};padding:${padding};box-sizing:border-box;`;
         }
 
-        function renderImageGallery(files, heading) {
+        function renderImageGallery(files, heading = '', extraClass = '') {
             if (!files || !files.length) return '';
             const cards = files.map((file) => {
                 const path = `wordprojectfiles/${encodeURIComponent(file)}`;
-                return `<figure class="asset-card"><img src="${path}" alt="Preview of ${file}" loading="lazy" style="${getImageInlineStyle(file)}" onerror="this.closest('figure').style.display='none'"><figcaption>${file}</figcaption></figure>`;
+                return `<figure class="asset-card"><img src="${path}" alt="" loading="lazy" style="${getImageInlineStyle(file)}" onerror="this.closest('figure').style.display='none'"></figure>`;
             }).join('');
-            return `<div class="asset-gallery"><h4>${heading}</h4><div class="asset-grid">${cards}</div></div>`;
+            const className = extraClass ? `asset-gallery ${extraClass}` : 'asset-gallery';
+            return `<div class="${className}"><div class="asset-grid">${cards}</div></div>`;
         }
 
         function render() {
@@ -1633,7 +1618,7 @@
                 html += `<h2>${cur.title}</h2>`;
                 if (cur.text) html += `<p>${cur.text}</p>`;
                 if (cur.coverImages && cur.coverImages.length) {
-                    html += renderImageGallery(cur.coverImages, 'Decorative preview of required image(s)');
+                    html += renderImageGallery(cur.coverImages, '', 'cover-preview');
                 }
                 if (cur.points && cur.points.length) {
                     html += '<ul>' + cur.points.map(p => `<li>${p}</li>`).join('') + '</ul>';
@@ -1657,7 +1642,7 @@
                 html += `<p class="note"><strong>Student tip:</strong> Do one step at a time in Word, then return here and click Next.</p>`;
                 const mentionedImages = getMentionedImageFiles(cur);
                 if (mentionedImages.length) {
-                    html += renderImageGallery(mentionedImages, 'Decorative image preview for this task');
+                    html += renderImageGallery(mentionedImages, '');
                 }
 
                 if (cur.contextNote) {

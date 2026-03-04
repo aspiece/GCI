@@ -343,12 +343,6 @@
       width: 290px;
     }
 
-    .asset-gallery h4 {
-      margin: 0 0 8px;
-      font-size: 14px;
-      color: var(--text);
-    }
-
     .asset-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -374,14 +368,6 @@
     .asset-gallery.cover-preview .asset-card img {
       height: 180px;
     }
-
-    .asset-card figcaption {
-      padding: 6px 8px;
-      font-size: 12px;
-      color: var(--muted);
-      word-break: break-word;
-    }
-
 
     .content::after {
       content: "";
@@ -1035,12 +1021,6 @@
             1.docx</a></span>
         <span class="kbd"><a href="wordprojectfiles/sign_illustration%201.png" download>sign_illustration
             1.png</a></span>
-        <span class="footer-note">Download both files before Step 1. Open <strong>Project1_datafile 1.docx</strong>
-          first, then save it to your <strong>OneDrive</strong> (recommended: <strong>Word Assignments</strong>
-          folder) before editing; use <strong>sign_illustration 1.png</strong> when image tasks request it. Need help
-          signing in? <a
-            href="https://support.microsoft.com/en-us/office/sync-files-with-onedrive-in-windows-615391c4-2bd3-4aae-a42a-858262e42a49"
-            target="_blank" rel="noopener noreferrer">Microsoft Support: Sign in to OneDrive</a>.</span>
       </div>
     </div>
   </div>
@@ -1761,11 +1741,10 @@
       if (!files || !files.length) return '';
       const cards = files.map((file) => {
         const path = `wordprojectfiles/${encodeURIComponent(file)}`;
-        return `<figure class="asset-card"><img src="${path}" alt="Preview of ${file}" loading="lazy" style="${getImageInlineStyle(file)}" onerror="this.closest('figure').style.display='none'"><figcaption>${file}</figcaption></figure>`;
+        return `<figure class="asset-card"><img src="${path}" alt="" loading="lazy" style="${getImageInlineStyle(file)}" onerror="this.closest('figure').style.display='none'"></figure>`;
       }).join('');
-      const headingHtml = heading ? `<h4>${heading}</h4>` : '';
       const className = extraClass ? `asset-gallery ${extraClass}` : 'asset-gallery';
-      return `<div class="${className}">${headingHtml}<div class="asset-grid">${cards}</div></div>`;
+      return `<div class="${className}"><div class="asset-grid">${cards}</div></div>`;
     }
 
     function render() {
@@ -1814,7 +1793,7 @@
         html += `<p class="note"><strong>Student tip:</strong> Do one step at a time in Word, then return here and click Next.</p>`;
         const mentionedImages = getMentionedImageFiles(cur);
         if (mentionedImages.length) {
-          html += renderImageGallery(mentionedImages, 'Decorative image preview for this task');
+          html += renderImageGallery(mentionedImages, '');
         }
 
         if (cur.contextNote) {
