@@ -416,7 +416,7 @@
 
         .wrap {
             max-width: 960px;
-            margin: 32px auto;
+            margin: 14px auto;
             padding: 0 16px;
         }
 
@@ -425,14 +425,14 @@
             align-items: flex-start;
             justify-content: space-between;
             gap: 12px;
-            margin-bottom: 16px;
+            margin-bottom: 8px;
             flex-wrap: wrap;
         }
 
         .title {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 2px;
         }
 
         .title h1 {
@@ -484,7 +484,7 @@
             background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.0));
             border: 1px solid var(--border);
             border-radius: 16px;
-            padding: 20px;
+            padding: 14px;
             box-shadow: var(--shadow);
         }
 
@@ -518,7 +518,7 @@
             border-radius: 999px;
             border: 1px solid var(--border);
             overflow: hidden;
-            margin: 16px 0 12px;
+            margin: 10px 0 8px;
         }
 
         .progress>div {
@@ -678,11 +678,13 @@
         }
 
         .asset-gallery {
-            margin-top: 14px;
+            margin: 0 0 12px 16px;
             padding: 10px;
             border: 1px solid var(--border);
             border-radius: 10px;
             background: var(--card);
+            float: right;
+            width: 290px;
         }
 
         .asset-gallery h4 {
@@ -718,6 +720,20 @@
             font-size: 12px;
             color: var(--muted);
             word-break: break-word;
+        }
+
+        .content::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        @media (max-width: 900px) {
+            .asset-gallery {
+                float: none;
+                width: auto;
+                margin: 12px 0;
+            }
         }
 
         .ui-btn {
@@ -1428,6 +1444,24 @@
                 coverImages: ['logo_square.png'],
                 text: '<strong>📖 Read through this overview before starting.</strong><br><br>You will complete Project 3 aligned to Exam MO-110: Microsoft Word (Microsoft 365 Apps) objectives. This guide walks you through styles, page layout, graphics, columns, links, SmartArt, tables, and references.<br><br><strong style="color: #ff6b6b;">⚠️ Important: Some tasks require Microsoft Word desktop app and cannot be completed in Word for the web. Check each task\'s app note.</strong><br><br><strong>💡 Quick Tips:</strong><br>• <strong>Undo:</strong> Press <span class="ui-key">Ctrl+Z</span><br>• <strong>Redo:</strong> Press <span class="ui-key">Ctrl+Y</span><br>• <strong>Save:</strong> Press <span class="ui-key">Ctrl+S</span> often<br>• <strong>Timing:</strong> Plan for 45-60 minutes to complete Project 3<br><br><strong>How to use this guide:</strong><br>• Download the required files listed at the bottom of this page before you begin<br>• Open <span class="ui-field">Project3_datafile.docx</span> before Step 1, then use <span class="ui-btn">File</span> > <span class="ui-btn">Save As</span> and save your working copy in <span class="ui-field">OneDrive</span> (recommended: <span class="ui-field">Word Assignments</span> folder)<br>• OneDrive sign-in help: <a href="https://support.microsoft.com/en-us/office/sync-files-with-onedrive-in-windows-615391c4-2bd3-4aae-a42a-858262e42a49" target="_blank" rel="noopener noreferrer">Microsoft Support: Sign in to OneDrive</a><br>• Use <span class="ui-field">Bee.docx</span> and <span class="ui-field">logo_square.png</span> when matching tasks request them<br>• Follow each task in order using the navigation buttons or arrow keys<br>• Complete the action in Word before advancing to the next step<br>• Use the Jump to task dropdown to skip ahead<br>• Check off completed tasks using the checkbox at the top of each task<br>• Reset progress at any time using the Reset button<br><br><div class="collapsible collapsed"><div class="collapsible-header" onclick="this.parentElement.classList.toggle(\'collapsed\')">📋 Keyboard Shortcuts Reference (click to expand)</div><div class="collapsible-content"><strong>Shortcuts you\'ll use in this project:</strong><br><br><span class="ui-key">Ctrl+S</span> - Save Document<br><span class="ui-key">Ctrl+W</span> - Close Document<br><span class="ui-key">Ctrl+Z</span> - Undo<br><span class="ui-key">Ctrl+Y</span> - Redo<br><span class="ui-key">Ctrl+Enter</span> - Insert Page Break<br><span class="ui-key">Tab</span> - Increase indent level (lists)<br><span class="ui-key">Shift+Tab</span> - Decrease indent level (lists)<br><br><strong>Navigation shortcuts:</strong><br><span class="ui-key">&larr;</span> <span class="ui-key">&rarr;</span> - Navigate between steps</div></div><br><strong>Legend:</strong><div class="legend"><div class="legend-item"><span class="ui-btn">Button/Menu</span><span>Click this in Word.</span></div><div class="legend-item"><span class="ui-text">Text to select</span><span>Highlight or locate this text in the document.</span></div><div class="legend-item"><span class="ui-field">Field/Option</span><span>Type or choose this value.</span></div><div class="legend-item"><span class="ui-key">Ctrl+S</span><span>Keyboard shortcut to press.</span></div></div>'
 
+            });
+            pages.push({
+                kind: 'task',
+                section: 'Setup',
+                title: 'Download and set up your project files',
+                estimatedTime: '2-3 min',
+                steps: [
+                    'At the bottom of this page, download <span class="ui-text">Project3_datafile.docx</span>, <span class="ui-text">Bee.docx</span>, and <span class="ui-text">logo_square.png</span>.',
+                    'Open <span class="ui-text">Project3_datafile.docx</span> in Microsoft Word desktop app.',
+                    'Select <span class="ui-btn">File</span> > <span class="ui-btn">Save As</span>, choose <span class="ui-text">OneDrive</span>, and save into your <span class="ui-text">Word Assignments</span> folder.',
+                    'Keep <span class="ui-text">Bee.docx</span> and <span class="ui-text">logo_square.png</span> available for matching tasks later in the project.'
+                ],
+                successIndicators: [
+                    '✅ Your working document is saved in OneDrive and ready for Project 3 tasks.'
+                ],
+                contextNote: 'If you need sign-in help for OneDrive, use the Microsoft Support link in the overview.',
+                requiresDesktop: true,
+                onlineGuidance: 'Setup should be completed with Microsoft Word desktop app and OneDrive before starting Project 3 tasks.'
             });
             for (const sec of data) {
                 for (const task of sec.tasks) {
