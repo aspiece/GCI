@@ -371,6 +371,10 @@
       background: #0f1117;
     }
 
+    .asset-gallery.cover-preview .asset-card img {
+      height: 180px;
+    }
+
     .asset-card figcaption {
       padding: 6px 8px;
       font-size: 12px;
@@ -1734,13 +1738,15 @@
       return `object-fit:${fit};background:${neutralBackground};padding:${padding};box-sizing:border-box;`;
     }
 
-    function renderImageGallery(files, heading) {
+    function renderImageGallery(files, heading = '', extraClass = '') {
       if (!files || !files.length) return '';
       const cards = files.map((file) => {
         const path = `wordprojectfiles/${encodeURIComponent(file)}`;
         return `<figure class="asset-card"><img src="${path}" alt="Preview of ${file}" loading="lazy" style="${getImageInlineStyle(file)}"><figcaption>${file}</figcaption></figure>`;
       }).join('');
-      return `<div class="asset-gallery"><h4>${heading}</h4><div class="asset-grid">${cards}</div></div>`;
+      const headingHtml = heading ? `<h4>${heading}</h4>` : '';
+      const className = extraClass ? `asset-gallery ${extraClass}` : 'asset-gallery';
+      return `<div class="${className}">${headingHtml}<div class="asset-grid">${cards}</div></div>`;
     }
 
     function render() {
@@ -1758,12 +1764,12 @@
           if (cur.coverImages && cur.coverImages.length && cur.text.includes(quickTipsMarker)) {
             const parts = cur.text.split(quickTipsMarker);
             html += `<p>${parts[0]}</p>`;
-            html += renderImageGallery(cur.coverImages, 'Decorative preview of required image(s)');
+            html += renderImageGallery(cur.coverImages, '', 'cover-preview');
             html += `<p><strong>💡 Quick Tips:</strong>${parts[1]}</p>`;
           } else {
             html += `<p>${cur.text}</p>`;
             if (cur.coverImages && cur.coverImages.length) {
-              html += renderImageGallery(cur.coverImages, 'Decorative preview of required image(s)');
+              html += renderImageGallery(cur.coverImages, '', 'cover-preview');
             }
           }
         }
