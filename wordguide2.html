@@ -212,7 +212,7 @@
         }
 
         [data-theme="high-contrast"] .resource a {
-            color: #0000ff;
+            color: var(--primary);
         }
 
         [data-theme="high-contrast"] .resource a:hover {
@@ -231,11 +231,11 @@
         }
 
         [data-theme="high-contrast"] .kbd a {
-            color: #00ffff;
+            color: var(--primary);
         }
 
         [data-theme="high-contrast"] .kbd a:hover {
-            color: #00ccff;
+            color: var(--primary-weak);
         }
 
         [data-theme="high-contrast"] .cover {
@@ -547,6 +547,15 @@
             margin: 0 0 10px;
         }
 
+        .content a {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        .content a:hover {
+            color: var(--primary-weak);
+        }
+
         .content .note {
             color: var(--muted);
             font-size: 13px;
@@ -557,7 +566,7 @@
         }
 
         .resource a {
-            color: #9fcbff;
+            color: var(--primary);
             text-decoration: none;
         }
 
@@ -604,7 +613,7 @@
         }
 
         .kbd a:hover {
-            color: #5fa8ff;
+            color: var(--primary-weak);
             text-decoration: underline;
         }
 
@@ -634,6 +643,15 @@
             margin-top: 2px;
         }
 
+        .footer-note a {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        .footer-note a:hover {
+            color: var(--primary-weak);
+        }
+
         .hint {
             color: var(--muted);
             font-size: 12px;
@@ -657,6 +675,49 @@
 
         .cover li {
             margin: 4px 0;
+        }
+
+        .asset-gallery {
+            margin-top: 14px;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--card);
+        }
+
+        .asset-gallery h4 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            color: var(--text);
+        }
+
+        .asset-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .asset-card {
+            margin: 0;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.12);
+        }
+
+        .asset-card img {
+            display: block;
+            width: 100%;
+            height: 110px;
+            object-fit: cover;
+            background: #0f1117;
+        }
+
+        .asset-card figcaption {
+            padding: 6px 8px;
+            font-size: 12px;
+            color: var(--muted);
+            word-break: break-word;
         }
 
         .ui-btn {
@@ -1514,6 +1575,7 @@
                 kind: 'cover',
                 section: 'Project Overview',
                 title: 'MOS Word Project 2 — Guided Walkthrough',
+                coverImages: ['dandelion_photo.jpg'],
                 text: '<strong>📖 Read through this overview before starting.</strong><br><br>You will complete Project 2 aligned to Exam MO-110: Microsoft Word (Microsoft 365 Apps) objectives. This comprehensive guide walks you through document collaboration, advanced formatting, tables, lists, graphics, and more.<br><br><strong style="color: #ff6b6b;">⚠️ Important: Some tasks require Microsoft Word desktop app and cannot be completed in Word for the web. Check each task\'s app note.</strong><br><br><strong>💡 Quick Tips:</strong><br>• <strong>Made a mistake?</strong> Press <span class="ui-key">Ctrl+Z</span> to undo your last action<br>• <strong>Need to redo?</strong> Press <span class="ui-key">Ctrl+Y</span> to redo an undone action<br>• <strong>Save your work:</strong> Press <span class="ui-key">Ctrl+S</span> frequently to save your progress<br>• <strong>Take your time:</strong> Project 2 has more tasks than Project 1 — plan for 45-60 minutes to complete<br><br><strong>How to use this guide:</strong><br>• Download the required files listed at the bottom of this page before you begin<br>• Open <span class="ui-field">Project2_datafile.docx</span> before Step 1, then use <span class="ui-btn">File</span> > <span class="ui-btn">Save As</span> and save your working copy in <span class="ui-field">OneDrive</span> (recommended: <span class="ui-field">Word Assignments</span> folder)<br>• OneDrive sign-in help: <a href="https://support.microsoft.com/en-us/office/sync-files-with-onedrive-in-windows-615391c4-2bd3-4aae-a42a-858262e42a49" target="_blank" rel="noopener noreferrer">Microsoft Support: Sign in to OneDrive</a><br>• Use <span class="ui-field">dandelion_photo.jpg</span> when picture tasks request it<br>• Follow each step in order using the navigation buttons at the bottom or arrow keys<br>• Complete the action in Word before advancing to the next step<br>• Use the "Jump to task..." dropdown above to skip to specific tasks<br>• Check off completed tasks using the checkbox at the top of each task<br>• Use the resource links provided for additional help<br>• Time estimates (⏱️) help you pace yourself<br>• Reset progress at any time using the Reset button<br><br><div class="collapsible collapsed"><div class="collapsible-header" onclick="this.parentElement.classList.toggle(\'collapsed\')">📋 Keyboard Shortcuts Reference (click to expand)</div><div class="collapsible-content"><strong>Shortcuts you\'ll use in this project:</strong><br><br><span class="ui-key">Ctrl+S</span> - Save Document<br><span class="ui-key">Ctrl+W</span> - Close Document<br><span class="ui-key">Ctrl+Z</span> - Undo<br><span class="ui-key">Ctrl+Y</span> - Redo<br><span class="ui-key">Ctrl+Enter</span> - Insert Page Break<br><span class="ui-key">Tab</span> - Increase indent level (in lists)<br><span class="ui-key">Shift+Tab</span> - Decrease indent level (in lists)<br><br><strong>Navigation shortcuts:</strong><br><span class="ui-key">←</span> <span class="ui-key">→</span> - Navigate between steps in this guide</div></div><br><strong>Legend:</strong><div class="legend"><div class="legend-item"><span class="ui-btn">Button/Menu</span><span>Click this in Word.</span></div><div class="legend-item"><span class="ui-text">Text to select</span><span>Highlight or locate this text in the document.</span></div><div class="legend-item"><span class="ui-field">Field/Option</span><span>Type or choose this value.</span></div><div class="legend-item"><span class="ui-key">Ctrl+S</span><span>Keyboard shortcut to press.</span></div></div>',
 
             });
@@ -1621,6 +1683,40 @@
             return `${isOnlineUiMayDiffer(page) ? 'UI may differ:' : 'Confirmed online:'} ${base}`.trim();
         }
 
+        function getMentionedImageFiles(page) {
+            const text = `${page.title || ''} ${(page.steps || []).join(' ')}`;
+            const imageRegex = /([A-Za-z0-9 _-]+\.(?:png|jpe?g|gif|webp|svg))/gi;
+            const found = [];
+            let match;
+            while ((match = imageRegex.exec(text)) !== null) {
+                const fileName = match[1].trim();
+                if (!found.includes(fileName)) {
+                    found.push(fileName);
+                }
+            }
+            return found;
+        }
+
+        function getImageFit(file) {
+            return /(logo|icon|badge|seal|svg)/i.test(file) ? 'contain' : 'cover';
+        }
+
+        function getImageInlineStyle(file) {
+            const fit = getImageFit(file);
+            const neutralBackground = fit === 'contain' ? 'var(--surface)' : '#0f1117';
+            const padding = fit === 'contain' ? '8px' : '0';
+            return `object-fit:${fit};background:${neutralBackground};padding:${padding};box-sizing:border-box;`;
+        }
+
+        function renderImageGallery(files, heading) {
+            if (!files || !files.length) return '';
+            const cards = files.map((file) => {
+                const path = `wordprojectfiles/${encodeURIComponent(file)}`;
+                return `<figure class="asset-card"><img src="${path}" alt="Preview of ${file}" loading="lazy" style="${getImageInlineStyle(file)}"><figcaption>${file}</figcaption></figure>`;
+            }).join('');
+            return `<div class="asset-gallery"><h4>${heading}</h4><div class="asset-grid">${cards}</div></div>`;
+        }
+
         function render() {
             const cur = pages[idx];
             els.stepCounter.textContent = fmtStep(idx + 1);
@@ -1632,6 +1728,9 @@
                 html += `<div class="cover">`;
                 html += `<h2>${cur.title}</h2>`;
                 if (cur.text) html += `<p>${cur.text}</p>`;
+                if (cur.coverImages && cur.coverImages.length) {
+                    html += renderImageGallery(cur.coverImages, 'Required image file preview');
+                }
                 if (cur.points && cur.points.length) {
                     html += '<ul>' + cur.points.map(p => `<li>${p}</li>`).join('') + '</ul>';
                 }
@@ -1652,6 +1751,11 @@
                 html += `<div class="app-required"><strong>${cur.requiresDesktop ? 'Required app:' : 'Word for the web status:'}</strong> ${cur.requiresDesktop ? 'Microsoft Word desktop app (not Word for the web/browser version).' : (isOnlineUiMayDiffer(cur) ? 'Possible in Word for the web, but menu names or layout may differ.' : 'Confirmed: this task can be completed in Word for the web.')}</div>`;
                 html += `<p class="note">${formatOnlineGuidance(cur)}</p>`;
                 html += `<p class="note"><strong>Student tip:</strong> Do one step at a time in Word, then return here and click Next.</p>`;
+
+                const mentionedImages = getMentionedImageFiles(cur);
+                if (mentionedImages.length) {
+                    html += renderImageGallery(mentionedImages, 'Image file preview for this task');
+                }
 
                 if (cur.contextNote) {
                     html += `<div class="context-note">${cur.contextNote}</div>`;
