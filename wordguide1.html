@@ -366,7 +366,7 @@
     }
 
     .asset-gallery.cover-preview .asset-card img {
-      height: 180px;
+      height: 220px;
     }
 
     .content::after {
@@ -1035,11 +1035,10 @@
             title: 'Inspect the document and remove Document Properties and Personal Information and Hidden Text.',
             estimatedTime: '2-3 min',
             resource: 'https://aka.ms/removeinformation',
-            contextNote: "📍 You should be opening the file for the first time.",
+            contextNote: "📍 Start with your saved Project1 working document already open.",
             warnings: ["⚠️ Don't skip the Reinspect step - it confirms everything was removed."],
             successIndicators: ["✓ You should see 'No items were found' after reinspecting."],
             steps: [
-              'Open Project1_datafile 1.docx in Microsoft Word (desktop app).',
               'Select <span class="ui-btn">File</span> (top-left), then select <span class="ui-btn">Info</span>.',
               'Under Inspect Document, select <span class="ui-btn">Check for Issues</span>, then select <span class="ui-btn">Inspect Document</span>.',
               'In Document Inspector, uncheck every box except Document Properties and Personal Information and Hidden Text, then select <span class="ui-btn">Inspect</span>.',
@@ -1757,20 +1756,10 @@
       if (cur.kind === 'cover') {
         html += `<div class="cover">`;
         html += `<h2>${cur.title}</h2>`;
-        if (cur.text) {
-          const quickTipsMarker = '<br><br><strong>💡 Quick Tips:</strong>';
-          if (cur.coverImages && cur.coverImages.length && cur.text.includes(quickTipsMarker)) {
-            const parts = cur.text.split(quickTipsMarker);
-            html += `<p>${parts[0]}</p>`;
-            html += renderImageGallery(cur.coverImages, '', 'cover-preview');
-            html += `<p><strong>💡 Quick Tips:</strong>${parts[1]}</p>`;
-          } else {
-            html += `<p>${cur.text}</p>`;
-            if (cur.coverImages && cur.coverImages.length) {
-              html += renderImageGallery(cur.coverImages, '', 'cover-preview');
-            }
-          }
+        if (cur.coverImages && cur.coverImages.length) {
+          html += renderImageGallery(cur.coverImages, '', 'cover-preview');
         }
+        if (cur.text) html += `<p>${cur.text}</p>`;
         if (cur.points && cur.points.length) {
           html += '<ul>' + cur.points.map(p => `<li>${p}</li>`).join('') + '</ul>';
         }

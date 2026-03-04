@@ -710,7 +710,7 @@
         }
 
         .asset-gallery.cover-preview .asset-card img {
-            height: 180px;
+            height: 220px;
         }
 
         .content::after {
@@ -1034,9 +1034,8 @@
                         title: 'Unlock Tracking with the password "project"',
                         estimatedTime: '1 min',
                         resource: 'https://support.microsoft.com/en-us/office/track-changes-in-word-197ba630-0f5f-4a8e-9a77-3712475e806a',
-                        contextNote: "📍 You should be opening Project2_datafile.docx for the first time. The document has tracking locked with password 'project'.",
+                        contextNote: "📍 Start with Project2_datafile.docx already open. The document has tracking locked with password 'project'.",
                         steps: [
-                            'Open <span class="ui-text">Project2_datafile.docx</span> from the wordprojectfiles folder.',
                             'From the <span class="ui-btn">Review</span> tab > Tracking group, select the <span class="ui-btn">Track Changes</span> drop-down.',
                             'Select <span class="ui-btn">Lock Tracking</span>.',
                             'In the password field, enter <span class="ui-field">project</span>.',
@@ -1766,10 +1765,10 @@
             if (cur.kind === 'cover') {
                 html += `<div class="cover">`;
                 html += `<h2>${cur.title}</h2>`;
-                if (cur.text) html += `<p>${cur.text}</p>`;
                 if (cur.coverImages && cur.coverImages.length) {
                     html += renderImageGallery(cur.coverImages, '', 'cover-preview');
                 }
+                if (cur.text) html += `<p>${cur.text}</p>`;
                 if (cur.points && cur.points.length) {
                     html += '<ul>' + cur.points.map(p => `<li>${p}</li>`).join('') + '</ul>';
                 }
