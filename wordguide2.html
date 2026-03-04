@@ -1765,13 +1765,13 @@
         }
 
         function getImageFit(file) {
-            return /(logo|icon|badge|seal|svg)/i.test(file) ? 'contain' : 'cover';
+            return 'contain';
         }
 
         function getImageInlineStyle(file) {
             const fit = getImageFit(file);
-            const neutralBackground = fit === 'contain' ? 'var(--surface)' : '#0f1117';
-            const padding = fit === 'contain' ? '8px' : '0';
+            const neutralBackground = 'var(--surface)';
+            const padding = '8px';
             return `object-fit:${fit};background:${neutralBackground};padding:${padding};box-sizing:border-box;`;
         }
 
