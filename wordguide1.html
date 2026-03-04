@@ -438,6 +438,25 @@
       white-space: nowrap;
     }
 
+    .download-pill {
+      color: var(--primary);
+      text-decoration: none;
+      margin-right: 8px;
+      display: inline-block;
+      margin-bottom: 4px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(79, 140, 255, 0.12);
+      font-size: 12px;
+      vertical-align: middle;
+    }
+
+    .download-pill:hover {
+      color: var(--primary-weak);
+      background: rgba(79, 140, 255, 0.2);
+    }
+
     .legend {
       margin-top: 10px;
       display: grid;
@@ -1343,7 +1362,7 @@
             resource: 'https://support.microsoft.com/en-us/office/make-or-find-pictures-to-insert-in-office-documents-4904e22f-9f1e-4f73-a9b7-a4a4eb3cb34c',
             steps: [
               'Click after <span class="ui-text">“Proposal Plan”</span> on the title page.',
-              'Insert > Pictures > <span class="ui-btn">This Device</span>, select sign_illustration 1.png, then select <span class="ui-btn">Insert</span>.'
+              'Insert > Pictures > <span class="ui-btn">This Device</span>, select <a class="download-pill" href="wordprojectfiles/sign_illustration%201.png" download>↓ sign_illustration 1.png</a>, then select <span class="ui-btn">Insert</span>.'
             ]
           },
           {
@@ -1597,7 +1616,7 @@
         title: 'Download and set up your project files',
         estimatedTime: '2-3 min',
         steps: [
-          'Download your required files: <a href="wordprojectfiles/Project1_datafile%201.docx" download>↓ Project1_datafile 1.docx</a> and <a href="wordprojectfiles/sign_illustration%201.png" download>↓ sign_illustration 1.png</a>.',
+          'Download your required files: <a class="download-pill" href="wordprojectfiles/Project1_datafile%201.docx" download>↓ Project1_datafile 1.docx</a> and <a class="download-pill" href="wordprojectfiles/sign_illustration%201.png" download>↓ sign_illustration 1.png</a>.',
           'Open <span class="ui-text">Project1_datafile 1.docx</span> in Microsoft Word desktop app.',
           'Select <span class="ui-btn">File</span> > <span class="ui-btn">Save As</span>, choose <span class="ui-text">OneDrive</span>, and save into your <span class="ui-text">Word Assignments</span> folder.',
           'Keep <span class="ui-text">sign_illustration 1.png</span> available for image steps later in the project.'
@@ -1715,7 +1734,7 @@
 
     function getMentionedImageFiles(page) {
       const text = `${page.title || ''} ${(page.steps || []).join(' ')}`;
-      const imageRegex = /([A-Za-z0-9 _-]+\.(?:png|jpe?g|gif|webp|svg))/gi;
+      const imageRegex = /(?<![A-Za-z0-9_])([A-Za-z][A-Za-z0-9]*(?:[_-][A-Za-z0-9]+)*(?: [0-9]+)?\.(?:png|jpe?g|gif|webp|svg))/gi;
       const found = [];
       let match;
       while ((match = imageRegex.exec(text)) !== null) {
@@ -1742,7 +1761,7 @@
       if (!files || !files.length) return '';
       const cards = files.map((file) => {
         const path = `wordprojectfiles/${encodeURIComponent(file)}`;
-        return `<figure class="asset-card"><img src="${path}" alt="Preview of ${file}" loading="lazy" style="${getImageInlineStyle(file)}"><figcaption>${file}</figcaption></figure>`;
+        return `<figure class="asset-card"><img src="${path}" alt="Preview of ${file}" loading="lazy" style="${getImageInlineStyle(file)}" onerror="this.closest('figure').style.display='none'"><figcaption>${file}</figcaption></figure>`;
       }).join('');
       const headingHtml = heading ? `<h4>${heading}</h4>` : '';
       const className = extraClass ? `asset-gallery ${extraClass}` : 'asset-gallery';

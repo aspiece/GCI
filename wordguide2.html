@@ -778,6 +778,25 @@
             white-space: nowrap;
         }
 
+        .download-pill {
+            color: var(--primary);
+            text-decoration: none;
+            margin-right: 8px;
+            display: inline-block;
+            margin-bottom: 4px;
+            padding: 3px 10px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            background: rgba(79, 140, 255, 0.12);
+            font-size: 12px;
+            vertical-align: middle;
+        }
+
+        .download-pill:hover {
+            color: var(--primary-weak);
+            background: rgba(79, 140, 255, 0.2);
+        }
+
         .legend {
             margin-top: 10px;
             display: grid;
@@ -1602,7 +1621,7 @@
                 title: 'Download and set up your project files',
                 estimatedTime: '2-3 min',
                 steps: [
-                    'Download your required files: <a href="wordprojectfiles/Project2_datafile.docx" download>↓ Project2_datafile.docx</a> and <a href="wordprojectfiles/dandelion_photo.jpg" download>↓ dandelion_photo.jpg</a>.',
+                    'Download your required files: <a class="download-pill" href="wordprojectfiles/Project2_datafile.docx" download>↓ Project2_datafile.docx</a> and <a class="download-pill" href="wordprojectfiles/dandelion_photo.jpg" download>↓ dandelion_photo.jpg</a>.',
                     'Open <span class="ui-text">Project2_datafile.docx</span> in Microsoft Word desktop app.',
                     'Select <span class="ui-btn">File</span> > <span class="ui-btn">Save As</span>, choose <span class="ui-text">OneDrive</span>, and save into your <span class="ui-text">Word Assignments</span> folder.',
                     'Keep <span class="ui-text">dandelion_photo.jpg</span> available for image-related tasks later in the project.'
@@ -1720,7 +1739,7 @@
 
         function getMentionedImageFiles(page) {
             const text = `${page.title || ''} ${(page.steps || []).join(' ')}`;
-            const imageRegex = /([A-Za-z0-9 _-]+\.(?:png|jpe?g|gif|webp|svg))/gi;
+            const imageRegex = /(?<![A-Za-z0-9_])([A-Za-z][A-Za-z0-9]*(?:[_-][A-Za-z0-9]+)*(?: [0-9]+)?\.(?:png|jpe?g|gif|webp|svg))/gi;
             const found = [];
             let match;
             while ((match = imageRegex.exec(text)) !== null) {
@@ -1747,7 +1766,7 @@
             if (!files || !files.length) return '';
             const cards = files.map((file) => {
                 const path = `wordprojectfiles/${encodeURIComponent(file)}`;
-                return `<figure class="asset-card"><img src="${path}" alt="Preview of ${file}" loading="lazy" style="${getImageInlineStyle(file)}"><figcaption>${file}</figcaption></figure>`;
+                return `<figure class="asset-card"><img src="${path}" alt="Preview of ${file}" loading="lazy" style="${getImageInlineStyle(file)}" onerror="this.closest('figure').style.display='none'"><figcaption>${file}</figcaption></figure>`;
             }).join('');
             return `<div class="asset-gallery"><h4>${heading}</h4><div class="asset-grid">${cards}</div></div>`;
         }
