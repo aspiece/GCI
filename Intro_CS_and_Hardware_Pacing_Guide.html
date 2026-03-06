@@ -85,6 +85,38 @@
       align-items: start;
     }
 
+    .course-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0 8px;
+    }
+
+    .tab-btn {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: #0b4f4a;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      background: #0f766e;
+      color: #fff;
+      border-color: #0f766e;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+      grid-column: 1 / -1;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
@@ -214,26 +246,14 @@
     <section class="hero">
       <h1>Intro to Computer Hardware and Intro to Computer Science</h1>
       <p>Time window: 2026-03-09 through 2026-06-09.</p>
-      <p>GCI no school days:</p>
+      <p><strong>Shared Dates (All Courses)</strong></p>
       <ul>
-        <li>2026-03-30 to 2026-04-03 (Spring Break)</li>
-        <li>2026-05-22</li>
-        <li>2026-05-25 (Memorial Day)</li>
+        <li>2026-03-18: Marking Period 3 last day to submit work</li>
+        <li>2026-03-30 to 2026-04-03: Spring Break (all schools)</li>
+        <li>2026-04-16: Spring Advisory</li>
+        <li>2026-04-17: Virtual Day</li>
+        <li>2026-04-18: NCWIT Award Ceremony</li>
       </ul>
-      <p>Spring Advisory: 2026-04-16.</p>
-      <p>Spring Break (all schools): 2026-03-30 to 2026-04-03.</p>
-      <p>Virtual Day: 2026-04-17.</p>
-      <p>Marking Period 3: last day to submit work is 2026-03-18.</p>
-      <p>NCWIT Award Ceremony: 2026-04-18.</p>
-      <p>Computer Hardware focus window: 2026-03-05 to 2026-03-12 (Computer Design presentations, classwork catch-up,
-        Network Cable data).</p>
-      <p>Week of 2026-03-16: first week of the new Computer Hardware teacher.</p>
-      <p>Computer Science: students work on problem sets daily until each due date.</p>
-      <p>Computer Hardware lab window: 2026-03-19 to 2026-03-27 (Helpdesk Lab - Computer Build).</p>
-      <p>First session Computer Hardware and Computer Science: Helpdesk Lab - 3D Printing, 2026-04-06 to 2026-04-10.</p>
-      <p>Second session Computer Hardware and Computer Science: Helpdesk Lab - 3D Printing, 2026-04-13 to 2026-04-15 and
-        2026-04-20 to 2026-04-21.
-      </p>
       <button class="print" onclick="window.print()">Print / Save PDF</button>
       <p class="week-key">Week marker: double line = start of week, light blue row = Friday, orange striped row = Spring
         Break.</p>
@@ -876,8 +896,8 @@
             </tr>
             <tr>
               <td>2026-04-20</td>
-              <td>Helpdesk Lab - 3D Printing</td>
-              <td>2nd session 5-day lab (continued after Spring Advisory/Virtual Day)</td>
+              <td>Teamwork</td>
+              <td>Base Camp (2nd session Computer Science)</td>
               <td>None</td>
             </tr>
             <tr>
@@ -888,8 +908,8 @@
             </tr>
             <tr>
               <td>2026-04-22</td>
-              <td></td>
-              <td></td>
+              <td>Helpdesk Lab - 3D Printing</td>
+              <td>2nd session 5-day lab (continued after Spring Advisory/Virtual Day)</td>
               <td>None</td>
             </tr>
             <tr>
@@ -1102,6 +1122,91 @@
     </div>
   </main>
   <script>
+    (function setupCourseTabsAndExtraCourses() {
+      const guides = document.querySelector(".guides-grid");
+      if (!guides) return;
+
+      const initialSections = Array.from(guides.querySelectorAll(":scope > section.card"));
+      if (initialSections.length < 2) return;
+
+      const sourceSection =
+        initialSections.find(section =>
+          /Intro to Computer Science/i.test((section.querySelector("h2")?.textContent || "").trim())
+        ) || initialSections[1];
+
+      const extraCourses = [
+        "Advanced Computer Hardware",
+        "AP Computer Science A: Game Design"
+      ];
+
+      for (const courseName of extraCourses) {
+        const clone = sourceSection.cloneNode(true);
+        const title = clone.querySelector("h2");
+        if (title) title.textContent = courseName;
+
+        // Keep calendar alignment, but clear instructional content for new course templates.
+        const rows = clone.querySelectorAll("tbody tr");
+        for (const row of rows) {
+          const cells = row.querySelectorAll("td");
+          if (cells.length < 4) continue;
+
+          const lessonCell = cells[1];
+          const gciCell = cells[2];
+          const homeCell = cells[cells.length - 1];
+          const combinedNotes = `${gciCell.textContent || ""} ${homeCell.textContent || ""}`;
+          const nonInstructionDay = /Spring Break|No GCI|Spring Advisory|Virtual Day|Memorial Day/i.test(combinedNotes);
+
+          lessonCell.textContent = "";
+          if (!nonInstructionDay) {
+            gciCell.textContent = "";
+          }
+        }
+
+        guides.appendChild(clone);
+      }
+
+      const sections = Array.from(guides.querySelectorAll(":scope > section.card"));
+      const tabs = document.createElement("div");
+      tabs.className = "course-tabs";
+      tabs.setAttribute("role", "tablist");
+      tabs.setAttribute("aria-label", "Course tabs");
+      guides.parentNode.insertBefore(tabs, guides);
+
+      const activateTab = targetId => {
+        const buttons = tabs.querySelectorAll("button[role='tab']");
+        for (const button of buttons) {
+          const active = button.getAttribute("aria-controls") === targetId;
+          button.classList.toggle("active", active);
+          button.setAttribute("aria-selected", active ? "true" : "false");
+        }
+
+        for (const section of sections) {
+          section.classList.toggle("active", section.id === targetId);
+        }
+      };
+
+      sections.forEach((section, index) => {
+        const title = (section.querySelector("h2")?.textContent || `Course ${index + 1}`).trim();
+        const id = `course-tab-${index + 1}`;
+        section.id = id;
+        section.classList.add("tab-panel");
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "tab-btn";
+        button.setAttribute("role", "tab");
+        button.setAttribute("aria-controls", id);
+        button.setAttribute("aria-selected", "false");
+        button.textContent = title;
+        button.addEventListener("click", () => activateTab(id));
+        tabs.appendChild(button);
+      });
+
+      if (sections[0]) {
+        activateTab(sections[0].id);
+      }
+    })();
+
     (function addCareerEssentialsColumn() {
       const tables = document.querySelectorAll(".card table");
       const cutoff = new Date("2026-03-13T23:59:59");
@@ -1117,7 +1222,7 @@
 
         const header = document.createElement("th");
         header.textContent = "Career Essentials";
-        headerRow.insertBefore(header, headerRow.children[2] || null);
+        headerRow.insertBefore(header, headerRow.children[3] || null);
 
         const rows = table.querySelectorAll("tbody tr");
         for (const row of rows) {
@@ -1137,7 +1242,7 @@
             }
           }
 
-          row.insertBefore(cell, row.children[2] || null);
+          row.insertBefore(cell, row.children[3] || null);
         }
       }
     })();
