@@ -78,11 +78,53 @@
       box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
     }
 
-    .guides-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      align-items: start;
+    .guide-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 4px 0 10px;
+    }
+
+    .guide-tab {
+      border: 1px solid var(--line);
+      background: #ffffff;
+      color: #0b4f4a;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+    }
+
+    .guide-tab:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(15, 118, 110, 0.16);
+      background: #f0fdfa;
+    }
+
+    .guide-tab.active {
+      background: #0f766e;
+      color: #ffffff;
+      border-color: #0f766e;
+      box-shadow: 0 4px 10px rgba(15, 118, 110, 0.24);
+    }
+
+    .guide-empty {
+      border: 1px dashed var(--line);
+      border-radius: 14px;
+      padding: 16px;
+      background: #fff9ef;
+      color: var(--muted);
+      font-weight: 600;
+      margin-top: 10px;
+    }
+
+    .guides-stack {
+      display: block;
+    }
+
+    .guide-panel[hidden] {
+      display: none !important;
     }
 
     table {
@@ -160,10 +202,6 @@
     }
 
     @media (max-width: 900px) {
-      .guides-grid {
-        grid-template-columns: 1fr;
-      }
-
       h1 {
         font-size: 24px;
       }
@@ -198,7 +236,7 @@
         max-height: none;
       }
 
-      .guides-grid {
+      .guides-stack {
         display: block;
       }
 
@@ -214,8 +252,8 @@
     <section class="hero">
       <h1>Intro to Computer Hardware and Intro to Computer Science</h1>
       <p>Time window: 2026-03-09 through 2026-06-09.</p>
-      <p>GCI no school days:</p>
-      <ul>
+      <p>GCI no school days (synced with No School Viewer):</p>
+      <ul id="gciNoSchoolDaysList">
         <li>2026-03-30 to 2026-04-03 (Spring Break)</li>
         <li>2026-05-22</li>
         <li>2026-05-25 (Memorial Day)</li>
@@ -239,8 +277,18 @@
         Break.</p>
     </section>
 
-    <div class="guides-grid">
-      <section class="card">
+    <section aria-label="Pacing guide tabs">
+      <div class="guide-tabs" role="tablist" aria-label="Pacing guides">
+        <button class="guide-tab" type="button" role="tab" aria-selected="false" aria-controls="guide-hardware"
+          data-guide-target="guide-hardware" id="tab-guide-hardware">Intro to Computer Hardware</button>
+        <button class="guide-tab" type="button" role="tab" aria-selected="false" aria-controls="guide-cs"
+          data-guide-target="guide-cs" id="tab-guide-cs">Intro to Computer Science</button>
+      </div>
+      <div class="guide-empty" id="guideEmptyState">Select a pacing guide tab to view it.</div>
+    </section>
+
+    <div class="guides-stack">
+      <section class="card guide-panel" id="guide-hardware" role="tabpanel" aria-labelledby="tab-guide-hardware" hidden>
         <h2>Intro to Computer Hardware</h2>
         <table>
           <thead>
@@ -670,7 +718,7 @@
         </table>
       </section>
 
-      <section class="card">
+      <section class="card guide-panel" id="guide-cs" role="tabpanel" aria-labelledby="tab-guide-cs" hidden>
         <h2>Intro to Computer Science</h2>
         <table>
           <thead>
@@ -1102,6 +1150,61 @@
     </div>
   </main>
   <script>
+    (function setupGuideTabs() {
+      const tabs = Array.from(document.querySelectorAll(".guide-tab"));
+      const panels = Array.from(document.querySelectorAll(".guide-panel"));
+      const empty = document.getElementById("guideEmptyState");
+
+      function showGuide(targetId) {
+        let selectedCount = 0;
+        for (const panel of panels) {
+          const isActive = panel.id === targetId;
+          panel.hidden = !isActive;
+          if (isActive) selectedCount += 1;
+        }
+
+        for (const tab of tabs) {
+          const isActive = tab.dataset.guideTarget === targetId;
+          tab.classList.toggle("active", isActive);
+          tab.setAttribute("aria-selected", isActive ? "true" : "false");
+        }
+
+        if (empty) empty.hidden = selectedCount > 0;
+      }
+
+      function clearGuides() {
+        for (const panel of panels) {
+          panel.hidden = true;
+        }
+        for (const tab of tabs) {
+          tab.classList.remove("active");
+          tab.setAttribute("aria-selected", "false");
+        }
+        if (empty) empty.hidden = false;
+      }
+
+      tabs.forEach((tab, index) => {
+        tab.addEventListener("click", () => {
+          const alreadySelected = tab.getAttribute("aria-selected") === "true";
+          if (alreadySelected) {
+            clearGuides();
+            return;
+          }
+          showGuide(tab.dataset.guideTarget || "");
+        });
+
+        tab.addEventListener("keydown", (event) => {
+          if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
+          event.preventDefault();
+          const delta = event.key === "ArrowRight" ? 1 : -1;
+          const next = (index + delta + tabs.length) % tabs.length;
+          tabs[next].focus();
+        });
+      });
+
+      clearGuides();
+    })();
+
     (function addCareerEssentialsColumn() {
       const tables = document.querySelectorAll(".card table");
       const cutoff = new Date("2026-03-13T23:59:59");
@@ -1160,6 +1263,276 @@
         if (date >= springBreakStart && date <= springBreakEnd) {
           row.classList.add("spring-break");
         }
+      }
+    })();
+
+    (async function syncNoSchoolDaysFromViewer() {
+      const VIEWER_URL = "https://aspiece.github.io/GCI/No_School_Viewer.html";
+      const FALLBACK_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTy-L_LG8bcMsu2w8HkdMXATdm2EASK-VR_O2XglJCmvzBxSSQ-B3-R_7jfba9DLctPy2Ul6bbLZvvI/pub?gid=371846928&single=true&output=csv";
+      const WINDOW_START = "2026-03-09";
+      const WINDOW_END = "2026-06-09";
+
+      function formatIsoDate(date) {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+        return `${y}-${m}-${d}`;
+      }
+
+      function parseDateFlexible(value) {
+        const s = String(value || "").trim();
+        if (!s) return null;
+
+        if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+          const d = new Date(`${s}T00:00:00`);
+          return Number.isNaN(d.getTime()) ? null : d;
+        }
+
+        const asDate = new Date(s);
+        if (!Number.isNaN(asDate.getTime())) {
+          return new Date(asDate.getFullYear(), asDate.getMonth(), asDate.getDate());
+        }
+
+        const slash = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+        if (slash) {
+          let year = Number(slash[3]);
+          if (year < 100) year += 2000;
+          const month = Number(slash[1]) - 1;
+          const day = Number(slash[2]);
+          const d = new Date(year, month, day);
+          return Number.isNaN(d.getTime()) ? null : d;
+        }
+
+        if (/^\d{4,6}$/.test(s)) {
+          // Excel serial date support.
+          const serial = Number(s);
+          const epoch = new Date("1899-12-30T00:00:00");
+          epoch.setDate(epoch.getDate() + serial);
+          return new Date(epoch.getFullYear(), epoch.getMonth(), epoch.getDate());
+        }
+
+        return null;
+      }
+
+      function splitCsvLine(line) {
+        const out = [];
+        let current = "";
+        let inQuotes = false;
+        for (let i = 0; i < line.length; i += 1) {
+          const ch = line[i];
+          if (ch === '"') {
+            if (inQuotes && line[i + 1] === '"') {
+              current += '"';
+              i += 1;
+            } else {
+              inQuotes = !inQuotes;
+            }
+          } else if (ch === "," && !inQuotes) {
+            out.push(current);
+            current = "";
+          } else {
+            current += ch;
+          }
+        }
+        out.push(current);
+        return out.map(cell => cell.trim());
+      }
+
+      function parseCsv(text) {
+        const lines = String(text || "")
+          .replace(/^\uFEFF/, "")
+          .split(/\r?\n/)
+          .filter(line => line.trim().length > 0);
+        if (!lines.length) return [];
+
+        const headers = splitCsvLine(lines[0]);
+        const indexByHeader = Object.fromEntries(headers.map((h, i) => [String(h || "").toLowerCase(), i]));
+
+        const findColumnIndex = (candidates, hints) => {
+          const normalize = (value) => String(value || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+          const normalizedHeaders = headers.map((h) => normalize(h));
+
+          for (const candidate of candidates) {
+            const target = normalize(candidate);
+            const exact = normalizedHeaders.findIndex((h) => h === target || h.includes(target) || target.includes(h));
+            if (exact >= 0) return exact;
+          }
+          for (const hint of hints) {
+            const target = normalize(hint);
+            const hit = normalizedHeaders.findIndex((h) => h.includes(target));
+            if (hit >= 0) return hit;
+          }
+          return -1;
+        };
+
+        const dateCol = findColumnIndex(["Date", "Start Date", "Event Date"], ["date", "start"]);
+        const eventCol = findColumnIndex(["Event", "Type", "Event Type", "Category"], ["event", "type", "category"]);
+        const schoolCol = findColumnIndex(["School Name", "School", "District", "Building"], ["school", "district", "building"]);
+
+        if (dateCol < 0 || eventCol < 0 || schoolCol < 0) return [];
+
+        const rows = [];
+        for (let i = 1; i < lines.length; i += 1) {
+          const cols = splitCsvLine(lines[i]);
+          const date = parseDateFlexible(cols[dateCol]);
+          const event = String(cols[eventCol] || "").trim();
+          const school = String(cols[schoolCol] || "").trim();
+          if (!date || !event || !school) continue;
+          rows.push({ dateIso: formatIsoDate(date), event, school });
+        }
+        return rows;
+      }
+
+      async function resolveCsvUrl() {
+        try {
+          const page = await fetch(VIEWER_URL, { cache: "no-store" });
+          if (!page.ok) return FALLBACK_CSV_URL;
+          const html = await page.text();
+          const match = html.match(/DATA_URL\s*:\s*["']([^"']+)["']/);
+          return match && match[1] ? match[1] : FALLBACK_CSV_URL;
+        } catch (_error) {
+          return FALLBACK_CSV_URL;
+        }
+      }
+
+      function toDisplayValue(eventsForDate) {
+        if (!eventsForDate || !eventsForDate.length) return "None";
+        const bySchool = new Map();
+        for (const row of eventsForDate) {
+          const school = row.school;
+          const event = row.event;
+          if (!bySchool.has(school)) bySchool.set(school, new Set());
+          bySchool.get(school).add(event);
+        }
+        return Array.from(bySchool.entries())
+          .map(([school, events]) => {
+            const firstEvent = Array.from(events)[0] || "";
+            const lower = firstEvent.toLowerCase();
+            if (school.toLowerCase().includes("all school")) {
+              return lower.includes("spring break") ? "All schools (Spring Break)" : `${school} (${firstEvent})`;
+            }
+            return school;
+          })
+          .join("; ");
+      }
+
+      function updateTables(byDate) {
+        const tables = document.querySelectorAll(".card table");
+        for (const table of tables) {
+          const headers = Array.from(table.querySelectorAll("thead th"));
+          const targetIndex = headers.findIndex((th) => {
+            const text = (th.textContent || "").trim().toLowerCase();
+            return text === "home school no school";
+          });
+          if (targetIndex < 0) continue;
+
+          const rows = table.querySelectorAll("tbody tr");
+          for (const row of rows) {
+            const cells = row.querySelectorAll("td");
+            if (cells.length <= targetIndex) continue;
+            const dateText = (cells[0].textContent || "").trim();
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(dateText)) continue;
+            const events = byDate.get(dateText) || [];
+            cells[targetIndex].textContent = toDisplayValue(events);
+          }
+        }
+      }
+
+      function compressRanges(dateRows) {
+        const ranges = [];
+        if (!dateRows.length) return ranges;
+
+        let start = dateRows[0].dateIso;
+        let end = dateRows[0].dateIso;
+        let label = dateRows[0].label;
+
+        const toDate = (iso) => new Date(`${iso}T00:00:00`);
+        const isNextDay = (aIso, bIso) => {
+          const a = toDate(aIso);
+          const b = toDate(bIso);
+          const diff = Math.round((b.getTime() - a.getTime()) / 86400000);
+          return diff === 1;
+        };
+
+        for (let i = 1; i < dateRows.length; i += 1) {
+          const current = dateRows[i];
+          if (current.label === label && isNextDay(end, current.dateIso)) {
+            end = current.dateIso;
+          } else {
+            ranges.push({ start, end, label });
+            start = current.dateIso;
+            end = current.dateIso;
+            label = current.label;
+          }
+        }
+        ranges.push({ start, end, label });
+        return ranges;
+      }
+
+      function updateSummary(byDate) {
+        const list = document.getElementById("gciNoSchoolDaysList");
+        if (!list) return;
+
+        const start = new Date(`${WINDOW_START}T00:00:00`);
+        const end = new Date(`${WINDOW_END}T23:59:59`);
+
+        const noSchoolDates = Array.from(byDate.entries())
+          .filter(([dateIso, rows]) => {
+            const d = new Date(`${dateIso}T00:00:00`);
+            if (Number.isNaN(d.getTime()) || d < start || d > end) return false;
+            return rows.some((r) => /no school|holiday/i.test(r.event));
+          })
+          .sort(([a], [b]) => a.localeCompare(b))
+          .map(([dateIso, rows]) => {
+            const events = Array.from(new Set(rows.map((r) => r.event)));
+            const first = events[0] || "No School";
+            const label = /spring break/i.test(first)
+              ? "Spring Break"
+              : /memorial day/i.test(first)
+                ? "Memorial Day"
+                : first;
+            return { dateIso, label };
+          });
+
+        const ranges = compressRanges(noSchoolDates);
+        list.innerHTML = "";
+
+        if (!ranges.length) {
+          const li = document.createElement("li");
+          li.textContent = "No no-school dates found in current sync window.";
+          list.appendChild(li);
+          return;
+        }
+
+        for (const range of ranges) {
+          const li = document.createElement("li");
+          li.textContent = range.start === range.end
+            ? `${range.start} (${range.label})`
+            : `${range.start} to ${range.end} (${range.label})`;
+          list.appendChild(li);
+        }
+      }
+
+      try {
+        const csvUrl = await resolveCsvUrl();
+        const response = await fetch(csvUrl, { cache: "no-store" });
+        if (!response.ok) throw new Error(`CSV fetch failed: ${response.status}`);
+
+        const csvText = await response.text();
+        const rows = parseCsv(csvText)
+          .filter((r) => /no school|holiday|spring break/i.test(r.event));
+
+        const byDate = new Map();
+        for (const row of rows) {
+          if (!byDate.has(row.dateIso)) byDate.set(row.dateIso, []);
+          byDate.get(row.dateIso).push(row);
+        }
+
+        updateTables(byDate);
+        updateSummary(byDate);
+      } catch (error) {
+        // Keep existing hardcoded content if sync fails.
+        console.warn("No-school sync failed:", error);
       }
     })();
   </script>
