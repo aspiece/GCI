@@ -106,6 +106,21 @@
       background: #fff9ef;
     }
 
+    /* Visual week markers */
+    tbody tr.week-start td {
+      border-top: 4px double #0f766e;
+    }
+
+    tbody tr.week-end td {
+      background: #eef7ff;
+    }
+
+    .week-key {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
     .print {
       margin-top: 8px;
       padding: 8px 12px;
@@ -178,7 +193,9 @@
       <p>Week of 2026-03-16: first week of the new Computer Hardware teacher.</p>
       <p>Computer Science: students work on problem sets daily until each due date.</p>
       <p>Computer Hardware lab window: 2026-03-19 to 2026-03-27 (Helpdesk Lab - Computer Build).</p>
+      <p>First session Computer Hardware and Computer Science: Helpdesk Lab - 3D Printing, 2026-04-06 to 2026-04-10.</p>
       <button class="print" onclick="window.print()">Print / Save PDF</button>
+      <p class="week-key">Week marker: double line = start of week, light blue row = Friday.</p>
     </section>
 
     <section class="card">
@@ -327,32 +344,32 @@
           </tr>
           <tr>
             <td>2026-04-06</td>
-            <td></td>
-            <td></td>
+            <td>Helpdesk Lab - 3D Printing</td>
+            <td>1st session 5-day lab</td>
             <td>Beecher High School; Bentley Community Schools; Davison Community Schools; Lakeville High School</td>
           </tr>
           <tr>
             <td>2026-04-07</td>
-            <td></td>
-            <td></td>
+            <td>Helpdesk Lab - 3D Printing</td>
+            <td>1st session 5-day lab</td>
             <td>None</td>
           </tr>
           <tr>
             <td>2026-04-08</td>
-            <td></td>
-            <td></td>
+            <td>Helpdesk Lab - 3D Printing</td>
+            <td>1st session 5-day lab</td>
             <td>Flushing Community Schools</td>
           </tr>
           <tr>
             <td>2026-04-09</td>
-            <td></td>
-            <td></td>
+            <td>Helpdesk Lab - 3D Printing</td>
+            <td>1st session 5-day lab</td>
             <td>None</td>
           </tr>
           <tr>
             <td>2026-04-10</td>
-            <td></td>
-            <td></td>
+            <td>Helpdesk Lab - 3D Printing</td>
+            <td>1st session 5-day lab</td>
             <td>C:\Users\aspie</td>
           </tr>
           <tr>
@@ -751,32 +768,32 @@
           </tr>
           <tr>
             <td>2026-04-06</td>
-            <td></td>
-            <td></td>
+            <td>Helpdesk Lab - 3D Printing</td>
+            <td>1st session 5-day lab</td>
             <td>Beecher High School; Bentley Community Schools; Davison Community Schools; Lakeville High School</td>
           </tr>
           <tr>
             <td>2026-04-07</td>
-            <td></td>
-            <td></td>
+            <td>Helpdesk Lab - 3D Printing</td>
+            <td>1st session 5-day lab</td>
             <td>None</td>
           </tr>
           <tr>
             <td>2026-04-08</td>
-            <td></td>
-            <td></td>
+            <td>Helpdesk Lab - 3D Printing</td>
+            <td>1st session 5-day lab</td>
             <td>Flushing Community Schools</td>
           </tr>
           <tr>
             <td>2026-04-09</td>
-            <td></td>
-            <td></td>
+            <td>Helpdesk Lab - 3D Printing</td>
+            <td>1st session 5-day lab</td>
             <td>None</td>
           </tr>
           <tr>
             <td>2026-04-10</td>
-            <td></td>
-            <td></td>
+            <td>Helpdesk Lab - 3D Printing</td>
+            <td>1st session 5-day lab</td>
             <td>None</td>
           </tr>
           <tr>
@@ -1035,6 +1052,25 @@
       </table>
     </section>
   </main>
+  <script>
+    // Mark week boundaries from the date in the first table column.
+    (function addWeekMarkers() {
+      const rows = document.querySelectorAll("tbody tr");
+      for (const row of rows) {
+        const firstCell = row.querySelector("td");
+        if (!firstCell) continue;
+        const text = (firstCell.textContent || "").trim();
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(text)) continue;
+
+        const date = new Date(text + "T00:00:00");
+        if (Number.isNaN(date.getTime())) continue;
+
+        const day = date.getDay();
+        if (day === 1) row.classList.add("week-start"); // Monday
+        if (day === 5) row.classList.add("week-end");   // Friday
+      }
+    })();
+  </script>
 </body>
 
 </html>

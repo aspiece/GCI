@@ -17,6 +17,8 @@ Computer Hardware focus window: 2026-03-05 to 2026-03-12 (Computer Design presen
 Week of 2026-03-16: first week of the new Computer Hardware teacher.
 Computer Science: students work on problem sets daily until each due date.
 Computer Hardware lab window: 2026-03-19 to 2026-03-27 (Helpdesk Lab - Computer Build).
+First session Computer Hardware and Computer Science: Helpdesk Lab - 3D Printing, 2026-04-06 to 2026-04-10.
+Second session Computer Hardware and Computer Science: Helpdesk Lab - 3D Printing, 2026-04-13 to 2026-04-17.
 
 ## Intro to Computer Science
 
@@ -43,16 +45,16 @@ Computer Hardware lab window: 2026-03-19 to 2026-03-27 (Helpdesk Lab - Computer 
 | 2026-04-01 |  | No GCI (No School - Spring Break) | All schools (Spring Break) |
 | 2026-04-02 |  | No GCI (No School - Spring Break) | All schools (Spring Break) |
 | 2026-04-03 |  | No GCI (No School - Spring Break) | All schools (Spring Break) |
-| 2026-04-06 |  |  | Beecher High School; Bentley Community Schools; Davison Community Schools; Lakeville High School |
-| 2026-04-07 |  |  | None |
-| 2026-04-08 |  |  | Flushing Community Schools |
-| 2026-04-09 |  |  | None |
-| 2026-04-10 |  |  | None |
-| 2026-04-13 |  |  | None |
-| 2026-04-14 |  |  | None |
-| 2026-04-15 |  |  | None |
-| 2026-04-16 |  | No GCI (No School) | None |
-| 2026-04-17 |  | Virtual Day; NCWIT Award Ceremony on 2026-04-18 | Genesee Early College; Montrose Community Schools |
+| 2026-04-06 | Helpdesk Lab - 3D Printing | 1st session 5-day lab | Beecher High School; Bentley Community Schools; Davison Community Schools; Lakeville High School |
+| 2026-04-07 | Helpdesk Lab - 3D Printing | 1st session 5-day lab | None |
+| 2026-04-08 | Helpdesk Lab - 3D Printing | 1st session 5-day lab | Flushing Community Schools |
+| 2026-04-09 | Helpdesk Lab - 3D Printing | 1st session 5-day lab | None |
+| 2026-04-10 | Helpdesk Lab - 3D Printing | 1st session 5-day lab | None |
+| 2026-04-13 | Helpdesk Lab - 3D Printing | 2nd session 5-day lab | None |
+| 2026-04-14 | Helpdesk Lab - 3D Printing | 2nd session 5-day lab | None |
+| 2026-04-15 | Helpdesk Lab - 3D Printing | 2nd session 5-day lab | None |
+| 2026-04-16 | Helpdesk Lab - 3D Printing | 2nd session 5-day lab; No GCI (No School) | None |
+| 2026-04-17 | Helpdesk Lab - 3D Printing | 2nd session 5-day lab; Virtual Day; NCWIT Award Ceremony on 2026-04-18 | Genesee Early College; Montrose Community Schools |
 | 2026-04-20 | Teamwork | Base Camp (2nd session Computer Science) | None |
 | 2026-04-21 |  |  | None |
 | 2026-04-22 |  |  | None |
@@ -117,16 +119,16 @@ Computer Hardware lab window: 2026-03-19 to 2026-03-27 (Helpdesk Lab - Computer 
 | 2026-04-01 |  | No GCI (No School - Spring Break) | All schools (Spring Break) |
 | 2026-04-02 |  | No GCI (No School - Spring Break) | All schools (Spring Break) |
 | 2026-04-03 |  | No GCI (No School - Spring Break) | All schools (Spring Break) |
-| 2026-04-06 |  |  | Beecher High School; Bentley Community Schools; Davison Community Schools; Lakeville High School |
-| 2026-04-07 |  |  | None |
-| 2026-04-08 |  |  | Flushing Community Schools |
-| 2026-04-09 |  |  | None |
-| 2026-04-10 |  |  | C:\Users\aspie |
-| 2026-04-13 |  |  | None |
-| 2026-04-14 |  |  | None |
-| 2026-04-15 |  |  | None |
-| 2026-04-16 |  | No GCI (No School) | None |
-| 2026-04-17 |  | Virtual Day; NCWIT Award Ceremony on 2026-04-18 | C:\Users\aspie |
+| 2026-04-06 | Helpdesk Lab - 3D Printing | 1st session 5-day lab | Beecher High School; Bentley Community Schools; Davison Community Schools; Lakeville High School |
+| 2026-04-07 | Helpdesk Lab - 3D Printing | 1st session 5-day lab | None |
+| 2026-04-08 | Helpdesk Lab - 3D Printing | 1st session 5-day lab | Flushing Community Schools |
+| 2026-04-09 | Helpdesk Lab - 3D Printing | 1st session 5-day lab | None |
+| 2026-04-10 | Helpdesk Lab - 3D Printing | 1st session 5-day lab | None |
+| 2026-04-13 | Helpdesk Lab - 3D Printing | 2nd session 5-day lab | None |
+| 2026-04-14 | Helpdesk Lab - 3D Printing | 2nd session 5-day lab | None |
+| 2026-04-15 | Helpdesk Lab - 3D Printing | 2nd session 5-day lab | None |
+| 2026-04-16 | Helpdesk Lab - 3D Printing | 2nd session 5-day lab; No GCI (No School) | None |
+| 2026-04-17 | Helpdesk Lab - 3D Printing | 2nd session 5-day lab; Virtual Day; NCWIT Award Ceremony on 2026-04-18 | Genesee Early College; Montrose Community Schools |
 | 2026-04-20 |  |  | None |
 | 2026-04-21 |  |  | None |
 | 2026-04-22 |  |  | None |
