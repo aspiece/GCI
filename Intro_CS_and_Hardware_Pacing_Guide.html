@@ -1,6 +1,5 @@
 ﻿<!doctype html>
 <html lang="en">
-
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -14,11 +13,7 @@
       --line: #d7ccc0;
       --muted: #4b5563;
     }
-
-    * {
-      box-sizing: border-box;
-    }
-
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
@@ -28,45 +23,32 @@
         radial-gradient(700px 320px at 95% 0%, #fde68a, transparent),
         var(--bg);
     }
-
     .wrap {
       max-width: 1300px;
       margin: 24px auto 48px;
       padding: 0 16px;
     }
-
     .hero {
       background: linear-gradient(130deg, #ffffff, #f3fdfb);
       border: 1px solid var(--line);
       border-radius: 14px;
       padding: 18px;
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 10px 24px rgba(0,0,0,0.08);
       margin-bottom: 16px;
     }
-
     h1 {
       margin: 0 0 10px;
       color: #0b4f4a;
       font-size: 30px;
       letter-spacing: 0.3px;
     }
-
     h2 {
       margin: 0 0 10px;
       color: #0b4f4a;
       font-size: 23px;
     }
-
-    .hero p {
-      margin: 6px 0;
-      color: var(--muted);
-    }
-
-    .hero ul {
-      margin: 6px 0 0 20px;
-      color: var(--muted);
-    }
-
+    .hero p { margin: 6px 0; color: var(--muted); }
+    .hero ul { margin: 6px 0 0 20px; color: var(--muted); }
     .card {
       background: var(--panel);
       border: 1px solid var(--line);
@@ -74,16 +56,14 @@
       padding: 14px;
       margin-top: 14px;
       overflow-x: auto;
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.05);
     }
-
     table {
       width: 100%;
       border-collapse: collapse;
       min-width: 880px;
       font-size: 14px;
     }
-
     thead th {
       position: sticky;
       top: 0;
@@ -94,33 +74,16 @@
       border: 1px solid var(--line);
       padding: 8px;
     }
-
     td {
       border: 1px solid var(--line);
       padding: 8px;
       vertical-align: top;
       line-height: 1.35;
     }
-
-    tbody tr:nth-child(even) {
-      background: #fff9ef;
-    }
-
-    /* Visual week markers */
-    tbody tr.week-start td {
-      border-top: 4px double #0f766e;
-    }
-
-    tbody tr.week-end td {
-      background: #eef7ff;
-    }
-
-    .week-key {
-      margin-top: 10px;
-      color: var(--muted);
-      font-size: 0.92rem;
-    }
-
+    tbody tr:nth-child(even) { background: #fff9ef; }
+    tbody tr.week-start td { border-top: 4px double #0f766e; }
+    tbody tr.week-end td { background: #eef7ff; }
+    .week-key { margin-top: 10px; color: var(--muted); font-size: 0.92rem; }
     .print {
       margin-top: 8px;
       padding: 8px 12px;
@@ -131,929 +94,189 @@
       cursor: pointer;
       font-weight: 600;
     }
-
     @media (max-width: 900px) {
-      h1 {
-        font-size: 24px;
-      }
-
-      h2 {
-        font-size: 20px;
-      }
-
-      .hero,
-      .card {
-        padding: 12px;
-      }
-
-      table {
-        font-size: 13px;
-      }
+      h1 { font-size: 24px; }
+      h2 { font-size: 20px; }
+      .hero, .card { padding: 12px; }
+      table { font-size: 13px; }
     }
-
     @media print {
-      body {
-        background: #fff;
-      }
-
-      .print {
-        display: none;
-      }
-
-      .hero,
-      .card {
-        box-shadow: none;
-      }
-
-      thead th {
-        position: static;
-      }
+      body { background: #fff; }
+      .print { display: none; }
+      .hero, .card { box-shadow: none; }
+      thead th { position: static; }
     }
   </style>
 </head>
-
 <body>
   <main class="wrap">
     <section class="hero">
       <h1>Intro to Computer Hardware and Intro to Computer Science</h1>
       <p>Time window: 2026-03-09 through 2026-06-09.</p>
-      <p>GCI no school days:</p>
-      <ul>
-        <li>2026-03-30 to 2026-04-03 (Spring Break)</li>
-        <li>2026-04-16</li>
-        <li>2026-05-22</li>
-        <li>2026-05-25 (Memorial Day)</li>
-      </ul>
-      <p>Spring Break (all schools): 2026-03-30 to 2026-04-03.</p>
-      <p>Virtual Day: 2026-04-17.</p>
-      <p>Marking Period 3: last day to submit work is 2026-03-18.</p>
-      <p>NCWIT Award Ceremony: 2026-04-18.</p>
-      <p>Computer Hardware focus window: 2026-03-05 to 2026-03-12 (Computer Design presentations, classwork catch-up,
-        Network Cable data).</p>
-      <p>Week of 2026-03-16: first week of the new Computer Hardware teacher.</p>
-      <p>Computer Science: students work on problem sets daily until each due date.</p>
-      <p>Computer Hardware lab window: 2026-03-19 to 2026-03-27 (Helpdesk Lab - Computer Build).</p>
-      <p>First session Computer Hardware and Computer Science: Helpdesk Lab - 3D Printing, 2026-04-06 to 2026-04-10.</p>
+<p>GCI no school days:</p><ul><li>2026-03-30 to 2026-04-03 (Spring Break)</li>
+<li>2026-04-16</li>
+<li>2026-05-22</li>
+<li>2026-05-25 (Memorial Day)</li></ul>
+<p>Spring Break (all schools): 2026-03-30 to 2026-04-03.</p>
+<p>Virtual Day: 2026-04-17.</p>
+<p>Marking Period 3: last day to submit work is 2026-03-18.</p>
+<p>NCWIT Award Ceremony: 2026-04-18.</p>
+<p>Computer Hardware focus window: 2026-03-05 to 2026-03-12 (Computer Design presentations, classwork catch-up, Network Cable data).</p>
+<p>Week of 2026-03-16: first week of the new Computer Hardware teacher.</p>
+<p>Computer Science: students work on problem sets daily until each due date.</p>
+<p>Computer Hardware lab window: 2026-03-19 to 2026-03-27 (Helpdesk Lab - Computer Build).</p>
+<p>First session Computer Hardware and Computer Science: Helpdesk Lab - 3D Printing, 2026-04-06 to 2026-04-10.</p>
+<p>Second session Computer Hardware and Computer Science: Helpdesk Lab - 3D Printing, 2026-04-13 to 2026-04-17.</p>
       <button class="print" onclick="window.print()">Print / Save PDF</button>
       <p class="week-key">Week marker: double line = start of week, light blue row = Friday.</p>
     </section>
 
     <section class="card">
       <h2>Intro to Computer Hardware</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Dates</th>
-            <th>Lesson/Lab Name</th>
-            <th>GCI Schedule notes</th>
-            <th>Home School no school</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>2026-03-05</td>
-            <td>Computer Design Presentations</td>
-            <td>Reference day; classwork catch-up; Network Cable data</td>
-            <td>Reference row</td>
-          </tr>
-          <tr>
-            <td>2026-03-06</td>
-            <td>Computer Design Presentations</td>
-            <td>Reference day; classwork catch-up; Network Cable data; Network Cabling Practice due</td>
-            <td>Reference row</td>
-          </tr>
-          <tr>
-            <td>2026-03-09</td>
-            <td>Classwork Catch-up and Network Cable Data</td>
-            <td>Base Camp (Computer Hardware); classwork catch-up; Network Cable data</td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-03-10</td>
-            <td>Computer Design Presentations</td>
-            <td>Classwork catch-up; Network Cable data</td>
-            <td>Powers Catholic High School</td>
-          </tr>
-          <tr>
-            <td>2026-03-11</td>
-            <td>Classwork Catch-up and Network Cable Data</td>
-            <td>Classwork catch-up; Network Cable data</td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-03-12</td>
-            <td>Computer Design Presentations</td>
-            <td>Classwork catch-up; Network Cable data</td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-03-13</td>
-            <td>Certification - Network Fundamentals</td>
-            <td>Network Cabling Practice due; Certification - Network Fundamentals due</td>
-            <td>Lakeville High School; Swartz Creek Community Schools</td>
-          </tr>
-          <tr>
-            <td>2026-03-16</td>
-            <td></td>
-            <td></td>
-            <td>Madison Academy</td>
-          </tr>
-          <tr>
-            <td>2026-03-17</td>
-            <td></td>
-            <td></td>
-            <td>Madison Academy</td>
-          </tr>
-          <tr>
-            <td>2026-03-18</td>
-            <td></td>
-            <td>MP3 work submission deadline</td>
-            <td>Beecher High School; Madison Academy; Southwestern Academy</td>
-          </tr>
-          <tr>
-            <td>2026-03-19</td>
-            <td></td>
-            <td></td>
-            <td>Madison Academy</td>
-          </tr>
-          <tr>
-            <td>2026-03-20</td>
-            <td></td>
-            <td></td>
-            <td>C:\Users\aspie</td>
-          </tr>
-          <tr>
-            <td>2026-03-23</td>
-            <td></td>
-            <td></td>
-            <td>Powers Catholic High School</td>
-          </tr>
-          <tr>
-            <td>2026-03-24</td>
-            <td></td>
-            <td></td>
-            <td>Southwestern Academy</td>
-          </tr>
-          <tr>
-            <td>2026-03-25</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-03-26</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-03-27</td>
-            <td></td>
-            <td></td>
-            <td>C:\Users\aspie</td>
-          </tr>
-          <tr>
-            <td>2026-03-30</td>
-            <td></td>
-            <td>No GCI (No School - Spring Break)</td>
-            <td>All schools (Spring Break)</td>
-          </tr>
-          <tr>
-            <td>2026-03-31</td>
-            <td></td>
-            <td>No GCI (No School - Spring Break)</td>
-            <td>All schools (Spring Break)</td>
-          </tr>
-          <tr>
-            <td>2026-04-01</td>
-            <td></td>
-            <td>No GCI (No School - Spring Break)</td>
-            <td>All schools (Spring Break)</td>
-          </tr>
-          <tr>
-            <td>2026-04-02</td>
-            <td></td>
-            <td>No GCI (No School - Spring Break)</td>
-            <td>All schools (Spring Break)</td>
-          </tr>
-          <tr>
-            <td>2026-04-03</td>
-            <td></td>
-            <td>No GCI (No School - Spring Break)</td>
-            <td>All schools (Spring Break)</td>
-          </tr>
-          <tr>
-            <td>2026-04-06</td>
-            <td>Helpdesk Lab - 3D Printing</td>
-            <td>1st session 5-day lab</td>
-            <td>Beecher High School; Bentley Community Schools; Davison Community Schools; Lakeville High School</td>
-          </tr>
-          <tr>
-            <td>2026-04-07</td>
-            <td>Helpdesk Lab - 3D Printing</td>
-            <td>1st session 5-day lab</td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-04-08</td>
-            <td>Helpdesk Lab - 3D Printing</td>
-            <td>1st session 5-day lab</td>
-            <td>Flushing Community Schools</td>
-          </tr>
-          <tr>
-            <td>2026-04-09</td>
-            <td>Helpdesk Lab - 3D Printing</td>
-            <td>1st session 5-day lab</td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-04-10</td>
-            <td>Helpdesk Lab - 3D Printing</td>
-            <td>1st session 5-day lab</td>
-            <td>C:\Users\aspie</td>
-          </tr>
-          <tr>
-            <td>2026-04-13</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-04-14</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-04-15</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-04-16</td>
-            <td></td>
-            <td>No GCI (No School)</td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-04-17</td>
-            <td></td>
-            <td>Virtual Day; NCWIT Award Ceremony on 2026-04-18</td>
-            <td>C:\Users\aspie</td>
-          </tr>
-          <tr>
-            <td>2026-04-20</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-04-21</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-04-22</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-04-23</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-04-24</td>
-            <td></td>
-            <td></td>
-            <td>C:\Users\aspie</td>
-          </tr>
-          <tr>
-            <td>2026-04-27</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-04-28</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-04-29</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-04-30</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-05-01</td>
-            <td></td>
-            <td></td>
-            <td>C:\Users\aspie</td>
-          </tr>
-          <tr>
-            <td>2026-05-04</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-05-05</td>
-            <td></td>
-            <td></td>
-            <td>Grand Blanc Community Schools</td>
-          </tr>
-          <tr>
-            <td>2026-05-06</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-05-07</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-05-08</td>
-            <td></td>
-            <td></td>
-            <td>C:\Users\aspie</td>
-          </tr>
-          <tr>
-            <td>2026-05-11</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-05-12</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-05-13</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-05-14</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-05-15</td>
-            <td></td>
-            <td></td>
-            <td>C:\Users\aspie</td>
-          </tr>
-          <tr>
-            <td>2026-05-18</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-05-19</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-05-20</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-05-21</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-05-22</td>
-            <td></td>
-            <td>No GCI (No School)</td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-05-25</td>
-            <td></td>
-            <td>No GCI (No School - Memorial Day)</td>
-            <td>Memorial Day (No School)</td>
-          </tr>
-          <tr>
-            <td>2026-05-26</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-05-27</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-05-28</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-05-29</td>
-            <td></td>
-            <td></td>
-            <td>C:\Users\aspie</td>
-          </tr>
-          <tr>
-            <td>2026-06-01</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-06-02</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-06-03</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-06-04</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-06-05</td>
-            <td></td>
-            <td></td>
-            <td>C:\Users\aspie</td>
-          </tr>
-          <tr>
-            <td>2026-06-08</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-06-09</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-        </tbody>
-      </table>
+      <table><thead><tr><th>Dates</th><th>Lesson/Lab Name</th><th>GCI Schedule notes</th><th>Home School no school</th></tr></thead><tbody><tr><td>2026-03-05</td><td>Computer Design Presentations</td><td>Reference day; classwork catch-up; Network Cable data</td><td>Reference row</td></tr>
+<tr><td>2026-03-06</td><td>Computer Design Presentations</td><td>Reference day; classwork catch-up; Network Cable data; Network Cabling Practice due</td><td>Reference row</td></tr>
+<tr><td>2026-03-09</td><td>Classwork Catch-up and Network Cable Data</td><td>Base Camp (Computer Hardware); classwork catch-up; Network Cable data</td><td>None</td></tr>
+<tr><td>2026-03-10</td><td>Computer Design Presentations</td><td>Classwork catch-up; Network Cable data</td><td>Powers Catholic High School</td></tr>
+<tr><td>2026-03-11</td><td>Classwork Catch-up and Network Cable Data</td><td>Classwork catch-up; Network Cable data</td><td>None</td></tr>
+<tr><td>2026-03-12</td><td>Computer Design Presentations</td><td>Classwork catch-up; Network Cable data</td><td>None</td></tr>
+<tr><td>2026-03-13</td><td>Certification - Network Fundamentals</td><td>Network Cabling Practice due; Certification - Network Fundamentals due</td><td>Lakeville High School; Swartz Creek Community Schools</td></tr>
+<tr><td>2026-03-16</td><td></td><td></td><td>Madison Academy</td></tr>
+<tr><td>2026-03-17</td><td></td><td></td><td>Madison Academy</td></tr>
+<tr><td>2026-03-18</td><td></td><td>MP3 work submission deadline</td><td>Beecher High School; Madison Academy; Southwestern Academy</td></tr>
+<tr><td>2026-03-19</td><td></td><td></td><td>Madison Academy</td></tr>
+<tr><td>2026-03-20</td><td></td><td></td><td>C:\Users\aspie</td></tr>
+<tr><td>2026-03-23</td><td></td><td></td><td>Powers Catholic High School</td></tr>
+<tr><td>2026-03-24</td><td></td><td></td><td>Southwestern Academy</td></tr>
+<tr><td>2026-03-25</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-03-26</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-03-27</td><td></td><td></td><td>C:\Users\aspie</td></tr>
+<tr><td>2026-03-30</td><td></td><td>No GCI (No School - Spring Break)</td><td>All schools (Spring Break)</td></tr>
+<tr><td>2026-03-31</td><td></td><td>No GCI (No School - Spring Break)</td><td>All schools (Spring Break)</td></tr>
+<tr><td>2026-04-01</td><td></td><td>No GCI (No School - Spring Break)</td><td>All schools (Spring Break)</td></tr>
+<tr><td>2026-04-02</td><td></td><td>No GCI (No School - Spring Break)</td><td>All schools (Spring Break)</td></tr>
+<tr><td>2026-04-03</td><td></td><td>No GCI (No School - Spring Break)</td><td>All schools (Spring Break)</td></tr>
+<tr><td>2026-04-06</td><td>Helpdesk Lab - 3D Printing</td><td>1st session 5-day lab</td><td>Beecher High School; Bentley Community Schools; Davison Community Schools; Lakeville High School</td></tr>
+<tr><td>2026-04-07</td><td>Helpdesk Lab - 3D Printing</td><td>1st session 5-day lab</td><td>None</td></tr>
+<tr><td>2026-04-08</td><td>Helpdesk Lab - 3D Printing</td><td>1st session 5-day lab</td><td>Flushing Community Schools</td></tr>
+<tr><td>2026-04-09</td><td>Helpdesk Lab - 3D Printing</td><td>1st session 5-day lab</td><td>None</td></tr>
+<tr><td>2026-04-10</td><td>Helpdesk Lab - 3D Printing</td><td>1st session 5-day lab</td><td>None</td></tr>
+<tr><td>2026-04-13</td><td>Helpdesk Lab - 3D Printing</td><td>2nd session 5-day lab</td><td>None</td></tr>
+<tr><td>2026-04-14</td><td>Helpdesk Lab - 3D Printing</td><td>2nd session 5-day lab</td><td>None</td></tr>
+<tr><td>2026-04-15</td><td>Helpdesk Lab - 3D Printing</td><td>2nd session 5-day lab</td><td>None</td></tr>
+<tr><td>2026-04-16</td><td>Helpdesk Lab - 3D Printing</td><td>2nd session 5-day lab; No GCI (No School)</td><td>None</td></tr>
+<tr><td>2026-04-17</td><td>Helpdesk Lab - 3D Printing</td><td>2nd session 5-day lab; Virtual Day; NCWIT Award Ceremony on 2026-04-18</td><td>Genesee Early College; Montrose Community Schools</td></tr>
+<tr><td>2026-04-20</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-04-21</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-04-22</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-04-23</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-04-24</td><td></td><td></td><td>C:\Users\aspie</td></tr>
+<tr><td>2026-04-27</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-04-28</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-04-29</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-04-30</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-05-01</td><td></td><td></td><td>C:\Users\aspie</td></tr>
+<tr><td>2026-05-04</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-05-05</td><td></td><td></td><td>Grand Blanc Community Schools</td></tr>
+<tr><td>2026-05-06</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-05-07</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-05-08</td><td></td><td></td><td>C:\Users\aspie</td></tr>
+<tr><td>2026-05-11</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-05-12</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-05-13</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-05-14</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-05-15</td><td></td><td></td><td>C:\Users\aspie</td></tr>
+<tr><td>2026-05-18</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-05-19</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-05-20</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-05-21</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-05-22</td><td></td><td>No GCI (No School)</td><td>None</td></tr>
+<tr><td>2026-05-25</td><td></td><td>No GCI (No School - Memorial Day)</td><td>Memorial Day (No School)</td></tr>
+<tr><td>2026-05-26</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-05-27</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-05-28</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-05-29</td><td></td><td></td><td>C:\Users\aspie</td></tr>
+<tr><td>2026-06-01</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-06-02</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-06-03</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-06-04</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-06-05</td><td></td><td></td><td>C:\Users\aspie</td></tr>
+<tr><td>2026-06-08</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-06-09</td><td></td><td></td><td>None</td></tr></tbody></table>
     </section>
 
     <section class="card">
       <h2>Intro to Computer Science</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Dates</th>
-            <th>Lesson/Lab Name</th>
-            <th>GCI Schedule notes</th>
-            <th>Home School no school</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>2026-03-06</td>
-            <td>Problem Set Due Date</td>
-            <td>Session 1: Problem Set 7 due; Session 2: Problem Set 6 due</td>
-            <td>Reference row</td>
-          </tr>
-          <tr>
-            <td>2026-03-09</td>
-            <td>Teamwork</td>
-            <td>Base Camp (1st and 3rd session Computer Science); daily problem set work time</td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-03-10</td>
-            <td>Problem Set Work Time</td>
-            <td>Daily problem set work time until due date</td>
-            <td>Powers Catholic High School</td>
-          </tr>
-          <tr>
-            <td>2026-03-11</td>
-            <td>Problem Set Work Time</td>
-            <td>Daily problem set work time until due date</td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-03-12</td>
-            <td>Problem Set Work Time</td>
-            <td>Daily problem set work time until due date</td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-03-13</td>
-            <td>Problem Set Due Date</td>
-            <td>Session 2: Problem Set 7 due</td>
-            <td>Lakeville High School; Swartz Creek Community Schools</td>
-          </tr>
-          <tr>
-            <td>2026-03-16</td>
-            <td></td>
-            <td>First week of new Computer Hardware teacher</td>
-            <td>Madison Academy</td>
-          </tr>
-          <tr>
-            <td>2026-03-17</td>
-            <td></td>
-            <td></td>
-            <td>Madison Academy</td>
-          </tr>
-          <tr>
-            <td>2026-03-18</td>
-            <td></td>
-            <td>MP3 work submission deadline</td>
-            <td>Beecher High School; Madison Academy; Southwestern Academy</td>
-          </tr>
-          <tr>
-            <td>2026-03-19</td>
-            <td>Helpdesk Lab - Computer Build</td>
-            <td>Computer build lab work session</td>
-            <td>Madison Academy</td>
-          </tr>
-          <tr>
-            <td>2026-03-20</td>
-            <td>Helpdesk Lab - Computer Build</td>
-            <td>Computer build lab work session</td>
-            <td>Madison Academy</td>
-          </tr>
-          <tr>
-            <td>2026-03-23</td>
-            <td>Helpdesk Lab - Computer Build</td>
-            <td>Computer build lab work session</td>
-            <td>Powers Catholic High School</td>
-          </tr>
-          <tr>
-            <td>2026-03-24</td>
-            <td>Helpdesk Lab - Computer Build</td>
-            <td>Computer build lab work session</td>
-            <td>Southwestern Academy</td>
-          </tr>
-          <tr>
-            <td>2026-03-25</td>
-            <td>Helpdesk Lab - Computer Build</td>
-            <td>Computer build lab work session</td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-03-26</td>
-            <td>Helpdesk Lab - Computer Build</td>
-            <td>Computer build lab work session</td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-03-27</td>
-            <td>Helpdesk Lab - Computer Build</td>
-            <td>Computer build lab wrap-up</td>
-            <td>Bentley Community Schools; Powers Catholic High School</td>
-          </tr>
-          <tr>
-            <td>2026-03-30</td>
-            <td></td>
-            <td>No GCI (No School - Spring Break)</td>
-            <td>All schools (Spring Break)</td>
-          </tr>
-          <tr>
-            <td>2026-03-31</td>
-            <td></td>
-            <td>No GCI (No School - Spring Break)</td>
-            <td>All schools (Spring Break)</td>
-          </tr>
-          <tr>
-            <td>2026-04-01</td>
-            <td></td>
-            <td>No GCI (No School - Spring Break)</td>
-            <td>All schools (Spring Break)</td>
-          </tr>
-          <tr>
-            <td>2026-04-02</td>
-            <td></td>
-            <td>No GCI (No School - Spring Break)</td>
-            <td>All schools (Spring Break)</td>
-          </tr>
-          <tr>
-            <td>2026-04-03</td>
-            <td></td>
-            <td>No GCI (No School - Spring Break)</td>
-            <td>All schools (Spring Break)</td>
-          </tr>
-          <tr>
-            <td>2026-04-06</td>
-            <td>Helpdesk Lab - 3D Printing</td>
-            <td>1st session 5-day lab</td>
-            <td>Beecher High School; Bentley Community Schools; Davison Community Schools; Lakeville High School</td>
-          </tr>
-          <tr>
-            <td>2026-04-07</td>
-            <td>Helpdesk Lab - 3D Printing</td>
-            <td>1st session 5-day lab</td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-04-08</td>
-            <td>Helpdesk Lab - 3D Printing</td>
-            <td>1st session 5-day lab</td>
-            <td>Flushing Community Schools</td>
-          </tr>
-          <tr>
-            <td>2026-04-09</td>
-            <td>Helpdesk Lab - 3D Printing</td>
-            <td>1st session 5-day lab</td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-04-10</td>
-            <td>Helpdesk Lab - 3D Printing</td>
-            <td>1st session 5-day lab</td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-04-13</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-04-14</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-04-15</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-04-16</td>
-            <td></td>
-            <td>No GCI (No School)</td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-04-17</td>
-            <td></td>
-            <td>Virtual Day; NCWIT Award Ceremony on 2026-04-18</td>
-            <td>Genesee Early College; Montrose Community Schools</td>
-          </tr>
-          <tr>
-            <td>2026-04-20</td>
-            <td>Teamwork</td>
-            <td>Base Camp (2nd session Computer Science)</td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-04-21</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-04-22</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-04-23</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-04-24</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-04-27</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-04-28</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-04-29</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-04-30</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-05-01</td>
-            <td></td>
-            <td></td>
-            <td>Bendle Public Schools; Fenton Area Public Schools; Lakeville High School</td>
-          </tr>
-          <tr>
-            <td>2026-05-04</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-05-05</td>
-            <td></td>
-            <td></td>
-            <td>Grand Blanc Community Schools</td>
-          </tr>
-          <tr>
-            <td>2026-05-06</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-05-07</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-05-08</td>
-            <td></td>
-            <td></td>
-            <td>Swartz Creek Community Schools</td>
-          </tr>
-          <tr>
-            <td>2026-05-11</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-05-12</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-05-13</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-05-14</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-05-15</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-05-18</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-05-19</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-05-20</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-05-21</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-05-22</td>
-            <td></td>
-            <td>No GCI (No School)</td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-05-25</td>
-            <td></td>
-            <td>No GCI (No School - Memorial Day)</td>
-            <td>Memorial Day (No School)</td>
-          </tr>
-          <tr>
-            <td>2026-05-26</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-05-27</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-05-28</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-05-29</td>
-            <td></td>
-            <td></td>
-            <td>Swartz Creek Community Schools</td>
-          </tr>
-          <tr>
-            <td>2026-06-01</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-06-02</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-06-03</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-06-04</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-06-05</td>
-            <td></td>
-            <td></td>
-            <td>Davison Community Schools</td>
-          </tr>
-          <tr>
-            <td>2026-06-08</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td>2026-06-09</td>
-            <td></td>
-            <td></td>
-            <td>None</td>
-          </tr>
-        </tbody>
-      </table>
+      <table><thead><tr><th>Dates</th><th>Lesson/Lab Name</th><th>GCI Schedule notes</th><th>Home School no school</th></tr></thead><tbody><tr><td>2026-03-06</td><td>Problem Set Due Date</td><td>Session 1: Problem Set 7 due; Session 2: Problem Set 6 due</td><td>Reference row</td></tr>
+<tr><td>2026-03-09</td><td>Teamwork</td><td>Base Camp (1st and 3rd session Computer Science); daily problem set work time</td><td>None</td></tr>
+<tr><td>2026-03-10</td><td>Problem Set Work Time</td><td>Daily problem set work time until due date</td><td>Powers Catholic High School</td></tr>
+<tr><td>2026-03-11</td><td>Problem Set Work Time</td><td>Daily problem set work time until due date</td><td>None</td></tr>
+<tr><td>2026-03-12</td><td>Problem Set Work Time</td><td>Daily problem set work time until due date</td><td>None</td></tr>
+<tr><td>2026-03-13</td><td>Problem Set Due Date</td><td>Session 2: Problem Set 7 due</td><td>Lakeville High School; Swartz Creek Community Schools</td></tr>
+<tr><td>2026-03-16</td><td></td><td>First week of new Computer Hardware teacher</td><td>Madison Academy</td></tr>
+<tr><td>2026-03-17</td><td></td><td></td><td>Madison Academy</td></tr>
+<tr><td>2026-03-18</td><td></td><td>MP3 work submission deadline</td><td>Beecher High School; Madison Academy; Southwestern Academy</td></tr>
+<tr><td>2026-03-19</td><td>Helpdesk Lab - Computer Build</td><td>Computer build lab work session</td><td>Madison Academy</td></tr>
+<tr><td>2026-03-20</td><td>Helpdesk Lab - Computer Build</td><td>Computer build lab work session</td><td>Madison Academy</td></tr>
+<tr><td>2026-03-23</td><td>Helpdesk Lab - Computer Build</td><td>Computer build lab work session</td><td>Powers Catholic High School</td></tr>
+<tr><td>2026-03-24</td><td>Helpdesk Lab - Computer Build</td><td>Computer build lab work session</td><td>Southwestern Academy</td></tr>
+<tr><td>2026-03-25</td><td>Helpdesk Lab - Computer Build</td><td>Computer build lab work session</td><td>None</td></tr>
+<tr><td>2026-03-26</td><td>Helpdesk Lab - Computer Build</td><td>Computer build lab work session</td><td>None</td></tr>
+<tr><td>2026-03-27</td><td>Helpdesk Lab - Computer Build</td><td>Computer build lab wrap-up</td><td>Bentley Community Schools; Powers Catholic High School</td></tr>
+<tr><td>2026-03-30</td><td></td><td>No GCI (No School - Spring Break)</td><td>All schools (Spring Break)</td></tr>
+<tr><td>2026-03-31</td><td></td><td>No GCI (No School - Spring Break)</td><td>All schools (Spring Break)</td></tr>
+<tr><td>2026-04-01</td><td></td><td>No GCI (No School - Spring Break)</td><td>All schools (Spring Break)</td></tr>
+<tr><td>2026-04-02</td><td></td><td>No GCI (No School - Spring Break)</td><td>All schools (Spring Break)</td></tr>
+<tr><td>2026-04-03</td><td></td><td>No GCI (No School - Spring Break)</td><td>All schools (Spring Break)</td></tr>
+<tr><td>2026-04-06</td><td>Helpdesk Lab - 3D Printing</td><td>1st session 5-day lab</td><td>Beecher High School; Bentley Community Schools; Davison Community Schools; Lakeville High School</td></tr>
+<tr><td>2026-04-07</td><td>Helpdesk Lab - 3D Printing</td><td>1st session 5-day lab</td><td>None</td></tr>
+<tr><td>2026-04-08</td><td>Helpdesk Lab - 3D Printing</td><td>1st session 5-day lab</td><td>Flushing Community Schools</td></tr>
+<tr><td>2026-04-09</td><td>Helpdesk Lab - 3D Printing</td><td>1st session 5-day lab</td><td>None</td></tr>
+<tr><td>2026-04-10</td><td>Helpdesk Lab - 3D Printing</td><td>1st session 5-day lab</td><td>None</td></tr>
+<tr><td>2026-04-13</td><td>Helpdesk Lab - 3D Printing</td><td>2nd session 5-day lab</td><td>None</td></tr>
+<tr><td>2026-04-14</td><td>Helpdesk Lab - 3D Printing</td><td>2nd session 5-day lab</td><td>None</td></tr>
+<tr><td>2026-04-15</td><td>Helpdesk Lab - 3D Printing</td><td>2nd session 5-day lab</td><td>None</td></tr>
+<tr><td>2026-04-16</td><td>Helpdesk Lab - 3D Printing</td><td>2nd session 5-day lab; No GCI (No School)</td><td>None</td></tr>
+<tr><td>2026-04-17</td><td>Helpdesk Lab - 3D Printing</td><td>2nd session 5-day lab; Virtual Day; NCWIT Award Ceremony on 2026-04-18</td><td>Genesee Early College; Montrose Community Schools</td></tr>
+<tr><td>2026-04-20</td><td>Teamwork</td><td>Base Camp (2nd session Computer Science)</td><td>None</td></tr>
+<tr><td>2026-04-21</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-04-22</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-04-23</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-04-24</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-04-27</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-04-28</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-04-29</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-04-30</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-05-01</td><td></td><td></td><td>Bendle Public Schools; Fenton Area Public Schools; Lakeville High School</td></tr>
+<tr><td>2026-05-04</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-05-05</td><td></td><td></td><td>Grand Blanc Community Schools</td></tr>
+<tr><td>2026-05-06</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-05-07</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-05-08</td><td></td><td></td><td>Swartz Creek Community Schools</td></tr>
+<tr><td>2026-05-11</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-05-12</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-05-13</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-05-14</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-05-15</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-05-18</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-05-19</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-05-20</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-05-21</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-05-22</td><td></td><td>No GCI (No School)</td><td>None</td></tr>
+<tr><td>2026-05-25</td><td></td><td>No GCI (No School - Memorial Day)</td><td>Memorial Day (No School)</td></tr>
+<tr><td>2026-05-26</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-05-27</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-05-28</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-05-29</td><td></td><td></td><td>Swartz Creek Community Schools</td></tr>
+<tr><td>2026-06-01</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-06-02</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-06-03</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-06-04</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-06-05</td><td></td><td></td><td>Davison Community Schools</td></tr>
+<tr><td>2026-06-08</td><td></td><td></td><td>None</td></tr>
+<tr><td>2026-06-09</td><td></td><td></td><td>None</td></tr></tbody></table>
     </section>
   </main>
   <script>
-    // Mark week boundaries from the date in the first table column.
     (function addWeekMarkers() {
       const rows = document.querySelectorAll("tbody tr");
       for (const row of rows) {
@@ -1061,16 +284,13 @@
         if (!firstCell) continue;
         const text = (firstCell.textContent || "").trim();
         if (!/^\d{4}-\d{2}-\d{2}$/.test(text)) continue;
-
         const date = new Date(text + "T00:00:00");
         if (Number.isNaN(date.getTime())) continue;
-
         const day = date.getDay();
-        if (day === 1) row.classList.add("week-start"); // Monday
-        if (day === 5) row.classList.add("week-end");   // Friday
+        if (day === 1) row.classList.add("week-start");
+        if (day === 5) row.classList.add("week-end");
       }
     })();
   </script>
 </body>
-
 </html>
