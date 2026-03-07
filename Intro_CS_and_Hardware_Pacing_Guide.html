@@ -11,8 +11,77 @@
       --ink: #1f2933;
       --panel: #fffdfa;
       --accent: #0f766e;
-      --line: #d7ccc0;
-      --muted: #4b5563;
+      --line: #b7a997;
+      --muted: #374151;
+      --hero-a: #ffffff;
+      --hero-b: #f3fdfb;
+      --title: #0b4f4a;
+      --tab-bg: #ffffff;
+      --tab-fg: #0b4f4a;
+      --tab-hover-bg: #f0fdfa;
+      --empty-bg: #fff4df;
+      --thead-bg: #d8f4ee;
+      --thead-fg: #0b4f4a;
+      --row-even-bg: #fff5e5;
+      --weekend-bg: #e2f1ff;
+      --spring-a: #ffe7b3;
+      --spring-b: #fff2cf;
+      --spring-fg: #7c2d12;
+      --spring-label: #9a3412;
+      --focus-ring: #0f766e;
+      --surface: #ffffff;
+    }
+
+    :root[data-theme="dark"] {
+      --bg: #0f172a;
+      --ink: #e5e7eb;
+      --panel: #111827;
+      --accent: #14b8a6;
+      --line: #374151;
+      --muted: #cbd5e1;
+      --hero-a: #0b1220;
+      --hero-b: #0f172a;
+      --title: #99f6e4;
+      --tab-bg: #111827;
+      --tab-fg: #d1fae5;
+      --tab-hover-bg: #1f2937;
+      --empty-bg: #1f2937;
+      --thead-bg: #0f2a2a;
+      --thead-fg: #ccfbf1;
+      --row-even-bg: #17202f;
+      --weekend-bg: #10243c;
+      --spring-a: #4a2e00;
+      --spring-b: #5b3a00;
+      --spring-fg: #ffedd5;
+      --spring-label: #fed7aa;
+      --focus-ring: #2dd4bf;
+      --surface: #0b1220;
+    }
+
+    :root[data-theme="high-contrast"] {
+      --bg: #000000;
+      --ink: #ffffff;
+      --panel: #000000;
+      --accent: #00ffff;
+      --line: #ffffff;
+      --muted: #ffffff;
+      --hero-a: #000000;
+      --hero-b: #000000;
+      --title: #00ffff;
+      --tab-bg: #000000;
+      --tab-fg: #ffffff;
+      --tab-hover-bg: #1a1a1a;
+      --empty-bg: #000000;
+      --thead-bg: #000000;
+      --thead-fg: #ffffff;
+      --row-even-bg: #000000;
+      --weekend-bg: #000000;
+      --spring-a: #000000;
+      --spring-b: #1a1a1a;
+      --spring-fg: #ffff00;
+      --spring-label: #ffff00;
+      --focus-ring: #ffff00;
+      --surface: #000000;
     }
 
     * {
@@ -29,14 +98,39 @@
         var(--bg);
     }
 
+    :root[data-theme="dark"] body,
+    :root[data-theme="high-contrast"] body {
+      background: var(--bg);
+    }
+
     .wrap {
       max-width: 1300px;
       margin: 24px auto 48px;
       padding: 0 16px;
     }
 
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: 8px;
+      background: var(--surface);
+      color: var(--title);
+      border: 2px solid var(--focus-ring);
+      border-radius: 8px;
+      padding: 8px 12px;
+      z-index: 1000;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .skip-link:focus,
+    .skip-link:focus-visible {
+      left: 12px;
+      outline: none;
+    }
+
     .hero {
-      background: linear-gradient(130deg, #ffffff, #f3fdfb);
+      background: linear-gradient(130deg, var(--hero-a), var(--hero-b));
       border: 1px solid var(--line);
       border-radius: 14px;
       padding: 18px;
@@ -44,16 +138,49 @@
       margin-bottom: 16px;
     }
 
+    .hero-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .theme-picker {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.92rem;
+    }
+
+    .theme-picker select {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 6px 8px;
+      background: var(--surface);
+      color: var(--ink);
+      font: inherit;
+    }
+
     h1 {
       margin: 0 0 10px;
-      color: #0b4f4a;
+      color: var(--title);
       font-size: 30px;
       letter-spacing: 0.3px;
     }
 
     h2 {
       margin: 0 0 10px;
-      color: #0b4f4a;
+      color: var(--title);
       font-size: 23px;
     }
 
@@ -87,8 +214,8 @@
 
     .guide-tab {
       border: 1px solid var(--line);
-      background: #ffffff;
-      color: #0b4f4a;
+      background: var(--tab-bg);
+      color: var(--tab-fg);
       border-radius: 999px;
       padding: 8px 14px;
       font-weight: 600;
@@ -99,13 +226,20 @@
     .guide-tab:hover {
       transform: translateY(-1px);
       box-shadow: 0 4px 10px rgba(15, 118, 110, 0.16);
-      background: #f0fdfa;
+      background: var(--tab-hover-bg);
+    }
+
+    .guide-tab:focus-visible,
+    .print:focus-visible,
+    .theme-picker select:focus-visible {
+      outline: 3px solid var(--focus-ring);
+      outline-offset: 2px;
     }
 
     .guide-tab.active {
-      background: #0f766e;
+      background: var(--accent);
       color: #ffffff;
-      border-color: #0f766e;
+      border-color: var(--accent);
       box-shadow: 0 4px 10px rgba(15, 118, 110, 0.24);
     }
 
@@ -113,7 +247,7 @@
       border: 1px dashed var(--line);
       border-radius: 14px;
       padding: 16px;
-      background: #fff9ef;
+      background: var(--empty-bg);
       color: var(--muted);
       font-weight: 600;
       margin-top: 10px;
@@ -138,8 +272,8 @@
       position: sticky;
       top: 0;
       z-index: 2;
-      background: #e8faf6;
-      color: #0b4f4a;
+      background: var(--thead-bg);
+      color: var(--thead-fg);
       text-align: left;
       border: 1px solid var(--line);
       padding: 8px;
@@ -153,33 +287,33 @@
     }
 
     tbody tr:nth-child(even) {
-      background: #fff9ef;
+      background: var(--row-even-bg);
     }
 
     tbody tr.week-start td {
-      border-top: 4px double #0f766e;
+      border-top: 4px double var(--accent);
     }
 
     tbody tr.week-end td {
-      background: #eef7ff;
+      background: var(--weekend-bg);
     }
 
     tbody tr.spring-break td {
       background:
         repeating-linear-gradient(-45deg,
-          #ffe7b3,
-          #ffe7b3 10px,
-          #fff2cf 10px,
-          #fff2cf 20px) !important;
-      border-top: 2px solid #d97706;
-      border-bottom: 2px solid #d97706;
+          var(--spring-a),
+          var(--spring-a) 10px,
+          var(--spring-b) 10px,
+          var(--spring-b) 20px) !important;
+      border-top: 2px solid var(--accent);
+      border-bottom: 2px solid var(--accent);
       font-weight: 700;
-      color: #7c2d12;
+      color: var(--spring-fg);
     }
 
     tbody tr.spring-break td:first-child::after {
       content: " SPRING BREAK";
-      color: #9a3412;
+      color: var(--spring-label);
       font-weight: 800;
       letter-spacing: 0.02em;
     }
@@ -187,18 +321,80 @@
     .week-key {
       margin-top: 10px;
       color: var(--muted);
-      font-size: 0.92rem;
+      font-size: 0.96rem;
+      font-weight: 600;
+    }
+
+    .disclaimer {
+      margin: 8px 0 0;
+      padding: 10px 12px;
+      border-left: 4px solid var(--accent);
+      border-radius: 8px;
+      background: var(--empty-bg);
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    @media (prefers-contrast: more) {
+      :root:not([data-theme="high-contrast"]) {
+        --line: #7a6a58;
+        --muted: #1f2933;
+      }
+
+      .hero,
+      .card,
+      .guide-empty,
+      .guide-tab,
+      .print,
+      thead th,
+      td {
+        box-shadow: none;
+      }
+
+      .guide-tab,
+      .print,
+      .hero,
+      .card,
+      .guide-empty,
+      thead th,
+      td {
+        border-width: 2px;
+      }
     }
 
     .print {
-      margin-top: 8px;
       padding: 8px 12px;
       border: 0;
       border-radius: 10px;
       background: var(--accent);
-      color: #fff;
+      color: #ffffff;
       cursor: pointer;
       font-weight: 600;
+      white-space: nowrap;
+    }
+
+    :root[data-theme="high-contrast"] .print,
+    :root[data-theme="high-contrast"] .guide-tab.active {
+      color: #000000;
+      background: #00ffff;
+      border: 2px solid #ffffff;
+      box-shadow: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+
+      .guide-tab:hover {
+        transform: none;
+      }
     }
 
     @media (max-width: 900px) {
@@ -216,6 +412,19 @@
         max-height: none;
       }
 
+      .hero-head {
+        flex-direction: column;
+      }
+
+      .hero-actions {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .print {
+        align-self: flex-end;
+      }
+
       table {
         font-size: 13px;
       }
@@ -227,6 +436,10 @@
       }
 
       .print {
+        display: none;
+      }
+
+      .theme-picker {
         display: none;
       }
 
@@ -248,16 +461,35 @@
 </head>
 
 <body>
+  <a class="skip-link" href="#guideTabsSection">Skip to pacing guide tabs</a>
   <main class="wrap">
     <section class="hero">
-      <h1>Computer Science Course Pacing Guides</h1>
-      <p>Time window: 2026-03-05 through 2026-06-09.</p>
-      <button class="print" onclick="window.print()">Print / Save PDF</button>
+      <div class="hero-head">
+        <div class="hero-title">
+          <h1>Computer Science Course Pacing Guides</h1>
+          <p>Time window: 2026-03-05 through 2026-06-09.</p>
+        </div>
+        <div class="hero-actions">
+          <label class="theme-picker" for="themeSelect">Theme
+            <select id="themeSelect" aria-label="Select color theme">
+              <option value="auto">Auto (System)</option>
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+              <option value="high-contrast">High Contrast</option>
+            </select>
+          </label>
+          <button class="print" type="button" aria-label="Print or save this page as PDF" onclick="window.print()">Print
+            /
+            Save PDF</button>
+        </div>
+      </div>
+      <p class="disclaimer" role="note"><strong>Disclaimer:</strong> These schedules are tentative and dates may change.
+      </p>
       <p class="week-key">Week marker: double line = start of week, light blue row = Friday, orange striped row = Spring
         Break.</p>
     </section>
 
-    <section aria-label="Pacing guide tabs">
+    <section id="guideTabsSection" aria-label="Pacing guide tabs" tabindex="-1">
       <div class="guide-tabs" role="tablist" aria-label="Pacing guides">
         <button class="guide-tab" type="button" role="tab" aria-selected="false" aria-controls="guide-hardware"
           data-guide-target="guide-hardware" id="tab-guide-hardware">Intro to Computer Hardware</button>
@@ -269,7 +501,8 @@
         <button class="guide-tab" type="button" role="tab" aria-selected="false" aria-controls="guide-apcsa-game"
           data-guide-target="guide-apcsa-game" id="tab-guide-apcsa-game">AP Computer Science A: Game Design</button>
       </div>
-      <div class="guide-empty" id="guideEmptyState">Select a pacing guide tab to view it.</div>
+      <div class="guide-empty" id="guideEmptyState" role="status" aria-live="polite">Select a pacing guide tab to view
+        it.</div>
     </section>
 
     <div class="guides-stack">
@@ -1406,6 +1639,38 @@
       const allPanels = Array.from(document.querySelectorAll(".guide-panel"));
       const validTargets = new Set(allPanels.map((panel) => panel.id));
 
+      function syncTabFocus(selectedTargetId = "") {
+        if (!allTabs.length) return;
+        let anyActive = false;
+        for (const tab of allTabs) {
+          const active = tab.dataset.guideTarget === selectedTargetId;
+          tab.tabIndex = active ? 0 : -1;
+          if (active) anyActive = true;
+        }
+        if (!anyActive) {
+          allTabs[0].tabIndex = 0;
+        }
+      }
+
+      function setPanelTableCaption(panel) {
+        const table = panel.querySelector("table");
+        if (!table) return;
+
+        let caption = table.querySelector("caption");
+        if (!caption) {
+          caption = document.createElement("caption");
+          table.prepend(caption);
+        }
+
+        const heading = (panel.querySelector("h2")?.textContent || "Pacing guide").trim();
+        caption.textContent = `${heading} schedule table`;
+
+        const headerCells = table.querySelectorAll("thead th");
+        for (const th of headerCells) {
+          th.setAttribute("scope", "col");
+        }
+      }
+
       function getGuideTargetFromHash() {
         const hashTarget = decodeURIComponent((window.location.hash || "").replace(/^#/, ""));
         return validTargets.has(hashTarget) ? hashTarget : "";
@@ -1474,8 +1739,9 @@
         }
 
         if (targetRow) {
+          const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
           requestAnimationFrame(() => {
-            targetRow.scrollIntoView({ behavior: "smooth", block: "start" });
+            targetRow.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
           });
         }
       }
@@ -1495,6 +1761,7 @@
         }
 
         if (empty) empty.hidden = selectedCount > 0;
+        syncTabFocus(selectedCount > 0 ? targetId : "");
         if (syncHash) updateHashForGuide(selectedCount > 0 ? targetId : "");
         if (selectedCount > 0) scrollGuideToCurrentWeek(targetId);
       }
@@ -1508,6 +1775,7 @@
           tab.setAttribute("aria-selected", "false");
         }
         if (empty) empty.hidden = false;
+        syncTabFocus();
         if (syncHash) updateHashForGuide("");
       }
 
@@ -1522,13 +1790,28 @@
         });
 
         tab.addEventListener("keydown", (event) => {
-          if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
+          if (!["ArrowRight", "ArrowLeft", "Home", "End"].includes(event.key)) return;
           event.preventDefault();
+
+          if (event.key === "Home") {
+            allTabs[0].focus();
+            return;
+          }
+
+          if (event.key === "End") {
+            allTabs[allTabs.length - 1].focus();
+            return;
+          }
+
           const delta = event.key === "ArrowRight" ? 1 : -1;
           const next = (index + delta + allTabs.length) % allTabs.length;
           allTabs[next].focus();
         });
       });
+
+      for (const panel of allPanels) {
+        setPanelTableCaption(panel);
+      }
 
       const initialTarget = getGuideTargetFromHash();
       if (initialTarget) {
@@ -1545,6 +1828,54 @@
           clearGuides();
         }
       });
+    }
+
+    function setupThemePicker() {
+      const select = document.getElementById("themeSelect");
+      if (!select) return;
+
+      const storageKey = "gci-pacing-theme";
+      const supportedThemes = new Set(["auto", "light", "dark", "high-contrast"]);
+
+      function getSystemTheme() {
+        const prefersHighContrast = window.matchMedia("(prefers-contrast: more)").matches;
+        if (prefersHighContrast) return "high-contrast";
+
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        return prefersDark ? "dark" : "light";
+      }
+
+      function applyTheme(mode) {
+        if (!supportedThemes.has(mode)) return;
+
+        const resolvedTheme = mode === "auto" ? getSystemTheme() : mode;
+        document.documentElement.setAttribute("data-theme", resolvedTheme);
+        select.value = mode;
+      }
+
+      const savedTheme = localStorage.getItem(storageKey);
+      if (savedTheme && supportedThemes.has(savedTheme)) {
+        applyTheme(savedTheme);
+      } else {
+        applyTheme("auto");
+      }
+
+      select.addEventListener("change", () => {
+        const mode = select.value;
+        applyTheme(mode);
+        localStorage.setItem(storageKey, mode);
+      });
+
+      const colorSchemeMedia = window.matchMedia("(prefers-color-scheme: dark)");
+      const contrastMedia = window.matchMedia("(prefers-contrast: more)");
+
+      function refreshAutoTheme() {
+        const currentMode = localStorage.getItem(storageKey) || select.value || "auto";
+        if (currentMode === "auto") applyTheme("auto");
+      }
+
+      colorSchemeMedia.addEventListener("change", refreshAutoTheme);
+      contrastMedia.addEventListener("change", refreshAutoTheme);
     }
 
     function addCareerEssentialsColumn() {
@@ -1686,6 +2017,7 @@
     }
 
     (async function initializePage() {
+      setupThemePicker();
       await loadDateDataFromCsv("Pacing_Dates_Master.csv");
       setupGuideTabs();
       addCareerEssentialsColumn();
