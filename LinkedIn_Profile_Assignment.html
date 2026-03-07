@@ -1,0 +1,631 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>LinkedIn Profile Setup Assignment</title>
+    <style>
+        :root {
+            --bg: #f4f6fb;
+            --ink: #18212b;
+            --muted: #3f4b5a;
+            --card: #ffffff;
+            --line: #c9d4e4;
+            --accent: #0a66c2;
+            --accent-strong: #084f97;
+            --ok: #1b7f43;
+            --warn-bg: #fff4dd;
+            --warn-line: #d6a13d;
+            --focus: #0a66c2;
+        }
+
+        :root[data-theme="dark"] {
+            --bg: #0f1622;
+            --ink: #e5edf8;
+            --muted: #c3cfdf;
+            --card: #131d2b;
+            --line: #32425a;
+            --accent: #5aa3ff;
+            --accent-strong: #8fc2ff;
+            --ok: #74d394;
+            --warn-bg: #2a2415;
+            --warn-line: #d6a13d;
+            --focus: #8fc2ff;
+        }
+
+        :root[data-theme="high-contrast"] {
+            --bg: #000000;
+            --ink: #ffffff;
+            --muted: #ffffff;
+            --card: #000000;
+            --line: #ffffff;
+            --accent: #00ffff;
+            --accent-strong: #00ffff;
+            --ok: #00ff00;
+            --warn-bg: #000000;
+            --warn-line: #ffff00;
+            --focus: #ffff00;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+            color: var(--ink);
+            background: radial-gradient(900px 460px at -10% -20%, #dbeafe 0%, transparent 50%),
+                radial-gradient(900px 460px at 110% -20%, #e0f2fe 0%, transparent 50%), var(--bg);
+        }
+
+        :root[data-theme="dark"] body,
+        :root[data-theme="high-contrast"] body {
+            background: var(--bg);
+        }
+
+        .wrap {
+            max-width: 960px;
+            margin: 24px auto 40px;
+            padding: 0 14px;
+        }
+
+        .skip-link {
+            position: absolute;
+            left: -9999px;
+            top: 8px;
+            background: var(--card);
+            color: var(--ink);
+            border: 2px solid var(--focus);
+            border-radius: 8px;
+            padding: 8px 10px;
+            text-decoration: none;
+            z-index: 1000;
+        }
+
+        .skip-link:focus,
+        .skip-link:focus-visible {
+            left: 10px;
+            outline: none;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 14px;
+        }
+
+        .hero {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.7rem;
+            color: var(--accent-strong);
+        }
+
+        h2 {
+            margin: 0 0 8px;
+            font-size: 1.2rem;
+            color: var(--accent-strong);
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        select,
+        button,
+        input[type="text"] {
+            border: 1px solid var(--line);
+            background: var(--card);
+            color: var(--ink);
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 0.95rem;
+            min-height: 42px;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        button.primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        :root[data-theme="high-contrast"] button.primary {
+            color: #000000;
+        }
+
+        button:focus-visible,
+        select:focus-visible,
+        a:focus-visible,
+        input:focus-visible {
+            outline: 3px solid var(--focus);
+            outline-offset: 2px;
+        }
+
+        .disclaimer {
+            margin-top: 10px;
+            padding: 10px 12px;
+            border-left: 4px solid var(--warn-line);
+            border-radius: 8px;
+            background: var(--warn-bg);
+            font-weight: 600;
+        }
+
+        .steps {
+            margin: 0;
+            padding-left: 22px;
+        }
+
+        .steps li {
+            margin: 8px 0;
+            line-height: 1.5;
+        }
+
+        .checklist {
+            display: grid;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .checklist label {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            line-height: 1.4;
+        }
+
+        input[type="checkbox"],
+        input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            margin-top: 1px;
+        }
+
+        .question {
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .question p {
+            margin: 0 0 8px;
+            font-weight: 700;
+        }
+
+        .question .options {
+            display: grid;
+            gap: 8px;
+        }
+
+        .video-wrap {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--line);
+            background: #000;
+            margin-top: 10px;
+        }
+
+        .video-wrap iframe {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .profile-link-box {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .status {
+            margin-top: 8px;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .status.good {
+            color: var(--ok);
+        }
+
+        .progress {
+            height: 10px;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            overflow: hidden;
+            background: var(--card);
+            margin-top: 10px;
+        }
+
+        .progress>div {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, var(--accent), #22b07d);
+            transition: width 0.2s ease;
+        }
+
+        .small {
+            font-size: 0.92rem;
+        }
+
+        @media (max-width: 760px) {
+            .profile-link-box {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        @media print {
+
+            .controls,
+            .skip-link,
+            .progress,
+            .no-print {
+                display: none !important;
+            }
+
+            body {
+                background: #fff;
+            }
+
+            .card {
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <a class="skip-link" href="#assignment">Skip to assignment content</a>
+    <main class="wrap" id="assignment">
+        <section class="card hero" aria-labelledby="pageTitle">
+            <div>
+                <h1 id="pageTitle">LinkedIn Profile Setup Assignment</h1>
+                <p class="muted">Career Readiness Assignment</p>
+            </div>
+            <div class="controls no-print">
+                <label for="themeSelect" class="small">Theme</label>
+                <select id="themeSelect" aria-label="Select color theme">
+                    <option value="auto">Auto (System)</option>
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                    <option value="high-contrast">High Contrast</option>
+                </select>
+                <button type="button" onclick="window.print()">Print / Save PDF</button>
+            </div>
+            <p class="disclaimer" role="note"><strong>Disclaimer:</strong> This assignment is for school use. Do not
+                share passwords or private personal information on this page.</p>
+        </section>
+
+        <section class="card" aria-labelledby="objectiveTitle">
+            <h2 id="objectiveTitle">Learning Objective</h2>
+            <p>Set up a professional LinkedIn profile, understand why LinkedIn matters for career opportunities, and
+                submit your profile link as proof of completion.</p>
+            <div class="progress" aria-hidden="true">
+                <div id="progressBar"></div>
+            </div>
+            <p class="status" id="overallStatus" role="status" aria-live="polite">Progress: 0% complete.</p>
+        </section>
+
+        <section class="card" aria-labelledby="activationTitle">
+            <h2 id="activationTitle">Activation: Get Ready to Build Your Brand</h2>
+            <p class="muted">Answer these quick questions to warm up before creating your profile.</p>
+
+            <div class="question" data-activation="1">
+                <p>1. What is one job or career area you might want to explore after graduation?</p>
+                <div class="options">
+                    <label><input type="radio" name="act1" value="set"> I already have one in mind.</label>
+                    <label><input type="radio" name="act1" value="maybe"> I have a few ideas.</label>
+                    <label><input type="radio" name="act1" value="unsure"> I am not sure yet.</label>
+                </div>
+            </div>
+
+            <div class="question" data-activation="2">
+                <p>2. Which part of your experience are you most excited to share on LinkedIn?</p>
+                <div class="options">
+                    <label><input type="radio" name="act2" value="projects"> Projects / labs</label>
+                    <label><input type="radio" name="act2" value="skills"> Technical skills</label>
+                    <label><input type="radio" name="act2" value="goals"> Career goals</label>
+                </div>
+            </div>
+
+            <div class="question" data-activation="3">
+                <p>3. What do you think LinkedIn helps with most?</p>
+                <div class="options">
+                    <label><input type="radio" name="act3" value="network"> Networking and connections</label>
+                    <label><input type="radio" name="act3" value="jobs"> Finding internships and jobs</label>
+                    <label><input type="radio" name="act3" value="both"> Both networking and job opportunities</label>
+                </div>
+            </div>
+        </section>
+
+        <section class="card" aria-labelledby="demoTitle">
+            <h2 id="demoTitle">Demonstration: Follow Along Video</h2>
+            <p><strong>Before starting the video:</strong> Create a LinkedIn account using your personal email address.
+                This allows you to access your profile after you graduate.</p>
+            <div class="checklist">
+                <label><input type="checkbox" id="preAccount" /> I created my LinkedIn account with my personal email
+                    before starting the video.</label>
+            </div>
+            <div class="video-wrap">
+                <iframe src="https://www.youtube.com/embed/hNzpEeU3a4I"
+                    title="How to Set Up a LinkedIn Account demonstration"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+            <p class="small muted">Direct video link: <a href="https://youtu.be/hNzpEeU3a4I?si=lQZV3ODlKewBwuyL"
+                    target="_blank" rel="noopener noreferrer">https://youtu.be/hNzpEeU3a4I</a></p>
+            <p><strong>Application portion:</strong> Follow along on your own computer while the video plays and build
+                your profile live.</p>
+        </section>
+
+        <section class="card" aria-labelledby="cfuTitle">
+            <h2 id="cfuTitle">Check for Understanding (After Video)</h2>
+            <p class="muted">Answer all questions, then click <strong>Check My Answers</strong>.</p>
+
+            <div class="question" data-cfu="1">
+                <p>1. What is a main purpose of LinkedIn?</p>
+                <div class="options">
+                    <label><input type="radio" name="cfu1" value="a" /> To post gaming clips only</label>
+                    <label><input type="radio" name="cfu1" value="b" /> To build a professional network and career
+                        profile</label>
+                    <label><input type="radio" name="cfu1" value="c" /> To replace your school email</label>
+                </div>
+            </div>
+
+            <div class="question" data-cfu="2">
+                <p>2. How can LinkedIn help you find a job?</p>
+                <div class="options">
+                    <label><input type="radio" name="cfu2" value="a" /> It connects you to recruiters and job
+                        postings</label>
+                    <label><input type="radio" name="cfu2" value="b" /> It automatically gives everyone a job</label>
+                    <label><input type="radio" name="cfu2" value="c" /> It removes the need for applications</label>
+                </div>
+            </div>
+
+            <div class="question" data-cfu="3">
+                <p>3. Which profile elements make your LinkedIn stronger?</p>
+                <div class="options">
+                    <label><input type="radio" name="cfu3" value="a" /> Headline, summary, skills, and projects</label>
+                    <label><input type="radio" name="cfu3" value="b" /> Random emojis only</label>
+                    <label><input type="radio" name="cfu3" value="c" /> Leaving all sections blank</label>
+                </div>
+            </div>
+
+            <button class="primary no-print" type="button" id="checkCfuBtn">Check My Answers</button>
+            <p class="status" id="cfuStatus" role="status" aria-live="polite">Quiz not graded yet.</p>
+        </section>
+
+        <section class="card" aria-labelledby="applicationTitle">
+            <h2 id="applicationTitle">Application Tasks</h2>
+            <ol class="steps">
+                <li>Finish your profile setup by following the video on your own computer.</li>
+                <li>Go to your instructor profile: <a href="https://www.linkedin.com/in/aspiece/" target="_blank"
+                        rel="noopener noreferrer">https://www.linkedin.com/in/aspiece/</a>.</li>
+                <li>Click <strong>Connect</strong> and send a connection request to your instructor.</li>
+                <li>Find and connect with <strong>two classmates</strong>.</li>
+            </ol>
+
+            <div class="checklist">
+                <label><input type="checkbox" id="taskProfileDone" /> I completed my profile setup.</label>
+                <label><input type="checkbox" id="taskTeacherConnect" /> I invited the instructor to connect.</label>
+                <label><input type="checkbox" id="taskPeersConnect" /> I connected with two classmates.</label>
+            </div>
+        </section>
+
+        <section class="card" aria-labelledby="submitTitle">
+            <h2 id="submitTitle">Submission Instructions</h2>
+            <ol class="steps">
+                <li>Open your own LinkedIn profile page.</li>
+                <li>Copy the profile URL from the browser address bar. It should look like
+                    <code>https://www.linkedin.com/in/your-name</code>.</li>
+                <li>Paste that link into your assignment submission in Google Classroom (or the submission form your
+                    teacher gave you).</li>
+                <li>Double-check that the link opens your profile.</li>
+            </ol>
+
+            <label for="profileUrl"><strong>Paste your LinkedIn profile link here to verify format:</strong></label>
+            <div class="profile-link-box no-print">
+                <input id="profileUrl" type="text" placeholder="https://www.linkedin.com/in/your-name"
+                    aria-describedby="profileUrlHelp" />
+                <button type="button" id="validateLinkBtn">Validate Link</button>
+            </div>
+            <p id="profileUrlHelp" class="small muted">This check is for practice format only. You still need to submit
+                the link in your class submission tool.</p>
+            <p class="status" id="linkStatus" role="status" aria-live="polite">Profile link not checked yet.</p>
+            <div class="checklist">
+                <label><input type="checkbox" id="taskSubmitted" /> I submitted my LinkedIn profile link.</label>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const cfuAnswerKey = {
+            cfu1: "b",
+            cfu2: "a",
+            cfu3: "a"
+        };
+
+        function setupThemePicker() {
+            const select = document.getElementById("themeSelect");
+            if (!select) return;
+
+            const storageKey = "gci-linkedin-assignment-theme";
+            const supportedThemes = new Set(["auto", "light", "dark", "high-contrast"]);
+
+            function getSystemTheme() {
+                const prefersHighContrast = window.matchMedia("(prefers-contrast: more)").matches;
+                if (prefersHighContrast) return "high-contrast";
+
+                const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+                return prefersDark ? "dark" : "light";
+            }
+
+            function applyTheme(mode) {
+                if (!supportedThemes.has(mode)) return;
+                const resolved = mode === "auto" ? getSystemTheme() : mode;
+                document.documentElement.setAttribute("data-theme", resolved);
+                select.value = mode;
+            }
+
+            const saved = localStorage.getItem(storageKey);
+            applyTheme(saved && supportedThemes.has(saved) ? saved : "auto");
+
+            select.addEventListener("change", () => {
+                applyTheme(select.value);
+                localStorage.setItem(storageKey, select.value);
+            });
+
+            const colorSchemeMedia = window.matchMedia("(prefers-color-scheme: dark)");
+            const contrastMedia = window.matchMedia("(prefers-contrast: more)");
+            const refreshAuto = () => {
+                const mode = localStorage.getItem(storageKey) || select.value || "auto";
+                if (mode === "auto") applyTheme("auto");
+            };
+
+            colorSchemeMedia.addEventListener("change", refreshAuto);
+            contrastMedia.addEventListener("change", refreshAuto);
+        }
+
+        function getCheckedValue(name) {
+            const checked = document.querySelector(`input[name="${name}"]:checked`);
+            return checked ? checked.value : "";
+        }
+
+        function gradeCfu() {
+            const cfuStatus = document.getElementById("cfuStatus");
+            let answered = 0;
+            let correct = 0;
+
+            Object.keys(cfuAnswerKey).forEach((key) => {
+                const selected = getCheckedValue(key);
+                if (selected) answered += 1;
+                if (selected === cfuAnswerKey[key]) correct += 1;
+            });
+
+            if (answered < Object.keys(cfuAnswerKey).length) {
+                cfuStatus.textContent = "Please answer all check-for-understanding questions before grading.";
+                cfuStatus.classList.remove("good");
+                return false;
+            }
+
+            cfuStatus.textContent = `Score: ${correct}/${Object.keys(cfuAnswerKey).length}. ${correct === 3 ? "Excellent work." : "Review any missed ideas with a classmate."}`;
+            cfuStatus.classList.toggle("good", correct === 3);
+            return true;
+        }
+
+        function validateProfileUrl() {
+            const input = document.getElementById("profileUrl");
+            const status = document.getElementById("linkStatus");
+            const value = (input.value || "").trim();
+            const valid = /^https:\/\/www\.linkedin\.com\/in\/[A-Za-z0-9\-_%]+\/?$/i.test(value);
+
+            if (!value) {
+                status.textContent = "Please paste your LinkedIn profile URL first.";
+                status.classList.remove("good");
+                return false;
+            }
+
+            if (valid) {
+                status.textContent = "Looks good. This appears to be a valid LinkedIn profile link format.";
+                status.classList.add("good");
+                return true;
+            }
+
+            status.textContent = "That link format does not look right yet. It should start with https://www.linkedin.com/in/.";
+            status.classList.remove("good");
+            return false;
+        }
+
+        function updateProgress() {
+            const items = [
+                ...Array.from(document.querySelectorAll('input[name="act1"], input[name="act2"], input[name="act3"]')).reduce((set, input) => {
+                    set.add(input.name);
+                    return set;
+                }, new Set())
+            ];
+
+            let completed = 0;
+            if (getCheckedValue("act1")) completed += 1;
+            if (getCheckedValue("act2")) completed += 1;
+            if (getCheckedValue("act3")) completed += 1;
+            if (document.getElementById("preAccount").checked) completed += 1;
+            if (document.getElementById("taskProfileDone").checked) completed += 1;
+            if (document.getElementById("taskTeacherConnect").checked) completed += 1;
+            if (document.getElementById("taskPeersConnect").checked) completed += 1;
+            if (document.getElementById("taskSubmitted").checked) completed += 1;
+
+            const total = 8;
+            const pct = Math.round((completed / total) * 100);
+            document.getElementById("progressBar").style.width = `${pct}%`;
+            document.getElementById("overallStatus").textContent = `Progress: ${pct}% complete.`;
+        }
+
+        function setupInteractions() {
+            document.getElementById("checkCfuBtn").addEventListener("click", () => {
+                gradeCfu();
+                updateProgress();
+            });
+
+            document.getElementById("validateLinkBtn").addEventListener("click", () => {
+                validateProfileUrl();
+            });
+
+            const watchedInputs = document.querySelectorAll('input[type="checkbox"], input[type="radio"]');
+            watchedInputs.forEach((input) => {
+                input.addEventListener("change", updateProgress);
+            });
+
+            document.getElementById("profileUrl").addEventListener("blur", () => {
+                if (document.getElementById("profileUrl").value.trim()) {
+                    validateProfileUrl();
+                }
+            });
+
+            updateProgress();
+        }
+
+        setupThemePicker();
+        setupInteractions();
+    </script>
+</body>
+
+</html>
