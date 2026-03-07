@@ -119,23 +119,6 @@
       margin-top: 10px;
     }
 
-    .bookmark-links {
-      margin: 0 0 10px;
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
-
-    .bookmark-links a {
-      color: #0b4f4a;
-      text-decoration: none;
-      margin-right: 10px;
-      font-weight: 600;
-    }
-
-    .bookmark-links a:hover {
-      text-decoration: underline;
-    }
-
     .guides-stack {
       display: block;
     }
@@ -286,13 +269,6 @@
         <button class="guide-tab" type="button" role="tab" aria-selected="false" aria-controls="guide-apcsa-game"
           data-guide-target="guide-apcsa-game" id="tab-guide-apcsa-game">AP Computer Science A: Game Design</button>
       </div>
-      <p class="bookmark-links" aria-label="Bookmark links for guides">
-        Bookmark links:
-        <a href="#guide-hardware">Intro Hardware</a>
-        <a href="#guide-cs">Intro CS</a>
-        <a href="#guide-advanced-hardware">Advanced Hardware</a>
-        <a href="#guide-apcsa-game">APCSA Game</a>
-      </p>
       <div class="guide-empty" id="guideEmptyState">Select a pacing guide tab to view it.</div>
     </section>
 
@@ -1444,6 +1420,66 @@
         window.history.replaceState(null, "", nextUrl);
       }
 
+      function startOfWeek(date) {
+        const d = new Date(date);
+        d.setHours(0, 0, 0, 0);
+        const day = d.getDay();
+        const diff = day === 0 ? -6 : 1 - day;
+        d.setDate(d.getDate() + diff);
+        return d;
+      }
+
+      function endOfWeek(date) {
+        const d = startOfWeek(date);
+        d.setDate(d.getDate() + 6);
+        d.setHours(23, 59, 59, 999);
+        return d;
+      }
+
+      function scrollGuideToCurrentWeek(targetId) {
+        const panel = document.getElementById(targetId);
+        if (!panel) return;
+
+        const tbodyRows = Array.from(panel.querySelectorAll("tbody tr"));
+        if (tbodyRows.length === 0) return;
+
+        const now = new Date();
+        const weekStart = startOfWeek(now);
+        const weekEnd = endOfWeek(now);
+
+        let targetRow = null;
+        for (const row of tbodyRows) {
+          const firstCell = row.querySelector("td");
+          if (!firstCell) continue;
+          const dateText = (firstCell.textContent || "").trim();
+          const iso = toIsoDate(dateText);
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) continue;
+
+          const rowDate = new Date(`${iso}T00:00:00`);
+          if (Number.isNaN(rowDate.getTime())) continue;
+          if (rowDate >= weekStart && rowDate <= weekEnd) {
+            targetRow = row;
+            break;
+          }
+        }
+
+        if (!targetRow) {
+          // Fallback to the first dated row when the current week is outside this guide's range.
+          targetRow = tbodyRows.find((row) => {
+            const firstCell = row.querySelector("td");
+            if (!firstCell) return false;
+            const iso = toIsoDate((firstCell.textContent || "").trim());
+            return /^\d{4}-\d{2}-\d{2}$/.test(iso);
+          }) || null;
+        }
+
+        if (targetRow) {
+          requestAnimationFrame(() => {
+            targetRow.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        }
+      }
+
       function showGuide(targetId, syncHash = false) {
         let selectedCount = 0;
         for (const panel of allPanels) {
@@ -1460,6 +1496,7 @@
 
         if (empty) empty.hidden = selectedCount > 0;
         if (syncHash) updateHashForGuide(selectedCount > 0 ? targetId : "");
+        if (selectedCount > 0) scrollGuideToCurrentWeek(targetId);
       }
 
       function clearGuides(syncHash = false) {
