@@ -1145,6 +1145,8 @@
     </div>
   </main>
   <script>
+    window.__pacingCourseRows = null;
+
     function parseCsv(text) {
       const rows = [];
       let row = [];
@@ -1252,6 +1254,7 @@
 
         const sharedRows = rows.filter((row) => row.SourceType === "SharedDate");
         const courseRows = rows.filter((row) => row.SourceType === "CourseRow");
+        window.__pacingCourseRows = courseRows;
 
         setSharedDatesFromRows(sharedRows);
         setCourseTableFromRows("guide-hardware", "Intro to Computer Hardware", courseRows);
@@ -1297,75 +1300,84 @@
             if (heading) heading.textContent = course.title;
 
             const rows = clone.querySelectorAll("tbody tr");
-            for (const row of rows) {
-              const cells = row.querySelectorAll("td");
-              if (cells.length < 4) continue;
+            const hasCsvCourseData = Array.isArray(window.__pacingCourseRows)
+              && window.__pacingCourseRows.some((row) => row.Course === course.title);
 
-              const lessonCell = cells[1];
-              const gciCell = cells[2];
-              const homeCell = cells[cells.length - 1];
-              const notes = `${gciCell.textContent || ""} ${homeCell.textContent || ""}`;
-              const nonInstructionDay = /Spring Break|No GCI|Spring Advisory|Virtual Day|Memorial Day/i.test(notes);
-
-              lessonCell.textContent = "";
-              if (!nonInstructionDay) gciCell.textContent = "";
-            }
-
-            if (course.panelId === "guide-apcsa-game") {
-              const apMilestones = {
-                "2026-03-10": {
-                  lesson: "Teamwork Assignment Due",
-                  notes: "3rd session AP Computer Science A"
-                },
-                "2026-03-13": {
-                  lesson: "Website Checkpoint 1",
-                  notes: "AP Computer Science A milestone"
-                },
-                "2026-03-20": {
-                  lesson: "Final Website",
-                  notes: "AP Computer Science A final website due"
-                }
-              };
-
+            if (!hasCsvCourseData) {
               for (const row of rows) {
                 const cells = row.querySelectorAll("td");
                 if (cells.length < 4) continue;
 
-                const dateText = (cells[0].textContent || "").trim();
-                const milestone = apMilestones[dateText];
-                if (!milestone) continue;
+                const lessonCell = cells[1];
+                const gciCell = cells[2];
+                const homeCell = cells[cells.length - 1];
+                const notes = `${gciCell.textContent || ""} ${homeCell.textContent || ""}`;
+                const nonInstructionDay = /Spring Break|No GCI|Spring Advisory|Virtual Day|Memorial Day/i.test(notes);
 
-                cells[1].textContent = milestone.lesson;
-                cells[2].textContent = milestone.notes;
+                lessonCell.textContent = "";
+                if (!nonInstructionDay) gciCell.textContent = "";
               }
-            }
 
-            if (course.panelId === "guide-advanced-hardware") {
-              const advancedHardwareMilestones = {
-                "2026-03-10": {
-                  lesson: "Teamwork Assignment Due",
-                  notes: "All hardware classes"
-                },
-                "2026-04-21": {
-                  lesson: "Teamwork Assignment Due",
-                  notes: "All hardware classes (2nd session)"
+              if (course.panelId === "guide-apcsa-game") {
+                const apMilestones = {
+                  "2026-03-10": {
+                    lesson: "Teamwork Assignment Due",
+                    notes: "3rd session AP Computer Science A"
+                  },
+                  "2026-03-13": {
+                    lesson: "Website Checkpoint 1",
+                    notes: "AP Computer Science A milestone"
+                  },
+                  "2026-03-20": {
+                    lesson: "Final Website",
+                    notes: "AP Computer Science A final website due"
+                  }
+                };
+
+                for (const row of rows) {
+                  const cells = row.querySelectorAll("td");
+                  if (cells.length < 4) continue;
+
+                  const dateText = (cells[0].textContent || "").trim();
+                  const milestone = apMilestones[dateText];
+                  if (!milestone) continue;
+
+                  cells[1].textContent = milestone.lesson;
+                  cells[2].textContent = milestone.notes;
                 }
-              };
+              }
 
-              for (const row of rows) {
-                const cells = row.querySelectorAll("td");
-                if (cells.length < 4) continue;
+              if (course.panelId === "guide-advanced-hardware") {
+                const advancedHardwareMilestones = {
+                  "2026-03-10": {
+                    lesson: "Teamwork Assignment Due",
+                    notes: "All hardware classes"
+                  },
+                  "2026-04-21": {
+                    lesson: "Teamwork Assignment Due",
+                    notes: "All hardware classes (2nd session)"
+                  }
+                };
 
-                const dateText = (cells[0].textContent || "").trim();
-                const milestone = advancedHardwareMilestones[dateText];
-                if (!milestone) continue;
+                for (const row of rows) {
+                  const cells = row.querySelectorAll("td");
+                  if (cells.length < 4) continue;
 
-                cells[1].textContent = milestone.lesson;
-                cells[2].textContent = milestone.notes;
+                  const dateText = (cells[0].textContent || "").trim();
+                  const milestone = advancedHardwareMilestones[dateText];
+                  if (!milestone) continue;
+
+                  cells[1].textContent = milestone.lesson;
+                  cells[2].textContent = milestone.notes;
+                }
               }
             }
 
             stack.appendChild(clone);
+
+            if (hasCsvCourseData) {
+              setCourseTableFromRows(course.panelId, course.title, window.__pacingCourseRows);
+            }
           }
         }
       }
