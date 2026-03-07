@@ -258,7 +258,7 @@
         <li>2026-04-16: Spring Advisory (No GCI)</li>
         <li>2026-04-17: Virtual Day</li>
         <li>2026-04-18: NCWIT Award Ceremony</li>
-        <li>2026-05-22</li>
+        <li>2026-05-22: No GCI</li>
         <li>2026-05-25 (Memorial Day)</li>
       </ul>
       <button class="print" onclick="window.print()">Print / Save PDF</button>
@@ -1200,6 +1200,26 @@
         return item;
       });
     }
+    function toIsoDate(rawDate) {
+      const value = (rawDate || "").trim();
+      if (!value) return "";
+      if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+
+      const mdY = value.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+      if (mdY) {
+        const month = mdY[1].padStart(2, "0");
+        const day = mdY[2].padStart(2, "0");
+        const year = mdY[3];
+        return `${year}-${month}-${day}`;
+      }
+
+      const parsed = new Date(value);
+      if (Number.isNaN(parsed.getTime())) return value;
+      const year = String(parsed.getFullYear());
+      const month = String(parsed.getMonth() + 1).padStart(2, "0");
+      const day = String(parsed.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
 
     function setSharedDatesFromRows(sharedRows) {
       const list = document.querySelector(".hero ul");
@@ -1208,7 +1228,7 @@
       list.innerHTML = "";
       sharedRows.forEach((row) => {
         const li = document.createElement("li");
-        li.textContent = row.SharedDateLabel || row.Date || "";
+        li.textContent = row.SharedDateLabel || toIsoDate(row.Date) || row.Date || "";
         list.appendChild(li);
       });
     }
@@ -1226,9 +1246,18 @@
       tbody.innerHTML = "";
       filtered.forEach((row) => {
         const tr = document.createElement("tr");
+
+        const normalizedDate = toIsoDate(row.Date);
+        const firstSession = row.FirstSession || "";
+        const secondSession = row.SecondSession || "";
+        const unifiedLesson = row.LessonOrLab || firstSession || secondSession || "";
+
+        tr.dataset.firstSession = firstSession;
+        tr.dataset.secondSession = secondSession;
+
         const cells = [
-          row.Date || "",
-          row.LessonOrLab || "",
+          normalizedDate || row.Date || "",
+          unifiedLesson,
           row.GciScheduleNotes || "",
           row.HomeSchoolNoSchool || ""
         ];
@@ -1472,9 +1501,17 @@
             const lessonCell = cells[lessonIndex];
             const lessonText = (lessonCell.textContent || "").trim();
             const gciText = (cells[lessonIndex + 1].textContent || "").trim();
+            const firstFromCsv = row.dataset.firstSession || "";
+            const secondFromCsv = row.dataset.secondSession || "";
 
             const secondCell = document.createElement("td");
             lessonCell.after(secondCell);
+
+            if (firstFromCsv || secondFromCsv) {
+              lessonCell.textContent = firstFromCsv;
+              secondCell.textContent = secondFromCsv;
+              continue;
+            }
 
             if (!lessonText) {
               lessonCell.textContent = "";

@@ -7,7 +7,7 @@ GCI no school days:
 
 - 2026-03-30 to 2026-04-03 (Spring Break)
 - 2026-04-16
-- 2026-05-22
+- 2026-05-22 (No GCI)
 - 2026-05-25 (Memorial Day)
 Spring Break (all schools): 2026-03-30 to 2026-04-03.
 Virtual Day: 2026-04-17.
