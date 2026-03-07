@@ -127,38 +127,6 @@
       display: none !important;
     }
 
-    .course-tabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin: 12px 0 8px;
-    }
-
-    .tab-btn {
-      border: 1px solid var(--line);
-      background: #fff;
-      color: #0b4f4a;
-      border-radius: 999px;
-      padding: 8px 14px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .tab-btn.active {
-      background: #0f766e;
-      color: #fff;
-      border-color: #0f766e;
-    }
-
-    .tab-panel {
-      display: none;
-    }
-
-    .tab-panel.active {
-      display: block;
-      grid-column: 1 / -1;
-    }
-
     table {
       width: 100%;
       border-collapse: collapse;
@@ -283,22 +251,15 @@
   <main class="wrap">
     <section class="hero">
       <h1>Intro to Computer Hardware and Intro to Computer Science</h1>
-      <p>Time window: 2026-03-09 through 2026-06-09.</p>
-<<<<<<< HEAD
+      <p>Time window: 2026-03-05 through 2026-06-09.</p>
       <p><strong>Shared Dates (All Courses)</strong></p>
       <ul>
-        <li>2026-03-18: Marking Period 3 last day to submit work</li>
         <li>2026-03-30 to 2026-04-03: Spring Break (all schools)</li>
         <li>2026-04-16: Spring Advisory</li>
         <li>2026-04-17: Virtual Day</li>
         <li>2026-04-18: NCWIT Award Ceremony</li>
-=======
-      <p>GCI no school days (synced with No School Viewer):</p>
-      <ul id="gciNoSchoolDaysList">
-        <li>2026-03-30 to 2026-04-03 (Spring Break)</li>
         <li>2026-05-22</li>
         <li>2026-05-25 (Memorial Day)</li>
->>>>>>> 44d7077f2bc66acd766a257d710dd48cc0529a6a
       </ul>
       <button class="print" onclick="window.print()">Print / Save PDF</button>
       <p class="week-key">Week marker: double line = start of week, light blue row = Friday, orange striped row = Spring
@@ -311,6 +272,11 @@
           data-guide-target="guide-hardware" id="tab-guide-hardware">Intro to Computer Hardware</button>
         <button class="guide-tab" type="button" role="tab" aria-selected="false" aria-controls="guide-cs"
           data-guide-target="guide-cs" id="tab-guide-cs">Intro to Computer Science</button>
+        <button class="guide-tab" type="button" role="tab" aria-selected="false" aria-controls="guide-advanced-hardware"
+          data-guide-target="guide-advanced-hardware" id="tab-guide-advanced-hardware">Advanced Computer
+          Hardware</button>
+        <button class="guide-tab" type="button" role="tab" aria-selected="false" aria-controls="guide-apcsa-game"
+          data-guide-target="guide-apcsa-game" id="tab-guide-apcsa-game">AP Computer Science A: Game Design</button>
       </div>
       <div class="guide-empty" id="guideEmptyState">Select a pacing guide tab to view it.</div>
     </section>
@@ -1178,105 +1144,71 @@
     </div>
   </main>
   <script>
-<<<<<<< HEAD
-    (function setupCourseTabsAndExtraCourses() {
-      const guides = document.querySelector(".guides-grid");
-      if (!guides) return;
-
-      const initialSections = Array.from(guides.querySelectorAll(":scope > section.card"));
-      if (initialSections.length < 2) return;
-
-      const sourceSection =
-        initialSections.find(section =>
-          /Intro to Computer Science/i.test((section.querySelector("h2")?.textContent || "").trim())
-        ) || initialSections[1];
-
-      const extraCourses = [
-        "Advanced Computer Hardware",
-        "AP Computer Science A: Game Design"
-      ];
-
-      for (const courseName of extraCourses) {
-        const clone = sourceSection.cloneNode(true);
-        const title = clone.querySelector("h2");
-        if (title) title.textContent = courseName;
-
-        // Keep calendar alignment, but clear instructional content for new course templates.
-        const rows = clone.querySelectorAll("tbody tr");
-        for (const row of rows) {
-          const cells = row.querySelectorAll("td");
-          if (cells.length < 4) continue;
-
-          const lessonCell = cells[1];
-          const gciCell = cells[2];
-          const homeCell = cells[cells.length - 1];
-          const combinedNotes = `${gciCell.textContent || ""} ${homeCell.textContent || ""}`;
-          const nonInstructionDay = /Spring Break|No GCI|Spring Advisory|Virtual Day|Memorial Day/i.test(combinedNotes);
-
-          lessonCell.textContent = "";
-          if (!nonInstructionDay) {
-            gciCell.textContent = "";
-          }
-        }
-
-        guides.appendChild(clone);
-      }
-
-      const sections = Array.from(guides.querySelectorAll(":scope > section.card"));
-      const tabs = document.createElement("div");
-      tabs.className = "course-tabs";
-      tabs.setAttribute("role", "tablist");
-      tabs.setAttribute("aria-label", "Course tabs");
-      guides.parentNode.insertBefore(tabs, guides);
-
-      const activateTab = targetId => {
-        const buttons = tabs.querySelectorAll("button[role='tab']");
-        for (const button of buttons) {
-          const active = button.getAttribute("aria-controls") === targetId;
-          button.classList.toggle("active", active);
-          button.setAttribute("aria-selected", active ? "true" : "false");
-        }
-
-        for (const section of sections) {
-          section.classList.toggle("active", section.id === targetId);
-        }
-      };
-
-      sections.forEach((section, index) => {
-        const title = (section.querySelector("h2")?.textContent || `Course ${index + 1}`).trim();
-        const id = `course-tab-${index + 1}`;
-        section.id = id;
-        section.classList.add("tab-panel");
-
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "tab-btn";
-        button.setAttribute("role", "tab");
-        button.setAttribute("aria-controls", id);
-        button.setAttribute("aria-selected", "false");
-        button.textContent = title;
-        button.addEventListener("click", () => activateTab(id));
-        tabs.appendChild(button);
-      });
-
-      if (sections[0]) {
-        activateTab(sections[0].id);
-      }
-=======
     (function setupGuideTabs() {
       const tabs = Array.from(document.querySelectorAll(".guide-tab"));
       const panels = Array.from(document.querySelectorAll(".guide-panel"));
       const empty = document.getElementById("guideEmptyState");
 
+      const sourcePanel = document.getElementById("guide-cs");
+      const stack = document.querySelector(".guides-stack");
+
+      const extraCourses = [
+        {
+          panelId: "guide-advanced-hardware",
+          tabId: "tab-guide-advanced-hardware",
+          title: "Advanced Computer Hardware"
+        },
+        {
+          panelId: "guide-apcsa-game",
+          tabId: "tab-guide-apcsa-game",
+          title: "AP Computer Science A: Game Design"
+        }
+      ];
+
+      if (sourcePanel && stack) {
+        for (const course of extraCourses) {
+          const existingPanel = document.getElementById(course.panelId);
+          if (!existingPanel) {
+            const clone = sourcePanel.cloneNode(true);
+            clone.id = course.panelId;
+            clone.setAttribute("aria-labelledby", course.tabId);
+            clone.hidden = true;
+
+            const heading = clone.querySelector("h2");
+            if (heading) heading.textContent = course.title;
+
+            const rows = clone.querySelectorAll("tbody tr");
+            for (const row of rows) {
+              const cells = row.querySelectorAll("td");
+              if (cells.length < 4) continue;
+
+              const lessonCell = cells[1];
+              const gciCell = cells[2];
+              const homeCell = cells[cells.length - 1];
+              const notes = `${gciCell.textContent || ""} ${homeCell.textContent || ""}`;
+              const nonInstructionDay = /Spring Break|No GCI|Spring Advisory|Virtual Day|Memorial Day/i.test(notes);
+
+              lessonCell.textContent = "";
+              if (!nonInstructionDay) gciCell.textContent = "";
+            }
+
+            stack.appendChild(clone);
+          }
+        }
+      }
+
+      const allTabs = Array.from(document.querySelectorAll(".guide-tab"));
+      const allPanels = Array.from(document.querySelectorAll(".guide-panel"));
+
       function showGuide(targetId) {
         let selectedCount = 0;
-        for (const panel of panels) {
+        for (const panel of allPanels) {
           const isActive = panel.id === targetId;
           panel.hidden = !isActive;
           if (isActive) selectedCount += 1;
         }
 
-        for (const tab of tabs) {
+        for (const tab of allTabs) {
           const isActive = tab.dataset.guideTarget === targetId;
           tab.classList.toggle("active", isActive);
           tab.setAttribute("aria-selected", isActive ? "true" : "false");
@@ -1286,17 +1218,17 @@
       }
 
       function clearGuides() {
-        for (const panel of panels) {
+        for (const panel of allPanels) {
           panel.hidden = true;
         }
-        for (const tab of tabs) {
+        for (const tab of allTabs) {
           tab.classList.remove("active");
           tab.setAttribute("aria-selected", "false");
         }
         if (empty) empty.hidden = false;
       }
 
-      tabs.forEach((tab, index) => {
+      allTabs.forEach((tab, index) => {
         tab.addEventListener("click", () => {
           const alreadySelected = tab.getAttribute("aria-selected") === "true";
           if (alreadySelected) {
@@ -1310,16 +1242,78 @@
           if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
           event.preventDefault();
           const delta = event.key === "ArrowRight" ? 1 : -1;
-          const next = (index + delta + tabs.length) % tabs.length;
-          tabs[next].focus();
+          const next = (index + delta + allTabs.length) % allTabs.length;
+          allTabs[next].focus();
         });
       });
 
       clearGuides();
->>>>>>> 44d7077f2bc66acd766a257d710dd48cc0529a6a
     })();
 
     (function addCareerEssentialsColumn() {
+      (function splitIntroLessonColumns() {
+        const introTables = [
+          document.querySelector("#guide-hardware table"),
+          document.querySelector("#guide-cs table")
+        ].filter(Boolean);
+
+        const firstSessionPattern = /\b(session\s*1|1st\s*session|session\s*3|3rd\s*session)\b/i;
+        const secondSessionPattern = /\b(session\s*2|2nd\s*session)\b/i;
+
+        for (const table of introTables) {
+          const headerRow = table.querySelector("thead tr");
+          if (!headerRow) continue;
+
+          const headers = Array.from(headerRow.querySelectorAll("th"));
+          const alreadySplit = headers.some((th) => (th.textContent || "").trim().toLowerCase() === "1st session")
+            && headers.some((th) => (th.textContent || "").trim().toLowerCase() === "2nd session");
+          if (alreadySplit) continue;
+
+          const lessonIndex = headers.findIndex(
+            (th) => (th.textContent || "").trim().toLowerCase() === "lesson/lab name"
+          );
+          if (lessonIndex < 0) continue;
+
+          headers[lessonIndex].textContent = "1st session";
+          const secondHeader = document.createElement("th");
+          secondHeader.textContent = "2nd session";
+          headerRow.insertBefore(secondHeader, headers[lessonIndex].nextSibling);
+
+          const rows = table.querySelectorAll("tbody tr");
+          for (const row of rows) {
+            const cells = Array.from(row.querySelectorAll("td"));
+            if (cells.length <= lessonIndex + 1) continue;
+
+            const lessonCell = cells[lessonIndex];
+            const lessonText = (lessonCell.textContent || "").trim();
+            const gciText = (cells[lessonIndex + 1].textContent || "").trim();
+
+            const secondCell = document.createElement("td");
+            lessonCell.after(secondCell);
+
+            if (!lessonText) {
+              lessonCell.textContent = "";
+              secondCell.textContent = "";
+              continue;
+            }
+
+            const hasFirst = firstSessionPattern.test(gciText);
+            const hasSecond = secondSessionPattern.test(gciText);
+
+            if (hasSecond && !hasFirst) {
+              lessonCell.textContent = "";
+              secondCell.textContent = lessonText;
+            } else if (hasFirst && !hasSecond) {
+              lessonCell.textContent = lessonText;
+              secondCell.textContent = "";
+            } else {
+              lessonCell.textContent = lessonText;
+              secondCell.textContent = lessonText;
+            }
+          }
+        }
+      })();
+
       const tables = document.querySelectorAll(".card table");
       const cutoff = new Date("2026-03-13T23:59:59");
 
@@ -1332,9 +1326,15 @@
         );
         if (exists) continue;
 
+        const headers = Array.from(headerRow.querySelectorAll("th"));
+        const gciIndex = headers.findIndex(
+          (th) => (th.textContent || "").trim().toLowerCase() === "gci schedule notes"
+        );
+        if (gciIndex < 0) continue;
+
         const header = document.createElement("th");
         header.textContent = "Career Essentials";
-        headerRow.insertBefore(header, headerRow.children[3] || null);
+        headerRow.insertBefore(header, headerRow.children[gciIndex + 1] || null);
 
         const rows = table.querySelectorAll("tbody tr");
         for (const row of rows) {
@@ -1354,7 +1354,7 @@
             }
           }
 
-          row.insertBefore(cell, row.children[3] || null);
+          row.insertBefore(cell, row.children[gciIndex + 1] || null);
         }
       }
     })();
@@ -1380,275 +1380,6 @@
       }
     })();
 
-    (async function syncNoSchoolDaysFromViewer() {
-      const VIEWER_URL = "https://aspiece.github.io/GCI/No_School_Viewer.html";
-      const FALLBACK_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTy-L_LG8bcMsu2w8HkdMXATdm2EASK-VR_O2XglJCmvzBxSSQ-B3-R_7jfba9DLctPy2Ul6bbLZvvI/pub?gid=371846928&single=true&output=csv";
-      const WINDOW_START = "2026-03-09";
-      const WINDOW_END = "2026-06-09";
-
-      function formatIsoDate(date) {
-        const y = date.getFullYear();
-        const m = String(date.getMonth() + 1).padStart(2, "0");
-        const d = String(date.getDate()).padStart(2, "0");
-        return `${y}-${m}-${d}`;
-      }
-
-      function parseDateFlexible(value) {
-        const s = String(value || "").trim();
-        if (!s) return null;
-
-        if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
-          const d = new Date(`${s}T00:00:00`);
-          return Number.isNaN(d.getTime()) ? null : d;
-        }
-
-        const asDate = new Date(s);
-        if (!Number.isNaN(asDate.getTime())) {
-          return new Date(asDate.getFullYear(), asDate.getMonth(), asDate.getDate());
-        }
-
-        const slash = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
-        if (slash) {
-          let year = Number(slash[3]);
-          if (year < 100) year += 2000;
-          const month = Number(slash[1]) - 1;
-          const day = Number(slash[2]);
-          const d = new Date(year, month, day);
-          return Number.isNaN(d.getTime()) ? null : d;
-        }
-
-        if (/^\d{4,6}$/.test(s)) {
-          // Excel serial date support.
-          const serial = Number(s);
-          const epoch = new Date("1899-12-30T00:00:00");
-          epoch.setDate(epoch.getDate() + serial);
-          return new Date(epoch.getFullYear(), epoch.getMonth(), epoch.getDate());
-        }
-
-        return null;
-      }
-
-      function splitCsvLine(line) {
-        const out = [];
-        let current = "";
-        let inQuotes = false;
-        for (let i = 0; i < line.length; i += 1) {
-          const ch = line[i];
-          if (ch === '"') {
-            if (inQuotes && line[i + 1] === '"') {
-              current += '"';
-              i += 1;
-            } else {
-              inQuotes = !inQuotes;
-            }
-          } else if (ch === "," && !inQuotes) {
-            out.push(current);
-            current = "";
-          } else {
-            current += ch;
-          }
-        }
-        out.push(current);
-        return out.map(cell => cell.trim());
-      }
-
-      function parseCsv(text) {
-        const lines = String(text || "")
-          .replace(/^\uFEFF/, "")
-          .split(/\r?\n/)
-          .filter(line => line.trim().length > 0);
-        if (!lines.length) return [];
-
-        const headers = splitCsvLine(lines[0]);
-        const indexByHeader = Object.fromEntries(headers.map((h, i) => [String(h || "").toLowerCase(), i]));
-
-        const findColumnIndex = (candidates, hints) => {
-          const normalize = (value) => String(value || "").toLowerCase().replace(/[^a-z0-9]/g, "");
-          const normalizedHeaders = headers.map((h) => normalize(h));
-
-          for (const candidate of candidates) {
-            const target = normalize(candidate);
-            const exact = normalizedHeaders.findIndex((h) => h === target || h.includes(target) || target.includes(h));
-            if (exact >= 0) return exact;
-          }
-          for (const hint of hints) {
-            const target = normalize(hint);
-            const hit = normalizedHeaders.findIndex((h) => h.includes(target));
-            if (hit >= 0) return hit;
-          }
-          return -1;
-        };
-
-        const dateCol = findColumnIndex(["Date", "Start Date", "Event Date"], ["date", "start"]);
-        const eventCol = findColumnIndex(["Event", "Type", "Event Type", "Category"], ["event", "type", "category"]);
-        const schoolCol = findColumnIndex(["School Name", "School", "District", "Building"], ["school", "district", "building"]);
-
-        if (dateCol < 0 || eventCol < 0 || schoolCol < 0) return [];
-
-        const rows = [];
-        for (let i = 1; i < lines.length; i += 1) {
-          const cols = splitCsvLine(lines[i]);
-          const date = parseDateFlexible(cols[dateCol]);
-          const event = String(cols[eventCol] || "").trim();
-          const school = String(cols[schoolCol] || "").trim();
-          if (!date || !event || !school) continue;
-          rows.push({ dateIso: formatIsoDate(date), event, school });
-        }
-        return rows;
-      }
-
-      async function resolveCsvUrl() {
-        try {
-          const page = await fetch(VIEWER_URL, { cache: "no-store" });
-          if (!page.ok) return FALLBACK_CSV_URL;
-          const html = await page.text();
-          const match = html.match(/DATA_URL\s*:\s*["']([^"']+)["']/);
-          return match && match[1] ? match[1] : FALLBACK_CSV_URL;
-        } catch (_error) {
-          return FALLBACK_CSV_URL;
-        }
-      }
-
-      function toDisplayValue(eventsForDate) {
-        if (!eventsForDate || !eventsForDate.length) return "None";
-        const bySchool = new Map();
-        for (const row of eventsForDate) {
-          const school = row.school;
-          const event = row.event;
-          if (!bySchool.has(school)) bySchool.set(school, new Set());
-          bySchool.get(school).add(event);
-        }
-        return Array.from(bySchool.entries())
-          .map(([school, events]) => {
-            const firstEvent = Array.from(events)[0] || "";
-            const lower = firstEvent.toLowerCase();
-            if (school.toLowerCase().includes("all school")) {
-              return lower.includes("spring break") ? "All schools (Spring Break)" : `${school} (${firstEvent})`;
-            }
-            return school;
-          })
-          .join("; ");
-      }
-
-      function updateTables(byDate) {
-        const tables = document.querySelectorAll(".card table");
-        for (const table of tables) {
-          const headers = Array.from(table.querySelectorAll("thead th"));
-          const targetIndex = headers.findIndex((th) => {
-            const text = (th.textContent || "").trim().toLowerCase();
-            return text === "home school no school";
-          });
-          if (targetIndex < 0) continue;
-
-          const rows = table.querySelectorAll("tbody tr");
-          for (const row of rows) {
-            const cells = row.querySelectorAll("td");
-            if (cells.length <= targetIndex) continue;
-            const dateText = (cells[0].textContent || "").trim();
-            if (!/^\d{4}-\d{2}-\d{2}$/.test(dateText)) continue;
-            const events = byDate.get(dateText) || [];
-            cells[targetIndex].textContent = toDisplayValue(events);
-          }
-        }
-      }
-
-      function compressRanges(dateRows) {
-        const ranges = [];
-        if (!dateRows.length) return ranges;
-
-        let start = dateRows[0].dateIso;
-        let end = dateRows[0].dateIso;
-        let label = dateRows[0].label;
-
-        const toDate = (iso) => new Date(`${iso}T00:00:00`);
-        const isNextDay = (aIso, bIso) => {
-          const a = toDate(aIso);
-          const b = toDate(bIso);
-          const diff = Math.round((b.getTime() - a.getTime()) / 86400000);
-          return diff === 1;
-        };
-
-        for (let i = 1; i < dateRows.length; i += 1) {
-          const current = dateRows[i];
-          if (current.label === label && isNextDay(end, current.dateIso)) {
-            end = current.dateIso;
-          } else {
-            ranges.push({ start, end, label });
-            start = current.dateIso;
-            end = current.dateIso;
-            label = current.label;
-          }
-        }
-        ranges.push({ start, end, label });
-        return ranges;
-      }
-
-      function updateSummary(byDate) {
-        const list = document.getElementById("gciNoSchoolDaysList");
-        if (!list) return;
-
-        const start = new Date(`${WINDOW_START}T00:00:00`);
-        const end = new Date(`${WINDOW_END}T23:59:59`);
-
-        const noSchoolDates = Array.from(byDate.entries())
-          .filter(([dateIso, rows]) => {
-            const d = new Date(`${dateIso}T00:00:00`);
-            if (Number.isNaN(d.getTime()) || d < start || d > end) return false;
-            return rows.some((r) => /no school|holiday/i.test(r.event));
-          })
-          .sort(([a], [b]) => a.localeCompare(b))
-          .map(([dateIso, rows]) => {
-            const events = Array.from(new Set(rows.map((r) => r.event)));
-            const first = events[0] || "No School";
-            const label = /spring break/i.test(first)
-              ? "Spring Break"
-              : /memorial day/i.test(first)
-                ? "Memorial Day"
-                : first;
-            return { dateIso, label };
-          });
-
-        const ranges = compressRanges(noSchoolDates);
-        list.innerHTML = "";
-
-        if (!ranges.length) {
-          const li = document.createElement("li");
-          li.textContent = "No no-school dates found in current sync window.";
-          list.appendChild(li);
-          return;
-        }
-
-        for (const range of ranges) {
-          const li = document.createElement("li");
-          li.textContent = range.start === range.end
-            ? `${range.start} (${range.label})`
-            : `${range.start} to ${range.end} (${range.label})`;
-          list.appendChild(li);
-        }
-      }
-
-      try {
-        const csvUrl = await resolveCsvUrl();
-        const response = await fetch(csvUrl, { cache: "no-store" });
-        if (!response.ok) throw new Error(`CSV fetch failed: ${response.status}`);
-
-        const csvText = await response.text();
-        const rows = parseCsv(csvText)
-          .filter((r) => /no school|holiday|spring break/i.test(r.event));
-
-        const byDate = new Map();
-        for (const row of rows) {
-          if (!byDate.has(row.dateIso)) byDate.set(row.dateIso, []);
-          byDate.get(row.dateIso).push(row);
-        }
-
-        updateTables(byDate);
-        updateSummary(byDate);
-      } catch (error) {
-        // Keep existing hardcoded content if sync fails.
-        console.warn("No-school sync failed:", error);
-      }
-    })();
   </script>
 </body>
 
