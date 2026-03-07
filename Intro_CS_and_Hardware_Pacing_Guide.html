@@ -119,6 +119,23 @@
       margin-top: 10px;
     }
 
+    .bookmark-links {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .bookmark-links a {
+      color: #0b4f4a;
+      text-decoration: none;
+      margin-right: 10px;
+      font-weight: 600;
+    }
+
+    .bookmark-links a:hover {
+      text-decoration: underline;
+    }
+
     .guides-stack {
       display: block;
     }
@@ -252,15 +269,6 @@
     <section class="hero">
       <h1>Computer Science Course Pacing Guides</h1>
       <p>Time window: 2026-03-05 through 2026-06-09.</p>
-      <p><strong>Shared Dates (All Courses)</strong></p>
-      <ul>
-        <li>2026-03-30 to 2026-04-03: Spring Break (all schools)</li>
-        <li>2026-04-16: Spring Advisory (No GCI)</li>
-        <li>2026-04-17: Virtual Day</li>
-        <li>2026-04-18: NCWIT Award Ceremony</li>
-        <li>2026-05-22: No GCI</li>
-        <li>2026-05-25 (Memorial Day)</li>
-      </ul>
       <button class="print" onclick="window.print()">Print / Save PDF</button>
       <p class="week-key">Week marker: double line = start of week, light blue row = Friday, orange striped row = Spring
         Break.</p>
@@ -278,6 +286,13 @@
         <button class="guide-tab" type="button" role="tab" aria-selected="false" aria-controls="guide-apcsa-game"
           data-guide-target="guide-apcsa-game" id="tab-guide-apcsa-game">AP Computer Science A: Game Design</button>
       </div>
+      <p class="bookmark-links" aria-label="Bookmark links for guides">
+        Bookmark links:
+        <a href="#guide-hardware">Intro Hardware</a>
+        <a href="#guide-cs">Intro CS</a>
+        <a href="#guide-advanced-hardware">Advanced Hardware</a>
+        <a href="#guide-apcsa-game">APCSA Game</a>
+      </p>
       <div class="guide-empty" id="guideEmptyState">Select a pacing guide tab to view it.</div>
     </section>
 
@@ -1413,8 +1428,23 @@
 
       const allTabs = Array.from(document.querySelectorAll(".guide-tab"));
       const allPanels = Array.from(document.querySelectorAll(".guide-panel"));
+      const validTargets = new Set(allPanels.map((panel) => panel.id));
 
-      function showGuide(targetId) {
+      function getGuideTargetFromHash() {
+        const hashTarget = decodeURIComponent((window.location.hash || "").replace(/^#/, ""));
+        return validTargets.has(hashTarget) ? hashTarget : "";
+      }
+
+      function updateHashForGuide(targetId) {
+        const nextHash = targetId ? `#${encodeURIComponent(targetId)}` : "";
+        const currentHash = window.location.hash || "";
+        if (currentHash === nextHash) return;
+
+        const nextUrl = `${window.location.pathname}${window.location.search}${nextHash}`;
+        window.history.replaceState(null, "", nextUrl);
+      }
+
+      function showGuide(targetId, syncHash = false) {
         let selectedCount = 0;
         for (const panel of allPanels) {
           const isActive = panel.id === targetId;
@@ -1429,9 +1459,10 @@
         }
 
         if (empty) empty.hidden = selectedCount > 0;
+        if (syncHash) updateHashForGuide(selectedCount > 0 ? targetId : "");
       }
 
-      function clearGuides() {
+      function clearGuides(syncHash = false) {
         for (const panel of allPanels) {
           panel.hidden = true;
         }
@@ -1440,16 +1471,17 @@
           tab.setAttribute("aria-selected", "false");
         }
         if (empty) empty.hidden = false;
+        if (syncHash) updateHashForGuide("");
       }
 
       allTabs.forEach((tab, index) => {
         tab.addEventListener("click", () => {
           const alreadySelected = tab.getAttribute("aria-selected") === "true";
           if (alreadySelected) {
-            clearGuides();
+            clearGuides(true);
             return;
           }
-          showGuide(tab.dataset.guideTarget || "");
+          showGuide(tab.dataset.guideTarget || "", true);
         });
 
         tab.addEventListener("keydown", (event) => {
@@ -1461,7 +1493,21 @@
         });
       });
 
-      clearGuides();
+      const initialTarget = getGuideTargetFromHash();
+      if (initialTarget) {
+        showGuide(initialTarget);
+      } else {
+        clearGuides();
+      }
+
+      window.addEventListener("hashchange", () => {
+        const target = getGuideTargetFromHash();
+        if (target) {
+          showGuide(target);
+        } else {
+          clearGuides();
+        }
+      });
     }
 
     function addCareerEssentialsColumn() {
