@@ -1145,7 +1145,125 @@
     </div>
   </main>
   <script>
-    (function setupGuideTabs() {
+    function parseCsv(text) {
+      const rows = [];
+      let row = [];
+      let cell = "";
+      let inQuotes = false;
+
+      for (let i = 0; i < text.length; i += 1) {
+        const ch = text[i];
+        const next = text[i + 1];
+
+        if (ch === '"') {
+          if (inQuotes && next === '"') {
+            cell += '"';
+            i += 1;
+          } else {
+            inQuotes = !inQuotes;
+          }
+          continue;
+        }
+
+        if (ch === "," && !inQuotes) {
+          row.push(cell);
+          cell = "";
+          continue;
+        }
+
+        if ((ch === "\n" || ch === "\r") && !inQuotes) {
+          if (ch === "\r" && next === "\n") i += 1;
+          row.push(cell);
+          cell = "";
+          if (row.some((value) => value !== "")) rows.push(row);
+          row = [];
+          continue;
+        }
+
+        cell += ch;
+      }
+
+      if (cell !== "" || row.length > 0) {
+        row.push(cell);
+        if (row.some((value) => value !== "")) rows.push(row);
+      }
+
+      if (rows.length === 0) return [];
+      const headers = rows[0].map((value) => value.trim());
+      return rows.slice(1).map((values) => {
+        const item = {};
+        headers.forEach((header, index) => {
+          item[header] = (values[index] || "").trim();
+        });
+        return item;
+      });
+    }
+
+    function setSharedDatesFromRows(sharedRows) {
+      const list = document.querySelector(".hero ul");
+      if (!list || sharedRows.length === 0) return;
+
+      list.innerHTML = "";
+      sharedRows.forEach((row) => {
+        const li = document.createElement("li");
+        li.textContent = row.SharedDateLabel || row.Date || "";
+        list.appendChild(li);
+      });
+    }
+
+    function setCourseTableFromRows(panelId, courseName, courseRows) {
+      const panel = document.getElementById(panelId);
+      if (!panel) return;
+
+      const tbody = panel.querySelector("tbody");
+      if (!tbody) return;
+
+      const filtered = courseRows.filter((row) => row.Course === courseName);
+      if (filtered.length === 0) return;
+
+      tbody.innerHTML = "";
+      filtered.forEach((row) => {
+        const tr = document.createElement("tr");
+        const cells = [
+          row.Date || "",
+          row.LessonOrLab || "",
+          row.GciScheduleNotes || "",
+          row.HomeSchoolNoSchool || ""
+        ];
+
+        cells.forEach((value) => {
+          const td = document.createElement("td");
+          td.textContent = value;
+          tr.appendChild(td);
+        });
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function loadDateDataFromCsv(csvPath) {
+      try {
+        const response = await fetch(csvPath, { cache: "no-store" });
+        if (!response.ok) throw new Error(`Unable to load ${csvPath}`);
+
+        const csvText = await response.text();
+        const rows = parseCsv(csvText);
+        if (rows.length === 0) return false;
+
+        const sharedRows = rows.filter((row) => row.SourceType === "SharedDate");
+        const courseRows = rows.filter((row) => row.SourceType === "CourseRow");
+
+        setSharedDatesFromRows(sharedRows);
+        setCourseTableFromRows("guide-hardware", "Intro to Computer Hardware", courseRows);
+        setCourseTableFromRows("guide-cs", "Intro to Computer Science", courseRows);
+        return true;
+      } catch (error) {
+        console.warn("Using in-page pacing data because CSV load failed.", error);
+        return false;
+      }
+    }
+
+    function setupGuideTabs() {
       const tabs = Array.from(document.querySelectorAll(".guide-tab"));
       const panels = Array.from(document.querySelectorAll(".guide-panel"));
       const empty = document.getElementById("guideEmptyState");
@@ -1303,9 +1421,9 @@
       });
 
       clearGuides();
-    })();
+    }
 
-    (function addCareerEssentialsColumn() {
+    function addCareerEssentialsColumn() {
       (function splitIntroLessonColumns() {
         const introTables = [
           document.querySelector("#guide-hardware table"),
@@ -1412,9 +1530,9 @@
           row.insertBefore(cell, row.children[gciIndex + 1] || null);
         }
       }
-    })();
+    }
 
-    (function addWeekMarkers() {
+    function addWeekMarkers() {
       const rows = document.querySelectorAll("tbody tr");
       const springBreakStart = new Date("2026-03-30T00:00:00");
       const springBreakEnd = new Date("2026-04-03T23:59:59");
@@ -1433,6 +1551,13 @@
           row.classList.add("spring-break");
         }
       }
+    }
+
+    (async function initializePage() {
+      await loadDateDataFromCsv("Pacing_Dates_Master.csv");
+      setupGuideTabs();
+      addCareerEssentialsColumn();
+      addWeekMarkers();
     })();
 
   </script>
