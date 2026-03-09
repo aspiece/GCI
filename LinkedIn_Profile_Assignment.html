@@ -173,6 +173,15 @@
             font-weight: 600;
         }
 
+        .submission-alert {
+            margin-top: 10px;
+            padding: 10px 12px;
+            border-left: 4px solid var(--warn-line);
+            border-radius: 8px;
+            background: var(--warn-bg);
+            font-weight: 700;
+        }
+
         .steps {
             margin: 0;
             padding-left: 22px;
@@ -218,6 +227,13 @@
         .question .options {
             display: grid;
             gap: 8px;
+        }
+
+        .question-nav {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-top: 10px;
         }
 
         .video-wrap {
@@ -347,86 +363,110 @@
 
         <section class="card" aria-labelledby="activationTitle">
             <h2 id="activationTitle">Activation: Get Ready to Build Your Brand</h2>
-            <p class="muted">Answer these quick questions to warm up before creating your profile.</p>
+            <p class="muted">New to LinkedIn? Answer one question at a time to get ready before creating your
+                profile.</p>
+            <p class="status" id="activationStepStatus" role="status" aria-live="polite">Question 1 of 3</p>
 
             <div class="question" data-activation="1">
-                <p>1. What is one job or career area you might want to explore after graduation?</p>
+                <p>1. If you are brand new to LinkedIn, what is your main goal for using it first?</p>
                 <div class="options">
-                    <label><input type="radio" name="act1" value="set"> I already have one in mind.</label>
-                    <label><input type="radio" name="act1" value="maybe"> I have a few ideas.</label>
-                    <label><input type="radio" name="act1" value="unsure"> I am not sure yet.</label>
+                    <label><input type="radio" name="act1" value="learn"> Learn what LinkedIn is and how it
+                        works.</label>
+                    <label><input type="radio" name="act1" value="build"> Build a basic profile I can improve over
+                        time.</label>
+                    <label><input type="radio" name="act1" value="jobs"> Start preparing to find internships/jobs
+                        later.</label>
                 </div>
             </div>
 
-            <div class="question" data-activation="2">
-                <p>2. Which part of your experience are you most excited to share on LinkedIn?</p>
+            <div class="question" data-activation="2" hidden>
+                <p>2. Which section is the best place to start on your very first profile?</p>
                 <div class="options">
-                    <label><input type="radio" name="act2" value="projects"> Projects / labs</label>
-                    <label><input type="radio" name="act2" value="skills"> Technical skills</label>
-                    <label><input type="radio" name="act2" value="goals"> Career goals</label>
+                    <label><input type="radio" name="act2" value="headline"> Headline and short About summary</label>
+                    <label><input type="radio" name="act2" value="experience"> Experience and projects</label>
+                    <label><input type="radio" name="act2" value="skills"> Skills section</label>
                 </div>
             </div>
 
-            <div class="question" data-activation="3">
-                <p>3. What do you think LinkedIn helps with most?</p>
+            <div class="question" data-activation="3" hidden>
+                <p>3. What is one action you can take today even if your profile is not perfect yet?</p>
                 <div class="options">
-                    <label><input type="radio" name="act3" value="network"> Networking and connections</label>
-                    <label><input type="radio" name="act3" value="jobs"> Finding internships and jobs</label>
-                    <label><input type="radio" name="act3" value="both"> Both networking and job opportunities</label>
+                    <label><input type="radio" name="act3" value="connect"> Connect with your instructor and two
+                        classmates</label>
+                    <label><input type="radio" name="act3" value="update"> Add one new profile section this week</label>
+                    <label><input type="radio" name="act3" value="both"> Do both: connect and improve your
+                        profile</label>
                 </div>
+            </div>
+
+            <div class="question-nav no-print" aria-label="Activation question navigation">
+                <button type="button" id="activationPrevBtn">Previous</button>
+                <button type="button" id="activationNextBtn" class="primary">Next</button>
             </div>
         </section>
 
         <section class="card" aria-labelledby="demoTitle">
-            <h2 id="demoTitle">Demonstration: Follow Along Video</h2>
-            <p><strong>Before starting the video:</strong> Create a LinkedIn account using your personal email address.
-                This allows you to access your profile after you graduate.</p>
+            <h2 id="demoTitle">Part 1: Setup Your Account</h2>
+            <p><strong>Start here:</strong> Create your LinkedIn account using your personal email address so you can
+                access your profile after graduation.</p>
             <div class="checklist">
                 <label><input type="checkbox" id="preAccount" /> I created my LinkedIn account with my personal email
-                    before starting the video.</label>
+                    and can log in.</label>
             </div>
-            <div class="video-wrap">
-                <iframe src="https://www.youtube.com/embed/hNzpEeU3a4I"
-                    title="How to Set Up a LinkedIn Account demonstration"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-            </div>
-            <p class="small muted">Direct video link: <a href="https://youtu.be/hNzpEeU3a4I?si=lQZV3ODlKewBwuyL"
-                    target="_blank" rel="noopener noreferrer">https://youtu.be/hNzpEeU3a4I</a></p>
-            <p><strong>Application portion:</strong> Follow along on your own computer while the video plays and build
-                your profile live.</p>
         </section>
 
         <section class="card" aria-labelledby="cfuTitle">
-            <h2 id="cfuTitle">Check for Understanding (After Video)</h2>
-            <p class="muted">Answer all questions, then click <strong>Check My Answers</strong>.</p>
+            <h2 id="cfuTitle">Part 3: Check for Understanding (Most Important Video Takeaways)</h2>
+            <p class="muted">Answer all 5 questions, then click <strong>Check My Answers</strong>.</p>
 
             <div class="question" data-cfu="1">
-                <p>1. What is a main purpose of LinkedIn?</p>
+                <p>1. What is the most important reason to have a LinkedIn profile as a student?</p>
                 <div class="options">
-                    <label><input type="radio" name="cfu1" value="a" /> To post gaming clips only</label>
-                    <label><input type="radio" name="cfu1" value="b" /> To build a professional network and career
-                        profile</label>
-                    <label><input type="radio" name="cfu1" value="c" /> To replace your school email</label>
+                    <label><input type="radio" name="cfu1" value="a" /> To share random daily posts</label>
+                    <label><input type="radio" name="cfu1" value="b" /> To build a professional profile and network
+                        for future opportunities</label>
+                    <label><input type="radio" name="cfu1" value="c" /> To replace all job applications</label>
                 </div>
             </div>
 
             <div class="question" data-cfu="2">
-                <p>2. How can LinkedIn help you find a job?</p>
+                <p>2. Which profile section should be strongest first because it is seen immediately?</p>
                 <div class="options">
-                    <label><input type="radio" name="cfu2" value="a" /> It connects you to recruiters and job
-                        postings</label>
-                    <label><input type="radio" name="cfu2" value="b" /> It automatically gives everyone a job</label>
-                    <label><input type="radio" name="cfu2" value="c" /> It removes the need for applications</label>
+                    <label><input type="radio" name="cfu2" value="a" /> Headline and About summary</label>
+                    <label><input type="radio" name="cfu2" value="b" /> Number of emojis in your bio</label>
+                    <label><input type="radio" name="cfu2" value="c" /> Leaving your profile mostly blank</label>
                 </div>
             </div>
 
             <div class="question" data-cfu="3">
-                <p>3. Which profile elements make your LinkedIn stronger?</p>
+                <p>3. Why does adding projects, skills, and experience matter most?</p>
                 <div class="options">
-                    <label><input type="radio" name="cfu3" value="a" /> Headline, summary, skills, and projects</label>
-                    <label><input type="radio" name="cfu3" value="b" /> Random emojis only</label>
-                    <label><input type="radio" name="cfu3" value="c" /> Leaving all sections blank</label>
+                    <label><input type="radio" name="cfu3" value="a" /> It gives evidence of what you can do and
+                        what you are learning</label>
+                    <label><input type="radio" name="cfu3" value="b" /> It only makes the page longer</label>
+                    <label><input type="radio" name="cfu3" value="c" /> It is not important for students</label>
+                </div>
+            </div>
+
+            <div class="question" data-cfu="4">
+                <p>4. What is most important when sending connection requests for this assignment?</p>
+                <div class="options">
+                    <label><input type="radio" name="cfu4" value="a" /> Connect with your instructor and classmates
+                        to start a professional network</label>
+                    <label><input type="radio" name="cfu4" value="b" /> Connect only with random people you do not
+                        know</label>
+                    <label><input type="radio" name="cfu4" value="c" /> Skip connecting and leave that step
+                        blank</label>
+                </div>
+            </div>
+
+            <div class="question" data-cfu="5">
+                <p>5. What is the most important final step before turning in this assignment?</p>
+                <div class="options">
+                    <label><input type="radio" name="cfu5" value="a" /> Submit a valid LinkedIn profile link that
+                        opens your profile</label>
+                    <label><input type="radio" name="cfu5" value="b" /> Submit only a screenshot</label>
+                    <label><input type="radio" name="cfu5" value="c" /> Submit no link and explain later</label>
                 </div>
             </div>
 
@@ -435,7 +475,17 @@
         </section>
 
         <section class="card" aria-labelledby="applicationTitle">
-            <h2 id="applicationTitle">Application Tasks</h2>
+            <h2 id="applicationTitle">Part 2: Follow the Video and Build Your Profile</h2>
+            <p><strong>During this part:</strong> Watch the demo video and complete your profile as Kevin models each
+                step.</p>
+            <div class="video-wrap">
+                <iframe src="https://www.youtube.com/embed/hNzpEeU3a4I"
+                    title="How to Set Up a LinkedIn Account demonstration"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+            <p class="small muted">Direct video link: <a href="https://youtu.be/hNzpEeU3a4I?si=lQZV3ODlKewBwuyL"
+                    target="_blank" rel="noopener noreferrer">https://youtu.be/hNzpEeU3a4I</a></p>
             <ol class="steps">
                 <li>Finish your profile setup by following the video on your own computer.</li>
                 <li>Go to your instructor profile: <a href="https://www.linkedin.com/in/aspiece/" target="_blank"
@@ -453,6 +503,8 @@
 
         <section class="card" aria-labelledby="submitTitle">
             <h2 id="submitTitle">Submission Instructions</h2>
+            <p class="submission-alert"><strong>Important for full points:</strong> Click <strong>Validate Link</strong>
+                and confirm your URL is valid <strong>before</strong> you submit.</p>
             <ol class="steps">
                 <li>Open your own LinkedIn profile page.</li>
                 <li>Copy the profile URL from the browser address bar. It should look like
@@ -469,8 +521,8 @@
                     aria-describedby="profileUrlHelp" />
                 <button type="button" id="validateLinkBtn">Validate Link</button>
             </div>
-            <p id="profileUrlHelp" class="small muted">This check is for practice format only. You still need to submit
-                the link in your class submission tool.</p>
+            <p id="profileUrlHelp" class="small muted">Use <strong>Validate Link</strong> first. A valid URL check
+                helps ensure full submission credit before you turn it in through your class submission tool.</p>
             <p class="status" id="linkStatus" role="status" aria-live="polite">Profile link not checked yet.</p>
             <div class="checklist">
                 <label><input type="checkbox" id="taskSubmitted" /> I submitted my LinkedIn profile link.</label>
@@ -482,7 +534,9 @@
         const cfuAnswerKey = {
             cfu1: "b",
             cfu2: "a",
-            cfu3: "a"
+            cfu3: "a",
+            cfu4: "a",
+            cfu5: "a"
         };
 
         function setupThemePicker() {
@@ -624,7 +678,45 @@
             updateProgress();
         }
 
+        function setupActivationQuestionFlow() {
+            const questions = Array.from(document.querySelectorAll('.question[data-activation]'));
+            const prevBtn = document.getElementById("activationPrevBtn");
+            const nextBtn = document.getElementById("activationNextBtn");
+            const stepStatus = document.getElementById("activationStepStatus");
+
+            if (!questions.length || !prevBtn || !nextBtn || !stepStatus) return;
+
+            let currentIndex = 0;
+
+            function renderActivationQuestion() {
+                questions.forEach((question, index) => {
+                    question.hidden = index !== currentIndex;
+                });
+
+                stepStatus.textContent = `Question ${currentIndex + 1} of ${questions.length}`;
+                prevBtn.disabled = currentIndex === 0;
+                nextBtn.textContent = currentIndex === questions.length - 1 ? "Finish" : "Next";
+            }
+
+            prevBtn.addEventListener("click", () => {
+                if (currentIndex > 0) {
+                    currentIndex -= 1;
+                    renderActivationQuestion();
+                }
+            });
+
+            nextBtn.addEventListener("click", () => {
+                if (currentIndex < questions.length - 1) {
+                    currentIndex += 1;
+                    renderActivationQuestion();
+                }
+            });
+
+            renderActivationQuestion();
+        }
+
         setupThemePicker();
+        setupActivationQuestionFlow();
         setupInteractions();
     </script>
 </body>
