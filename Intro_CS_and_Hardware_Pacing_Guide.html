@@ -2141,6 +2141,50 @@
       }
     }
 
+    function addDayOfWeekColumn() {
+      const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+      const tables = document.querySelectorAll(".guide-panel table");
+
+      for (const table of tables) {
+        const headerRow = table.querySelector("thead tr");
+        if (!headerRow) continue;
+
+        const headers = Array.from(headerRow.querySelectorAll("th"));
+        const hasDayColumn = headers.some((th) => normalizeHeaderLabel(th.textContent) === "day");
+        if (hasDayColumn) continue;
+
+        const dateIndex = headers.findIndex((th) => {
+          const label = normalizeHeaderLabel(th.textContent);
+          return label === "dates" || label === "date";
+        });
+        if (dateIndex < 0) continue;
+
+        const dayHeader = document.createElement("th");
+        dayHeader.textContent = "Day";
+        headerRow.insertBefore(dayHeader, headerRow.children[dateIndex + 1] || null);
+
+        const rows = table.querySelectorAll("tbody tr");
+        for (const row of rows) {
+          const cells = Array.from(row.querySelectorAll("td"));
+          if (cells.length <= dateIndex) continue;
+
+          const sourceDate = row.dataset.rowDate || toIsoDate((cells[dateIndex].textContent || "").trim());
+          let dayText = "";
+
+          if (/^\d{4}-\d{2}-\d{2}$/.test(sourceDate)) {
+            const date = new Date(`${sourceDate}T00:00:00`);
+            if (!Number.isNaN(date.getTime())) {
+              dayText = dayNames[date.getDay()] || "";
+            }
+          }
+
+          const dayCell = document.createElement("td");
+          dayCell.textContent = dayText;
+          row.insertBefore(dayCell, row.children[dateIndex + 1] || null);
+        }
+      }
+    }
+
     (async function initializePage() {
       setupThemePicker();
       await loadDateDataFromCsv("Pacing_Dates_Master.csv");
@@ -2148,6 +2192,7 @@
       if (!window.__usingDynamicCsvTables) {
         addCareerEssentialsColumn();
       }
+      addDayOfWeekColumn();
       applyCourseHeaderRules({
         "advanced computer hardware": {
           rename: {
