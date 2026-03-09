@@ -426,6 +426,11 @@
             cursor: grab;
         }
 
+        .sort-card.selected {
+            outline: 3px solid var(--focus);
+            outline-offset: 2px;
+        }
+
         .sort-card:active {
             cursor: grabbing;
         }
@@ -457,6 +462,18 @@
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
         }
 
         .sort-feedback {
@@ -507,7 +524,7 @@
 <body>
     <a class="skip-link" href="#assignmentMain">Skip to assignment content</a>
 
-    <main class="wrap" id="assignmentMain">
+    <main class="wrap" id="assignmentMain" tabindex="-1">
         <section class="card hero">
             <div>
                 <h1>High Ropes Teamwork Challenge - Follow-Up Assignment</h1>
@@ -527,6 +544,18 @@
             <p class="note"><strong>Purpose:</strong> Teams were tested physically and mentally on high ropes. This
                 follow-up helps you turn that experience into stronger collaboration skills for class, projects, and
                 future jobs.</p>
+        </section>
+
+        <section class="card" aria-label="Assignment completion steps">
+            <h2>How to Complete and Submit (In Order)</h2>
+            <ol class="key-points">
+                <li>If you missed Base Camp, complete Step 1 (makeup video + quiz). If you attended, skip Step 1.</li>
+                <li>Complete Step 2 by watching the required demonstration video.</li>
+                <li>Complete Step 3 by finishing the required accountability quiz.</li>
+                <li>Complete Step 4 by sorting statements and checking your answers.</li>
+                <li>Complete Step 5 by writing your comfort-zone reflection.</li>
+                <li>In Step 6, generate and copy your full submission text, then paste it into your LMS assignment.</li>
+            </ol>
         </section>
 
         <section class="card">
@@ -563,11 +592,6 @@
             <p><strong>Video 2 link:</strong> <a href="https://youtu.be/DVCwE20uRcI?si=aIRExS5q-S1A1QGZ" target="_blank"
                     rel="noopener noreferrer">https://youtu.be/DVCwE20uRcI?si=aIRExS5q-S1A1QGZ</a></p>
 
-            <div class="checklist">
-                <label><input type="checkbox" /> I completed all Video 2 accountability check-for-understanding
-                    questions.</label>
-            </div>
-
             <div class="quiz-shell" id="makeupQuiz" aria-live="polite">
                 <p class="quiz-question-meta" id="quizMeta">Question 1 of 6</p>
                 <p class="quiz-question" id="quizQuestion">Loading question...</p>
@@ -588,7 +612,8 @@
         <section class="card">
             <h2>Step 2: Watch the Required Demonstration Video</h2>
             <p class="muted">All students must use this high ropes teamwork challenge video as part of this assignment,
-                along with the instructor ropes course reflection transcript.
+                along with the instructor ropes course reflection transcript. The first ropes course video is from
+                International Academy East in Troy.
             </p>
             <div class="video-wrap" aria-label="High ropes teamwork challenge demonstration video">
                 <iframe src="https://www.youtube.com/embed/nYfr-nN0m6c" title="Ropes Course Demonstration Video"
@@ -628,10 +653,12 @@
         </section>
 
         <section class="card" aria-label="Interactive teamwork sorting activity">
-            <h2>Interactive Activity: Sort the Teamwork Evidence</h2>
+            <h2>Step 4: Interactive Activity - Sort the Teamwork Evidence</h2>
             <p class="muted">Drag each statement into the correct category. Then click <strong>Check Answers</strong>.
             </p>
-            <div class="sort-activity" id="teamworkSortActivity">
+            <p id="sortInstructions" class="muted">Accessibility tip: You can drag statements, or use keyboard only.
+                Tab to a statement and press Enter/Space to select it, then use the move buttons below.</p>
+            <div class="sort-activity" id="teamworkSortActivity" aria-describedby="sortInstructions">
                 <div class="sort-source">
                     <h3>Statement Bank</h3>
                     <ul class="sort-list" id="sortSource">
@@ -666,6 +693,9 @@
                 </div>
 
                 <div class="sort-controls">
+                    <button type="button" id="moveSelectedToAccountabilityBtn">Move Selected to Accountability</button>
+                    <button type="button" id="moveSelectedToReflectionBtn">Move Selected to Reflection</button>
+                    <button type="button" id="moveSelectedToBankBtn">Return Selected to Statement Bank</button>
                     <button type="button" class="primary" id="checkSortBtn">Check Answers</button>
                     <button type="button" id="resetSortBtn">Reset Activity</button>
                 </div>
@@ -679,13 +709,16 @@
                 <label><input type="checkbox" /> I watched the required demonstration video.</label>
                 <label><input type="checkbox" /> I completed the required video accountability CFU quiz.</label>
                 <label><input type="checkbox" /> If needed, I completed the makeup video CFU quiz.</label>
+                <label><input type="checkbox" /> I completed the Step 4 sorting activity and checked my answers.</label>
+                <label><input type="checkbox" /> I completed the Step 5 comfort-zone reflection response.</label>
+                <label><input type="checkbox" /> I generated and copied my full submission text.</label>
                 <label><input type="checkbox" /> I submitted in our LMS as either a document file or PDF.</label>
             </div>
             <p class="footer-status">Submit your generated report with quiz scores through your LMS assignment.</p>
         </section>
 
         <section class="card" aria-label="Comfort zone short answer">
-            <h2>Final Reflection: Comfort Zone</h2>
+            <h2>Step 5: Final Reflection - Comfort Zone</h2>
             <div class="prompt-grid">
                 <label for="comfortZoneResponse"><strong>Short Answer:</strong> Describe one moment in this activity
                     where you got out of your comfort zone. What did you do, and what did you learn?</label>
@@ -694,14 +727,19 @@
             </div>
         </section>
 
-        <section class="card" aria-label="Google Doc copy tools">
-            <h2>Final Step: Generate and Copy for Google Docs</h2>
-            <p class="muted">After completing all prompts, generate your submission text and use copy to paste directly
-                into your Google Doc.</p>
+        <section class="card" aria-label="Submission copy tools">
+            <h2>Step 6: Generate and Submit Your Response</h2>
+            <p class="muted">Use this final step after completing all sections.</p>
+            <ol class="key-points">
+                <li>Click <strong>Generate Full Submission Text</strong> to compile your current work.</li>
+                <li>Review the submission preview.</li>
+                <li>Click <strong>Copy Submission Text</strong> and paste it into your LMS assignment submission.</li>
+            </ol>
             <div class="submission-tools">
                 <div class="button-row">
-                    <button id="generateSubmissionBtn" type="button" class="primary">Generate Submission Text</button>
-                    <button id="copySubmissionBtn" type="button">Copy for Google Doc</button>
+                    <button id="generateSubmissionBtn" type="button" class="primary">Generate Full Submission
+                        Text</button>
+                    <button id="copySubmissionBtn" type="button">Copy Submission Text</button>
                     <button id="clearSavedWorkBtn" type="button">Clear Saved Work</button>
                 </div>
                 <p class="muted">Your responses auto-save on this device and reload when you return.</p>
@@ -828,6 +866,82 @@
                 return (document.getElementById(id)?.value || "").trim();
             }
 
+            function buildPageSnapshotText() {
+                const main = document.getElementById("assignmentMain");
+                if (!main) return "[Unable to capture assignment content.]";
+
+                const clone = main.cloneNode(true);
+
+                // Remove UI-only controls from the snapshot.
+                clone.querySelector(".controls")?.remove();
+
+                // Avoid recursive inclusion of the generated preview field.
+                const previewBox = clone.querySelector("#submissionOutput");
+                if (previewBox) {
+                    const previewNote = document.createElement("p");
+                    previewNote.textContent = "[Submission preview omitted from copied snapshot]";
+                    previewBox.replaceWith(previewNote);
+                }
+
+                const liveFields = Array.from(main.querySelectorAll("textarea, input, select"));
+                const cloneFields = Array.from(clone.querySelectorAll("textarea, input, select"));
+                liveFields.forEach((liveField, index) => {
+                    const cloneField = cloneFields[index];
+                    if (!cloneField) return;
+
+                    if (liveField instanceof HTMLInputElement && cloneField instanceof HTMLInputElement) {
+                        if (liveField.type === "checkbox" || liveField.type === "radio") {
+                            cloneField.checked = liveField.checked;
+                        } else {
+                            cloneField.value = liveField.value;
+                        }
+                        return;
+                    }
+
+                    if (liveField instanceof HTMLTextAreaElement && cloneField instanceof HTMLTextAreaElement) {
+                        cloneField.value = liveField.value;
+                        return;
+                    }
+
+                    if (liveField instanceof HTMLSelectElement && cloneField instanceof HTMLSelectElement) {
+                        cloneField.value = liveField.value;
+                    }
+                });
+
+                clone.querySelectorAll("input[type='checkbox']").forEach((input) => {
+                    const marker = document.createTextNode(input.checked ? "[x] " : "[ ] ");
+                    input.replaceWith(marker);
+                });
+
+                clone.querySelectorAll("input[type='radio']").forEach((input) => {
+                    const marker = document.createTextNode(input.checked ? "(o) " : "( ) ");
+                    input.replaceWith(marker);
+                });
+
+                clone.querySelectorAll("input:not([type='checkbox']):not([type='radio'])").forEach((input) => {
+                    const value = (input.value || "").trim();
+                    input.replaceWith(document.createTextNode(value || "[blank]"));
+                });
+
+                clone.querySelectorAll("select").forEach((select) => {
+                    const value = (select.value || "").trim();
+                    select.replaceWith(document.createTextNode(value || "[blank]"));
+                });
+
+                clone.querySelectorAll("textarea").forEach((textarea) => {
+                    const value = (textarea.value || "").trim();
+                    const replacement = document.createElement("p");
+                    replacement.textContent = value || "[No response entered]";
+                    textarea.replaceWith(replacement);
+                });
+
+                clone.querySelectorAll("button").forEach((button) => button.remove());
+
+                return (clone.innerText || clone.textContent || "")
+                    .replace(/\n{3,}/g, "\n\n")
+                    .trim();
+            }
+
             function buildSubmissionText() {
                 const requiredQuizSummary = typeof window.__getRequiredQuizSummary === "function"
                     ? window.__getRequiredQuizSummary()
@@ -842,6 +956,7 @@
                     ? `Makeup Video CFU: ${makeupQuizSummary.correct}/${makeupQuizSummary.total}`
                     : "Makeup Video CFU: [Not completed]";
                 const comfortZoneResponse = getValue("comfortZoneResponse") || "[No response provided]";
+                const pageSnapshot = buildPageSnapshotText();
 
                 return [
                     "High Ropes Teamwork Challenge - Follow-Up Assignment",
@@ -853,11 +968,8 @@
                     "- Question: Describe one moment in this activity where you got out of your comfort zone. What did you do, and what did you learn?",
                     `- Response: ${comfortZoneResponse}`,
                     "",
-                    "Evidence Sources Used:",
-                    "- Required video: https://youtu.be/nYfr-nN0m6c?si=7C5EagBaiXgJ_Uvq",
-                    "- Makeup video: https://youtu.be/DVCwE20uRcI?si=aIRExS5q-S1A1QGZ",
-                    "- Accountability transcript",
-                    "- Ropes course reflection transcript"
+                    "Full Page Snapshot:",
+                    pageSnapshot
                 ].join("\n");
             }
 
@@ -877,7 +989,7 @@
 
             generateBtn.addEventListener("click", () => {
                 output.value = buildSubmissionText();
-                status.textContent = "Submission text generated. Review it, then click Copy for Google Doc.";
+                status.textContent = "Full submission text generated. Review it, then click Copy Submission Text.";
                 saveResponses();
             });
 
@@ -888,7 +1000,7 @@
 
                 try {
                     await copyToClipboard(output.value);
-                    status.textContent = "Copied. Paste into your Google Doc for submission.";
+                    status.textContent = "Copied. Paste into your LMS assignment submission.";
                 } catch (error) {
                     status.textContent = "Copy failed. Select the preview text manually and copy it.";
                 }
@@ -1331,24 +1443,68 @@
             const zones = Array.from(document.querySelectorAll(".drop-zone"));
             const checkBtn = document.getElementById("checkSortBtn");
             const resetBtn = document.getElementById("resetSortBtn");
+            const moveToAccountabilityBtn = document.getElementById("moveSelectedToAccountabilityBtn");
+            const moveToReflectionBtn = document.getElementById("moveSelectedToReflectionBtn");
+            const moveToBankBtn = document.getElementById("moveSelectedToBankBtn");
             const feedback = document.getElementById("sortFeedback");
 
-            if (!source || zones.length === 0 || !checkBtn || !resetBtn || !feedback) {
+            if (!source || zones.length === 0 || !checkBtn || !resetBtn || !moveToAccountabilityBtn || !moveToReflectionBtn || !moveToBankBtn || !feedback) {
                 return;
             }
 
             let draggedCard = null;
+            let selectedCard = null;
+
+            const accountabilityList = zones.find((zone) => zone.dataset.target === "accountability")?.querySelector(".sort-list");
+            const reflectionList = zones.find((zone) => zone.dataset.target === "reflection")?.querySelector(".sort-list");
 
             function getAllCards() {
                 return Array.from(document.querySelectorAll(".sort-card"));
             }
 
+            function setSelectedCard(card) {
+                selectedCard = card;
+                getAllCards().forEach((entry) => {
+                    const isSelected = entry === card;
+                    entry.classList.toggle("selected", isSelected);
+                    entry.setAttribute("aria-pressed", isSelected ? "true" : "false");
+                });
+            }
+
+            function moveSelectedTo(targetList, targetLabel) {
+                if (!selectedCard || !targetList) {
+                    feedback.textContent = "Select a statement first, then choose where to move it.";
+                    return;
+                }
+
+                targetList.appendChild(selectedCard);
+                feedback.textContent = `Moved selected statement to ${targetLabel}.`;
+                selectedCard.focus();
+            }
+
             function bindCard(card) {
+                card.setAttribute("tabindex", "0");
+                card.setAttribute("role", "button");
+                card.setAttribute("aria-pressed", "false");
+
                 card.addEventListener("dragstart", () => {
                     draggedCard = card;
+                    setSelectedCard(card);
                 });
                 card.addEventListener("dragend", () => {
                     draggedCard = null;
+                });
+
+                card.addEventListener("click", () => {
+                    setSelectedCard(card);
+                });
+
+                card.addEventListener("keydown", (event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        setSelectedCard(card);
+                        feedback.textContent = "Statement selected. Use a move button to place it in a category.";
+                    }
                 });
             }
 
@@ -1370,6 +1526,7 @@
                     zone.classList.remove("drag-over");
                     if (draggedCard) {
                         list.appendChild(draggedCard);
+                        setSelectedCard(draggedCard);
                     }
                 });
             }
@@ -1382,11 +1539,24 @@
                 event.preventDefault();
                 if (draggedCard) {
                     source.appendChild(draggedCard);
+                    setSelectedCard(draggedCard);
                 }
             });
 
             zones.forEach(setupDropZone);
             getAllCards().forEach(bindCard);
+
+            moveToAccountabilityBtn.addEventListener("click", () => {
+                moveSelectedTo(accountabilityList, "Accountability");
+            });
+
+            moveToReflectionBtn.addEventListener("click", () => {
+                moveSelectedTo(reflectionList, "Ropes Course Reflection");
+            });
+
+            moveToBankBtn.addEventListener("click", () => {
+                moveSelectedTo(source, "Statement Bank");
+            });
 
             checkBtn.addEventListener("click", () => {
                 const cards = getAllCards();
@@ -1412,6 +1582,7 @@
 
             resetBtn.addEventListener("click", () => {
                 getAllCards().forEach((card) => source.appendChild(card));
+                setSelectedCard(null);
                 feedback.textContent = "Activity reset. Drag the statements to try again.";
             });
         })();
