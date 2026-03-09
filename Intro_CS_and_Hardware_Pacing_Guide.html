@@ -318,6 +318,16 @@
       letter-spacing: 0.02em;
     }
 
+    tbody tr.no-gci-row td {
+      background: color-mix(in oklab, var(--warn-bg, #fff4df) 78%, var(--accent) 22%);
+      font-weight: 700;
+    }
+
+    :root[data-theme="high-contrast"] tbody tr.no-gci-row td {
+      background: #1a1a1a;
+      color: #ffff00;
+    }
+
     .week-key {
       margin-top: 10px;
       color: var(--muted);
@@ -2185,6 +2195,16 @@
       }
     }
 
+    function highlightNoGciRows() {
+      const rows = document.querySelectorAll("tbody tr");
+      for (const row of rows) {
+        const rowText = (row.textContent || "").toLowerCase();
+        if (/\bno\s+gci\b/i.test(rowText)) {
+          row.classList.add("no-gci-row");
+        }
+      }
+    }
+
     (async function initializePage() {
       setupThemePicker();
       await loadDateDataFromCsv("Pacing_Dates_Master.csv");
@@ -2216,6 +2236,7 @@
         }
       });
       addWeekMarkers();
+      highlightNoGciRows();
     })();
 
   </script>
