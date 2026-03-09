@@ -1,0 +1,704 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>High Ropes Teamwork Challenge - Follow-Up Assignment</title>
+    <style>
+        :root {
+            --bg: #f6f3ee;
+            --ink: #1f2933;
+            --muted: #3f4b57;
+            --panel: #fffdfa;
+            --line: #b9ad9d;
+            --accent: #0f766e;
+            --accent-2: #7c3aed;
+            --warn-bg: #fff5df;
+            --warn-line: #b45309;
+            --ok: #166534;
+            --focus: #0f766e;
+        }
+
+        :root[data-theme="dark"] {
+            --bg: #0e1623;
+            --ink: #e5edf8;
+            --muted: #c9d2e3;
+            --panel: #121d2d;
+            --line: #33455e;
+            --accent: #2dd4bf;
+            --accent-2: #a78bfa;
+            --warn-bg: #2a2418;
+            --warn-line: #f59e0b;
+            --ok: #4ade80;
+            --focus: #2dd4bf;
+        }
+
+        :root[data-theme="high-contrast"] {
+            --bg: #000000;
+            --ink: #ffffff;
+            --muted: #ffffff;
+            --panel: #000000;
+            --line: #ffffff;
+            --accent: #00ffff;
+            --accent-2: #ffff00;
+            --warn-bg: #000000;
+            --warn-line: #ffff00;
+            --ok: #00ff00;
+            --focus: #ffff00;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(900px 420px at -8% -20%, #d9f3e6 0%, transparent 55%),
+                radial-gradient(700px 360px at 110% -15%, #efe0ff 0%, transparent 55%),
+                var(--bg);
+        }
+
+        :root[data-theme="dark"] body,
+        :root[data-theme="high-contrast"] body {
+            background: var(--bg);
+        }
+
+        .wrap {
+            max-width: 980px;
+            margin: 24px auto 42px;
+            padding: 0 14px;
+        }
+
+        .skip-link {
+            position: absolute;
+            left: -9999px;
+            top: 8px;
+            background: var(--panel);
+            color: var(--ink);
+            border: 2px solid var(--focus);
+            border-radius: 8px;
+            padding: 8px 10px;
+            text-decoration: none;
+            z-index: 1000;
+        }
+
+        .skip-link:focus,
+        .skip-link:focus-visible {
+            left: 10px;
+            outline: none;
+        }
+
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
+        }
+
+        .hero {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        h1 {
+            margin: 0;
+            color: var(--accent);
+            font-size: 1.85rem;
+        }
+
+        h2 {
+            margin: 0 0 8px;
+            color: var(--accent);
+            font-size: 1.2rem;
+        }
+
+        .muted {
+            color: var(--muted);
+            margin: 6px 0 0;
+        }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        select,
+        button,
+        input,
+        textarea {
+            border: 1px solid var(--line);
+            background: var(--panel);
+            color: var(--ink);
+            border-radius: 10px;
+            padding: 10px 12px;
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        button.primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: #ffffff;
+            border: 0;
+        }
+
+        :root[data-theme="high-contrast"] button.primary {
+            color: #000000;
+            background: #00ffff;
+            border: 2px solid #ffffff;
+        }
+
+        button:focus-visible,
+        select:focus-visible,
+        input:focus-visible,
+        textarea:focus-visible,
+        a:focus-visible {
+            outline: 3px solid var(--focus);
+            outline-offset: 2px;
+        }
+
+        .meta {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(120px, 1fr));
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .meta label {
+            display: grid;
+            gap: 6px;
+            font-size: 0.95rem;
+            color: var(--muted);
+        }
+
+        .note {
+            margin-top: 10px;
+            padding: 10px 12px;
+            border-left: 4px solid var(--warn-line);
+            border-radius: 8px;
+            background: var(--warn-bg);
+            font-weight: 600;
+        }
+
+        .checklist {
+            display: grid;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .checklist label {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+            line-height: 1.45;
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-top: 1px;
+        }
+
+        .prompt-grid {
+            display: grid;
+            gap: 10px;
+        }
+
+        .prompt-grid textarea {
+            width: 100%;
+            min-height: 96px;
+            resize: vertical;
+            line-height: 1.4;
+        }
+
+        .video-wrap {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--line);
+            background: #000;
+            margin-top: 10px;
+        }
+
+        .video-wrap iframe {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .mode-grid {
+            display: grid;
+            gap: 10px;
+            grid-template-columns: repeat(2, minmax(240px, 1fr));
+            margin-top: 10px;
+        }
+
+        .mode-box {
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 10px;
+            background: color-mix(in oklab, var(--panel) 92%, var(--accent) 8%);
+        }
+
+        .key-points {
+            margin: 8px 0 0;
+            padding-left: 20px;
+        }
+
+        .key-points li {
+            margin: 6px 0;
+            line-height: 1.4;
+        }
+
+        .principle-grid {
+            display: grid;
+            gap: 10px;
+            grid-template-columns: repeat(2, minmax(240px, 1fr));
+            margin-top: 10px;
+        }
+
+        .principle {
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 10px;
+            background: color-mix(in oklab, var(--panel) 94%, var(--accent) 6%);
+        }
+
+        .principle-tag {
+            display: inline-block;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: 2px 8px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 8px;
+            min-width: 680px;
+        }
+
+        th,
+        td {
+            border: 1px solid var(--line);
+            padding: 10px;
+            vertical-align: top;
+            text-align: left;
+        }
+
+        th {
+            background: color-mix(in oklab, var(--panel) 88%, var(--accent) 12%);
+        }
+
+        .rubric-wrap {
+            overflow: auto;
+        }
+
+        .footer-status {
+            color: var(--ok);
+            font-weight: 700;
+            margin: 8px 0 0;
+        }
+
+        @media (max-width: 860px) {
+            .meta {
+                grid-template-columns: repeat(2, minmax(120px, 1fr));
+            }
+
+            .mode-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .principle-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media print {
+            .controls {
+                display: none;
+            }
+
+            body {
+                background: #fff;
+            }
+
+            .card {
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <a class="skip-link" href="#assignmentMain">Skip to assignment content</a>
+
+    <main class="wrap" id="assignmentMain">
+        <section class="card hero">
+            <div>
+                <h1>High Ropes Teamwork Challenge - Follow-Up Assignment</h1>
+                <p class="muted">Reflect, analyze, and apply what you learned from the high ropes teamwork challenge.
+                </p>
+            </div>
+            <div class="controls">
+                <label for="themeSelect" class="muted">Theme</label>
+                <select id="themeSelect" aria-label="Choose page theme">
+                    <option value="auto">Auto</option>
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                    <option value="high-contrast">High Contrast</option>
+                </select>
+                <button class="primary" type="button" onclick="window.print()">Print / Save PDF</button>
+            </div>
+            <div class="meta" aria-label="Assignment details">
+                <label>Student Name
+                    <input type="text" placeholder="First and last name" />
+                </label>
+                <label>Class / Hour
+                    <input type="text" placeholder="Example: Intro CS - 3rd" />
+                </label>
+                <label>Team Name
+                    <input type="text" placeholder="Your challenge team" />
+                </label>
+                <label>Date
+                    <input type="date" />
+                </label>
+            </div>
+            <p class="note"><strong>Purpose:</strong> Teams were tested physically and mentally on high ropes. This
+                follow-up helps you turn that experience into stronger collaboration skills for class, projects, and
+                future jobs.</p>
+            <p class="muted"><strong>Repo homepage:</strong> <a href="index.html">GCI Project Hub</a></p>
+        </section>
+
+        <section class="card">
+            <h2>Demonstration Video (Required)</h2>
+            <p class="muted">All students must use this high ropes teamwork challenge video as part of this assignment,
+                along with the instructor ropes course reflection transcript.
+            </p>
+            <div class="video-wrap" aria-label="High ropes teamwork challenge demonstration video">
+                <iframe src="https://www.youtube.com/embed/nYfr-nN0m6c"
+                    title="High Ropes Teamwork Challenge Demonstration" loading="lazy"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen></iframe>
+            </div>
+            <p><strong>Direct link:</strong> <a href="https://youtu.be/nYfr-nN0m6c?si=7C5EagBaiXgJ_Uvq" target="_blank"
+                    rel="noopener noreferrer">https://youtu.be/nYfr-nN0m6c?si=7C5EagBaiXgJ_Uvq</a></p>
+
+            <div class="mode-grid" aria-label="Blended learning and makeup directions">
+                <div class="mode-box">
+                    <h3>Blended Learning Students</h3>
+                    <p class="muted">If you participated in person, watch the video and compare it to your own
+                        experience.</p>
+                    <div class="checklist">
+                        <label><input type="checkbox" /> I watched the full video and identified at least 2 teamwork
+                            moves that matched my team.</label>
+                        <label><input type="checkbox" /> I connected at least 1 idea from the accountability transcript
+                            and 1 idea from the ropes course transcript to my team experience.</label>
+                        <label><input type="checkbox" /> I used both in-person evidence and video evidence in my written
+                            responses.</label>
+                    </div>
+                </div>
+                <div class="mode-box">
+                    <h3>Makeup Assignment Students</h3>
+                    <p class="muted">If you did not participate in person, use the video as your full demonstration
+                        source.</p>
+                    <div class="checklist">
+                        <label><input type="checkbox" /> I watched the full video and took notes on communication,
+                            trust, and problem-solving.</label>
+                        <label><input type="checkbox" /> I used at least 2 ideas from the transcripts to explain what
+                            effective teamwork looks like.</label>
+                        <label><input type="checkbox" /> I answered all prompts using specific moments from the video as
+                            evidence.</label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Video and Transcript Evidence Bank</h2>
+            <p class="muted">Use these core ideas from both transcripts when writing your responses.</p>
+            <div class="mode-grid">
+                <div class="mode-box">
+                    <h3>Video/Transcript 1: Accountability</h3>
+                    <ul class="key-points">
+                        <li>"Do your job" can be right in high-pressure moments.</li>
+                        <li>In collaboration, teams also need to find gaps and close them.</li>
+                        <li>Ultimate accountability is to the outcome, not just individual tasks.</li>
+                        <li>Strong teams define values, vision, mission, and then "find a way."</li>
+                    </ul>
+                </div>
+                <div class="mode-box">
+                    <h3>Video/Transcript 2: Ropes Course Reflection</h3>
+                    <ul class="key-points">
+                        <li>Course goals emphasize communication, cooperation, trust, and teamwork.</li>
+                        <li>Students grow when they move from "I can't do that" to "I can do this."</li>
+                        <li>Belay safety depends on multiple roles working together as one system.</li>
+                        <li>The trapeze jump requires decision-making, courage, and trust in teammates.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Learning Targets</h2>
+            <div class="checklist">
+                <label><input type="checkbox" /> I can describe how my team communicated during a high-pressure
+                    challenge.</label>
+                <label><input type="checkbox" /> I can identify one team strength and one team growth area using
+                    specific evidence.</label>
+                <label><input type="checkbox" /> I can set a realistic action plan to improve teamwork in our next
+                    project.</label>
+                <label><input type="checkbox" /> I can connect high ropes teamwork behaviors to workplace readiness
+                    skills.</label>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Merrill's First Principles Alignment</h2>
+            <p class="muted">This assignment is structured around a real team problem and follows Merrill's model:</p>
+            <div class="principle-grid">
+                <div class="principle">
+                    <span class="principle-tag">Problem-Centered</span>
+                    <p>Solve a real challenge: how to improve teamwork outcomes under pressure in class and future work
+                        settings.</p>
+                </div>
+                <div class="principle">
+                    <span class="principle-tag">Activation</span>
+                    <p>Recall prior teamwork experiences and connect them to the transcript evidence bank before
+                        writing.</p>
+                </div>
+                <div class="principle">
+                    <span class="principle-tag">Demonstration</span>
+                    <p>Analyze modeled teamwork from the required video plus both transcripts (accountability and
+                        ropes-course reflection).</p>
+                </div>
+                <div class="principle">
+                    <span class="principle-tag">Application</span>
+                    <p>Apply concepts through written analysis, evidence-based responses, and a practical team protocol.
+                    </p>
+                </div>
+                <div class="principle">
+                    <span class="principle-tag">Integration</span>
+                    <p>Transfer learning by setting a SMART goal and explaining how skills will be used in future teams.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Part A: Challenge Debrief (What Happened?)</h2>
+            <p class="muted"><strong>Principle focus:</strong> Activation</p>
+            <div class="prompt-grid">
+                <label for="a1"><strong>1. Briefly describe your high ropes challenge experience.</strong> Include your
+                    team role and one key moment.</label>
+                <textarea id="a1" placeholder="4-6 sentences"></textarea>
+
+                <label for="a2"><strong>2. Communication under pressure:</strong> What communication worked well? What
+                    caused confusion?</label>
+                <textarea id="a2" placeholder="Use specific examples from your team"></textarea>
+
+                <label for="a3"><strong>3. Trust and support:</strong> How did your team build trust (or struggle to
+                    build trust)?</label>
+                <textarea id="a3" placeholder="3-5 sentences"></textarea>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Part B: Teamwork Skill Analysis (Why It Matters)</h2>
+            <p class="muted"><strong>Principle focus:</strong> Demonstration + Application</p>
+            <div class="prompt-grid">
+                <label for="b1"><strong>4. Pick two skills:</strong> collaboration, leadership, active listening,
+                    accountability, conflict resolution, adaptability. Explain how your team showed each skill.</label>
+                <textarea id="b1" placeholder="6-8 sentences total"></textarea>
+
+                <label for="b2"><strong>5. Challenge point:</strong> What was your team's toughest moment, and what
+                    would you do differently next time?</label>
+                <textarea id="b2" placeholder="4-6 sentences"></textarea>
+
+                <label for="b3"><strong>6. Workplace connection:</strong> How are high ropes teamwork behaviors similar
+                    to what employers expect?</label>
+                <textarea id="b3" placeholder="3-5 sentences"></textarea>
+
+                <label for="b4"><strong>7. Transcript synthesis:</strong> Compare "do your job" and "accountability to
+                    the outcome" with the ropes course examples of trust, belay roles, and growth zone. Which mindset
+                    leads to better team results and why?</label>
+                <textarea id="b4" placeholder="Use evidence from both transcripts (5-8 sentences)"></textarea>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Part C: Action Plan (What You Will Do Next)</h2>
+            <p class="muted"><strong>Principle focus:</strong> Integration</p>
+            <div class="prompt-grid">
+                <label for="c1"><strong>8. Personal goal:</strong> Set one SMART teamwork goal for your next class team
+                    activity.</label>
+                <textarea id="c1" placeholder="Specific, measurable, achievable, relevant, time-bound"></textarea>
+
+                <label for="c2"><strong>9. Team protocol:</strong> Create a 4-step plan your team can use next time
+                    before, during, and after a challenge.</label>
+                <textarea id="c2"
+                    placeholder="Example: role check, communication check-ins, safety signals, debrief"></textarea>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Submission Checklist</h2>
+            <div class="checklist">
+                <label><input type="checkbox" /> All written responses are complete with specific examples.</label>
+                <label><input type="checkbox" /> Responses use clear school-appropriate and professional
+                    language.</label>
+                <label><input type="checkbox" /> I watched the required demonstration video and referenced it in my
+                    responses.</label>
+                <label><input type="checkbox" /> I used evidence from both transcripts in at least one response.</label>
+                <label><input type="checkbox" /> My action plan includes one SMART goal and one team protocol.</label>
+                <label><input type="checkbox" /> I submitted in Google Classroom as either a Google Doc or PDF.</label>
+                <label><input type="checkbox" /> I reviewed spelling, clarity, and detail before submitting.</label>
+            </div>
+            <p class="footer-status">Recommended length: 550-850 words total.</p>
+        </section>
+
+        <section class="card">
+            <h2>Google Classroom Submission (Grade-Ready)</h2>
+            <div class="prompt-grid">
+                <p><strong>Student turn-in requirements:</strong></p>
+                <ul class="key-points">
+                    <li>Submit one completed response document as <strong>Google Doc</strong> or <strong>PDF</strong>.
+                    </li>
+                    <li>File name format: <code>Lastname_Firstname_HighRopesFollowUp</code>.</li>
+                    <li>Include direct evidence from the video and both transcripts.</li>
+                </ul>
+
+                <p><strong>Teacher Google Classroom setup:</strong></p>
+                <ul class="key-points">
+                    <li>Assignment title: <code>High Ropes Teamwork Follow-Up (Merrill Aligned)</code>.</li>
+                    <li>Points: <strong>40</strong>.</li>
+                    <li>Attach this HTML as directions or paste directions into Classroom description.</li>
+                    <li>Use rubric categories below and enable rubric scoring in Classroom.</li>
+                </ul>
+
+                <p><strong>Suggested grading weights (40 points total):</strong></p>
+                <ul class="key-points">
+                    <li>Evidence and Detail: 10 points</li>
+                    <li>Teamwork Analysis: 10 points</li>
+                    <li>Action Plan Quality: 10 points</li>
+                    <li>Professional Communication: 10 points</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="card rubric-wrap" aria-label="Grading rubric">
+            <h2>Rubric (40 points)</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Category</th>
+                        <th scope="col">Exceeds (10)</th>
+                        <th scope="col">Meets (8)</th>
+                        <th scope="col">Developing (6)</th>
+                        <th scope="col">Beginning (4)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Evidence and Detail</strong></td>
+                        <td>Specific examples from high ropes are clear, accurate, and insightful.</td>
+                        <td>Examples are relevant and mostly specific.</td>
+                        <td>Examples are general or missing detail.</td>
+                        <td>Very limited evidence or off-topic details.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Teamwork Analysis</strong></td>
+                        <td>Strong analysis of communication, trust, and problem-solving with reflection.</td>
+                        <td>Clear analysis of most teamwork elements.</td>
+                        <td>Partial analysis with limited reflection.</td>
+                        <td>Minimal analysis of teamwork behaviors.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Action Plan Quality</strong></td>
+                        <td>SMART goal and team protocol are practical, measurable, and realistic.</td>
+                        <td>Goal and protocol are clear with minor gaps.</td>
+                        <td>Goal or protocol is vague or incomplete.</td>
+                        <td>Action plan is missing or not usable.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Professional Communication</strong></td>
+                        <td>Writing is polished, organized, and professional with no major errors.</td>
+                        <td>Writing is clear with few errors.</td>
+                        <td>Writing is understandable but has repeated errors.</td>
+                        <td>Writing is difficult to follow or incomplete.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <script>
+        (function setupThemePicker() {
+            const select = document.getElementById("themeSelect");
+            if (!select) return;
+
+            const storageKey = "gci-high-ropes-follow-up-theme";
+            const allowed = new Set(["auto", "light", "dark", "high-contrast"]);
+
+            function getSystemTheme() {
+                const prefersHighContrast = window.matchMedia("(prefers-contrast: more)").matches;
+                if (prefersHighContrast) return "high-contrast";
+                return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+            }
+
+            function applyTheme(mode) {
+                if (!allowed.has(mode)) return;
+                const resolved = mode === "auto" ? getSystemTheme() : mode;
+                document.documentElement.setAttribute("data-theme", resolved);
+                select.value = mode;
+            }
+
+            const saved = localStorage.getItem(storageKey);
+            applyTheme(saved && allowed.has(saved) ? saved : "auto");
+
+            select.addEventListener("change", () => {
+                const mode = select.value;
+                applyTheme(mode);
+                localStorage.setItem(storageKey, mode);
+            });
+
+            const darkMedia = window.matchMedia("(prefers-color-scheme: dark)");
+            const contrastMedia = window.matchMedia("(prefers-contrast: more)");
+
+            function refreshAuto() {
+                const mode = localStorage.getItem(storageKey) || select.value || "auto";
+                if (mode === "auto") applyTheme("auto");
+            }
+
+            darkMedia.addEventListener("change", refreshAuto);
+            contrastMedia.addEventListener("change", refreshAuto);
+        })();
+    </script>
+</body>
+
+</html>
