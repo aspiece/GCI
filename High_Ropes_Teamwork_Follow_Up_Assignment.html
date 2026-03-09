@@ -390,6 +390,10 @@
             min-height: 1.2em;
         }
 
+        .status-line.error {
+            color: var(--warn-line);
+        }
+
         .quiz-shell {
             border: 1px solid var(--line);
             border-radius: 12px;
@@ -772,8 +776,10 @@
             <h2>Submission Checklist</h2>
             <div class="checklist">
                 <label><input type="checkbox" /> I watched the required demonstration video.</label>
-                <label><input type="checkbox" /> I completed the required video accountability CFU quiz.</label>
-                <label><input type="checkbox" /> If needed, I completed the makeup video CFU quiz.</label>
+                <label><input type="checkbox" /> I completed the required video accountability check for understanding
+                    quiz.</label>
+                <label><input type="checkbox" /> If needed, I completed the makeup video check for understanding
+                    quiz.</label>
                 <label><input type="checkbox" /> I completed the Step 4 sorting activity and checked my answers.</label>
                 <label><input type="checkbox" /> I completed the Step 5 comfort-zone reflection response.</label>
             </div>
@@ -967,6 +973,12 @@
                 return (document.getElementById(id)?.value || "").trim();
             }
 
+            function setStatus(message, isError = false) {
+                status.textContent = message;
+                status.classList.toggle("error", isError);
+                status.setAttribute("aria-live", isError ? "assertive" : "polite");
+            }
+
             function formatQuizStep(report) {
                 const lines = [];
 
@@ -1086,19 +1098,23 @@
                 const missing = getMissingRequiredSteps();
 
                 if (missing.length > 0) {
-                    status.textContent = `Complete Steps 2-5 before generating. Missing: ${missing.join(", ")}.`;
+                    const message = `You cannot generate your Document yet. Please complete: ${missing.join(", ")}.`;
+                    setStatus(message, true);
+                    window.alert(message);
                     return;
                 }
 
                 output.value = buildSubmissionText();
-                status.textContent = "Full Document text generated. Review it, then click Copy Document Text.";
+                setStatus("Full Document text generated. Review it, then click Copy Document Text.");
                 saveResponses();
             });
 
             copyBtn.addEventListener("click", async () => {
                 const missing = getMissingRequiredSteps();
                 if (missing.length > 0) {
-                    status.textContent = `Complete Steps 2-5 before copying. Missing: ${missing.join(", ")}.`;
+                    const message = `You cannot copy your Document yet. Please complete: ${missing.join(", ")}.`;
+                    setStatus(message, true);
+                    window.alert(message);
                     return;
                 }
 
@@ -1108,9 +1124,9 @@
 
                 try {
                     await copyToClipboard(output.value);
-                    status.textContent = "Copied. Submit your completed Document.";
+                    setStatus("Copied. Submit your completed Document.");
                 } catch (error) {
-                    status.textContent = "Copy failed. Select the preview text manually and copy it.";
+                    setStatus("Copy failed. Select the preview text manually and copy it.", true);
                 }
             });
 
