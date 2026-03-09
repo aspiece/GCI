@@ -219,9 +219,10 @@
             margin-top: 10px;
         }
 
-        .question p {
+        .question legend {
             margin: 0 0 8px;
             font-weight: 700;
+            padding: 0;
         }
 
         .question .options {
@@ -292,6 +293,35 @@
             font-size: 0.92rem;
         }
 
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .status.error {
+            color: #8b1e1e;
+        }
+
+        :root[data-theme="dark"] .status.error {
+            color: #fca5a5;
+        }
+
+        :root[data-theme="high-contrast"] .status.error {
+            color: #ffff00;
+        }
+
         @media (max-width: 760px) {
             .profile-link-box {
                 grid-template-columns: 1fr;
@@ -331,7 +361,7 @@
 
 <body>
     <a class="skip-link" href="#assignment">Skip to assignment content</a>
-    <main class="wrap" id="assignment">
+    <main class="wrap" id="assignment" tabindex="-1">
         <section class="card hero" aria-labelledby="pageTitle">
             <div>
                 <h1 id="pageTitle">LinkedIn Profile Setup Assignment</h1>
@@ -365,43 +395,55 @@
             <h2 id="activationTitle">Activation: Get Ready to Build Your Brand</h2>
             <p class="muted">New to LinkedIn? Answer one question at a time to get ready before creating your
                 profile.</p>
+            <p id="activationNavHelp" class="sr-only">Use Previous and Next to move through activation questions one
+                at a time.</p>
             <p class="status" id="activationStepStatus" role="status" aria-live="polite">Question 1 of 3</p>
 
-            <div class="question" data-activation="1">
-                <p>1. If you are brand new to LinkedIn, what is your main goal for using it first?</p>
+            <fieldset class="question" data-activation="1">
+                <legend>1. If you are brand new to LinkedIn, what is your main goal for using it first?</legend>
                 <div class="options">
-                    <label><input type="radio" name="act1" value="learn"> Learn what LinkedIn is and how it
+                    <label for="act1-learn"><input id="act1-learn" type="radio" name="act1" value="learn"> Learn what
+                        LinkedIn is and how it
                         works.</label>
-                    <label><input type="radio" name="act1" value="build"> Build a basic profile I can improve over
+                    <label for="act1-build"><input id="act1-build" type="radio" name="act1" value="build"> Build a basic
+                        profile I can improve over
                         time.</label>
-                    <label><input type="radio" name="act1" value="jobs"> Start preparing to find internships/jobs
+                    <label for="act1-jobs"><input id="act1-jobs" type="radio" name="act1" value="jobs"> Start preparing
+                        to find internships/jobs
                         later.</label>
                 </div>
-            </div>
+            </fieldset>
 
-            <div class="question" data-activation="2" hidden>
-                <p>2. Which section is the best place to start on your very first profile?</p>
+            <fieldset class="question" data-activation="2" hidden>
+                <legend>2. Which section is the best place to start on your very first profile?</legend>
                 <div class="options">
-                    <label><input type="radio" name="act2" value="headline"> Headline and short About summary</label>
-                    <label><input type="radio" name="act2" value="experience"> Experience and projects</label>
-                    <label><input type="radio" name="act2" value="skills"> Skills section</label>
+                    <label for="act2-headline"><input id="act2-headline" type="radio" name="act2" value="headline">
+                        Headline and short About summary</label>
+                    <label for="act2-experience"><input id="act2-experience" type="radio" name="act2"
+                            value="experience"> Experience and projects</label>
+                    <label for="act2-skills"><input id="act2-skills" type="radio" name="act2" value="skills"> Skills
+                        section</label>
                 </div>
-            </div>
+            </fieldset>
 
-            <div class="question" data-activation="3" hidden>
-                <p>3. What is one action you can take today even if your profile is not perfect yet?</p>
+            <fieldset class="question" data-activation="3" hidden>
+                <legend>3. What is one action you can take today even if your profile is not perfect yet?</legend>
                 <div class="options">
-                    <label><input type="radio" name="act3" value="connect"> Connect with your instructor and two
+                    <label for="act3-connect"><input id="act3-connect" type="radio" name="act3" value="connect"> Connect
+                        with your instructor and two
                         classmates</label>
-                    <label><input type="radio" name="act3" value="update"> Add one new profile section this week</label>
-                    <label><input type="radio" name="act3" value="both"> Do both: connect and improve your
+                    <label for="act3-update"><input id="act3-update" type="radio" name="act3" value="update"> Add one
+                        new profile section this week</label>
+                    <label for="act3-both"><input id="act3-both" type="radio" name="act3" value="both"> Do both: connect
+                        and improve your
                         profile</label>
                 </div>
-            </div>
+            </fieldset>
 
             <div class="question-nav no-print" aria-label="Activation question navigation">
-                <button type="button" id="activationPrevBtn">Previous</button>
-                <button type="button" id="activationNextBtn" class="primary">Next</button>
+                <button type="button" id="activationPrevBtn" aria-describedby="activationNavHelp">Previous</button>
+                <button type="button" id="activationNextBtn" class="primary"
+                    aria-describedby="activationNavHelp">Next</button>
             </div>
         </section>
 
@@ -413,65 +455,6 @@
                 <label><input type="checkbox" id="preAccount" /> I created my LinkedIn account with my personal email
                     and can log in.</label>
             </div>
-        </section>
-
-        <section class="card" aria-labelledby="cfuTitle">
-            <h2 id="cfuTitle">Part 3: Check for Understanding (Most Important Video Takeaways)</h2>
-            <p class="muted">Answer all 5 questions, then click <strong>Check My Answers</strong>.</p>
-
-            <div class="question" data-cfu="1">
-                <p>1. What is the most important reason to have a LinkedIn profile as a student?</p>
-                <div class="options">
-                    <label><input type="radio" name="cfu1" value="a" /> To share random daily posts</label>
-                    <label><input type="radio" name="cfu1" value="b" /> To build a professional profile and network
-                        for future opportunities</label>
-                    <label><input type="radio" name="cfu1" value="c" /> To replace all job applications</label>
-                </div>
-            </div>
-
-            <div class="question" data-cfu="2">
-                <p>2. Which profile section should be strongest first because it is seen immediately?</p>
-                <div class="options">
-                    <label><input type="radio" name="cfu2" value="a" /> Headline and About summary</label>
-                    <label><input type="radio" name="cfu2" value="b" /> Number of emojis in your bio</label>
-                    <label><input type="radio" name="cfu2" value="c" /> Leaving your profile mostly blank</label>
-                </div>
-            </div>
-
-            <div class="question" data-cfu="3">
-                <p>3. Why does adding projects, skills, and experience matter most?</p>
-                <div class="options">
-                    <label><input type="radio" name="cfu3" value="a" /> It gives evidence of what you can do and
-                        what you are learning</label>
-                    <label><input type="radio" name="cfu3" value="b" /> It only makes the page longer</label>
-                    <label><input type="radio" name="cfu3" value="c" /> It is not important for students</label>
-                </div>
-            </div>
-
-            <div class="question" data-cfu="4">
-                <p>4. What is most important when sending connection requests for this assignment?</p>
-                <div class="options">
-                    <label><input type="radio" name="cfu4" value="a" /> Connect with your instructor and classmates
-                        to start a professional network</label>
-                    <label><input type="radio" name="cfu4" value="b" /> Connect only with random people you do not
-                        know</label>
-                    <label><input type="radio" name="cfu4" value="c" /> Skip connecting and leave that step
-                        blank</label>
-                </div>
-            </div>
-
-            <div class="question" data-cfu="5">
-                <p>5. What is the most important final step before turning in this assignment?</p>
-                <div class="options">
-                    <label><input type="radio" name="cfu5" value="a" /> Submit a valid LinkedIn profile link that
-                        opens your profile</label>
-                    <label><input type="radio" name="cfu5" value="b" /> Submit only a screenshot</label>
-                    <label><input type="radio" name="cfu5" value="c" /> Submit no link and explain later</label>
-                </div>
-            </div>
-
-            <button class="primary no-print" type="button" id="checkCfuBtn">Check My Answers</button>
-            <p class="status" id="cfuStatus" role="status" aria-live="polite">Quiz not graded yet.</p>
         </section>
 
         <section class="card" aria-labelledby="applicationTitle">
@@ -501,6 +484,88 @@
             </div>
         </section>
 
+        <section class="card" aria-labelledby="cfuTitle">
+            <h2 id="cfuTitle">Part 3: Check for Understanding (Most Important Video Takeaways)</h2>
+            <p class="muted">Answer all 5 questions one at a time, then click <strong>Check My Answers</strong>.</p>
+            <p id="cfuNavHelp" class="sr-only">Use Previous and Next to move through check-for-understanding questions
+                one at a time.</p>
+            <p class="status" id="cfuStepStatus" role="status" aria-live="polite">Question 1 of 5</p>
+
+            <fieldset class="question" data-cfu="1">
+                <legend>1. What is the most important reason to have a LinkedIn profile as a student?</legend>
+                <div class="options">
+                    <label for="cfu1-a"><input id="cfu1-a" type="radio" name="cfu1" value="a" /> To share random daily
+                        posts</label>
+                    <label for="cfu1-b"><input id="cfu1-b" type="radio" name="cfu1" value="b" /> To build a professional
+                        profile and network
+                        for future opportunities</label>
+                    <label for="cfu1-c"><input id="cfu1-c" type="radio" name="cfu1" value="c" /> To replace all job
+                        applications</label>
+                </div>
+            </fieldset>
+
+            <fieldset class="question" data-cfu="2" hidden>
+                <legend>2. Which profile section should be strongest first because it is seen immediately?</legend>
+                <div class="options">
+                    <label for="cfu2-a"><input id="cfu2-a" type="radio" name="cfu2" value="a" /> Headline and About
+                        summary</label>
+                    <label for="cfu2-b"><input id="cfu2-b" type="radio" name="cfu2" value="b" /> Number of emojis in
+                        your bio</label>
+                    <label for="cfu2-c"><input id="cfu2-c" type="radio" name="cfu2" value="c" /> Leaving your profile
+                        mostly blank</label>
+                </div>
+            </fieldset>
+
+            <fieldset class="question" data-cfu="3" hidden>
+                <legend>3. Why does adding projects, skills, and experience matter most?</legend>
+                <div class="options">
+                    <label for="cfu3-a"><input id="cfu3-a" type="radio" name="cfu3" value="a" /> It gives evidence of
+                        what you can do and
+                        what you are learning</label>
+                    <label for="cfu3-b"><input id="cfu3-b" type="radio" name="cfu3" value="b" /> It only makes the page
+                        longer</label>
+                    <label for="cfu3-c"><input id="cfu3-c" type="radio" name="cfu3" value="c" /> It is not important for
+                        students</label>
+                </div>
+            </fieldset>
+
+            <fieldset class="question" data-cfu="4" hidden>
+                <legend>4. What is most important when sending connection requests for this assignment?</legend>
+                <div class="options">
+                    <label for="cfu4-a"><input id="cfu4-a" type="radio" name="cfu4" value="a" /> Connect with your
+                        instructor and classmates
+                        to start a professional network</label>
+                    <label for="cfu4-b"><input id="cfu4-b" type="radio" name="cfu4" value="b" /> Connect only with
+                        random people you do not
+                        know</label>
+                    <label for="cfu4-c"><input id="cfu4-c" type="radio" name="cfu4" value="c" /> Skip connecting and
+                        leave that step
+                        blank</label>
+                </div>
+            </fieldset>
+
+            <fieldset class="question" data-cfu="5" hidden>
+                <legend>5. What is the most important final step before turning in this assignment?</legend>
+                <div class="options">
+                    <label for="cfu5-a"><input id="cfu5-a" type="radio" name="cfu5" value="a" /> Submit a valid LinkedIn
+                        profile link that
+                        opens your profile</label>
+                    <label for="cfu5-b"><input id="cfu5-b" type="radio" name="cfu5" value="b" /> Submit only a
+                        screenshot</label>
+                    <label for="cfu5-c"><input id="cfu5-c" type="radio" name="cfu5" value="c" /> Submit no link and
+                        explain later</label>
+                </div>
+            </fieldset>
+
+            <div class="question-nav no-print" aria-label="CFU question navigation">
+                <button type="button" id="cfuPrevBtn" aria-describedby="cfuNavHelp">Previous</button>
+                <button type="button" id="cfuNextBtn" class="primary" aria-describedby="cfuNavHelp">Next</button>
+            </div>
+
+            <button class="primary no-print" type="button" id="checkCfuBtn">Check My Answers</button>
+            <p class="status" id="cfuStatus" role="status" aria-live="polite">Quiz not graded yet.</p>
+        </section>
+
         <section class="card" aria-labelledby="submitTitle">
             <h2 id="submitTitle">Submission Instructions</h2>
             <p class="submission-alert"><strong>Important for full points:</strong> Click <strong>Validate Link</strong>
@@ -517,8 +582,8 @@
 
             <label for="profileUrl"><strong>Paste your LinkedIn profile link here to verify format:</strong></label>
             <div class="profile-link-box no-print">
-                <input id="profileUrl" type="text" placeholder="https://www.linkedin.com/in/your-name"
-                    aria-describedby="profileUrlHelp" />
+                <input id="profileUrl" type="text" placeholder="https://www.linkedin.com/in/your-name" inputmode="url"
+                    autocomplete="url" aria-describedby="profileUrlHelp" />
                 <button type="button" id="validateLinkBtn">Validate Link</button>
             </div>
             <p id="profileUrlHelp" class="small muted">Use <strong>Validate Link</strong> first. A valid URL check
@@ -589,6 +654,7 @@
             const cfuStatus = document.getElementById("cfuStatus");
             let answered = 0;
             let correct = 0;
+            const total = Object.keys(cfuAnswerKey).length;
 
             Object.keys(cfuAnswerKey).forEach((key) => {
                 const selected = getCheckedValue(key);
@@ -596,14 +662,16 @@
                 if (selected === cfuAnswerKey[key]) correct += 1;
             });
 
-            if (answered < Object.keys(cfuAnswerKey).length) {
+            if (answered < total) {
                 cfuStatus.textContent = "Please answer all check-for-understanding questions before grading.";
                 cfuStatus.classList.remove("good");
+                cfuStatus.classList.add("error");
                 return false;
             }
 
-            cfuStatus.textContent = `Score: ${correct}/${Object.keys(cfuAnswerKey).length}. ${correct === 3 ? "Excellent work." : "Review any missed ideas with a classmate."}`;
-            cfuStatus.classList.toggle("good", correct === 3);
+            cfuStatus.textContent = `Score: ${correct}/${total}. ${correct === total ? "Excellent work." : "Review any missed ideas with a classmate."}`;
+            cfuStatus.classList.toggle("good", correct === total);
+            cfuStatus.classList.remove("error");
             return true;
         }
 
@@ -616,17 +684,23 @@
             if (!value) {
                 status.textContent = "Please paste your LinkedIn profile URL first.";
                 status.classList.remove("good");
+                status.classList.add("error");
+                input.setAttribute("aria-invalid", "true");
                 return false;
             }
 
             if (valid) {
                 status.textContent = "Looks good. This appears to be a valid LinkedIn profile link format.";
                 status.classList.add("good");
+                status.classList.remove("error");
+                input.setAttribute("aria-invalid", "false");
                 return true;
             }
 
             status.textContent = "That link format does not look right yet. It should start with https://www.linkedin.com/in/.";
             status.classList.remove("good");
+            status.classList.add("error");
+            input.setAttribute("aria-invalid", "true");
             return false;
         }
 
@@ -702,6 +776,11 @@
                 if (currentIndex > 0) {
                     currentIndex -= 1;
                     renderActivationQuestion();
+                    const prompt = questions[currentIndex]?.querySelector("legend");
+                    if (prompt) {
+                        prompt.setAttribute("tabindex", "-1");
+                        prompt.focus();
+                    }
                 }
             });
 
@@ -709,14 +788,67 @@
                 if (currentIndex < questions.length - 1) {
                     currentIndex += 1;
                     renderActivationQuestion();
+                    const prompt = questions[currentIndex]?.querySelector("legend");
+                    if (prompt) {
+                        prompt.setAttribute("tabindex", "-1");
+                        prompt.focus();
+                    }
                 }
             });
 
             renderActivationQuestion();
         }
 
+        function setupCfuQuestionFlow() {
+            const questions = Array.from(document.querySelectorAll('.question[data-cfu]'));
+            const prevBtn = document.getElementById("cfuPrevBtn");
+            const nextBtn = document.getElementById("cfuNextBtn");
+            const stepStatus = document.getElementById("cfuStepStatus");
+
+            if (!questions.length || !prevBtn || !nextBtn || !stepStatus) return;
+
+            let currentIndex = 0;
+
+            function renderCfuQuestion() {
+                questions.forEach((question, index) => {
+                    question.hidden = index !== currentIndex;
+                });
+
+                stepStatus.textContent = `Question ${currentIndex + 1} of ${questions.length}`;
+                prevBtn.disabled = currentIndex === 0;
+                nextBtn.textContent = currentIndex === questions.length - 1 ? "Finish" : "Next";
+            }
+
+            prevBtn.addEventListener("click", () => {
+                if (currentIndex > 0) {
+                    currentIndex -= 1;
+                    renderCfuQuestion();
+                    const prompt = questions[currentIndex]?.querySelector("legend");
+                    if (prompt) {
+                        prompt.setAttribute("tabindex", "-1");
+                        prompt.focus();
+                    }
+                }
+            });
+
+            nextBtn.addEventListener("click", () => {
+                if (currentIndex < questions.length - 1) {
+                    currentIndex += 1;
+                    renderCfuQuestion();
+                    const prompt = questions[currentIndex]?.querySelector("legend");
+                    if (prompt) {
+                        prompt.setAttribute("tabindex", "-1");
+                        prompt.focus();
+                    }
+                }
+            });
+
+            renderCfuQuestion();
+        }
+
         setupThemePicker();
         setupActivationQuestionFlow();
+        setupCfuQuestionFlow();
         setupInteractions();
     </script>
 </body>
