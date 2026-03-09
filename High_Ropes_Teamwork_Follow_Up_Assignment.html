@@ -388,10 +388,16 @@
             font-weight: 700;
             color: var(--ok);
             min-height: 1.2em;
+            margin: 0;
+            padding: 8px 10px;
+            border-radius: 8px;
+            background: color-mix(in oklab, var(--panel) 90%, var(--ok) 10%);
         }
 
         .status-line.error {
             color: var(--warn-line);
+            background: var(--warn-bg);
+            border: 1px solid var(--warn-line);
         }
 
         .quiz-shell {
@@ -801,11 +807,11 @@
                     <button id="copySubmissionBtn" type="button">Copy Document Text</button>
                     <button id="clearSavedWorkBtn" type="button">Clear Saved Work</button>
                 </div>
+                <p id="copyStatus" class="status-line" role="status" aria-live="polite"></p>
                 <p class="muted">Your responses auto-save on this device and reload when you return.</p>
                 <label for="submissionOutput"><strong>Document Preview</strong></label>
                 <textarea id="submissionOutput" class="output-box" readonly
                     placeholder="Your generated Document will appear here."></textarea>
-                <p id="copyStatus" class="status-line" role="status" aria-live="polite"></p>
             </div>
         </section>
     </main>
@@ -855,23 +861,20 @@
         (function setupAssignmentProgress() {
             const progressBar = document.getElementById("assignmentProgressBar");
             const progressText = document.getElementById("progressText");
+            const step1Status = document.getElementById("step1Status");
             const step2Status = document.getElementById("step2Status");
             const requiredQuiz = document.getElementById("requiredQuiz");
-            const makeupQuiz = document.getElementById("makeupQuiz");
             const comfortZoneResponse = document.getElementById("comfortZoneResponse");
 
-            if (!progressBar || !progressText || !step2Status || !requiredQuiz || !makeupQuiz || !comfortZoneResponse) return;
+            if (!progressBar || !progressText || !step1Status || !step2Status || !requiredQuiz || !comfortZoneResponse) return;
 
             window.__step4SortCompleted = Boolean(window.__step4SortCompleted);
 
             function updateProgress() {
-                const makeupQuizSummary = typeof window.__getMakeupQuizSummary === "function"
-                    ? window.__getMakeupQuizSummary()
-                    : null;
                 const requiredQuizSummary = typeof window.__getRequiredQuizSummary === "function"
                     ? window.__getRequiredQuizSummary()
                     : null;
-                const step1Complete = Boolean(makeupQuizSummary?.complete);
+                const step1Complete = step1Status.checked;
                 const step2Complete = Boolean(requiredQuizSummary?.complete);
                 const step3Complete = step2Status.checked;
                 const step4Complete = Boolean(window.__step4SortCompleted);
@@ -887,11 +890,10 @@
                 progressText.textContent = `${completed} of ${total} steps completed (${percent}%).`;
             }
 
+            step1Status.addEventListener("change", updateProgress);
             step2Status.addEventListener("change", updateProgress);
             requiredQuiz.addEventListener("change", updateProgress);
             requiredQuiz.addEventListener("click", updateProgress);
-            makeupQuiz.addEventListener("change", updateProgress);
-            makeupQuiz.addEventListener("click", updateProgress);
             comfortZoneResponse.addEventListener("input", updateProgress);
             comfortZoneResponse.addEventListener("change", updateProgress);
             document.addEventListener("gci-step-progress-changed", updateProgress);
@@ -919,10 +921,6 @@
                     payload[id] = element.value || "";
                 });
 
-                const checklistValues = Array.from(document.querySelectorAll(".checklist input[type='checkbox']"))
-                    .map((box) => box.checked);
-                payload.__checklist = checklistValues;
-
                 localStorage.setItem(responseStorageKey, JSON.stringify(payload));
             }
 
@@ -941,12 +939,11 @@
                         }
                     });
 
-                    if (Array.isArray(payload.__checklist)) {
-                        const boxes = Array.from(document.querySelectorAll(".checklist input[type='checkbox']"));
-                        boxes.forEach((box, index) => {
-                            box.checked = Boolean(payload.__checklist[index]);
-                        });
-                    }
+                    // Always start with checkboxes cleared after refresh.
+                    const boxes = Array.from(document.querySelectorAll(".checklist input[type='checkbox']"));
+                    boxes.forEach((box) => {
+                        box.checked = false;
+                    });
                 } catch (error) {
                     console.warn("Unable to restore saved assignment responses.", error);
                 }
@@ -967,6 +964,8 @@
                 output.value = "";
                 localStorage.removeItem(responseStorageKey);
                 status.textContent = "Saved work cleared for this browser.";
+                status.classList.remove("error");
+                status.setAttribute("aria-live", "polite");
             }
 
             function getValue(id) {
@@ -1100,7 +1099,6 @@
                 if (missing.length > 0) {
                     const message = `You cannot generate your Document yet. Please complete: ${missing.join(", ")}.`;
                     setStatus(message, true);
-                    window.alert(message);
                     return;
                 }
 
@@ -1114,7 +1112,6 @@
                 if (missing.length > 0) {
                     const message = `You cannot copy your Document yet. Please complete: ${missing.join(", ")}.`;
                     setStatus(message, true);
-                    window.alert(message);
                     return;
                 }
 
