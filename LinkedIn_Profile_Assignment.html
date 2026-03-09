@@ -389,174 +389,219 @@
         <section class="card hero" aria-labelledby="pageTitle">
             <div>
                 <h1 id="pageTitle">LinkedIn Profile Setup Assignment</h1>
-                <section class="card" aria-labelledby="demoTitle">
-                    <h2 id="demoTitle">Part 1: Setup Your Account</h2>
-                    <p><strong>Start here:</strong> Create your LinkedIn account using your personal email address so
-                        you can
-                        access your profile after graduation.</p>
-                    <div class="checklist">
-                        <label><input type="checkbox" id="preAccount" /> I created my LinkedIn account with my personal
-                            email
-                            and can log in.</label>
-                    </div>
-                </section>
+                <p class="muted">Complete each part in order, track your progress, and validate your profile link before
+                    submitting.</p>
+            </div>
+            <div class="controls no-print" aria-label="Page controls">
+                <label for="themeSelect">Theme:</label>
+                <select id="themeSelect" aria-label="Color theme">
+                    <option value="auto">Auto</option>
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                    <option value="high-contrast">High Contrast</option>
+                </select>
+                <button type="button" onclick="window.print()">Print / Save PDF</button>
+            </div>
+        </section>
 
-                <section class="card" aria-labelledby="applicationTitle">
-                    <h2 id="applicationTitle">Part 2: Follow the Video and Build Your Profile</h2>
-                    <p><strong>During this part:</strong> Watch the demo video and complete your profile as Kevin models
-                        each
-                        step.</p>
-                    <div class="video-wrap">
-                        <iframe src="https://www.youtube.com/embed/hNzpEeU3a4I"
-                            title="How to Set Up a LinkedIn Account demonstration"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-                    </div>
-                    <p class="small muted">Direct video link: <a href="https://youtu.be/hNzpEeU3a4I?si=lQZV3ODlKewBwuyL"
-                            target="_blank" rel="noopener noreferrer">https://youtu.be/hNzpEeU3a4I</a></p>
-                    <ol class="steps">
-                        <li>Finish your profile setup by following the video on your own computer.</li>
-                        <li>Go to your instructor profile: <a href="https://www.linkedin.com/in/aspiece/"
-                                target="_blank" rel="noopener noreferrer">https://www.linkedin.com/in/aspiece/</a>.</li>
-                        <li>Click <strong>Connect</strong> and send a connection request to your instructor.</li>
-                        <li>Find and connect with <strong>two classmates</strong>.</li>
-                    </ol>
+        <section class="card" aria-labelledby="progressTitle">
+            <h2 id="progressTitle">Progress</h2>
+            <p id="overallStatus" class="status" role="status" aria-live="polite">Progress: 0% complete.</p>
+            <div class="progress" aria-hidden="true">
+                <div id="progressBar"></div>
+            </div>
+        </section>
 
-                    <div class="checklist">
-                        <label><input type="checkbox" id="taskProfileDone" /> I completed my profile setup.</label>
-                        <label><input type="checkbox" id="taskTeacherConnect" /> I invited the instructor to
-                            connect.</label>
-                        <label><input type="checkbox" id="taskPeersConnect" /> I connected with two classmates.</label>
-                    </div>
-                </section>
+        <section class="card" aria-labelledby="demoTitle">
+            <h2 id="demoTitle">Part 1: Setup Your Account</h2>
+            <p><strong>Start here:</strong> Create your LinkedIn account using your personal email address so
+                you can
+                access your profile after graduation.</p>
+            <ol class="steps">
+                <li>Go to <a href="https://www.linkedin.com/" target="_blank"
+                        rel="noopener noreferrer">https://www.linkedin.com/</a> and click <strong>Join now</strong>.
+                </li>
+                <li>Use your <strong>personal email</strong> (not a temporary school login if you will lose access).
+                </li>
+                <li>Create a secure password you can remember, then complete email verification if prompted.</li>
+                <li>Enter your real first and last name, school or current role, and location so your account setup can
+                    finish.</li>
+                <li>Sign in successfully and confirm you can open your own profile page.</li>
+            </ol>
+            <h3>Common Setup Issues</h3>
+            <ul class="steps">
+                <li><strong>I already have an account:</strong> Use <strong>Sign in</strong> instead of Join now, then
+                    reset your password if needed.</li>
+                <li><strong>I did not get the verification email:</strong> Check Spam/Junk and search for "LinkedIn" in
+                    your inbox.</li>
+                <li><strong>It asks for phone verification:</strong> Complete the prompt, then continue account setup.
+                </li>
+                <li><strong>I accidentally used the wrong email:</strong> Sign out and restart account creation with
+                    your personal email.</li>
+            </ul>
+            <p class="small muted">If you get stuck during setup, raise your hand before moving to Part 2.</p>
+            <div class="checklist">
+                <label><input type="checkbox" id="preAccount" /> I created my LinkedIn account with my personal
+                    email
+                    and can log in.</label>
+            </div>
+        </section>
 
-                <section class="card" aria-labelledby="cfuTitle">
-                    <h2 id="cfuTitle">Part 3: Check for Understanding (Most Important Video Takeaways)</h2>
-                    <p class="muted">Answer all 5 questions one at a time, then click <strong>Check My Answers</strong>.
-                    </p>
-                    <p id="cfuNavHelp" class="sr-only">Use Previous and Next to move through check-for-understanding
-                        questions
-                        one at a time.</p>
-                    <p class="status" id="cfuStepStatus" role="status" aria-live="polite">Question 1 of 5</p>
+        <section class="card" aria-labelledby="applicationTitle">
+            <h2 id="applicationTitle">Part 2: Follow the Video and Build Your Profile</h2>
+            <p><strong>During this part:</strong> Watch the demo video and complete your profile as Kevin models
+                each
+                step.</p>
+            <div class="video-wrap">
+                <iframe src="https://www.youtube.com/embed/hNzpEeU3a4I"
+                    title="How to Set Up a LinkedIn Account demonstration"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+            <p class="small muted">Direct video link: <a href="https://youtu.be/hNzpEeU3a4I?si=lQZV3ODlKewBwuyL"
+                    target="_blank" rel="noopener noreferrer">https://youtu.be/hNzpEeU3a4I</a></p>
+            <ol class="steps">
+                <li>Finish your profile setup by following the video on your own computer.</li>
+                <li>Go to your instructor profile: <a href="https://www.linkedin.com/in/aspiece/" target="_blank"
+                        rel="noopener noreferrer">https://www.linkedin.com/in/aspiece/</a>.</li>
+                <li>Click <strong>Connect</strong> and send a connection request to your instructor.</li>
+                <li>Find and connect with <strong>two classmates</strong>.</li>
+            </ol>
 
-                    <fieldset class="question" data-cfu="1">
-                        <legend>1. According to the video, why does your LinkedIn profile matter most?</legend>
-                        <div class="options">
-                            <label for="cfu1-a"><input id="cfu1-a" type="radio" name="cfu1" value="a" /> It is mainly
-                                for posting
-                                personal updates</label>
-                            <label for="cfu1-b"><input id="cfu1-b" type="radio" name="cfu1" value="b" /> It acts like
-                                your personal
-                                brand and helps recruiters find you through search</label>
-                            <label for="cfu1-c"><input id="cfu1-c" type="radio" name="cfu1" value="c" /> It replaces the
-                                need for
-                                networking and applications</label>
-                        </div>
-                    </fieldset>
+            <div class="checklist">
+                <label><input type="checkbox" id="taskProfileDone" /> I completed my profile setup.</label>
+                <label><input type="checkbox" id="taskTeacherConnect" /> I invited the instructor to
+                    connect.</label>
+                <label><input type="checkbox" id="taskPeersConnect" /> I connected with two classmates.</label>
+            </div>
+        </section>
 
-                    <fieldset class="question" data-cfu="2" hidden>
-                        <legend>2. What did Kevin say is most important for a professional profile photo?</legend>
-                        <div class="options">
-                            <label for="cfu2-a"><input id="cfu2-a" type="radio" name="cfu2" value="a" /> Clear face,
-                                good lighting,
-                                clean background, and no group/party photos</label>
-                            <label for="cfu2-b"><input id="cfu2-b" type="radio" name="cfu2" value="b" /> Any photo is
-                                fine as long
-                                as your job title is listed</label>
-                            <label for="cfu2-c"><input id="cfu2-c" type="radio" name="cfu2" value="c" /> A cropped
-                                vacation selfie
-                                is best for personality</label>
-                        </div>
-                    </fieldset>
+        <section class="card" aria-labelledby="cfuTitle">
+            <h2 id="cfuTitle">Part 3: Check for Understanding (Most Important Video Takeaways)</h2>
+            <p class="muted">Answer all 5 questions one at a time, then click <strong>Check My Answers</strong>.
+            </p>
+            <p id="cfuNavHelp" class="sr-only">Use Previous and Next to move through check-for-understanding
+                questions
+                one at a time.</p>
+            <p class="status" id="cfuStepStatus" role="status" aria-live="polite">Question 1 of 5</p>
 
-                    <fieldset class="question" data-cfu="3" hidden>
-                        <legend>3. What is the strongest headline approach from the video?</legend>
-                        <div class="options">
-                            <label for="cfu3-a"><input id="cfu3-a" type="radio" name="cfu3" value="a" /> Use only your
-                                current job
-                                title</label>
-                            <label for="cfu3-b"><input id="cfu3-b" type="radio" name="cfu3" value="b" /> Use a creative
-                                quote with
-                                no keywords</label>
-                            <label for="cfu3-c"><input id="cfu3-c" type="radio" name="cfu3" value="c" /> Include your
-                                role, how you
-                                help, and who you help</label>
-                        </div>
-                    </fieldset>
+            <fieldset class="question" data-cfu="1">
+                <legend>1. According to the video, why does your LinkedIn profile matter most?</legend>
+                <div class="options">
+                    <label for="cfu1-a"><input id="cfu1-a" type="radio" name="cfu1" value="a" /> It is mainly
+                        for posting
+                        personal updates</label>
+                    <label for="cfu1-b"><input id="cfu1-b" type="radio" name="cfu1" value="b" /> It acts like
+                        your personal
+                        brand and helps recruiters find you through search</label>
+                    <label for="cfu1-c"><input id="cfu1-c" type="radio" name="cfu1" value="c" /> It replaces the
+                        need for
+                        networking and applications</label>
+                </div>
+            </fieldset>
 
-                    <fieldset class="question" data-cfu="4" hidden>
-                        <legend>4. What is the key takeaway for the About (summary) section?</legend>
-                        <div class="options">
-                            <label for="cfu4-a"><input id="cfu4-a" type="radio" name="cfu4" value="a" /> Skip it because
-                                recruiters
-                                only read job titles</label>
-                            <label for="cfu4-b"><input id="cfu4-b" type="radio" name="cfu4" value="b" /> Tell a clear,
-                                conversational
-                                story: who you are, what you do, and why it matters</label>
-                            <label for="cfu4-c"><input id="cfu4-c" type="radio" name="cfu4" value="c" /> Fill it with
-                                buzzwords to
-                                sound more professional</label>
-                        </div>
-                    </fieldset>
+            <fieldset class="question" data-cfu="2" hidden>
+                <legend>2. What did Kevin say is most important for a professional profile photo?</legend>
+                <div class="options">
+                    <label for="cfu2-a"><input id="cfu2-a" type="radio" name="cfu2" value="a" /> Clear face,
+                        good lighting,
+                        clean background, and no group/party photos</label>
+                    <label for="cfu2-b"><input id="cfu2-b" type="radio" name="cfu2" value="b" /> Any photo is
+                        fine as long
+                        as your job title is listed</label>
+                    <label for="cfu2-c"><input id="cfu2-c" type="radio" name="cfu2" value="c" /> A cropped
+                        vacation selfie
+                        is best for personality</label>
+                </div>
+            </fieldset>
 
-                    <fieldset class="question" data-cfu="5" hidden>
-                        <legend>5. In the experience section, what makes your bullets most powerful?</legend>
-                        <div class="options">
-                            <label for="cfu5-a"><input id="cfu5-a" type="radio" name="cfu5" value="a" /> Use concise
-                                bullets with
-                                clear outcomes and measurable results</label>
-                            <label for="cfu5-b"><input id="cfu5-b" type="radio" name="cfu5" value="b" /> List duties
-                                only with no
-                                impact or numbers</label>
-                            <label for="cfu5-c"><input id="cfu5-c" type="radio" name="cfu5" value="c" /> Use long
-                                paragraphs and
-                                avoid specifics</label>
-                        </div>
-                    </fieldset>
+            <fieldset class="question" data-cfu="3" hidden>
+                <legend>3. What is the strongest headline approach from the video?</legend>
+                <div class="options">
+                    <label for="cfu3-a"><input id="cfu3-a" type="radio" name="cfu3" value="a" /> Use only your
+                        current job
+                        title</label>
+                    <label for="cfu3-b"><input id="cfu3-b" type="radio" name="cfu3" value="b" /> Use a creative
+                        quote with
+                        no keywords</label>
+                    <label for="cfu3-c"><input id="cfu3-c" type="radio" name="cfu3" value="c" /> Include your
+                        role, how you
+                        help, and who you help</label>
+                </div>
+            </fieldset>
 
-                    <div class="question-nav no-print" aria-label="CFU question navigation">
-                        <button type="button" id="cfuPrevBtn" aria-describedby="cfuNavHelp">Previous</button>
-                        <button type="button" id="cfuNextBtn" class="primary"
-                            aria-describedby="cfuNavHelp">Next</button>
-                    </div>
+            <fieldset class="question" data-cfu="4" hidden>
+                <legend>4. What is the key takeaway for the About (summary) section?</legend>
+                <div class="options">
+                    <label for="cfu4-a"><input id="cfu4-a" type="radio" name="cfu4" value="a" /> Skip it because
+                        recruiters
+                        only read job titles</label>
+                    <label for="cfu4-b"><input id="cfu4-b" type="radio" name="cfu4" value="b" /> Tell a clear,
+                        conversational
+                        story: who you are, what you do, and why it matters</label>
+                    <label for="cfu4-c"><input id="cfu4-c" type="radio" name="cfu4" value="c" /> Fill it with
+                        buzzwords to
+                        sound more professional</label>
+                </div>
+            </fieldset>
 
-                    <button class="primary no-print" type="button" id="checkCfuBtn">Check My Answers</button>
-                    <p class="status" id="cfuStatus" role="status" aria-live="polite">Quiz not graded yet.</p>
-                </section>
+            <fieldset class="question" data-cfu="5" hidden>
+                <legend>5. In the experience section, what makes your bullets most powerful?</legend>
+                <div class="options">
+                    <label for="cfu5-a"><input id="cfu5-a" type="radio" name="cfu5" value="a" /> Use concise
+                        bullets with
+                        clear outcomes and measurable results</label>
+                    <label for="cfu5-b"><input id="cfu5-b" type="radio" name="cfu5" value="b" /> List duties
+                        only with no
+                        impact or numbers</label>
+                    <label for="cfu5-c"><input id="cfu5-c" type="radio" name="cfu5" value="c" /> Use long
+                        paragraphs and
+                        avoid specifics</label>
+                </div>
+            </fieldset>
 
-                <section class="card" aria-labelledby="submitTitle">
-                    <h2 id="submitTitle">Submission Instructions</h2>
-                    <p class="submission-alert"><strong>Important for full points:</strong> Click <strong>Validate
-                            Link</strong>
-                        and confirm your URL is valid <strong>before</strong> you submit.</p>
-                    <ol class="steps">
-                        <li>Open your own LinkedIn profile page.</li>
-                        <li>Copy the profile URL from the browser address bar. It should look like
-                            <code>https://www.linkedin.com/in/your-name</code>.
-                        </li>
-                        <li>Paste that link into your assignment submission form or learning platform as directed by
-                            your
-                            teacher.</li>
-                        <li>Double-check that the link opens your profile.</li>
-                    </ol>
+            <div class="question-nav no-print" aria-label="CFU question navigation">
+                <button type="button" id="cfuPrevBtn" aria-describedby="cfuNavHelp">Previous</button>
+                <button type="button" id="cfuNextBtn" class="primary" aria-describedby="cfuNavHelp">Next</button>
+            </div>
 
-                    <label for="profileUrl"><strong>Paste your LinkedIn profile link here to verify
-                            format:</strong></label>
-                    <div class="profile-link-box no-print">
-                        <input id="profileUrl" type="text" placeholder="https://www.linkedin.com/in/your-name"
-                            inputmode="url" autocomplete="url" aria-describedby="profileUrlHelp" />
-                        <button type="button" id="validateLinkBtn">Validate Link</button>
-                    </div>
-                    <p id="profileUrlHelp" class="small muted">Use <strong>Validate Link</strong> first. A valid URL
-                        check
-                        helps ensure full submission credit before you turn it in through your class submission tool.
-                    </p>
-                    <p class="status" id="linkStatus" role="status" aria-live="polite">Profile link not checked yet.</p>
-                    <div class="checklist">
-                        <label><input type="checkbox" id="taskSubmitted" /> I submitted my LinkedIn profile
-                            link.</label>
-                    </div>
-                </section>
+            <button class="primary no-print" type="button" id="checkCfuBtn">Check My Answers</button>
+            <p class="status" id="cfuStatus" role="status" aria-live="polite">Quiz not graded yet.</p>
+        </section>
+
+        <section class="card" aria-labelledby="submitTitle">
+            <h2 id="submitTitle">Submission Instructions</h2>
+            <p class="submission-alert"><strong>Important for full points:</strong> Click <strong>Validate
+                    Link</strong>
+                and confirm your URL is valid <strong>before</strong> you submit.</p>
+            <ol class="steps">
+                <li>Open your own LinkedIn profile page.</li>
+                <li>Copy the profile URL from the browser address bar. It should look like
+                    <code>https://www.linkedin.com/in/your-name</code>.
+                </li>
+                <li>Paste that link into your assignment submission form or learning platform as directed by
+                    your
+                    teacher.</li>
+                <li>Double-check that the link opens your profile.</li>
+            </ol>
+
+            <label for="profileUrl"><strong>Paste your LinkedIn profile link here to verify
+                    format:</strong></label>
+            <div class="profile-link-box no-print">
+                <input id="profileUrl" type="url" placeholder="https://www.linkedin.com/in/your-name" inputmode="url"
+                    autocomplete="url" spellcheck="false" aria-describedby="profileUrlHelp" />
+                <button type="button" id="validateLinkBtn">Validate Link</button>
+            </div>
+            <p id="profileUrlHelp" class="small muted">Use <strong>Validate Link</strong> first. A valid URL
+                check
+                helps ensure full submission credit before you turn it in through your class submission tool.
+            </p>
+            <p class="status" id="linkStatus" role="status" aria-live="polite">Profile link not checked yet.</p>
+            <div class="checklist">
+                <label><input type="checkbox" id="taskSubmitted" /> I submitted my LinkedIn profile
+                    link.</label>
+            </div>
+        </section>
     </main>
 
     <script>
