@@ -346,6 +346,57 @@
             min-height: 1.2em;
         }
 
+        .quiz-shell {
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 10px;
+            background: color-mix(in oklab, var(--panel) 94%, var(--accent) 6%);
+        }
+
+        .quiz-question-meta {
+            color: var(--muted);
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .quiz-question {
+            margin: 0 0 10px;
+            font-weight: 700;
+        }
+
+        .quiz-options {
+            display: grid;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .quiz-options label {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+            line-height: 1.4;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 8px;
+            background: var(--panel);
+        }
+
+        .quiz-result {
+            margin-top: 10px;
+            font-weight: 700;
+            color: var(--ok);
+        }
+
+        .quiz-review {
+            margin-top: 8px;
+            padding-left: 18px;
+        }
+
+        .quiz-review li {
+            margin: 6px 0;
+        }
+
         @media (max-width: 860px) {
             .meta {
                 grid-template-columns: repeat(2, minmax(120px, 1fr));
@@ -486,6 +537,31 @@
                         <li>The trapeze jump requires decision-making, courage, and trust in teammates.</li>
                     </ul>
                 </div>
+            </div>
+        </section>
+
+        <section class="card" aria-label="Makeup activity video 2">
+            <h2>Makeup Activity: Video 2 Check for Understanding</h2>
+            <p class="muted">Use the second video transcript (Ropes Course Reflection) for this activity. Questions are
+                shown one at a time.</p>
+            <div class="checklist">
+                <label><input type="checkbox" /> I completed all Video 2 check-for-understanding questions.</label>
+            </div>
+
+            <div class="quiz-shell" id="makeupQuiz" aria-live="polite">
+                <p class="quiz-question-meta" id="quizMeta">Question 1 of 6</p>
+                <p class="quiz-question" id="quizQuestion">Loading question...</p>
+                <div class="quiz-options" id="quizOptions"></div>
+
+                <div class="button-row" style="margin-top: 10px;">
+                    <button type="button" id="quizPrevBtn">Previous</button>
+                    <button type="button" id="quizNextBtn" class="primary">Next</button>
+                    <button type="button" id="quizSubmitBtn" class="primary" hidden>Submit Quiz</button>
+                    <button type="button" id="quizResetBtn">Reset Quiz</button>
+                </div>
+
+                <p class="quiz-result" id="quizResult" role="status" aria-live="polite"></p>
+                <ul class="quiz-review" id="quizReview"></ul>
             </div>
         </section>
 
@@ -689,7 +765,9 @@
                 <div class="button-row">
                     <button id="generateSubmissionBtn" type="button" class="primary">Generate Submission Text</button>
                     <button id="copySubmissionBtn" type="button">Copy for Google Doc</button>
+                    <button id="clearSavedWorkBtn" type="button">Clear Saved Work</button>
                 </div>
+                <p class="muted">Your responses auto-save on this device and reload when you return.</p>
                 <label for="submissionOutput"><strong>Submission Preview</strong></label>
                 <textarea id="submissionOutput" class="output-box" readonly
                     placeholder="Your generated submission will appear here."></textarea>
@@ -743,10 +821,74 @@
         (function setupSubmissionComposer() {
             const generateBtn = document.getElementById("generateSubmissionBtn");
             const copyBtn = document.getElementById("copySubmissionBtn");
+            const clearSavedWorkBtn = document.getElementById("clearSavedWorkBtn");
             const output = document.getElementById("submissionOutput");
             const status = document.getElementById("copyStatus");
+            const responseStorageKey = "gci-high-ropes-follow-up-responses-v1";
+            const fieldIds = [
+                "studentName", "classHour", "teamName", "submissionDate",
+                "a1", "a2", "a3", "b1", "b2", "b3", "b4", "c1", "c2"
+            ];
 
             if (!generateBtn || !copyBtn || !output || !status) return;
+
+            function saveResponses() {
+                const payload = {};
+                fieldIds.forEach((id) => {
+                    const element = document.getElementById(id);
+                    if (!element) return;
+                    payload[id] = element.value || "";
+                });
+
+                const checklistValues = Array.from(document.querySelectorAll(".checklist input[type='checkbox']"))
+                    .map((box) => box.checked);
+                payload.__checklist = checklistValues;
+
+                localStorage.setItem(responseStorageKey, JSON.stringify(payload));
+            }
+
+            function loadResponses() {
+                const raw = localStorage.getItem(responseStorageKey);
+                if (!raw) return;
+
+                try {
+                    const payload = JSON.parse(raw);
+
+                    fieldIds.forEach((id) => {
+                        const element = document.getElementById(id);
+                        if (!element) return;
+                        if (typeof payload[id] === "string") {
+                            element.value = payload[id];
+                        }
+                    });
+
+                    if (Array.isArray(payload.__checklist)) {
+                        const boxes = Array.from(document.querySelectorAll(".checklist input[type='checkbox']"));
+                        boxes.forEach((box, index) => {
+                            box.checked = Boolean(payload.__checklist[index]);
+                        });
+                    }
+                } catch (error) {
+                    console.warn("Unable to restore saved assignment responses.", error);
+                }
+            }
+
+            function clearSavedWork() {
+                fieldIds.forEach((id) => {
+                    const element = document.getElementById(id);
+                    if (!element) return;
+                    element.value = "";
+                });
+
+                const boxes = document.querySelectorAll(".checklist input[type='checkbox']");
+                boxes.forEach((box) => {
+                    box.checked = false;
+                });
+
+                output.value = "";
+                localStorage.removeItem(responseStorageKey);
+                status.textContent = "Saved work cleared for this browser.";
+            }
 
             function getValue(id) {
                 return (document.getElementById(id)?.value || "").trim();
@@ -762,6 +904,12 @@
                 const classHour = getValue("classHour") || "[Class / Hour]";
                 const teamName = getValue("teamName") || "[Team Name]";
                 const submissionDate = getValue("submissionDate") || "[Date]";
+                const quizSummary = typeof window.__getMakeupQuizSummary === "function"
+                    ? window.__getMakeupQuizSummary()
+                    : null;
+                const quizScoreLine = quizSummary
+                    ? `Video 2 CFU Score: ${quizSummary.correct}/${quizSummary.total}`
+                    : "Video 2 CFU Score: [Not completed]";
 
                 return [
                     "High Ropes Teamwork Challenge - Follow-Up Assignment",
@@ -770,6 +918,7 @@
                     `Class / Hour: ${classHour}`,
                     `Team Name: ${teamName}`,
                     `Date: ${submissionDate}`,
+                    quizScoreLine,
                     "",
                     "Part A: Challenge Debrief (Activation)",
                     "1. Briefly describe your high ropes challenge experience.",
@@ -825,6 +974,7 @@
             generateBtn.addEventListener("click", () => {
                 output.value = buildSubmissionText();
                 status.textContent = "Submission text generated. Review it, then click Copy for Google Doc.";
+                saveResponses();
             });
 
             copyBtn.addEventListener("click", async () => {
@@ -839,6 +989,230 @@
                     status.textContent = "Copy failed. Select the preview text manually and copy it.";
                 }
             });
+
+            clearSavedWorkBtn?.addEventListener("click", clearSavedWork);
+
+            fieldIds.forEach((id) => {
+                const element = document.getElementById(id);
+                if (!element) return;
+                element.addEventListener("input", saveResponses);
+                element.addEventListener("change", saveResponses);
+            });
+
+            const boxes = document.querySelectorAll(".checklist input[type='checkbox']");
+            boxes.forEach((box) => {
+                box.addEventListener("change", saveResponses);
+            });
+
+            loadResponses();
+        })();
+
+        (function setupMakeupQuiz() {
+            const quizStorageKey = "gci-high-ropes-video2-quiz-v1";
+            const meta = document.getElementById("quizMeta");
+            const question = document.getElementById("quizQuestion");
+            const options = document.getElementById("quizOptions");
+            const result = document.getElementById("quizResult");
+            const review = document.getElementById("quizReview");
+            const prevBtn = document.getElementById("quizPrevBtn");
+            const nextBtn = document.getElementById("quizNextBtn");
+            const submitBtn = document.getElementById("quizSubmitBtn");
+            const resetBtn = document.getElementById("quizResetBtn");
+
+            if (!meta || !question || !options || !result || !review || !prevBtn || !nextBtn || !submitBtn || !resetBtn) {
+                return;
+            }
+
+            const quizItems = [
+                {
+                    prompt: "What is the main goal of the ropes course trip described in the transcript?",
+                    choices: [
+                        "To rank students by athletic skill",
+                        "To implement teamwork, communication, cooperation, and trust",
+                        "To practice only individual climbing speed",
+                        "To replace all classroom instruction"
+                    ],
+                    answer: 1
+                },
+                {
+                    prompt: "The transcript emphasizes student growth when they move from which mindset to which mindset?",
+                    choices: [
+                        "From 'I can do this' to 'I should quit'",
+                        "From 'I can't do that' to proving themselves wrong",
+                        "From 'Team first' to 'Me first'",
+                        "From planning to avoiding challenge"
+                    ],
+                    answer: 1
+                },
+                {
+                    prompt: "How is belay support organized in the second video transcript?",
+                    choices: [
+                        "One person handles all roles alone",
+                        "Two students rotate one role",
+                        "Five different roles combine into a safe team belay technique",
+                        "Teachers do all safety roles"
+                    ],
+                    answer: 2
+                },
+                {
+                    prompt: "In the trapeze element, students make two key trust decisions. What are they?",
+                    choices: [
+                        "Whether to run and whether to stop",
+                        "Whether to jump, and then whether to let go of the trapeze bar",
+                        "Whether to compete and whether to coach others",
+                        "Whether to belay and whether to grade peers"
+                    ],
+                    answer: 1
+                },
+                {
+                    prompt: "Which preparation strategy is named by a student before participating?",
+                    choices: [
+                        "Avoid all risk and rely on teacher instructions only",
+                        "Try best, count on allies, and push into a growth zone",
+                        "Focus only on speed and performance ranking",
+                        "Skip teamwork roles to reduce confusion"
+                    ],
+                    answer: 1
+                },
+                {
+                    prompt: "What best connects the second transcript to your class teamwork goals?",
+                    choices: [
+                        "Team roles, trust, and communication can transfer to future challenges",
+                        "Physical skill matters, teamwork does not",
+                        "Only advanced students benefit from challenge tasks",
+                        "Growth is mostly accidental and cannot be planned"
+                    ],
+                    answer: 0
+                }
+            ];
+
+            let currentIndex = 0;
+            let responses = new Array(quizItems.length).fill(null);
+
+            function getQuizSummary() {
+                let correct = 0;
+                let answered = 0;
+
+                quizItems.forEach((item, idx) => {
+                    const response = responses[idx];
+                    if (typeof response === "number") {
+                        answered += 1;
+                        if (response === item.answer) correct += 1;
+                    }
+                });
+
+                return {
+                    correct,
+                    answered,
+                    total: quizItems.length,
+                    complete: answered === quizItems.length
+                };
+            }
+
+            // Expose summary so the submission generator can include quiz score.
+            window.__getMakeupQuizSummary = getQuizSummary;
+
+            function saveQuizState() {
+                const payload = { currentIndex, responses };
+                localStorage.setItem(quizStorageKey, JSON.stringify(payload));
+            }
+
+            function loadQuizState() {
+                const raw = localStorage.getItem(quizStorageKey);
+                if (!raw) return;
+
+                try {
+                    const payload = JSON.parse(raw);
+                    if (Array.isArray(payload.responses) && payload.responses.length === quizItems.length) {
+                        responses = payload.responses;
+                    }
+                    if (typeof payload.currentIndex === "number" && payload.currentIndex >= 0 && payload.currentIndex < quizItems.length) {
+                        currentIndex = payload.currentIndex;
+                    }
+                } catch (error) {
+                    console.warn("Unable to restore quiz state.", error);
+                }
+            }
+
+            function renderQuestion() {
+                const item = quizItems[currentIndex];
+                meta.textContent = `Question ${currentIndex + 1} of ${quizItems.length}`;
+                question.textContent = item.prompt;
+                options.innerHTML = "";
+
+                item.choices.forEach((choice, idx) => {
+                    const label = document.createElement("label");
+                    const input = document.createElement("input");
+                    input.type = "radio";
+                    input.name = "makeupQuizQuestion";
+                    input.value = String(idx);
+                    input.checked = responses[currentIndex] === idx;
+                    input.addEventListener("change", () => {
+                        responses[currentIndex] = idx;
+                        saveQuizState();
+                    });
+
+                    const text = document.createElement("span");
+                    text.textContent = choice;
+                    label.appendChild(input);
+                    label.appendChild(text);
+                    options.appendChild(label);
+                });
+
+                prevBtn.disabled = currentIndex === 0;
+                const isLast = currentIndex === quizItems.length - 1;
+                nextBtn.hidden = isLast;
+                submitBtn.hidden = !isLast;
+            }
+
+            function scoreQuiz() {
+                const summary = getQuizSummary();
+
+                result.textContent = `Score: ${summary.correct}/${summary.total}.`;
+                review.innerHTML = "";
+
+                quizItems.forEach((item, idx) => {
+                    const li = document.createElement("li");
+                    const studentAnswer = responses[idx];
+                    const statusText = studentAnswer === item.answer ? "Correct" : "Needs Review";
+                    const answerText = typeof studentAnswer === "number"
+                        ? item.choices[studentAnswer]
+                        : "No answer selected";
+                    li.textContent = `Q${idx + 1}: ${statusText}. Your answer: ${answerText}`;
+                    review.appendChild(li);
+                });
+            }
+
+            prevBtn.addEventListener("click", () => {
+                if (currentIndex === 0) return;
+                currentIndex -= 1;
+                saveQuizState();
+                renderQuestion();
+            });
+
+            nextBtn.addEventListener("click", () => {
+                if (currentIndex >= quizItems.length - 1) return;
+                currentIndex += 1;
+                saveQuizState();
+                renderQuestion();
+            });
+
+            submitBtn.addEventListener("click", () => {
+                scoreQuiz();
+                saveQuizState();
+            });
+
+            resetBtn.addEventListener("click", () => {
+                currentIndex = 0;
+                responses = new Array(quizItems.length).fill(null);
+                result.textContent = "";
+                review.innerHTML = "";
+                localStorage.removeItem(quizStorageKey);
+                renderQuestion();
+            });
+
+            loadQuizState();
+            renderQuestion();
         })();
     </script>
 </body>
