@@ -569,7 +569,7 @@
 
         <section class="card progress-card" aria-label="Assignment progress">
             <h2>Your Progress</h2>
-            <p class="muted" id="progressText">0 of 1 completion tasks finished (0%).</p>
+            <p class="muted" id="progressText">0 of 5 steps completed (0%).</p>
             <progress id="assignmentProgressBar" max="100" value="0" aria-describedby="progressText"></progress>
         </section>
 
@@ -619,6 +619,11 @@
             <p><strong>Reflection video link:</strong> <a href="https://youtu.be/DVCwE20uRcI?si=aIRExS5q-S1A1QGZ"
                     target="_blank" rel="noopener noreferrer">https://youtu.be/DVCwE20uRcI?si=aIRExS5q-S1A1QGZ</a></p>
 
+            <div class="checklist">
+                <label><input id="step1Status" type="checkbox" /> I completed this makeup step, or I attended Base Camp
+                    and skipped it.</label>
+            </div>
+
             <div class="quiz-shell" id="makeupQuiz" aria-live="polite">
                 <p class="quiz-question-meta" id="quizMeta">Question 1 of 6</p>
                 <p class="quiz-question" id="quizQuestion">Loading question...</p>
@@ -651,16 +656,16 @@
             <p><strong>Direct link:</strong> <a href="https://youtu.be/nYfr-nN0m6c?si=7C5EagBaiXgJ_Uvq" target="_blank"
                     rel="noopener noreferrer">https://youtu.be/nYfr-nN0m6c?si=7C5EagBaiXgJ_Uvq</a></p>
 
+            <div class="checklist">
+                <label><input id="step2Status" type="checkbox" /> I watched the required demonstration video.</label>
+            </div>
+
         </section>
 
         <section class="card" aria-label="Required video accountability check">
             <h2>Step 3: Check Your Understanding - Accountability</h2>
             <p class="muted">Complete this accountability check for the required video. Questions are shown one at a
                 time.</p>
-            <div class="checklist">
-                <label><input type="checkbox" /> I completed all accountability check-for-understanding questions for
-                    the required video.</label>
-            </div>
 
             <div class="quiz-shell" id="requiredQuiz" aria-live="polite">
                 <p class="quiz-question-meta" id="requiredQuizMeta">Question 1 of 6</p>
@@ -748,8 +753,6 @@
                 <label><input type="checkbox" /> If needed, I completed the makeup video CFU quiz.</label>
                 <label><input type="checkbox" /> I completed the Step 4 sorting activity and checked my answers.</label>
                 <label><input type="checkbox" /> I completed the Step 5 comfort-zone reflection response.</label>
-                <label><input type="checkbox" /> I generated and copied my full Document text.</label>
-                <label><input type="checkbox" /> I submitted my completed Document.</label>
             </div>
             <p class="footer-status">Submit your completed Document with quiz scores.</p>
         </section>
@@ -823,30 +826,42 @@
         (function setupAssignmentProgress() {
             const progressBar = document.getElementById("assignmentProgressBar");
             const progressText = document.getElementById("progressText");
-            const submissionChecklist = document.getElementById("submissionChecklist");
+            const step1Status = document.getElementById("step1Status");
+            const step2Status = document.getElementById("step2Status");
+            const requiredQuiz = document.getElementById("requiredQuiz");
             const comfortZoneResponse = document.getElementById("comfortZoneResponse");
 
-            if (!progressBar || !progressText || !submissionChecklist || !comfortZoneResponse) return;
+            if (!progressBar || !progressText || !step1Status || !step2Status || !requiredQuiz || !comfortZoneResponse) return;
 
-            const checklistBoxes = Array.from(submissionChecklist.querySelectorAll(".checklist input[type='checkbox']"));
+            window.__step4SortCompleted = Boolean(window.__step4SortCompleted);
 
             function updateProgress() {
-                const checklistComplete = checklistBoxes.filter((box) => box.checked).length;
-                const reflectionComplete = comfortZoneResponse.value.trim().length > 0 ? 1 : 0;
-                const completed = checklistComplete + reflectionComplete;
-                const total = checklistBoxes.length + 1;
+                const step1Complete = step1Status.checked;
+                const step2Complete = step2Status.checked;
+                const requiredQuizSummary = typeof window.__getRequiredQuizSummary === "function"
+                    ? window.__getRequiredQuizSummary()
+                    : null;
+                const step3Complete = Boolean(requiredQuizSummary?.complete);
+                const step4Complete = Boolean(window.__step4SortCompleted);
+                const step5Complete = comfortZoneResponse.value.trim().length > 0;
+
+                const completed = [step1Complete, step2Complete, step3Complete, step4Complete, step5Complete]
+                    .filter(Boolean).length;
+                const total = 5;
                 const percent = Math.round((completed / total) * 100);
 
                 progressBar.value = percent;
                 progressBar.setAttribute("aria-valuenow", String(percent));
-                progressText.textContent = `${completed} of ${total} completion tasks finished (${percent}%).`;
+                progressText.textContent = `${completed} of ${total} steps completed (${percent}%).`;
             }
 
-            checklistBoxes.forEach((box) => {
-                box.addEventListener("change", updateProgress);
-            });
+            step1Status.addEventListener("change", updateProgress);
+            step2Status.addEventListener("change", updateProgress);
+            requiredQuiz.addEventListener("change", updateProgress);
+            requiredQuiz.addEventListener("click", updateProgress);
             comfortZoneResponse.addEventListener("input", updateProgress);
             comfortZoneResponse.addEventListener("change", updateProgress);
+            document.addEventListener("gci-step-progress-changed", updateProgress);
 
             updateProgress();
         })();
@@ -1621,6 +1636,8 @@
                 const placedCards = cards.filter((card) => card.parentElement?.id !== "sortSource");
 
                 if (placedCards.length !== cards.length) {
+                    window.__step4SortCompleted = false;
+                    document.dispatchEvent(new CustomEvent("gci-step-progress-changed"));
                     feedback.textContent = "Move all statements into a category before checking.";
                     return;
                 }
@@ -1635,12 +1652,16 @@
                     }
                 });
 
+                window.__step4SortCompleted = true;
+                document.dispatchEvent(new CustomEvent("gci-step-progress-changed"));
                 feedback.textContent = `Score: ${correct}/${cards.length}. Review and adjust any statements that do not fit.`;
             });
 
             resetBtn.addEventListener("click", () => {
                 getAllCards().forEach((card) => source.appendChild(card));
                 setSelectedCard(null);
+                window.__step4SortCompleted = false;
+                document.dispatchEvent(new CustomEvent("gci-step-progress-changed"));
                 feedback.textContent = "Activity reset. Drag the statements to try again.";
             });
         })();
