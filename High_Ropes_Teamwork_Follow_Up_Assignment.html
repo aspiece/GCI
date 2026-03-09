@@ -18,6 +18,9 @@
             --warn-line: #b45309;
             --ok: #166534;
             --focus: #0f766e;
+            --link: #0b4f4a;
+            --link-visited: #5b2a86;
+            --link-hover: #083a36;
         }
 
         :root[data-theme="dark"] {
@@ -32,6 +35,9 @@
             --warn-line: #f59e0b;
             --ok: #4ade80;
             --focus: #2dd4bf;
+            --link: #7ee7dc;
+            --link-visited: #d8b4fe;
+            --link-hover: #99f6e4;
         }
 
         :root[data-theme="high-contrast"] {
@@ -46,6 +52,9 @@
             --warn-line: #ffff00;
             --ok: #00ff00;
             --focus: #ffff00;
+            --link: #00ffff;
+            --link-visited: #ffff00;
+            --link-hover: #ffffff;
         }
 
         * {
@@ -124,6 +133,20 @@
         .muted {
             color: var(--muted);
             margin: 6px 0 0;
+        }
+
+        a {
+            color: var(--link);
+            text-decoration-thickness: 2px;
+            text-underline-offset: 2px;
+        }
+
+        a:visited {
+            color: var(--link-visited);
+        }
+
+        a:hover {
+            color: var(--link-hover);
         }
 
         .controls {
