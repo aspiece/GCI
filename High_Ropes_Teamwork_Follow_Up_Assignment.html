@@ -826,22 +826,25 @@
         (function setupAssignmentProgress() {
             const progressBar = document.getElementById("assignmentProgressBar");
             const progressText = document.getElementById("progressText");
-            const step1Status = document.getElementById("step1Status");
             const step2Status = document.getElementById("step2Status");
             const requiredQuiz = document.getElementById("requiredQuiz");
+            const makeupQuiz = document.getElementById("makeupQuiz");
             const comfortZoneResponse = document.getElementById("comfortZoneResponse");
 
-            if (!progressBar || !progressText || !step1Status || !step2Status || !requiredQuiz || !comfortZoneResponse) return;
+            if (!progressBar || !progressText || !step2Status || !requiredQuiz || !makeupQuiz || !comfortZoneResponse) return;
 
             window.__step4SortCompleted = Boolean(window.__step4SortCompleted);
 
             function updateProgress() {
-                const step1Complete = step1Status.checked;
-                const step2Complete = step2Status.checked;
+                const makeupQuizSummary = typeof window.__getMakeupQuizSummary === "function"
+                    ? window.__getMakeupQuizSummary()
+                    : null;
                 const requiredQuizSummary = typeof window.__getRequiredQuizSummary === "function"
                     ? window.__getRequiredQuizSummary()
                     : null;
-                const step3Complete = Boolean(requiredQuizSummary?.complete);
+                const step1Complete = Boolean(makeupQuizSummary?.complete);
+                const step2Complete = Boolean(requiredQuizSummary?.complete);
+                const step3Complete = step2Status.checked;
                 const step4Complete = Boolean(window.__step4SortCompleted);
                 const step5Complete = comfortZoneResponse.value.trim().length > 0;
 
@@ -855,10 +858,11 @@
                 progressText.textContent = `${completed} of ${total} steps completed (${percent}%).`;
             }
 
-            step1Status.addEventListener("change", updateProgress);
             step2Status.addEventListener("change", updateProgress);
             requiredQuiz.addEventListener("change", updateProgress);
             requiredQuiz.addEventListener("click", updateProgress);
+            makeupQuiz.addEventListener("change", updateProgress);
+            makeupQuiz.addEventListener("click", updateProgress);
             comfortZoneResponse.addEventListener("input", updateProgress);
             comfortZoneResponse.addEventListener("change", updateProgress);
             document.addEventListener("gci-step-progress-changed", updateProgress);
@@ -872,10 +876,11 @@
             const clearSavedWorkBtn = document.getElementById("clearSavedWorkBtn");
             const output = document.getElementById("submissionOutput");
             const status = document.getElementById("copyStatus");
+            const step2Status = document.getElementById("step2Status");
             const responseStorageKey = "gci-high-ropes-follow-up-responses-v1";
             const fieldIds = ["comfortZoneResponse"];
 
-            if (!generateBtn || !copyBtn || !output || !status) return;
+            if (!generateBtn || !copyBtn || !output || !status || !step2Status) return;
 
             function saveResponses() {
                 const payload = {};
@@ -939,111 +944,105 @@
                 return (document.getElementById(id)?.value || "").trim();
             }
 
-            function buildPageSnapshotText() {
-                const main = document.getElementById("assignmentMain");
-                if (!main) return "[Unable to capture assignment content.]";
+            function formatQuizStep(report) {
+                const lines = [];
 
-                const clone = main.cloneNode(true);
-
-                // Remove UI-only controls from the snapshot.
-                clone.querySelector(".controls")?.remove();
-
-                // Avoid recursive inclusion of the generated preview field.
-                const previewBox = clone.querySelector("#submissionOutput");
-                if (previewBox) {
-                    const previewNote = document.createElement("p");
-                    previewNote.textContent = "[Submission preview omitted from copied snapshot]";
-                    previewBox.replaceWith(previewNote);
+                if (!report || !report.summary) {
+                    lines.push("Score: Not completed");
+                    return lines;
                 }
 
-                const liveFields = Array.from(main.querySelectorAll("textarea, input, select"));
-                const cloneFields = Array.from(clone.querySelectorAll("textarea, input, select"));
-                liveFields.forEach((liveField, index) => {
-                    const cloneField = cloneFields[index];
-                    if (!cloneField) return;
-
-                    if (liveField instanceof HTMLInputElement && cloneField instanceof HTMLInputElement) {
-                        if (liveField.type === "checkbox" || liveField.type === "radio") {
-                            cloneField.checked = liveField.checked;
-                        } else {
-                            cloneField.value = liveField.value;
-                        }
-                        return;
-                    }
-
-                    if (liveField instanceof HTMLTextAreaElement && cloneField instanceof HTMLTextAreaElement) {
-                        cloneField.value = liveField.value;
-                        return;
-                    }
-
-                    if (liveField instanceof HTMLSelectElement && cloneField instanceof HTMLSelectElement) {
-                        cloneField.value = liveField.value;
-                    }
+                lines.push(`Score: ${report.summary.correct}/${report.summary.total}`);
+                report.items.forEach((item, idx) => {
+                    lines.push(`Q${idx + 1}: ${item.prompt}`);
+                    lines.push(`- Your answer: ${item.selectedText}`);
+                    lines.push(`- Correct answer: ${item.correctText}`);
+                    lines.push(`- Result: ${item.isCorrect ? "Correct" : "Needs Review"}`);
                 });
 
-                clone.querySelectorAll("input[type='checkbox']").forEach((input) => {
-                    const marker = document.createTextNode(input.checked ? "[x] " : "[ ] ");
-                    input.replaceWith(marker);
-                });
-
-                clone.querySelectorAll("input[type='radio']").forEach((input) => {
-                    const marker = document.createTextNode(input.checked ? "(o) " : "( ) ");
-                    input.replaceWith(marker);
-                });
-
-                clone.querySelectorAll("input:not([type='checkbox']):not([type='radio'])").forEach((input) => {
-                    const value = (input.value || "").trim();
-                    input.replaceWith(document.createTextNode(value || "[blank]"));
-                });
-
-                clone.querySelectorAll("select").forEach((select) => {
-                    const value = (select.value || "").trim();
-                    select.replaceWith(document.createTextNode(value || "[blank]"));
-                });
-
-                clone.querySelectorAll("textarea").forEach((textarea) => {
-                    const value = (textarea.value || "").trim();
-                    const replacement = document.createElement("p");
-                    replacement.textContent = value || "[No response entered]";
-                    textarea.replaceWith(replacement);
-                });
-
-                clone.querySelectorAll("button").forEach((button) => button.remove());
-
-                return (clone.innerText || clone.textContent || "")
-                    .replace(/\n{3,}/g, "\n\n")
-                    .trim();
+                return lines;
             }
 
-            function buildSubmissionText() {
+            function getCategorizedItemsReport() {
+                const bank = document.getElementById("sortSource");
+                const accountability = document.querySelector(".drop-zone[data-target='accountability'] .sort-list");
+                const reflection = document.querySelector(".drop-zone[data-target='reflection'] .sort-list");
+
+                const readList = (list) => list
+                    ? Array.from(list.querySelectorAll(".sort-card")).map((item) => (item.textContent || "").trim()).filter(Boolean)
+                    : [];
+
+                return {
+                    accountability: readList(accountability),
+                    reflection: readList(reflection),
+                    unplaced: readList(bank)
+                };
+            }
+
+            function getRequiredCompletionState() {
                 const requiredQuizSummary = typeof window.__getRequiredQuizSummary === "function"
                     ? window.__getRequiredQuizSummary()
                     : null;
-                const makeupQuizSummary = typeof window.__getMakeupQuizSummary === "function"
-                    ? window.__getMakeupQuizSummary()
-                    : null;
-                const requiredQuizScoreLine = requiredQuizSummary
-                    ? `Required Video Accountability CFU: ${requiredQuizSummary.correct}/${requiredQuizSummary.total}`
-                    : "Required Video Accountability CFU: [Not completed]";
-                const makeupQuizScoreLine = makeupQuizSummary
-                    ? `Makeup Video CFU: ${makeupQuizSummary.correct}/${makeupQuizSummary.total}`
-                    : "Makeup Video CFU: [Not completed]";
-                const comfortZoneResponse = getValue("comfortZoneResponse") || "[No response provided]";
-                const pageSnapshot = buildPageSnapshotText();
+                const step2Complete = Boolean(requiredQuizSummary?.complete);
+                const step3Complete = step2Status.checked;
+                const step4Complete = Boolean(window.__step4SortCompleted);
+                const step5Complete = getValue("comfortZoneResponse").length > 0;
 
-                return [
-                    "High Ropes Teamwork Challenge - Follow-Up Assignment",
-                    "",
-                    requiredQuizScoreLine,
-                    makeupQuizScoreLine,
-                    "",
-                    "Comfort Zone Reflection:",
-                    "- Question: Describe one moment in this activity where you got out of your comfort zone. What did you do, and what did you learn?",
-                    `- Response: ${comfortZoneResponse}`,
-                    "",
-                    "Full Page Snapshot:",
-                    pageSnapshot
-                ].join("\n");
+                return { step2Complete, step3Complete, step4Complete, step5Complete };
+            }
+
+            function getMissingRequiredSteps() {
+                const completion = getRequiredCompletionState();
+                const missing = [];
+                if (!completion.step2Complete) missing.push("Step 2 (check for understanding)");
+                if (!completion.step3Complete) missing.push("Step 3 (required video checkbox)");
+                if (!completion.step4Complete) missing.push("Step 4 (categorized items)");
+                if (!completion.step5Complete) missing.push("Step 5 (reflection response)");
+                return missing;
+            }
+
+            function buildSubmissionText() {
+                const makeupQuizReport = typeof window.__getMakeupQuizReport === "function"
+                    ? window.__getMakeupQuizReport()
+                    : null;
+                const requiredQuizReport = typeof window.__getRequiredQuizReport === "function"
+                    ? window.__getRequiredQuizReport()
+                    : null;
+                const categorized = getCategorizedItemsReport();
+                const comfortZoneResponse = getValue("comfortZoneResponse") || "[No response provided]";
+                const step3Selected = step2Status.checked ? "Yes" : "No";
+
+                const lines = [
+                    "Step 1:",
+                    "Answers and score to each question of the Check for understanding"
+                ];
+
+                lines.push(...formatQuizStep(makeupQuizReport));
+                lines.push("", "Step 2:", "Answers and score of the check for understanding");
+                lines.push(...formatQuizStep(requiredQuizReport));
+                lines.push("", "Step 3:", "Check box selected", `- Required demonstration video watched checkbox: ${step3Selected}`);
+                lines.push("", "Step 4:", "Categorized items");
+                lines.push("- Accountability:");
+                if (categorized.accountability.length === 0) {
+                    lines.push("  - [No items categorized]");
+                } else {
+                    categorized.accountability.forEach((item) => lines.push(`  - ${item}`));
+                }
+                lines.push("- Ropes Course Reflection:");
+                if (categorized.reflection.length === 0) {
+                    lines.push("  - [No items categorized]");
+                } else {
+                    categorized.reflection.forEach((item) => lines.push(`  - ${item}`));
+                }
+                lines.push("- Not yet categorized:");
+                if (categorized.unplaced.length === 0) {
+                    lines.push("  - [None]");
+                } else {
+                    categorized.unplaced.forEach((item) => lines.push(`  - ${item}`));
+                }
+                lines.push("", "Step 5:", "Response to the prompt", comfortZoneResponse);
+
+                return lines.join("\n");
             }
 
             async function copyToClipboard(text) {
@@ -1061,12 +1060,25 @@
             }
 
             generateBtn.addEventListener("click", () => {
+                const missing = getMissingRequiredSteps();
+
+                if (missing.length > 0) {
+                    status.textContent = `Complete Steps 2-5 before generating. Missing: ${missing.join(", ")}.`;
+                    return;
+                }
+
                 output.value = buildSubmissionText();
                 status.textContent = "Full Document text generated. Review it, then click Copy Document Text.";
                 saveResponses();
             });
 
             copyBtn.addEventListener("click", async () => {
+                const missing = getMissingRequiredSteps();
+                if (missing.length > 0) {
+                    status.textContent = `Complete Steps 2-5 before copying. Missing: ${missing.join(", ")}.`;
+                    return;
+                }
+
                 if (!output.value.trim()) {
                     output.value = buildSubmissionText();
                 }
@@ -1198,8 +1210,27 @@
                 };
             }
 
+            function getQuizReport() {
+                const summary = getQuizSummary();
+                const items = quizItems.map((item, idx) => {
+                    const selectedIndex = responses[idx];
+                    const selectedText = typeof selectedIndex === "number"
+                        ? item.choices[selectedIndex]
+                        : "No answer selected";
+                    return {
+                        prompt: item.prompt,
+                        selectedText,
+                        correctText: item.choices[item.answer],
+                        isCorrect: selectedIndex === item.answer
+                    };
+                });
+
+                return { summary, items };
+            }
+
             // Expose summary so the submission generator can include quiz score.
             window.__getMakeupQuizSummary = getQuizSummary;
+            window.__getMakeupQuizReport = getQuizReport;
 
             function saveQuizState() {
                 const payload = { currentIndex, responses };
@@ -1239,6 +1270,7 @@
                     input.addEventListener("change", () => {
                         responses[currentIndex] = idx;
                         saveQuizState();
+                        document.dispatchEvent(new CustomEvent("gci-step-progress-changed"));
                     });
 
                     const text = document.createElement("span");
@@ -1289,6 +1321,7 @@
             submitBtn.addEventListener("click", () => {
                 scoreQuiz();
                 saveQuizState();
+                document.dispatchEvent(new CustomEvent("gci-step-progress-changed"));
             });
 
             resetBtn.addEventListener("click", () => {
@@ -1298,6 +1331,7 @@
                 review.innerHTML = "";
                 localStorage.removeItem(quizStorageKey);
                 renderQuestion();
+                document.dispatchEvent(new CustomEvent("gci-step-progress-changed"));
             });
 
             loadQuizState();
@@ -1406,7 +1440,26 @@
                 };
             }
 
+            function getQuizReport() {
+                const summary = getQuizSummary();
+                const items = quizItems.map((item, idx) => {
+                    const selectedIndex = responses[idx];
+                    const selectedText = typeof selectedIndex === "number"
+                        ? item.choices[selectedIndex]
+                        : "No answer selected";
+                    return {
+                        prompt: item.prompt,
+                        selectedText,
+                        correctText: item.choices[item.answer],
+                        isCorrect: selectedIndex === item.answer
+                    };
+                });
+
+                return { summary, items };
+            }
+
             window.__getRequiredQuizSummary = getQuizSummary;
+            window.__getRequiredQuizReport = getQuizReport;
 
             function saveQuizState() {
                 const payload = { currentIndex, responses };
@@ -1446,6 +1499,7 @@
                     input.addEventListener("change", () => {
                         responses[currentIndex] = idx;
                         saveQuizState();
+                        document.dispatchEvent(new CustomEvent("gci-step-progress-changed"));
                     });
 
                     const text = document.createElement("span");
@@ -1496,6 +1550,7 @@
             submitBtn.addEventListener("click", () => {
                 scoreQuiz();
                 saveQuizState();
+                document.dispatchEvent(new CustomEvent("gci-step-progress-changed"));
             });
 
             resetBtn.addEventListener("click", () => {
@@ -1505,6 +1560,7 @@
                 review.innerHTML = "";
                 localStorage.removeItem(quizStorageKey);
                 renderQuestion();
+                document.dispatchEvent(new CustomEvent("gci-step-progress-changed"));
             });
 
             loadQuizState();
