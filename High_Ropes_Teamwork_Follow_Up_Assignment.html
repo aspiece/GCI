@@ -397,6 +397,75 @@
             margin: 6px 0;
         }
 
+        .sort-activity {
+            display: grid;
+            gap: 12px;
+        }
+
+        .sort-source {
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 10px;
+            background: color-mix(in oklab, var(--panel) 95%, var(--accent) 5%);
+        }
+
+        .sort-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: grid;
+            gap: 8px;
+        }
+
+        .sort-card {
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 9px 10px;
+            background: var(--panel);
+            line-height: 1.35;
+            cursor: grab;
+        }
+
+        .sort-card:active {
+            cursor: grabbing;
+        }
+
+        .drop-grid {
+            display: grid;
+            gap: 10px;
+            grid-template-columns: repeat(2, minmax(240px, 1fr));
+        }
+
+        .drop-zone {
+            border: 2px dashed var(--line);
+            border-radius: 10px;
+            padding: 10px;
+            min-height: 160px;
+            background: color-mix(in oklab, var(--panel) 96%, var(--accent) 4%);
+        }
+
+        .drop-zone.drag-over {
+            border-color: var(--accent);
+            background: color-mix(in oklab, var(--panel) 88%, var(--accent) 12%);
+        }
+
+        .drop-zone h3 {
+            margin-top: 0;
+        }
+
+        .sort-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .sort-feedback {
+            margin: 0;
+            font-weight: 700;
+            color: var(--ok);
+            min-height: 1.2em;
+        }
+
         @media (max-width: 860px) {
             .meta {
                 grid-template-columns: repeat(2, minmax(120px, 1fr));
@@ -407,6 +476,10 @@
             }
 
             .principle-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .drop-grid {
                 grid-template-columns: 1fr;
             }
 
@@ -565,28 +638,49 @@
             </div>
         </section>
 
-        <section class="card">
-            <h2>Key Ideas You Can Use in Your Responses</h2>
-            <p class="muted">Use these core ideas from both transcripts when writing your responses.</p>
-            <div class="mode-grid">
-                <div class="mode-box">
-                    <h3>Video/Transcript 1: Accountability</h3>
-                    <ul class="key-points">
-                        <li>"Do your job" can be right in high-pressure moments.</li>
-                        <li>In collaboration, teams also need to find gaps and close them.</li>
-                        <li>Ultimate accountability is to the outcome, not just individual tasks.</li>
-                        <li>Strong teams define values, vision, mission, and then "find a way."</li>
+        <section class="card" aria-label="Interactive teamwork sorting activity">
+            <h2>Interactive Activity: Sort the Teamwork Evidence</h2>
+            <p class="muted">Drag each statement into the correct category. Then click <strong>Check Answers</strong>.
+            </p>
+            <div class="sort-activity" id="teamworkSortActivity">
+                <div class="sort-source">
+                    <h3>Statement Bank</h3>
+                    <ul class="sort-list" id="sortSource">
+                        <li class="sort-card" draggable="true" data-category="accountability">"Do your job" can be right
+                            in high-pressure moments.</li>
+                        <li class="sort-card" draggable="true" data-category="accountability">Teams need to find gaps
+                            and close them, not just stay in one role.</li>
+                        <li class="sort-card" draggable="true" data-category="accountability">Ultimate accountability is
+                            to the outcome, not just individual tasks.</li>
+                        <li class="sort-card" draggable="true" data-category="accountability">Strong teams define
+                            values, vision, mission, and then "find a way."</li>
+                        <li class="sort-card" draggable="true" data-category="reflection">Course goals emphasize
+                            communication, cooperation, trust, and teamwork.</li>
+                        <li class="sort-card" draggable="true" data-category="reflection">Students grow when they move
+                            from "I can't do that" to "I can do this."</li>
+                        <li class="sort-card" draggable="true" data-category="reflection">Belay safety depends on
+                            multiple roles working together as one system.</li>
+                        <li class="sort-card" draggable="true" data-category="reflection">The trapeze jump requires
+                            decision-making, courage, and trust in teammates.</li>
                     </ul>
                 </div>
-                <div class="mode-box">
-                    <h3>Video/Transcript 2: Ropes Course Reflection</h3>
-                    <ul class="key-points">
-                        <li>Course goals emphasize communication, cooperation, trust, and teamwork.</li>
-                        <li>Students grow when they move from "I can't do that" to "I can do this."</li>
-                        <li>Belay safety depends on multiple roles working together as one system.</li>
-                        <li>The trapeze jump requires decision-making, courage, and trust in teammates.</li>
-                    </ul>
+
+                <div class="drop-grid">
+                    <div class="drop-zone" data-target="accountability">
+                        <h3>Video/Transcript 1: Accountability</h3>
+                        <ul class="sort-list"></ul>
+                    </div>
+                    <div class="drop-zone" data-target="reflection">
+                        <h3>Video/Transcript 2: Ropes Course Reflection</h3>
+                        <ul class="sort-list"></ul>
+                    </div>
                 </div>
+
+                <div class="sort-controls">
+                    <button type="button" class="primary" id="checkSortBtn">Check Answers</button>
+                    <button type="button" id="resetSortBtn">Reset Activity</button>
+                </div>
+                <p class="sort-feedback" id="sortFeedback" role="status" aria-live="polite"></p>
             </div>
         </section>
 
@@ -1279,6 +1373,96 @@
 
             loadQuizState();
             renderQuestion();
+        })();
+
+        (function setupTeamworkSortActivity() {
+            const source = document.getElementById("sortSource");
+            const zones = Array.from(document.querySelectorAll(".drop-zone"));
+            const checkBtn = document.getElementById("checkSortBtn");
+            const resetBtn = document.getElementById("resetSortBtn");
+            const feedback = document.getElementById("sortFeedback");
+
+            if (!source || zones.length === 0 || !checkBtn || !resetBtn || !feedback) {
+                return;
+            }
+
+            let draggedCard = null;
+
+            function getAllCards() {
+                return Array.from(document.querySelectorAll(".sort-card"));
+            }
+
+            function bindCard(card) {
+                card.addEventListener("dragstart", () => {
+                    draggedCard = card;
+                });
+                card.addEventListener("dragend", () => {
+                    draggedCard = null;
+                });
+            }
+
+            function setupDropZone(zone) {
+                const list = zone.querySelector(".sort-list");
+                if (!list) return;
+
+                zone.addEventListener("dragover", (event) => {
+                    event.preventDefault();
+                    zone.classList.add("drag-over");
+                });
+
+                zone.addEventListener("dragleave", () => {
+                    zone.classList.remove("drag-over");
+                });
+
+                zone.addEventListener("drop", (event) => {
+                    event.preventDefault();
+                    zone.classList.remove("drag-over");
+                    if (draggedCard) {
+                        list.appendChild(draggedCard);
+                    }
+                });
+            }
+
+            source.addEventListener("dragover", (event) => {
+                event.preventDefault();
+            });
+
+            source.addEventListener("drop", (event) => {
+                event.preventDefault();
+                if (draggedCard) {
+                    source.appendChild(draggedCard);
+                }
+            });
+
+            zones.forEach(setupDropZone);
+            getAllCards().forEach(bindCard);
+
+            checkBtn.addEventListener("click", () => {
+                const cards = getAllCards();
+                const placedCards = cards.filter((card) => card.parentElement?.id !== "sortSource");
+
+                if (placedCards.length !== cards.length) {
+                    feedback.textContent = "Move all statements into a category before checking.";
+                    return;
+                }
+
+                let correct = 0;
+                cards.forEach((card) => {
+                    const zone = card.closest(".drop-zone");
+                    if (!zone) return;
+                    const target = zone.dataset.target;
+                    if (target && card.dataset.category === target) {
+                        correct += 1;
+                    }
+                });
+
+                feedback.textContent = `Score: ${correct}/${cards.length}. Review and adjust any statements that do not fit.`;
+            });
+
+            resetBtn.addEventListener("click", () => {
+                getAllCards().forEach((card) => source.appendChild(card));
+                feedback.textContent = "Activity reset. Drag the statements to try again.";
+            });
         })();
     </script>
 </body>
