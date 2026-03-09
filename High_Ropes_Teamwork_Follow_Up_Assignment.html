@@ -606,18 +606,6 @@
             <progress id="assignmentProgressBar" max="100" value="0" aria-describedby="progressText"></progress>
         </section>
 
-        <section class="card" aria-label="Assignment completion steps">
-            <h2>How to Complete and Submit</h2>
-            <ol class="key-points">
-                <li>If you missed Base Camp, complete Step 1 (makeup video + quiz). If you attended, skip Step 1.</li>
-                <li>Complete Step 2 by watching the required demonstration video.</li>
-                <li>Complete Step 3 by finishing the required accountability quiz.</li>
-                <li>Complete Step 4 by sorting statements and checking your answers.</li>
-                <li>Complete Step 5 by writing your comfort-zone reflection.</li>
-                <li>In Step 6, generate and copy your full Document text, then submit that Document.</li>
-            </ol>
-        </section>
-
         <section class="card">
             <h2>What You Are Learning</h2>
             <p class="muted"><strong>Growth challenge:</strong> Choose one part of this assignment that pushes you
@@ -641,7 +629,11 @@
             <p class="muted"><strong>If you attended and participated in Base Camp:</strong> skip this section and
                 continue to the Demonstration Video section below.</p>
             <p class="muted"><strong>If you did not attend Base Camp:</strong> complete this makeup activity first. Use
-                the second video transcript focused on accountability. Questions are shown one at a time.</p>
+                the reflection transcript and answer all questions shown one at a time, then click
+                <strong>Submit Quiz</strong>.
+            </p>
+            <p class="muted">To mark Step 1 complete, check the Step 1 box after finishing this makeup quiz, or check
+                it if you attended Base Camp and skipped this step.</p>
 
             <div class="video-wrap" aria-label="Makeup reflection video activity">
                 <iframe src="https://www.youtube.com/embed/DVCwE20uRcI"
@@ -680,6 +672,7 @@
                 along with the instructor ropes course reflection transcript. The required ropes course video is from
                 International Academy East in Troy.
             </p>
+            <p class="muted">After watching the full video, check the Step 2 box to mark this step complete.</p>
             <div class="video-wrap" aria-label="High ropes teamwork challenge demonstration video">
                 <iframe src="https://www.youtube.com/embed/nYfr-nN0m6c" title="Ropes Course Demonstration Video"
                     loading="lazy"
@@ -698,7 +691,7 @@
         <section class="card" aria-label="Required video accountability check">
             <h2>Step 3: Check Your Understanding - Accountability</h2>
             <p class="muted">Complete this accountability check for the required video. Questions are shown one at a
-                time.</p>
+                time. Click <strong>Submit Quiz</strong> on the final question to complete this step.</p>
 
             <div class="quiz-shell" id="requiredQuiz" aria-live="polite">
                 <p class="quiz-question-meta" id="requiredQuizMeta">Question 1 of 6</p>
@@ -721,6 +714,8 @@
             <h2>Step 4: Interactive Activity - Sort the Teamwork Evidence</h2>
             <p class="muted">Drag each statement into the correct category. Then click <strong>Check Answers</strong>.
             </p>
+            <p class="muted">Step 4 is complete only after you click <strong>Check Answers</strong> and receive your
+                result.</p>
             <p id="sortInstructions" class="muted">Accessibility tip: You can drag statements, or use keyboard only.
                 Tab to a statement and press Enter/Space to select it, then use the move buttons below.</p>
             <div class="sort-activity" id="teamworkSortActivity" aria-describedby="sortInstructions">
@@ -770,6 +765,8 @@
 
         <section class="card" aria-label="Comfort zone short answer">
             <h2>Step 5: Final Reflection - Comfort Zone</h2>
+            <p class="muted">Write a complete response in the box below. Step 5 is complete when this response is not
+                blank.</p>
             <div class="prompt-grid">
                 <label for="comfortZoneResponse"><strong>Short Answer:</strong> Describe one moment in this activity
                     where you got out of your comfort zone. What did you do, and what did you learn?</label>
@@ -1048,13 +1045,13 @@
 
                 const lines = [
                     "Step 1:",
-                    "Answers and score to each question of the Check for understanding"
+                    "Answers and score for each check for understanding question"
                 ];
 
                 lines.push(...formatQuizStep(makeupQuizReport));
-                lines.push("", "Step 2:", "Answers and score of the check for understanding");
+                lines.push("", "Step 2:", "Answers and score for the check for understanding");
                 lines.push(...formatQuizStep(requiredQuizReport));
-                lines.push("", "Step 3:", "Check box selected", `- Required demonstration video watched checkbox: ${step3Selected}`);
+                lines.push("", "Step 3:", "Checkbox selected", `- Required demonstration video watched checkbox: ${step3Selected}`);
                 lines.push("", "Step 4:", "Categorized items");
                 lines.push("- Accountability:");
                 if (categorized.accountability.length === 0) {
