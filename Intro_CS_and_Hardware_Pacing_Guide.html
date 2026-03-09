@@ -2207,7 +2207,7 @@
 
     (async function initializePage() {
       setupThemePicker();
-      await loadDateDataFromCsv("Pacing_Dates_Master.csv");
+      await loadDateDataFromCsv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTKx29K8v37v3JeZGfnW065TaUesL1ezA-0xF4R9U5W9Lec4xG-w9fL8uQv0N97U_2fiTnjPtxF6-wb/pub?gid=1938167791&single=true&output=csv");
       setupGuideTabs();
       if (!window.__usingDynamicCsvTables) {
         addCareerEssentialsColumn();
