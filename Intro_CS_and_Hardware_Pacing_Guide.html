@@ -1370,6 +1370,7 @@
   </main>
   <script>
     window.__pacingCourseRows = null;
+    window.__usingDynamicCsvTables = false;
 
     function parseCsv(text) {
       const rows = [];
@@ -1457,64 +1458,137 @@
       });
     }
 
-    function setCourseTableFromRows(panelId, courseName, courseRows) {
-      const panel = document.getElementById(panelId);
-      if (!panel) return;
+    function setTimeWindowFromRows(courseRows) {
+      const windowText = document.querySelector(".hero-title p");
+      if (!windowText) return;
 
-      const tbody = panel.querySelector("tbody");
-      if (!tbody) return;
+      const isoDates = courseRows
+        .map((row) => toIsoDate(row.Date || ""))
+        .filter((value) => /^\d{4}-\d{2}-\d{2}$/.test(value))
+        .sort();
 
-      const filtered = courseRows.filter((row) => row.Course === courseName);
-      if (filtered.length === 0) return;
+      if (isoDates.length === 0) return;
+      windowText.textContent = `Time window: ${isoDates[0]} through ${isoDates[isoDates.length - 1]}.`;
+    }
 
-      tbody.innerHTML = "";
-      filtered.forEach((row) => {
-        const tr = document.createElement("tr");
+    function toTabId(courseName) {
+      const slug = (courseName || "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "") || "course";
+      return `guide-${slug}`;
+    }
 
-        const normalizedDate = toIsoDate(row.Date);
-        const firstSession = row.FirstSession || "";
-        const secondSession = row.SecondSession || "";
-        const unifiedLesson = row.LessonOrLab || firstSession || secondSession || "";
+    function renderCourseGuidesFromCsv(courseRows, csvHeaders) {
+      const tabList = document.querySelector(".guide-tabs");
+      const stack = document.querySelector(".guides-stack");
+      if (!tabList || !stack) return;
 
-        tr.dataset.firstSession = firstSession;
-        tr.dataset.secondSession = secondSession;
+      const hiddenColumns = new Set(["SourceType", "Course"]);
+      const displayHeaders = csvHeaders.filter((header) => !hiddenColumns.has(header));
+      if (displayHeaders.length === 0) return;
 
-        const cells = [
-          normalizedDate || row.Date || "",
-          unifiedLesson,
-          row.GciScheduleNotes || "",
-          row.HomeSchoolNoSchool || ""
-        ];
+      const courses = [];
+      const seen = new Set();
+      for (const row of courseRows) {
+        const course = (row.Course || "").trim();
+        if (!course || seen.has(course)) continue;
+        seen.add(course);
+        courses.push(course);
+      }
 
-        cells.forEach((value) => {
-          const td = document.createElement("td");
-          td.textContent = value;
-          tr.appendChild(td);
+      if (courses.length === 0) return;
+
+      tabList.innerHTML = "";
+      stack.innerHTML = "";
+
+      courses.forEach((course, index) => {
+        const panelId = toTabId(course);
+        const tabId = `tab-${panelId}`;
+
+        const tab = document.createElement("button");
+        tab.className = "guide-tab";
+        tab.type = "button";
+        tab.role = "tab";
+        tab.id = tabId;
+        tab.dataset.guideTarget = panelId;
+        tab.setAttribute("aria-selected", "false");
+        tab.setAttribute("aria-controls", panelId);
+        tab.textContent = course;
+        tabList.appendChild(tab);
+
+        const panel = document.createElement("section");
+        panel.className = "card guide-panel";
+        panel.id = panelId;
+        panel.role = "tabpanel";
+        panel.setAttribute("aria-labelledby", tabId);
+        panel.hidden = true;
+
+        const heading = document.createElement("h2");
+        heading.textContent = course;
+        panel.appendChild(heading);
+
+        const table = document.createElement("table");
+        const thead = document.createElement("thead");
+        const headerRow = document.createElement("tr");
+        displayHeaders.forEach((headerText) => {
+          const th = document.createElement("th");
+          th.textContent = headerText;
+          headerRow.appendChild(th);
         });
+        thead.appendChild(headerRow);
 
-        tbody.appendChild(tr);
+        const tbody = document.createElement("tbody");
+        for (const row of courseRows) {
+          if ((row.Course || "").trim() !== course) continue;
+
+          const tr = document.createElement("tr");
+          tr.dataset.rowDate = toIsoDate(row.Date || "");
+          displayHeaders.forEach((headerText) => {
+            const td = document.createElement("td");
+            td.textContent = row[headerText] || "";
+            tr.appendChild(td);
+          });
+          tbody.appendChild(tr);
+        }
+
+        table.appendChild(thead);
+        table.appendChild(tbody);
+        panel.appendChild(table);
+        stack.appendChild(panel);
+
+        if (index === 0) {
+          tab.tabIndex = 0;
+        } else {
+          tab.tabIndex = -1;
+        }
       });
     }
 
     async function loadDateDataFromCsv(csvPath) {
       try {
-        const response = await fetch(csvPath, { cache: "no-store" });
+        const cacheBustedPath = `${csvPath}${csvPath.includes("?") ? "&" : "?"}t=${Date.now()}`;
+        const response = await fetch(cacheBustedPath, { cache: "no-store" });
         if (!response.ok) throw new Error(`Unable to load ${csvPath}`);
 
         const csvText = await response.text();
         const rows = parseCsv(csvText);
         if (rows.length === 0) return false;
 
+        const csvHeaders = Object.keys(rows[0]);
+
         const sharedRows = rows.filter((row) => row.SourceType === "SharedDate");
         const courseRows = rows.filter((row) => row.SourceType === "CourseRow");
         window.__pacingCourseRows = courseRows;
+        window.__usingDynamicCsvTables = true;
 
         setSharedDatesFromRows(sharedRows);
-        setCourseTableFromRows("guide-hardware", "Intro to Computer Hardware", courseRows);
-        setCourseTableFromRows("guide-cs", "Intro to Computer Science", courseRows);
+        setTimeWindowFromRows(courseRows);
+        renderCourseGuidesFromCsv(courseRows, csvHeaders);
         return true;
       } catch (error) {
         console.warn("Using in-page pacing data because CSV load failed.", error);
+        window.__usingDynamicCsvTables = false;
         return false;
       }
     }
@@ -1526,6 +1600,7 @@
 
       const sourcePanel = document.getElementById("guide-cs");
       const stack = document.querySelector(".guides-stack");
+      const hasCsvCourseData = Array.isArray(window.__pacingCourseRows) && window.__pacingCourseRows.length > 0;
 
       const extraCourses = [
         {
@@ -1540,7 +1615,7 @@
         }
       ];
 
-      if (sourcePanel && stack) {
+      if (!hasCsvCourseData && sourcePanel && stack) {
         for (const course of extraCourses) {
           const existingPanel = document.getElementById(course.panelId);
           if (!existingPanel) {
@@ -1553,10 +1628,10 @@
             if (heading) heading.textContent = course.title;
 
             const rows = clone.querySelectorAll("tbody tr");
-            const hasCsvCourseData = Array.isArray(window.__pacingCourseRows)
+            const panelHasCsvCourseData = Array.isArray(window.__pacingCourseRows)
               && window.__pacingCourseRows.some((row) => row.Course === course.title);
 
-            if (!hasCsvCourseData) {
+            if (!panelHasCsvCourseData) {
               for (const row of rows) {
                 const cells = row.querySelectorAll("td");
                 if (cells.length < 4) continue;
@@ -1628,9 +1703,6 @@
 
             stack.appendChild(clone);
 
-            if (hasCsvCourseData) {
-              setCourseTableFromRows(course.panelId, course.title, window.__pacingCourseRows);
-            }
           }
         }
       }
@@ -1714,10 +1786,8 @@
 
         let targetRow = null;
         for (const row of tbodyRows) {
-          const firstCell = row.querySelector("td");
-          if (!firstCell) continue;
-          const dateText = (firstCell.textContent || "").trim();
-          const iso = toIsoDate(dateText);
+          const fallbackDateText = (row.querySelector("td")?.textContent || "").trim();
+          const iso = row.dataset.rowDate || toIsoDate(fallbackDateText);
           if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) continue;
 
           const rowDate = new Date(`${iso}T00:00:00`);
@@ -1731,9 +1801,8 @@
         if (!targetRow) {
           // Fallback to the first dated row when the current week is outside this guide's range.
           targetRow = tbodyRows.find((row) => {
-            const firstCell = row.querySelector("td");
-            if (!firstCell) return false;
-            const iso = toIsoDate((firstCell.textContent || "").trim());
+            const fallbackDateText = (row.querySelector("td")?.textContent || "").trim();
+            const iso = row.dataset.rowDate || toIsoDate(fallbackDateText);
             return /^\d{4}-\d{2}-\d{2}$/.test(iso);
           }) || null;
         }
@@ -2001,9 +2070,8 @@
       const springBreakEnd = new Date("2026-04-03T23:59:59");
 
       for (const row of rows) {
-        const firstCell = row.querySelector("td");
-        if (!firstCell) continue;
-        const text = (firstCell.textContent || "").trim();
+        const fallbackDateText = (row.querySelector("td")?.textContent || "").trim();
+        const text = row.dataset.rowDate || toIsoDate(fallbackDateText);
         if (!/^\d{4}-\d{2}-\d{2}$/.test(text)) continue;
         const date = new Date(text + "T00:00:00");
         if (Number.isNaN(date.getTime())) continue;
@@ -2020,7 +2088,9 @@
       setupThemePicker();
       await loadDateDataFromCsv("Pacing_Dates_Master.csv");
       setupGuideTabs();
-      addCareerEssentialsColumn();
+      if (!window.__usingDynamicCsvTables) {
+        addCareerEssentialsColumn();
+      }
       addWeekMarkers();
     })();
 
