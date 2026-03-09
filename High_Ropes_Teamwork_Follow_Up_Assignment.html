@@ -524,24 +524,9 @@
                 </select>
                 <button class="primary" type="button" onclick="window.print()">Print / Save PDF</button>
             </div>
-            <div class="meta" aria-label="Assignment details">
-                <label>Student Name
-                    <input id="studentName" type="text" placeholder="First and last name" />
-                </label>
-                <label>Class / Hour
-                    <input id="classHour" type="text" placeholder="Example: Intro CS - 3rd" />
-                </label>
-                <label>Team Name
-                    <input id="teamName" type="text" placeholder="Your challenge team" />
-                </label>
-                <label>Date
-                    <input id="submissionDate" type="date" />
-                </label>
-            </div>
             <p class="note"><strong>Purpose:</strong> Teams were tested physically and mentally on high ropes. This
                 follow-up helps you turn that experience into stronger collaboration skills for class, projects, and
                 future jobs.</p>
-            <p class="muted"><strong>Repo homepage:</strong> <a href="index.html">GCI Project Hub</a></p>
         </section>
 
         <section class="card">
@@ -699,6 +684,16 @@
             <p class="footer-status">Submit your generated report with quiz scores through your LMS assignment.</p>
         </section>
 
+        <section class="card" aria-label="Comfort zone short answer">
+            <h2>Final Reflection: Comfort Zone</h2>
+            <div class="prompt-grid">
+                <label for="comfortZoneResponse"><strong>Short Answer:</strong> Describe one moment in this activity
+                    where you got out of your comfort zone. What did you do, and what did you learn?</label>
+                <textarea id="comfortZoneResponse"
+                    placeholder="Example: I volunteered to lead our team discussion even though I was nervous..."></textarea>
+            </div>
+        </section>
+
         <section class="card" aria-label="Google Doc copy tools">
             <h2>Final Step: Generate and Copy for Google Docs</h2>
             <p class="muted">After completing all prompts, generate your submission text and use copy to paste directly
@@ -767,7 +762,7 @@
             const output = document.getElementById("submissionOutput");
             const status = document.getElementById("copyStatus");
             const responseStorageKey = "gci-high-ropes-follow-up-responses-v1";
-            const fieldIds = ["studentName", "classHour", "teamName", "submissionDate"];
+            const fieldIds = ["comfortZoneResponse"];
 
             if (!generateBtn || !copyBtn || !output || !status) return;
 
@@ -834,10 +829,6 @@
             }
 
             function buildSubmissionText() {
-                const studentName = getValue("studentName") || "[Student Name]";
-                const classHour = getValue("classHour") || "[Class / Hour]";
-                const teamName = getValue("teamName") || "[Team Name]";
-                const submissionDate = getValue("submissionDate") || "[Date]";
                 const requiredQuizSummary = typeof window.__getRequiredQuizSummary === "function"
                     ? window.__getRequiredQuizSummary()
                     : null;
@@ -850,16 +841,17 @@
                 const makeupQuizScoreLine = makeupQuizSummary
                     ? `Makeup Video CFU: ${makeupQuizSummary.correct}/${makeupQuizSummary.total}`
                     : "Makeup Video CFU: [Not completed]";
+                const comfortZoneResponse = getValue("comfortZoneResponse") || "[No response provided]";
 
                 return [
                     "High Ropes Teamwork Challenge - Follow-Up Assignment",
                     "",
-                    `Student Name: ${studentName}`,
-                    `Class / Hour: ${classHour}`,
-                    `Team Name: ${teamName}`,
-                    `Date: ${submissionDate}`,
                     requiredQuizScoreLine,
                     makeupQuizScoreLine,
+                    "",
+                    "Comfort Zone Reflection:",
+                    "- Question: Describe one moment in this activity where you got out of your comfort zone. What did you do, and what did you learn?",
+                    `- Response: ${comfortZoneResponse}`,
                     "",
                     "Evidence Sources Used:",
                     "- Required video: https://youtu.be/nYfr-nN0m6c?si=7C5EagBaiXgJ_Uvq",
