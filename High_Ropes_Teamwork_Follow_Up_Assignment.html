@@ -321,6 +321,31 @@
             margin: 8px 0 0;
         }
 
+        .submission-tools {
+            display: grid;
+            gap: 10px;
+        }
+
+        .button-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        textarea.output-box {
+            width: 100%;
+            min-height: 260px;
+            resize: vertical;
+            line-height: 1.35;
+            font-family: Consolas, "Courier New", monospace;
+        }
+
+        .status-line {
+            font-weight: 700;
+            color: var(--ok);
+            min-height: 1.2em;
+        }
+
         @media (max-width: 860px) {
             .meta {
                 grid-template-columns: repeat(2, minmax(120px, 1fr));
@@ -377,16 +402,16 @@
             </div>
             <div class="meta" aria-label="Assignment details">
                 <label>Student Name
-                    <input type="text" placeholder="First and last name" />
+                    <input id="studentName" type="text" placeholder="First and last name" />
                 </label>
                 <label>Class / Hour
-                    <input type="text" placeholder="Example: Intro CS - 3rd" />
+                    <input id="classHour" type="text" placeholder="Example: Intro CS - 3rd" />
                 </label>
                 <label>Team Name
-                    <input type="text" placeholder="Your challenge team" />
+                    <input id="teamName" type="text" placeholder="Your challenge team" />
                 </label>
                 <label>Date
-                    <input type="date" />
+                    <input id="submissionDate" type="date" />
                 </label>
             </div>
             <p class="note"><strong>Purpose:</strong> Teams were tested physically and mentally on high ropes. This
@@ -655,6 +680,22 @@
                 </tbody>
             </table>
         </section>
+
+        <section class="card" aria-label="Google Doc copy tools">
+            <h2>Final Step: Generate and Copy for Google Docs</h2>
+            <p class="muted">After completing all prompts, generate your submission text and use copy to paste directly
+                into your Google Doc.</p>
+            <div class="submission-tools">
+                <div class="button-row">
+                    <button id="generateSubmissionBtn" type="button" class="primary">Generate Submission Text</button>
+                    <button id="copySubmissionBtn" type="button">Copy for Google Doc</button>
+                </div>
+                <label for="submissionOutput"><strong>Submission Preview</strong></label>
+                <textarea id="submissionOutput" class="output-box" readonly
+                    placeholder="Your generated submission will appear here."></textarea>
+                <p id="copyStatus" class="status-line" role="status" aria-live="polite"></p>
+            </div>
+        </section>
     </main>
 
     <script>
@@ -697,6 +738,107 @@
 
             darkMedia.addEventListener("change", refreshAuto);
             contrastMedia.addEventListener("change", refreshAuto);
+        })();
+
+        (function setupSubmissionComposer() {
+            const generateBtn = document.getElementById("generateSubmissionBtn");
+            const copyBtn = document.getElementById("copySubmissionBtn");
+            const output = document.getElementById("submissionOutput");
+            const status = document.getElementById("copyStatus");
+
+            if (!generateBtn || !copyBtn || !output || !status) return;
+
+            function getValue(id) {
+                return (document.getElementById(id)?.value || "").trim();
+            }
+
+            function getResponse(id) {
+                const text = getValue(id);
+                return text || "[No response entered]";
+            }
+
+            function buildSubmissionText() {
+                const studentName = getValue("studentName") || "[Student Name]";
+                const classHour = getValue("classHour") || "[Class / Hour]";
+                const teamName = getValue("teamName") || "[Team Name]";
+                const submissionDate = getValue("submissionDate") || "[Date]";
+
+                return [
+                    "High Ropes Teamwork Challenge - Follow-Up Assignment",
+                    "",
+                    `Student Name: ${studentName}`,
+                    `Class / Hour: ${classHour}`,
+                    `Team Name: ${teamName}`,
+                    `Date: ${submissionDate}`,
+                    "",
+                    "Part A: Challenge Debrief (Activation)",
+                    "1. Briefly describe your high ropes challenge experience.",
+                    getResponse("a1"),
+                    "",
+                    "2. Communication under pressure.",
+                    getResponse("a2"),
+                    "",
+                    "3. Trust and support.",
+                    getResponse("a3"),
+                    "",
+                    "Part B: Teamwork Skill Analysis (Demonstration + Application)",
+                    "4. Two teamwork skills and evidence.",
+                    getResponse("b1"),
+                    "",
+                    "5. Toughest challenge point and improvement.",
+                    getResponse("b2"),
+                    "",
+                    "6. Workplace connection.",
+                    getResponse("b3"),
+                    "",
+                    "7. Transcript synthesis (accountability + ropes reflection).",
+                    getResponse("b4"),
+                    "",
+                    "Part C: Action Plan (Integration)",
+                    "8. SMART teamwork goal.",
+                    getResponse("c1"),
+                    "",
+                    "9. Team protocol (4 steps).",
+                    getResponse("c2"),
+                    "",
+                    "Evidence Sources Used:",
+                    "- Required video: https://youtu.be/nYfr-nN0m6c?si=7C5EagBaiXgJ_Uvq",
+                    "- Transcript 1: Accountability",
+                    "- Transcript 2: Ropes Course Reflection"
+                ].join("\n");
+            }
+
+            async function copyToClipboard(text) {
+                if (navigator.clipboard?.writeText) {
+                    await navigator.clipboard.writeText(text);
+                    return;
+                }
+
+                output.focus();
+                output.select();
+                const success = document.execCommand("copy");
+                if (!success) {
+                    throw new Error("Clipboard copy failed");
+                }
+            }
+
+            generateBtn.addEventListener("click", () => {
+                output.value = buildSubmissionText();
+                status.textContent = "Submission text generated. Review it, then click Copy for Google Doc.";
+            });
+
+            copyBtn.addEventListener("click", async () => {
+                if (!output.value.trim()) {
+                    output.value = buildSubmissionText();
+                }
+
+                try {
+                    await copyToClipboard(output.value);
+                    status.textContent = "Copied. Paste into your Google Doc for submission.";
+                } catch (error) {
+                    status.textContent = "Copy failed. Select the preview text manually and copy it.";
+                }
+            });
         })();
     </script>
 </body>
