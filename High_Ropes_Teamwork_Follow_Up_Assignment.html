@@ -472,11 +472,11 @@
         </section>
 
         <section class="card" aria-label="Makeup activity video 2">
-            <h2>Makeup Activity First: Video 2 Check for Understanding</h2>
+            <h2>Step 1 (Makeup Only): Watch Video 2 and Check Your Understanding</h2>
             <p class="muted"><strong>If you attended and participated in Base Camp:</strong> skip this section and
                 continue to the Demonstration Video section below.</p>
             <p class="muted"><strong>If you did not attend Base Camp:</strong> complete this makeup activity first. Use
-                the second video transcript (Ropes Course Reflection). Questions are shown one at a time.</p>
+                the second video transcript focused on accountability. Questions are shown one at a time.</p>
 
             <div class="video-wrap" aria-label="Video 2 makeup activity">
                 <iframe src="https://www.youtube.com/embed/nYfr-nN0m6c"
@@ -488,7 +488,8 @@
                     rel="noopener noreferrer">https://youtu.be/nYfr-nN0m6c?si=7C5EagBaiXgJ_Uvq</a></p>
 
             <div class="checklist">
-                <label><input type="checkbox" /> I completed all Video 2 check-for-understanding questions.</label>
+                <label><input type="checkbox" /> I completed all Video 2 accountability check-for-understanding
+                    questions.</label>
             </div>
 
             <div class="quiz-shell" id="makeupQuiz" aria-live="polite">
@@ -509,23 +510,23 @@
         </section>
 
         <section class="card">
-            <h2>Ropes Course Demonstration Video (Required)</h2>
+            <h2>Step 2: Watch the Required Demonstration Video</h2>
             <p class="muted">All students must use this high ropes teamwork challenge video as part of this assignment,
                 along with the instructor ropes course reflection transcript.
             </p>
             <div class="video-wrap" aria-label="High ropes teamwork challenge demonstration video">
-                <iframe src="https://www.youtube.com/embed/nYfr-nN0m6c" title="Ropes Course Demonstration Video"
+                <iframe src="https://www.youtube.com/embed/DVCwE20uRcI" title="Ropes Course Demonstration Video"
                     loading="lazy"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowfullscreen></iframe>
             </div>
-            <p><strong>Direct link:</strong> <a href="https://youtu.be/nYfr-nN0m6c?si=7C5EagBaiXgJ_Uvq" target="_blank"
-                    rel="noopener noreferrer">https://youtu.be/nYfr-nN0m6c?si=7C5EagBaiXgJ_Uvq</a></p>
+            <p><strong>Direct link:</strong> <a href="https://youtu.be/DVCwE20uRcI?si=aIRExS5q-S1A1QGZ" target="_blank"
+                    rel="noopener noreferrer">https://youtu.be/DVCwE20uRcI?si=aIRExS5q-S1A1QGZ</a></p>
 
         </section>
 
         <section class="card">
-            <h2>Video and Transcript Evidence Bank</h2>
+            <h2>Key Ideas You Can Use in Your Responses</h2>
             <p class="muted">Use these core ideas from both transcripts when writing your responses.</p>
             <div class="mode-grid">
                 <div class="mode-box">
@@ -550,7 +551,7 @@
         </section>
 
         <section class="card">
-            <h2>Learning Targets</h2>
+            <h2>What You Are Learning</h2>
             <div class="checklist">
                 <label><input type="checkbox" /> I can describe how my team communicated during a high-pressure
                     challenge.</label>
@@ -564,7 +565,7 @@
         </section>
 
         <section class="card">
-            <h2>Merrill's First Principles Alignment</h2>
+            <h2>How This Assignment Helps You Learn</h2>
             <p class="muted">This assignment is structured around a real team problem and follows Merrill's model:</p>
             <div class="principle-grid">
                 <div class="principle">
@@ -596,7 +597,7 @@
         </section>
 
         <section class="card">
-            <h2>Part A: Challenge Debrief (What Happened?)</h2>
+            <h2>Part A: Describe What Happened</h2>
             <p class="muted"><strong>Principle focus:</strong> Activation</p>
             <div class="prompt-grid">
                 <label for="a1"><strong>1. Briefly describe your high ropes challenge experience.</strong> Include your
@@ -614,7 +615,7 @@
         </section>
 
         <section class="card">
-            <h2>Part B: Teamwork Skill Analysis (Why It Matters)</h2>
+            <h2>Part B: Explain Why It Matters</h2>
             <p class="muted"><strong>Principle focus:</strong> Demonstration + Application</p>
             <div class="prompt-grid">
                 <label for="b1"><strong>4. Pick two skills:</strong> collaboration, leadership, active listening,
@@ -637,7 +638,7 @@
         </section>
 
         <section class="card">
-            <h2>Part C: Action Plan (What You Will Do Next)</h2>
+            <h2>Part C: Plan What You Will Do Next</h2>
             <p class="muted"><strong>Principle focus:</strong> Integration</p>
             <div class="prompt-grid">
                 <label for="c1"><strong>8. Personal goal:</strong> Set one SMART teamwork goal for your next class team
@@ -935,7 +936,7 @@
                     getResponse("c2"),
                     "",
                     "Evidence Sources Used:",
-                    "- Required video: https://youtu.be/nYfr-nN0m6c?si=7C5EagBaiXgJ_Uvq",
+                    "- Required video: https://youtu.be/DVCwE20uRcI?si=aIRExS5q-S1A1QGZ",
                     "- Transcript 1: Accountability",
                     "- Transcript 2: Ropes Course Reflection"
                 ].join("\n");
@@ -1009,64 +1010,64 @@
 
             const quizItems = [
                 {
-                    prompt: "What is the main goal of the ropes course trip described in the transcript?",
+                    prompt: "In this accountability video, when is 'do your job' most useful?",
                     choices: [
-                        "To rank students by athletic skill",
-                        "To implement teamwork, communication, cooperation, and trust",
-                        "To practice only individual climbing speed",
-                        "To replace all classroom instruction"
+                        "In fast, high-pressure moments when roles must be executed quickly",
+                        "Only when no one is assigned a role",
+                        "Only after the event is over",
+                        "Only in individual work, never in teams"
+                    ],
+                    answer: 0
+                },
+                {
+                    prompt: "What is the key warning from the video about teamwork accountability?",
+                    choices: [
+                        "Teams should avoid discussing mistakes",
+                        "People can fall into thinking their job is only to do their own job",
+                        "Accountability is only a leadership issue",
+                        "Accountability means never making errors"
                     ],
                     answer: 1
                 },
                 {
-                    prompt: "The transcript emphasizes student growth when they move from which mindset to which mindset?",
+                    prompt: "According to the video, ultimate accountability is to what?",
                     choices: [
-                        "From 'I can do this' to 'I should quit'",
-                        "From 'I can't do that' to proving themselves wrong",
-                        "From 'Team first' to 'Me first'",
-                        "From planning to avoiding challenge"
-                    ],
-                    answer: 1
-                },
-                {
-                    prompt: "How is belay support organized in the second video transcript?",
-                    choices: [
-                        "One person handles all roles alone",
-                        "Two students rotate one role",
-                        "Five different roles combine into a safe team belay technique",
-                        "Teachers do all safety roles"
+                        "Personal effort only",
+                        "Following the playbook exactly",
+                        "The team outcome",
+                        "Avoiding all conflict"
                     ],
                     answer: 2
                 },
                 {
-                    prompt: "In the trapeze element, students make two key trust decisions. What are they?",
+                    prompt: "When collaboration is more complex and there is time to think, what does the video suggest?",
                     choices: [
-                        "Whether to run and whether to stop",
-                        "Whether to jump, and then whether to let go of the trapeze bar",
-                        "Whether to compete and whether to coach others",
-                        "Whether to belay and whether to grade peers"
+                        "Stay inside your lane and ignore gaps",
+                        "Wait for someone else to solve unexpected issues",
+                        "Go beyond your own task and help close gaps",
+                        "Skip team conversations"
                     ],
-                    answer: 1
+                    answer: 2
                 },
                 {
-                    prompt: "Which preparation strategy is named by a student before participating?",
+                    prompt: "The video says teams should define values, vision, and mission. What comes next?",
                     choices: [
-                        "Avoid all risk and rely on teacher instructions only",
-                        "Try best, count on allies, and push into a growth zone",
-                        "Focus only on speed and performance ranking",
-                        "Skip teamwork roles to reduce confusion"
-                    ],
-                    answer: 1
-                },
-                {
-                    prompt: "What best connects the second transcript to your class teamwork goals?",
-                    choices: [
-                        "Team roles, trust, and communication can transfer to future challenges",
-                        "Physical skill matters, teamwork does not",
-                        "Only advanced students benefit from challenge tasks",
-                        "Growth is mostly accidental and cannot be planned"
+                        "Find a way to achieve the outcome together",
+                        "Assign blame to the last person who made a mistake",
+                        "Remove accountability rules",
+                        "Focus only on individual success"
                     ],
                     answer: 0
+                },
+                {
+                    prompt: "Which statement best matches the video's view of mistakes in teams?",
+                    choices: [
+                        "The goal is to fix people, not problems",
+                        "Mistakes mean the team should stop collaborating",
+                        "Mistakes happen; teams should focus on fixing the problem and outcome",
+                        "Mistakes prove accountability does not work"
+                    ],
+                    answer: 2
                 }
             ];
 
