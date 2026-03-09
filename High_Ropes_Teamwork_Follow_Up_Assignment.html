@@ -194,6 +194,27 @@
             font-weight: 600;
         }
 
+        .progress-card progress {
+            width: 100%;
+            height: 18px;
+            margin-top: 8px;
+        }
+
+        .progress-card progress::-webkit-progress-bar {
+            background: color-mix(in oklab, var(--panel) 90%, var(--line) 10%);
+            border-radius: 999px;
+        }
+
+        .progress-card progress::-webkit-progress-value {
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            border-radius: 999px;
+        }
+
+        .progress-card progress::-moz-progress-bar {
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            border-radius: 999px;
+        }
+
         .checklist {
             display: grid;
             gap: 8px;
@@ -546,15 +567,21 @@
                 future jobs.</p>
         </section>
 
+        <section class="card progress-card" aria-label="Assignment progress">
+            <h2>Your Progress</h2>
+            <p class="muted" id="progressText">0 of 1 completion tasks finished (0%).</p>
+            <progress id="assignmentProgressBar" max="100" value="0" aria-describedby="progressText"></progress>
+        </section>
+
         <section class="card" aria-label="Assignment completion steps">
-            <h2>How to Complete and Submit (In Order)</h2>
+            <h2>How to Complete and Submit</h2>
             <ol class="key-points">
                 <li>If you missed Base Camp, complete Step 1 (makeup video + quiz). If you attended, skip Step 1.</li>
                 <li>Complete Step 2 by watching the required demonstration video.</li>
                 <li>Complete Step 3 by finishing the required accountability quiz.</li>
                 <li>Complete Step 4 by sorting statements and checking your answers.</li>
                 <li>Complete Step 5 by writing your comfort-zone reflection.</li>
-                <li>In Step 6, generate and copy your full submission text, then paste it into your LMS assignment.</li>
+                <li>In Step 6, generate and copy your full Document text, then submit that Document.</li>
             </ol>
         </section>
 
@@ -576,21 +603,21 @@
             </div>
         </section>
 
-        <section class="card" aria-label="Makeup activity video 2">
-            <h2>Step 1 (Makeup Only): Watch Video 2 and Check Your Understanding</h2>
+        <section class="card" aria-label="Makeup reflection video activity">
+            <h2>Step 1 (Makeup Only): Watch the Reflection Video and Check Your Understanding</h2>
             <p class="muted"><strong>If you attended and participated in Base Camp:</strong> skip this section and
                 continue to the Demonstration Video section below.</p>
             <p class="muted"><strong>If you did not attend Base Camp:</strong> complete this makeup activity first. Use
                 the second video transcript focused on accountability. Questions are shown one at a time.</p>
 
-            <div class="video-wrap" aria-label="Video 2 makeup activity">
+            <div class="video-wrap" aria-label="Makeup reflection video activity">
                 <iframe src="https://www.youtube.com/embed/DVCwE20uRcI"
-                    title="Video 2 Makeup Activity - Ropes Course Reflection" loading="lazy"
+                    title="Makeup Activity - Ropes Course Reflection" loading="lazy"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowfullscreen></iframe>
             </div>
-            <p><strong>Video 2 link:</strong> <a href="https://youtu.be/DVCwE20uRcI?si=aIRExS5q-S1A1QGZ" target="_blank"
-                    rel="noopener noreferrer">https://youtu.be/DVCwE20uRcI?si=aIRExS5q-S1A1QGZ</a></p>
+            <p><strong>Reflection video link:</strong> <a href="https://youtu.be/DVCwE20uRcI?si=aIRExS5q-S1A1QGZ"
+                    target="_blank" rel="noopener noreferrer">https://youtu.be/DVCwE20uRcI?si=aIRExS5q-S1A1QGZ</a></p>
 
             <div class="quiz-shell" id="makeupQuiz" aria-live="polite">
                 <p class="quiz-question-meta" id="quizMeta">Question 1 of 6</p>
@@ -612,7 +639,7 @@
         <section class="card">
             <h2>Step 2: Watch the Required Demonstration Video</h2>
             <p class="muted">All students must use this high ropes teamwork challenge video as part of this assignment,
-                along with the instructor ropes course reflection transcript. The first ropes course video is from
+                along with the instructor ropes course reflection transcript. The required ropes course video is from
                 International Academy East in Troy.
             </p>
             <div class="video-wrap" aria-label="High ropes teamwork challenge demonstration video">
@@ -703,20 +730,6 @@
             </div>
         </section>
 
-        <section class="card">
-            <h2>Submission Checklist</h2>
-            <div class="checklist">
-                <label><input type="checkbox" /> I watched the required demonstration video.</label>
-                <label><input type="checkbox" /> I completed the required video accountability CFU quiz.</label>
-                <label><input type="checkbox" /> If needed, I completed the makeup video CFU quiz.</label>
-                <label><input type="checkbox" /> I completed the Step 4 sorting activity and checked my answers.</label>
-                <label><input type="checkbox" /> I completed the Step 5 comfort-zone reflection response.</label>
-                <label><input type="checkbox" /> I generated and copied my full submission text.</label>
-                <label><input type="checkbox" /> I submitted in our LMS as either a document file or PDF.</label>
-            </div>
-            <p class="footer-status">Submit your generated report with quiz scores through your LMS assignment.</p>
-        </section>
-
         <section class="card" aria-label="Comfort zone short answer">
             <h2>Step 5: Final Reflection - Comfort Zone</h2>
             <div class="prompt-grid">
@@ -727,25 +740,39 @@
             </div>
         </section>
 
+        <section class="card" id="submissionChecklist">
+            <h2>Submission Checklist</h2>
+            <div class="checklist">
+                <label><input type="checkbox" /> I watched the required demonstration video.</label>
+                <label><input type="checkbox" /> I completed the required video accountability CFU quiz.</label>
+                <label><input type="checkbox" /> If needed, I completed the makeup video CFU quiz.</label>
+                <label><input type="checkbox" /> I completed the Step 4 sorting activity and checked my answers.</label>
+                <label><input type="checkbox" /> I completed the Step 5 comfort-zone reflection response.</label>
+                <label><input type="checkbox" /> I generated and copied my full Document text.</label>
+                <label><input type="checkbox" /> I submitted my completed Document.</label>
+            </div>
+            <p class="footer-status">Submit your completed Document with quiz scores.</p>
+        </section>
+
         <section class="card" aria-label="Submission copy tools">
             <h2>Step 6: Generate and Submit Your Response</h2>
             <p class="muted">Use this final step after completing all sections.</p>
             <ol class="key-points">
-                <li>Click <strong>Generate Full Submission Text</strong> to compile your current work.</li>
-                <li>Review the submission preview.</li>
-                <li>Click <strong>Copy Submission Text</strong> and paste it into your LMS assignment submission.</li>
+                <li>Click <strong>Generate Full Document Text</strong> to compile your current work.</li>
+                <li>Review the Document preview.</li>
+                <li>Click <strong>Copy Document Text</strong> and submit that Document.</li>
             </ol>
             <div class="submission-tools">
                 <div class="button-row">
-                    <button id="generateSubmissionBtn" type="button" class="primary">Generate Full Submission
+                    <button id="generateSubmissionBtn" type="button" class="primary">Generate Full Document
                         Text</button>
-                    <button id="copySubmissionBtn" type="button">Copy Submission Text</button>
+                    <button id="copySubmissionBtn" type="button">Copy Document Text</button>
                     <button id="clearSavedWorkBtn" type="button">Clear Saved Work</button>
                 </div>
                 <p class="muted">Your responses auto-save on this device and reload when you return.</p>
-                <label for="submissionOutput"><strong>Submission Preview</strong></label>
+                <label for="submissionOutput"><strong>Document Preview</strong></label>
                 <textarea id="submissionOutput" class="output-box" readonly
-                    placeholder="Your generated submission will appear here."></textarea>
+                    placeholder="Your generated Document will appear here."></textarea>
                 <p id="copyStatus" class="status-line" role="status" aria-live="polite"></p>
             </div>
         </section>
@@ -791,6 +818,37 @@
 
             darkMedia.addEventListener("change", refreshAuto);
             contrastMedia.addEventListener("change", refreshAuto);
+        })();
+
+        (function setupAssignmentProgress() {
+            const progressBar = document.getElementById("assignmentProgressBar");
+            const progressText = document.getElementById("progressText");
+            const submissionChecklist = document.getElementById("submissionChecklist");
+            const comfortZoneResponse = document.getElementById("comfortZoneResponse");
+
+            if (!progressBar || !progressText || !submissionChecklist || !comfortZoneResponse) return;
+
+            const checklistBoxes = Array.from(submissionChecklist.querySelectorAll(".checklist input[type='checkbox']"));
+
+            function updateProgress() {
+                const checklistComplete = checklistBoxes.filter((box) => box.checked).length;
+                const reflectionComplete = comfortZoneResponse.value.trim().length > 0 ? 1 : 0;
+                const completed = checklistComplete + reflectionComplete;
+                const total = checklistBoxes.length + 1;
+                const percent = Math.round((completed / total) * 100);
+
+                progressBar.value = percent;
+                progressBar.setAttribute("aria-valuenow", String(percent));
+                progressText.textContent = `${completed} of ${total} completion tasks finished (${percent}%).`;
+            }
+
+            checklistBoxes.forEach((box) => {
+                box.addEventListener("change", updateProgress);
+            });
+            comfortZoneResponse.addEventListener("input", updateProgress);
+            comfortZoneResponse.addEventListener("change", updateProgress);
+
+            updateProgress();
         })();
 
         (function setupSubmissionComposer() {
@@ -989,7 +1047,7 @@
 
             generateBtn.addEventListener("click", () => {
                 output.value = buildSubmissionText();
-                status.textContent = "Full submission text generated. Review it, then click Copy Submission Text.";
+                status.textContent = "Full Document text generated. Review it, then click Copy Document Text.";
                 saveResponses();
             });
 
@@ -1000,7 +1058,7 @@
 
                 try {
                     await copyToClipboard(output.value);
-                    status.textContent = "Copied. Paste into your LMS assignment submission.";
+                    status.textContent = "Copied. Submit your completed Document.";
                 } catch (error) {
                     status.textContent = "Copy failed. Select the preview text manually and copy it.";
                 }
