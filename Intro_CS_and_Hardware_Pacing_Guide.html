@@ -286,6 +286,15 @@
       line-height: 1.35;
     }
 
+    .stacked-items {
+      margin: 0;
+      padding-left: 1.1rem;
+    }
+
+    .stacked-items li+li {
+      margin-top: 0.28rem;
+    }
+
     tbody tr:nth-child(even) {
       background: var(--row-even-bg);
     }
@@ -1913,6 +1922,72 @@
       return (value || "").trim().toLowerCase();
     }
 
+    function splitCellItems(value) {
+      return (value || "")
+        .split(/\s*(?:;|\n)\s*/)
+        .map((item) => item.trim())
+        .filter(Boolean);
+    }
+
+    function formatCellItems(cell) {
+      if (!cell) return;
+
+      const rawValue = cell.dataset.rawValue ?? (cell.textContent || "").trim();
+      cell.dataset.rawValue = rawValue;
+
+      const items = splitCellItems(rawValue);
+      if (items.length <= 1) {
+        cell.textContent = rawValue;
+        return;
+      }
+
+      cell.replaceChildren();
+      const list = document.createElement("ul");
+      list.className = "stacked-items";
+
+      for (const item of items) {
+        const entry = document.createElement("li");
+        entry.textContent = item;
+        list.appendChild(entry);
+      }
+
+      cell.appendChild(list);
+    }
+
+    function formatMultiValueColumns() {
+      const multiValueHeaders = new Set([
+        "1st session",
+        "2nd session",
+        "first session",
+        "second session",
+        "lesson",
+        "career essentials"
+      ]);
+
+      const tables = document.querySelectorAll(".guide-panel table");
+      for (const table of tables) {
+        const headerRow = table.querySelector("thead tr");
+        if (!headerRow) continue;
+
+        const targetIndexes = Array.from(headerRow.querySelectorAll("th"))
+          .map((header, index) => ({ index, label: normalizeHeaderLabel(header.textContent) }))
+          .filter((entry) => multiValueHeaders.has(entry.label))
+          .map((entry) => entry.index);
+
+        if (targetIndexes.length === 0) continue;
+
+        const rows = table.querySelectorAll("tbody tr");
+        for (const row of rows) {
+          const cells = Array.from(row.querySelectorAll("td"));
+          for (const index of targetIndexes) {
+            if (cells[index]) {
+              formatCellItems(cells[index]);
+            }
+          }
+        }
+      }
+    }
+
     function applyCourseHeaderRules(rulesByCourse) {
       const panels = Array.from(document.querySelectorAll(".guide-panel"));
 
@@ -2235,6 +2310,7 @@
           remove: ["2nd session", "second session", "secondsession"]
         }
       });
+      formatMultiValueColumns();
       addWeekMarkers();
       highlightNoGciRows();
     })();
