@@ -42,6 +42,35 @@
             padding: 24px 16px 42px;
         }
 
+        .skip-link {
+            position: absolute;
+            left: 16px;
+            top: -48px;
+            z-index: 1000;
+            padding: 10px 14px;
+            border-radius: 10px;
+            background: #111827;
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .skip-link:focus {
+            top: 12px;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
         .topbar {
             display: flex;
             flex-wrap: wrap;
@@ -250,6 +279,15 @@
             color: #ffffff;
         }
 
+        a:focus-visible,
+        button:focus-visible,
+        textarea:focus-visible,
+        input:focus-visible,
+        .problem-tab:focus-visible {
+            outline: 3px solid #111827;
+            outline-offset: 3px;
+        }
+
         button:hover,
         button:focus-visible {
             background: var(--accent-2);
@@ -321,6 +359,10 @@
             resize: vertical;
             background: #0b1224;
             color: #e2e8f0;
+        }
+
+        .runner textarea:focus-visible {
+            border-color: #93c5fd;
         }
 
         .editor-host {
@@ -399,11 +441,18 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        @media (prefers-reduced-motion: reduce) {
+            html:focus-within {
+                scroll-behavior: auto;
+            }
+        }
     </style>
 </head>
 
 <body>
-    <main class="wrap">
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <main class="wrap" id="main-content">
         <div class="topbar">
             <a class="home-link" href="index.html" aria-label="Return to project hub">← Back to Project Hub</a>
             <span class="chip">CS50P</span>
@@ -416,8 +465,8 @@
             <strong>“Which Week 2 idea does this problem want me to use?”</strong></p>
 
         <section class="intro-grid" aria-label="Page introduction cards">
-            <section class="card">
-                <h2>How to Use This Page</h2>
+            <section class="card" aria-labelledby="how-to-use-title">
+                <h2 id="how-to-use-title">How to Use This Page</h2>
                 <ol>
                     <li>Click a problem tab.</li>
                     <li>Read the task and steps.</li>
@@ -427,8 +476,8 @@
                 </ol>
             </section>
 
-            <section class="card docs">
-                <h2>Official CS50 Links</h2>
+            <section class="card docs" aria-labelledby="official-links-title">
+                <h2 id="official-links-title">Official CS50 Links</h2>
                 <ul>
                 <li><a href="https://cs50.harvard.edu/python/2022/weeks/2/" target="_blank"
                     rel="noopener noreferrer">Week 2 Lecture Notes and Materials</a></li>
@@ -443,20 +492,20 @@
         </section>
 
         <div class="layout">
-            <section class="card">
-                <h2>Pick a Problem</h2>
+            <section class="card" aria-labelledby="problem-guide-title">
+                <h2 id="problem-guide-title">Pick a Problem</h2>
                 <p class="subtle">Each tab shows a quick plan and lecture pattern. Use it to guide your work without
                     giving away your final CS50 answer.</p>
                 <div class="problem-tabs" role="tablist" aria-label="Problem tabs">
-                    <button class="problem-tab active" role="tab" aria-selected="true" data-tab="camel">1. camel.py</button>
-                    <button class="problem-tab" role="tab" aria-selected="false" data-tab="coke">2. coke.py</button>
-                    <button class="problem-tab" role="tab" aria-selected="false" data-tab="twttr">3. twttr.py</button>
-                    <button class="problem-tab" role="tab" aria-selected="false" data-tab="plates">4. plates.py</button>
-                    <button class="problem-tab" role="tab" aria-selected="false" data-tab="nutrition">5. nutrition.py</button>
+                    <button class="problem-tab active" id="tab-camel" type="button" role="tab" aria-selected="true" aria-controls="panel-camel" tabindex="0" data-tab="camel">1. camel.py</button>
+                    <button class="problem-tab" id="tab-coke" type="button" role="tab" aria-selected="false" aria-controls="panel-coke" tabindex="-1" data-tab="coke">2. coke.py</button>
+                    <button class="problem-tab" id="tab-twttr" type="button" role="tab" aria-selected="false" aria-controls="panel-twttr" tabindex="-1" data-tab="twttr">3. twttr.py</button>
+                    <button class="problem-tab" id="tab-plates" type="button" role="tab" aria-selected="false" aria-controls="panel-plates" tabindex="-1" data-tab="plates">4. plates.py</button>
+                    <button class="problem-tab" id="tab-nutrition" type="button" role="tab" aria-selected="false" aria-controls="panel-nutrition" tabindex="-1" data-tab="nutrition">5. nutrition.py</button>
                 </div>
 
                 <div class="grid">
-                    <article class="problem" id="camel" data-problem="camel">
+                    <article class="problem" id="panel-camel" data-problem="camel" role="tabpanel" aria-labelledby="tab-camel" tabindex="0">
                         <div class="problem-header">
                             <h3>Problem 1 – camel.py</h3>
                             <span class="pill-ok">Skill: Loop through letters</span>
@@ -483,7 +532,7 @@ c.isupper()</code></pre>
                         </div>
                     </article>
 
-                    <article class="problem hidden" id="coke" data-problem="coke">
+                    <article class="problem hidden" id="panel-coke" data-problem="coke" role="tabpanel" aria-labelledby="tab-coke" tabindex="0" hidden>
                         <div class="problem-header">
                             <h3>Problem 2 – coke.py</h3>
                             <span class="pill-ok">Skill: while loop</span>
@@ -509,7 +558,7 @@ c.isupper()</code></pre>
                         </div>
                     </article>
 
-                    <article class="problem hidden" id="twttr" data-problem="twttr">
+                    <article class="problem hidden" id="panel-twttr" data-problem="twttr" role="tabpanel" aria-labelledby="tab-twttr" tabindex="0" hidden>
                         <div class="problem-header">
                             <h3>Problem 3 – twttr.py</h3>
                             <span class="pill-ok">Skill: Filter characters</span>
@@ -534,7 +583,7 @@ c.isupper()</code></pre>
                         </div>
                     </article>
 
-                    <article class="problem hidden" id="plates" data-problem="plates">
+                    <article class="problem hidden" id="panel-plates" data-problem="plates" role="tabpanel" aria-labelledby="tab-plates" tabindex="0" hidden>
                         <div class="problem-header">
                             <h3>Problem 4 – plates.py</h3>
                             <span class="pill-ok">Skill: Check text rules</span>
@@ -560,7 +609,7 @@ s.isdigit()</code></pre>
                         </div>
                     </article>
 
-                    <article class="problem hidden" id="nutrition" data-problem="nutrition">
+                    <article class="problem hidden" id="panel-nutrition" data-problem="nutrition" role="tabpanel" aria-labelledby="tab-nutrition" tabindex="0" hidden>
                         <div class="problem-header">
                             <h3>Problem 5 – nutrition.py</h3>
                             <span class="pill-ok">Skill: Dictionary lookups</span>
@@ -594,6 +643,7 @@ if fruit in fruits:
                     <h2 style="margin:0">Quick Reference (At a Glance)</h2>
                     <div class="table-wrap">
                         <table aria-label="Problem to concept map">
+                            <caption class="sr-only">Quick reference table showing each CS50P problem and its main Week 2 concept.</caption>
                             <thead>
                                 <tr>
                                     <th>Problem</th>
@@ -631,16 +681,17 @@ if fruit in fruits:
                 <article class="card runner" id="runner">
                     <div class="row" style="justify-content:space-between">
                         <h2 style="margin:0">Try Code Here</h2>
-                        <span class="status" id="pyStatus">Loading Python…</span>
+                        <span class="status" id="pyStatus" role="status" aria-live="polite">Loading Python…</span>
                     </div>
-                    <div class="callout" id="loadedExampleInfo" style="margin-top:8px">
+                    <div class="callout" id="loadedExampleInfo" style="margin-top:8px" role="status" aria-live="polite">
                         Loaded code info: none yet.
                     </div>
                     <p class="subtle">Use <strong>Ctrl+Enter</strong> to run. If your code has
                         <code>input()</code>, a pop-up will ask for your answer.
                     </p>
                     <div id="pyEditor" class="editor-host" aria-label="Python code editor"></div>
-                    <textarea id="pyCode" spellcheck="false">print("CS50P Week 2 practice runner")
+                    <label class="sr-only" for="pyCode">Python code editor</label>
+                    <textarea id="pyCode" spellcheck="false" aria-describedby="editorNote" wrap="soft">print("CS50P Week 2 practice runner")
 
 ## Try loading one of the problem starters
 ## from the buttons on the left.
@@ -652,12 +703,12 @@ if fruit in fruits:
                     </div>
                     <div class="runner-output">
                         <strong>Output</strong>
-                        <pre id="pyOut" aria-live="polite"></pre>
+                        <pre id="pyOut" aria-live="polite" tabindex="0" aria-label="Python program output"></pre>
                     </div>
                 </article>
 
-                <article class="card">
-                    <h2>Debugging Checklist</h2>
+                <article class="card" aria-labelledby="debugging-checklist-title">
+                    <h2 id="debugging-checklist-title">Debugging Checklist</h2>
                     <div class="checklist">
                         <label><input type="checkbox" /> Print variables to see what values your program is using</label>
                         <label><input type="checkbox" /> Test one small part of your code first</label>
@@ -850,6 +901,7 @@ else:
         const loadedExampleInfo = document.getElementById('loadedExampleInfo');
         const runBtn = document.getElementById('runPy');
         const clearBtn = document.getElementById('clearPyOut');
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
         let pyodide = null;
         let pyEditor = null;
         let pyodideIndexURL = null;
@@ -939,6 +991,7 @@ else:
                     scrollBeyondLastLine: false,
                     wordWrap: 'on',
                     wrappingIndent: 'same',
+                    ariaLabel: 'Python code editor',
                 });
 
                 pyEditor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
@@ -1059,24 +1112,57 @@ else:
                 const active = button.dataset.tab === problemKey;
                 button.classList.toggle('active', active);
                 button.setAttribute('aria-selected', active ? 'true' : 'false');
+                button.setAttribute('tabindex', active ? '0' : '-1');
             });
 
             document.querySelectorAll('.problem[data-problem]').forEach((panel) => {
                 const active = panel.dataset.problem === problemKey;
                 panel.classList.toggle('hidden', !active);
+                panel.hidden = !active;
             });
         }
 
-        document.querySelectorAll('.problem-tab').forEach((button) => {
+        const problemTabs = Array.from(document.querySelectorAll('.problem-tab'));
+
+        function focusProblemTab(index) {
+            const normalized = (index + problemTabs.length) % problemTabs.length;
+            const nextTab = problemTabs[normalized];
+            activateProblemTab(nextTab.dataset.tab);
+            nextTab.focus();
+        }
+
+        problemTabs.forEach((button, index) => {
             button.addEventListener('click', () => {
                 activateProblemTab(button.dataset.tab);
+            });
+
+            button.addEventListener('keydown', (event) => {
+                if (event.key === 'ArrowRight') {
+                    event.preventDefault();
+                    focusProblemTab(index + 1);
+                }
+                if (event.key === 'ArrowLeft') {
+                    event.preventDefault();
+                    focusProblemTab(index - 1);
+                }
+                if (event.key === 'Home') {
+                    event.preventDefault();
+                    focusProblemTab(0);
+                }
+                if (event.key === 'End') {
+                    event.preventDefault();
+                    focusProblemTab(problemTabs.length - 1);
+                }
             });
         });
 
         function loadIntoRunner(code, descriptionText = '') {
             setEditorCode(code);
             setLoadedExampleText(descriptionText);
-            document.getElementById('runner').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            document.getElementById('runner').scrollIntoView({
+                behavior: prefersReducedMotion.matches ? 'auto' : 'smooth',
+                block: 'start'
+            });
         }
 
         document.querySelectorAll('.load-template').forEach((button) => {
