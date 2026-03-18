@@ -702,6 +702,9 @@ while i &lt; 3:
                             <strong>Lecture pattern</strong>
                             <pre><code>s.isalpha()
 s.isdigit()</code></pre>
+                            <p><strong>Also available – <code>re</code> module</strong></p>
+                            <pre><code>import re
+re.fullmatch(r"[A-Za-z0-9]+", s)</code></pre>
                             <p><strong>Example from the notes</strong></p>
                             <pre><code>students = {
     "Hermione": "Gryffindor",
@@ -883,6 +886,9 @@ for c in text:
 
 print("Output:", output)`,
             plates: `# plates.py starter pattern (not full solution)
+# Tip: import re lets you use re.fullmatch() to check for allowed characters
+# import re
+
 plate = input("Plate: ")
 
 def is_valid(s):
@@ -890,7 +896,7 @@ def is_valid(s):
     ## TODO: first two chars are letters
     ## TODO: numbers only at end
     ## TODO: first number not 0
-    ## TODO: no punctuation/spaces
+    ## TODO: no punctuation/spaces (re.fullmatch can help here)
     return False
 
 if is_valid(plate):
@@ -965,8 +971,10 @@ for ch in message:
         filtered += ch
 
 print("Result:", filtered)`,
-            plates: `## Complete similar example:
+            plates: `## Complete similar example (uses re module):
 ## validate a custom ID tag
+import re
+
 tag = input("Tag: ")
 
 def valid_tag(s):
@@ -974,9 +982,9 @@ def valid_tag(s):
         return False
     if not s[:2].isalpha():
         return False
-    if not s.isalnum():
+    ## re.fullmatch confirms only letters/digits — no spaces or punctuation
+    if not re.fullmatch(r"[A-Za-z0-9]+", s):
         return False
-
     seen_digit = False
     for ch in s:
         if ch.isdigit():
@@ -986,7 +994,6 @@ def valid_tag(s):
                 seen_digit = True
         elif seen_digit:
             return False
-
     return True
 
 if valid_tag(tag):
@@ -1317,6 +1324,8 @@ print(students["Hermione"])`
                 });
             }
             setStatus('Ready', true);
+            // Pre-load standard library modules students commonly use in Week 2
+            try { await pyodide.runPythonAsync('import re, sys, string, random'); } catch (_) {}
             return pyodide;
         }
 
@@ -1327,7 +1336,12 @@ print(students["Hermione"])`
                 const runtime = await ensurePyodide();
                 await runtime.runPythonAsync(getEditorCode());
             } catch (error) {
-                appendOutput(String(error) + '\n');
+                const msg = String(error);
+                if (msg.includes('SystemExit')) {
+                    appendOutput('[Program exited.]\n');
+                } else {
+                    appendOutput(msg + '\n');
+                }
             } finally {
                 runBtn.disabled = false;
             }
