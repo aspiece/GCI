@@ -116,8 +116,13 @@
         .layout {
             margin-top: 18px;
             display: grid;
-            grid-template-columns: 1.25fr 1.15fr;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 14px;
+        }
+
+        .layout > section,
+        .intro-grid > section {
+            min-width: 0;
         }
 
         .intro-grid {
@@ -305,6 +310,12 @@
         button.ghost:hover,
         button.ghost:focus-visible {
             background: #eff6ff;
+        }
+
+        button.mini-load {
+            min-height: 34px;
+            padding: 6px 10px;
+            font-size: 0.82rem;
         }
 
         .table-wrap {
@@ -584,6 +595,9 @@ c.isupper()</code></pre>
 
 for student in students:
     print(student)</code></pre>
+                            <div class="row" style="margin-top:8px">
+                                <button type="button" class="ghost mini-load load-note-example" data-note-example="camel">Load note example</button>
+                            </div>
                         </div>
                         <ol>
                             <li>Ask the user to type text.</li>
@@ -615,6 +629,9 @@ for student in students:
 while i &lt; 3:
     print("meow")
     i += 1</code></pre>
+                            <div class="row" style="margin-top:8px">
+                                <button type="button" class="ghost mini-load load-note-example" data-note-example="coke">Load note example</button>
+                            </div>
                         </div>
                         <ol>
                             <li>Start with <code>amount_due = 50</code>.</li>
@@ -643,6 +660,9 @@ while i &lt; 3:
                             <p><strong>Example from the notes</strong></p>
                             <pre><code>for _ in range(3):
     print("meow")</code></pre>
+                            <div class="row" style="margin-top:8px">
+                                <button type="button" class="ghost mini-load load-note-example" data-note-example="twttr">Load note example</button>
+                            </div>
                         </div>
                         <ol>
                             <li>Ask the user for text.</li>
@@ -683,6 +703,9 @@ s.isdigit()</code></pre>
 
 for student in students:
     print(student, students[student], sep=", ")</code></pre>
+                            <div class="row" style="margin-top:8px">
+                                <button type="button" class="ghost mini-load load-note-example" data-note-example="plates">Load note example</button>
+                            </div>
                         </div>
                         <div class="row" style="margin-top:10px">
                             <a href="https://cs50.harvard.edu/python/2022/psets/2/plates/" target="_blank"
@@ -715,6 +738,9 @@ if fruit in fruits:
 }
 
 print(students["Hermione"])</code></pre>
+                            <div class="row" style="margin-top:8px">
+                                <button type="button" class="ghost mini-load load-note-example" data-note-example="nutrition">Load note example</button>
+                            </div>
                         </div>
                         <ol>
                             <li>Make a dictionary of fruits and calories.</li>
@@ -975,6 +1001,33 @@ else:
     print("Item not found")`
         };
 
+        const NOTE_EXAMPLE_TEMPLATES = {
+            camel: `students = ["Hermione", "Harry", "Ron"]
+
+    for student in students:
+        print(student)`,
+            coke: `i = 0
+    while i < 3:
+        print("meow")
+        i += 1`,
+            twttr: `for _ in range(3):
+        print("meow")`,
+            plates: `students = {
+        "Hermione": "Gryffindor",
+        "Harry": "Gryffindor",
+    }
+
+    for student in students:
+        print(student, students[student], sep=", ")`,
+            nutrition: `students = {
+        "Hermione": "Gryffindor",
+        "Harry": "Gryffindor",
+        "Ron": "Gryffindor",
+    }
+
+    print(students["Hermione"])`
+        };
+
         const EXAMPLE_DESCRIPTIONS = {
             camel: 'Turns mixedCase text into under_score_case by adding underscores before capital letters.',
             coke: 'Runs a coin machine loop until the amount due is paid.',
@@ -1177,7 +1230,11 @@ else:
             });
             if (pyodide.setStdin) {
                 pyodide.setStdin({
-                    stdin: () => (window.prompt('Python input() — enter a line:') ?? '') + '\n'
+                    stdin: () => {
+                        const entered = window.prompt('Python input() — enter a line:') ?? '';
+                        appendOutput(`[Input entered] ${entered}\n`);
+                        return entered + '\n';
+                    }
                 });
             }
             setStatus('Ready', true);
@@ -1286,6 +1343,13 @@ else:
                 const key = button.dataset.example;
                 const description = EXAMPLE_DESCRIPTIONS[key] || 'Loaded worked example.';
                 loadIntoRunner(EXAMPLE_TEMPLATES[key], `Loaded worked example for ${key}: ${description}`);
+            });
+        });
+
+        document.querySelectorAll('.load-note-example').forEach((button) => {
+            button.addEventListener('click', () => {
+                const key = button.dataset.noteExample;
+                loadIntoRunner(NOTE_EXAMPLE_TEMPLATES[key], `Loaded note example for ${key}.`);
             });
         });
 
