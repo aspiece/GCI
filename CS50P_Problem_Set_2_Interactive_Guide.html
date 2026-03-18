@@ -579,6 +579,11 @@
     print(c)
 
 c.isupper()</code></pre>
+                            <p><strong>Example from the notes</strong></p>
+                            <pre><code>students = ["Hermione", "Harry", "Ron"]
+
+for student in students:
+    print(student)</code></pre>
                         </div>
                         <ol>
                             <li>Ask the user to type text.</li>
@@ -605,6 +610,11 @@ c.isupper()</code></pre>
                             <strong>Lecture pattern</strong>
                             <pre><code>while amount_due &gt; 0:
     ...</code></pre>
+                            <p><strong>Example from the notes</strong></p>
+                            <pre><code>i = 0
+while i &lt; 3:
+    print("meow")
+    i += 1</code></pre>
                         </div>
                         <ol>
                             <li>Start with <code>amount_due = 50</code>.</li>
@@ -630,6 +640,9 @@ c.isupper()</code></pre>
                             <strong>Lecture pattern</strong>
                             <pre><code>for c in text:
     ...</code></pre>
+                            <p><strong>Example from the notes</strong></p>
+                            <pre><code>for _ in range(3):
+    print("meow")</code></pre>
                         </div>
                         <ol>
                             <li>Ask the user for text.</li>
@@ -662,6 +675,14 @@ c.isupper()</code></pre>
                             <strong>Lecture pattern</strong>
                             <pre><code>s.isalpha()
 s.isdigit()</code></pre>
+                            <p><strong>Example from the notes</strong></p>
+                            <pre><code>students = {
+    "Hermione": "Gryffindor",
+    "Harry": "Gryffindor",
+}
+
+for student in students:
+    print(student, students[student], sep=", ")</code></pre>
                         </div>
                         <div class="row" style="margin-top:10px">
                             <a href="https://cs50.harvard.edu/python/2022/psets/2/plates/" target="_blank"
@@ -686,6 +707,14 @@ s.isdigit()</code></pre>
 
 if fruit in fruits:
     ...</code></pre>
+                            <p><strong>Example from the notes</strong></p>
+                            <pre><code>students = {
+    "Hermione": "Gryffindor",
+    "Harry": "Gryffindor",
+    "Ron": "Gryffindor",
+}
+
+print(students["Hermione"])</code></pre>
                         </div>
                         <ol>
                             <li>Make a dictionary of fruits and calories.</li>
