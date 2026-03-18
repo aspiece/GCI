@@ -90,6 +90,13 @@
             gap: 14px;
         }
 
+        .intro-grid {
+            margin-top: 12px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
         .card {
             background: var(--card);
             border: 1px solid var(--border);
@@ -384,6 +391,10 @@
         }
 
         @media (max-width: 980px) {
+            .intro-grid {
+                grid-template-columns: 1fr;
+            }
+
             .layout {
                 grid-template-columns: 1fr;
             }
@@ -404,29 +415,31 @@
         <p class="lead">This page helps you practice each Problem Set 2 skill step by step. If you get stuck, ask:
             <strong>“Which Week 2 idea does this problem want me to use?”</strong></p>
 
-        <section class="card docs" style="margin-top:12px">
-            <h2>Official CS50 Links</h2>
-            <ul>
-            <li><a href="https://cs50.harvard.edu/python/2022/weeks/2/" target="_blank"
-                rel="noopener noreferrer">Week 2 Lecture Notes and Materials</a></li>
-            <li><a href="https://cs50.harvard.edu/python/2022/psets/2/" target="_blank"
-                rel="noopener noreferrer">Problem Set 2 Overview</a></li>
-            <li><a href="https://cs50.harvard.edu/python/2022/shorts/" target="_blank"
-                rel="noopener noreferrer">CS50P Shorts Library</a></li>
-            </ul>
-            <div class="callout">Use the official problem specs for exact requirements, input/output formats,
-            and edge-case expectations.</div>
-        </section>
+        <section class="intro-grid" aria-label="Page introduction cards">
+            <section class="card">
+                <h2>How to Use This Page</h2>
+                <ol>
+                    <li>Click a problem tab.</li>
+                    <li>Read the task and steps.</li>
+                    <li>Click <strong>Load worked example</strong> to see a complete similar program.</li>
+                    <li>Click <strong>Load starter code</strong> to begin your own version.</li>
+                    <li>Press <strong>Run Code</strong> (or Ctrl+Enter) to test.</li>
+                </ol>
+            </section>
 
-        <section class="card" style="margin-top:12px">
-            <h2>How to Use This Page</h2>
-            <ol>
-                <li>Click a problem tab.</li>
-                <li>Read the task and steps.</li>
-                <li>Click <strong>Load worked example</strong> to see a complete similar program.</li>
-                <li>Click <strong>Load starter code</strong> to begin your own version.</li>
-                <li>Press <strong>Run Code</strong> (or Ctrl+Enter) to test.</li>
-            </ol>
+            <section class="card docs">
+                <h2>Official CS50 Links</h2>
+                <ul>
+                <li><a href="https://cs50.harvard.edu/python/2022/weeks/2/" target="_blank"
+                    rel="noopener noreferrer">Week 2 Lecture Notes and Materials</a></li>
+                <li><a href="https://cs50.harvard.edu/python/2022/psets/2/" target="_blank"
+                    rel="noopener noreferrer">Problem Set 2 Overview</a></li>
+                <li><a href="https://cs50.harvard.edu/python/2022/shorts/" target="_blank"
+                    rel="noopener noreferrer">CS50P Shorts Library</a></li>
+                </ul>
+                <div class="callout">Use the official problem specs for exact requirements, input/output formats,
+                and edge-case expectations.</div>
+            </section>
         </section>
 
         <div class="layout">
