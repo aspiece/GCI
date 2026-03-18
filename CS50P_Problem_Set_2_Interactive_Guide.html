@@ -818,16 +818,12 @@ print("under_score_case:", converted)`,
             coke: `## Complete similar example:
 ## snack machine costs 65 cents
 amount_due = 65
-accepted = {25, 10, 5}
 
 while amount_due > 0:
     print("Amount Due:", amount_due)
-    try:
-        coin = int(input("Insert Coin: "))
-    except ValueError:
-        continue
+    coin = int(input("Insert Coin: "))
 
-    if coin in accepted:
+    if coin == 25 or coin == 10 or coin == 5:
         amount_due -= coin
 
 print("Change Owed:", abs(amount_due))`,
@@ -866,7 +862,10 @@ def valid_tag(s):
 
     return True
 
-print("Valid" if valid_tag(tag) else "Invalid")`,
+if valid_tag(tag):
+    print("Valid")
+else:
+    print("Invalid")`,
             nutrition: `## Complete similar example:
 ## look up points by snack name
 snack_points = {
@@ -902,9 +901,14 @@ else:
         const runBtn = document.getElementById('runPy');
         const clearBtn = document.getElementById('clearPyOut');
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        const DEFAULT_EDITOR_TEXT = `print("CS50P Week 2 practice runner")
+
+    ## Try loading one of the problem starters
+    ## from the buttons on the left.`;
         let pyodide = null;
         let pyEditor = null;
         let pyodideIndexURL = null;
+        let activeProblemKey = 'camel';
         const attemptedScripts = new Set();
 
         const PYODIDE_CANDIDATES = [
@@ -1107,7 +1111,15 @@ else:
             loadedExampleInfo.textContent = text || 'Loaded code info: none yet.';
         }
 
-        function activateProblemTab(problemKey) {
+        function resetRunnerForProblemChange() {
+            setEditorCode(DEFAULT_EDITOR_TEXT);
+            pyOut.textContent = '';
+            setLoadedExampleText('Loaded code info: none yet.');
+        }
+
+        function activateProblemTab(problemKey, options = {}) {
+            const shouldClearEditor = options.clearEditor === true && problemKey !== activeProblemKey;
+
             document.querySelectorAll('.problem-tab').forEach((button) => {
                 const active = button.dataset.tab === problemKey;
                 button.classList.toggle('active', active);
@@ -1120,6 +1132,12 @@ else:
                 panel.classList.toggle('hidden', !active);
                 panel.hidden = !active;
             });
+
+            activeProblemKey = problemKey;
+
+            if (shouldClearEditor) {
+                resetRunnerForProblemChange();
+            }
         }
 
         const problemTabs = Array.from(document.querySelectorAll('.problem-tab'));
@@ -1127,13 +1145,13 @@ else:
         function focusProblemTab(index) {
             const normalized = (index + problemTabs.length) % problemTabs.length;
             const nextTab = problemTabs[normalized];
-            activateProblemTab(nextTab.dataset.tab);
+            activateProblemTab(nextTab.dataset.tab, { clearEditor: true });
             nextTab.focus();
         }
 
         problemTabs.forEach((button, index) => {
             button.addEventListener('click', () => {
-                activateProblemTab(button.dataset.tab);
+                activateProblemTab(button.dataset.tab, { clearEditor: true });
             });
 
             button.addEventListener('keydown', (event) => {
