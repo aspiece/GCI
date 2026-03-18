@@ -342,7 +342,6 @@
             }
         }
     </style>
-    <script defer src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
 </head>
 
 <body>
@@ -357,6 +356,20 @@
         <h1>CS50P – Problem Set 2 Student Support Guide</h1>
         <p class="lead">Every problem in this set comes directly from Week 2 lecture patterns. When you feel stuck,
             ask: <strong>“Which lecture concept is this problem asking me to use?”</strong></p>
+
+        <section class="card docs" style="margin-top:12px">
+            <h2>Official CS50 Links</h2>
+            <ul>
+            <li><a href="https://cs50.harvard.edu/python/2022/weeks/2/" target="_blank"
+                rel="noopener noreferrer">Week 2 Lecture Notes and Materials</a></li>
+            <li><a href="https://cs50.harvard.edu/python/2022/psets/2/" target="_blank"
+                rel="noopener noreferrer">Problem Set 2 Overview</a></li>
+            <li><a href="https://cs50.harvard.edu/python/2022/shorts/" target="_blank"
+                rel="noopener noreferrer">CS50P Shorts Library</a></li>
+            </ul>
+            <div class="callout">Use the official problem specs for exact requirements, input/output formats,
+            and edge-case expectations.</div>
+        </section>
 
         <div class="layout">
             <section class="card">
@@ -532,20 +545,6 @@ if fruit in fruits:
             </section>
 
             <section class="grid">
-                <article class="card docs">
-                    <h2>Official CS50 Links</h2>
-                    <ul>
-                        <li><a href="https://cs50.harvard.edu/python/2022/weeks/2/" target="_blank"
-                                rel="noopener noreferrer">Week 2 Lecture Notes and Materials</a></li>
-                        <li><a href="https://cs50.harvard.edu/python/2022/psets/2/" target="_blank"
-                                rel="noopener noreferrer">Problem Set 2 Overview</a></li>
-                        <li><a href="https://cs50.harvard.edu/python/2022/shorts/" target="_blank"
-                                rel="noopener noreferrer">CS50P Shorts Library</a></li>
-                    </ul>
-                    <div class="callout">Use the official problem specs for exact requirements, input/output formats,
-                        and edge-case expectations.</div>
-                </article>
-
                 <article class="card runner" id="runner">
                     <div class="row" style="justify-content:space-between">
                         <h2 style="margin:0">Run Python in this Page</h2>
@@ -664,6 +663,23 @@ if fruit in fruits:
         const runBtn = document.getElementById('runPy');
         const clearBtn = document.getElementById('clearPyOut');
         let pyodide = null;
+        let pyodideIndexURL = null;
+        const attemptedScripts = new Set();
+
+        const PYODIDE_CANDIDATES = [
+            {
+                scriptURL: 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js',
+                indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/'
+            },
+            {
+                scriptURL: 'https://cdn.jsdelivr.net/npm/pyodide@0.24.1/pyodide.js',
+                indexURL: 'https://cdn.jsdelivr.net/npm/pyodide@0.24.1/'
+            },
+            {
+                scriptURL: 'https://unpkg.com/pyodide@0.24.1/pyodide.js',
+                indexURL: 'https://unpkg.com/pyodide@0.24.1/'
+            }
+        ];
 
         function setStatus(text, ready = false) {
             pyStatus.textContent = text;
@@ -675,14 +691,70 @@ if fruit in fruits:
             pyOut.scrollTop = pyOut.scrollHeight;
         }
 
+        function delay(ms) {
+            return new Promise((resolve) => setTimeout(resolve, ms));
+        }
+
+        async function waitForGlobalLoader(timeoutMs = 2500) {
+            const started = Date.now();
+            while (Date.now() - started < timeoutMs) {
+                if (typeof loadPyodide === 'function') return true;
+                await delay(50);
+            }
+            return false;
+        }
+
+        async function loadScriptOnce(url) {
+            if (attemptedScripts.has(url)) {
+                return typeof loadPyodide === 'function';
+            }
+            attemptedScripts.add(url);
+
+            await new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = url;
+                script.async = true;
+                script.onload = () => resolve();
+                script.onerror = () => reject(new Error(`Failed to load: ${url}`));
+                document.head.appendChild(script);
+            });
+
+            return waitForGlobalLoader(3000);
+        }
+
+        async function preparePyodideLoader() {
+            if (typeof loadPyodide === 'function') {
+                if (!pyodideIndexURL) {
+                    pyodideIndexURL = PYODIDE_CANDIDATES[0].indexURL;
+                }
+                return;
+            }
+
+            for (const candidate of PYODIDE_CANDIDATES) {
+                try {
+                    const ready = await loadScriptOnce(candidate.scriptURL);
+                    if (ready) {
+                        pyodideIndexURL = candidate.indexURL;
+                        return;
+                    }
+                } catch (_) {
+                    // try next candidate
+                }
+            }
+
+            throw new Error('Unable to load Pyodide. Check internet access or school content filtering for jsdelivr/unpkg.');
+        }
+
         async function ensurePyodide() {
             if (pyodide) return pyodide;
-            if (typeof loadPyodide !== 'function') {
-                throw new Error('Pyodide failed to load from CDN.');
+            await preparePyodideLoader();
+
+            if (typeof loadPyodide !== 'function' || !pyodideIndexURL) {
+                throw new Error('Python runtime is unavailable right now.');
             }
             setStatus('Downloading Python…');
             pyodide = await loadPyodide({
-                indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/',
+                indexURL: pyodideIndexURL,
                 stdout: (message) => appendOutput(message + '\n'),
                 stderr: (message) => appendOutput(message + '\n')
             });
@@ -728,9 +800,8 @@ if fruit in fruits:
             }
         });
 
-        ensurePyodide().catch((error) => {
-            setStatus('Failed to load', false);
-            appendOutput(String(error) + '\n');
+        ensurePyodide().catch(() => {
+            setStatus('Python not ready (click Run to retry)', false);
         });
     </script>
 </body>
