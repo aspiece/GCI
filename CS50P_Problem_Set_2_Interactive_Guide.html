@@ -618,7 +618,8 @@ if fruit in fruits:
                     <div id="pyEditor" class="editor-host" aria-label="Python code editor"></div>
                     <textarea id="pyCode" spellcheck="false">print("CS50P Week 2 practice runner")
 
-# Try loading one of the problem starters from the buttons on the left.
+## Try loading one of the problem starters
+## from the buttons on the left.
 </textarea>
                     <div id="editorNote" class="editor-note">Editor mode: standard textarea (loading VS Code-style highlighting…)</div>
                     <div class="row" style="margin-top:10px">
@@ -653,8 +654,10 @@ text = input("camelCase: ")
 result = ""
 
 for c in text:
-    # TODO: if uppercase, add underscore + lowercase letter
-    # TODO: otherwise add character as-is
+    ## TODO: if uppercase,
+    ## add underscore + lowercase letter
+    ## TODO: otherwise add
+    ## character as-is
     pass
 
 print("snake_case:", result)`,
@@ -664,8 +667,9 @@ amount_due = 50
 while amount_due > 0:
     print("Amount Due:", amount_due)
     coin = int(input("Insert Coin: "))
-    # TODO: if coin is 25, 10, or 5, subtract it
-    # TODO: ignore invalid coins
+    ## TODO: if coin is
+    ## 25, 10, or 5, subtract it
+    ## TODO: ignore invalid coins
 
 print("Change Owed:", abs(amount_due))`,
             twttr: `# twttr.py starter pattern (not full solution)
@@ -673,7 +677,8 @@ text = input("Input: ")
 output = ""
 
 for c in text:
-    # TODO: if c is NOT a vowel, add to output
+    ## TODO: if c is NOT
+    ## a vowel, add to output
     pass
 
 print("Output:", output)`,
@@ -681,10 +686,11 @@ print("Output:", output)`,
 plate = input("Plate: ")
 
 def is_valid(s):
-    # TODO: check length 2-6
-    # TODO: first two characters letters
-    # TODO: numbers only at end and first number not 0
-    # TODO: no punctuation/spaces
+    ## TODO: check length 2-6
+    ## TODO: first two chars are letters
+    ## TODO: numbers only at end
+    ## TODO: first number not 0
+    ## TODO: no punctuation/spaces
     return False
 
 if is_valid(plate):
@@ -722,7 +728,8 @@ if fruit in fruits:
         };
 
         const EXAMPLE_TEMPLATES = {
-            camel: `# Complete similar example: convert mixedCase -> under_score_case
+            camel: `## Complete similar example:
+## convert mixedCase -> under_score_case
 text = input("mixedCase: ")
 converted = ""
 
@@ -733,7 +740,8 @@ for ch in text:
         converted += ch
 
 print("under_score_case:", converted)`,
-            coke: `# Complete similar example: snack machine costs 65 cents
+            coke: `## Complete similar example:
+## snack machine costs 65 cents
 amount_due = 65
 accepted = {25, 10, 5}
 
@@ -748,7 +756,8 @@ while amount_due > 0:
         amount_due -= coin
 
 print("Change Owed:", abs(amount_due))`,
-            twttr: `# Complete similar example: remove vowels from a message
+            twttr: `## Complete similar example:
+## remove vowels from a message
 message = input("Message: ")
 vowels = "aeiouAEIOU"
 filtered = ""
@@ -758,7 +767,8 @@ for ch in message:
         filtered += ch
 
 print("Result:", filtered)`,
-            plates: `# Complete similar example: validate a custom ID tag
+            plates: `## Complete similar example:
+## validate a custom ID tag
 tag = input("Tag: ")
 
 def valid_tag(s):
@@ -782,7 +792,8 @@ def valid_tag(s):
     return True
 
 print("Valid" if valid_tag(tag) else "Invalid")`,
-            nutrition: `# Complete similar example: look up points by snack name
+            nutrition: `## Complete similar example:
+## look up points by snack name
 snack_points = {
     "apple": 130,
     "banana": 110,
@@ -902,6 +913,8 @@ else:
                     tabSize: 4,
                     insertSpaces: true,
                     scrollBeyondLastLine: false,
+                    wordWrap: 'on',
+                    wrappingIndent: 'same',
                 });
 
                 pyEditor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
