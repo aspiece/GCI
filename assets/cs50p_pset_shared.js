@@ -44,6 +44,204 @@
     { scriptURL: 'https://unpkg.com/pyodide@0.24.1/pyodide.js', indexURL: 'https://unpkg.com/pyodide@0.24.1/' }
   ];
 
+  const PROBLEM_ALIGNMENT = {
+    // PSET 0
+    'Indoor Voice': {
+      skill: 'String methods and direct output formatting.',
+      lecturePattern: 'text = input("Input: ")\nprint(text.lower())',
+      noteExample: 'name = input("What\'s your name? ")\nprint(f"hello, {name}")'
+    },
+    'Playback Speed': {
+      skill: 'String replacement and transformation.',
+      lecturePattern: 'text = input("Input: ")\nprint(text.replace(" ", "..."))',
+      noteExample: 'word = "cat"\nprint(word * 3)'
+    },
+    'Making Faces': {
+      skill: 'Writing and calling small helper functions.',
+      lecturePattern: 'def convert(text):\n    return text.replace(":)", "🙂").replace(":(", "🙁")\n\nprint(convert(input("Input: ")))',
+      noteExample: 'def main():\n    name = input("What\'s your name? ")\n    hello(name)\n\ndef hello(to):\n    print("hello,", to)\n\nmain()'
+    },
+    'Einstein': {
+      skill: 'Variables, arithmetic, and constants.',
+      lecturePattern: 'c = 300000000\nm = int(input("m: "))\nprint(m * c ** 2)',
+      noteExample: 'x = int(input("x: "))\nprint(x * 2)'
+    },
+    'Tip Calculator': {
+      skill: 'Parsing input and computing formulas.',
+      lecturePattern: 'dollars = float(input("How much was the meal? ").replace("$", ""))\npercent = float(input("Tip percentage? ").replace("%", ""))\nprint(dollars * (percent / 100))',
+      noteExample: 'x = float(input("x: "))\ny = float(input("y: "))\nprint(x + y)'
+    },
+
+    // PSET 1
+    'Deep Thought': {
+      skill: 'if/else condition checks with normalized text.',
+      lecturePattern: 'answer = input("What is the Answer to the Great Question of Life, the Universe, and Everything? ").strip().lower()\nif answer == "42" or answer == "forty-two" or answer == "forty two":\n    print("Yes")\nelse:\n    print("No")',
+      noteExample: 'x = int(input("x: "))\nif x < y:\n    print("x is less than y")\nelif x > y:\n    print("x is greater than y")\nelse:\n    print("x is equal to y")'
+    },
+    'Home Federal Savings Bank': {
+      skill: 'Startswith checks and branch logic.',
+      lecturePattern: 'greeting = input("Greeting: ").strip().lower()\nif greeting.startswith("hello"):\n    print("$0")\nelif greeting.startswith("h"):\n    print("$20")\nelse:\n    print("$100")',
+      noteExample: 'name = input("Name: ").strip()\nif name == "Harry":\n    print("Gryffindor")\nelse:\n    print("Who?")'
+    },
+    'File Extensions': {
+      skill: 'String split and mapping outcomes.',
+      lecturePattern: 'name = input("File name: ").strip().lower()\nif name.endswith(".gif"):\n    print("image/gif")\nelif name.endswith(".jpg") or name.endswith(".jpeg"):\n    print("image/jpeg")\nelse:\n    print("application/octet-stream")',
+      noteExample: 'filename = "photo.jpg"\nprint(filename.lower())'
+    },
+    'Math Interpreter': {
+      skill: 'Split input into tokens and compute by operator.',
+      lecturePattern: 'expr = input("Expression: ")\nx, op, y = expr.split(" ")\nx = float(x)\ny = float(y)\nif op == "+":\n    print(x + y)\nelif op == "-":\n    print(x - y)',
+      noteExample: 'x = int(input("x: "))\ny = int(input("y: "))\nprint(x + y)'
+    },
+    'Meal Time': {
+      skill: 'Function decomposition and range checks.',
+      lecturePattern: 'def convert(time):\n    h, m = time.split(":")\n    return int(h) + int(m) / 60\n\nt = convert(input("What time is it? "))\nif 7 <= t <= 8:\n    print("breakfast time")',
+      noteExample: 'def main():\n    value = get_number()\n    print(value)\n\ndef get_number():\n    return int(input("Number: "))\n\nmain()'
+    },
+
+    // PSET 3
+    'Fuel Gauge': {
+      skill: 'Loop validation and conditional output bands.',
+      lecturePattern: 'while True:\n    frac = input("Fraction: ")\n    if "/" in frac:\n        x, y = frac.split("/")\n        if int(y) != 0:\n            pct = round(int(x) / int(y) * 100)\n            if 0 <= pct <= 100:\n                break',
+      noteExample: 'while True:\n    n = int(input("What\'s n? "))\n    if n > 0:\n        break\n\nfor _ in range(n):\n    print("meow")'
+    },
+    'Felipe’s Taqueria': {
+      skill: 'Dictionary lookups inside a loop.',
+      lecturePattern: 'menu = {"baja taco": 4.25, "burrito": 7.50}\ntotal = 0\nwhile True:\n    item = input("Item: ").lower()\n    if item in menu:\n        total += menu[item]\n        print(f"Total: ${total:.2f}")',
+      noteExample: 'students = {"Hermione": "Gryffindor", "Harry": "Gryffindor"}\nfor student in students:\n    print(student, students[student], sep=", ")'
+    },
+    'Grocery List': {
+      skill: 'Count items with a dictionary and print sorted output.',
+      lecturePattern: 'counts = {}\nwhile True:\n    item = input().upper()\n    counts[item] = counts.get(item, 0) + 1',
+      noteExample: 'students = ["Hermione", "Harry", "Ron"]\nfor student in students:\n    print(student)'
+    },
+    'Outdated': {
+      skill: 'Loop until valid format, then normalize.',
+      lecturePattern: 'while True:\n    date = input("Date: ").strip()\nif "/" in date:\n    month, day, year = date.split("/")\n    print(f"{int(year):04}-{int(month):02}-{int(day):02}")',
+      noteExample: 'months = ["January", "February", "March"]\nfor i in range(len(months)):\n    print(i + 1, months[i])'
+    },
+
+    // PSET 4
+    'Emojize': {
+      skill: 'Library usage and transformed output.',
+      lecturePattern: 'import emoji\ntext = input("Input: ")\nprint(emoji.emojize(text, language="alias"))',
+      noteExample: 'import random\nprint(random.randint(1, 10))'
+    },
+    'Frank, Ian and Glen’s Letters': {
+      skill: 'Command-line arguments and third-party package use.',
+      lecturePattern: 'from pyfiglet import Figlet\nfiglet = Figlet()\nprint(figlet.renderText(input("Input: ")))',
+      noteExample: 'import sys\nprint("Arguments:", sys.argv)'
+    },
+    'Adieu, Adieu': {
+      skill: 'Collect list input and format final sentence.',
+      lecturePattern: 'names = []\nwhile True:\n    name = input("Name: ")\n    names.append(name)',
+      noteExample: 'students = ["Hermione", "Harry", "Ron"]\nfor student in students:\n    print(student)'
+    },
+    'Guessing Game': {
+      skill: 'Random value + looped user guesses.',
+      lecturePattern: 'import random\nlevel = int(input("Level: "))\nsecret = random.randint(1, level)\nwhile True:\n    guess = int(input("Guess: "))',
+      noteExample: 'i = 0\nwhile i < 3:\n    print("meow")\n    i += 1'
+    },
+    'Little Professor': {
+      skill: 'Nested loops and score tracking.',
+      lecturePattern: 'for _ in range(10):\n    # ask question\n    # allow up to 3 tries\n    pass',
+      noteExample: 'for _ in range(3):\n    print("#")'
+    },
+    'Bitcoin Price Index': {
+      skill: 'API request + numeric conversion/output.',
+      lecturePattern: 'import requests\nimport sys\nprice = requests.get("https://api.coindesk.com/v1/bpi/currentprice.json").json()["bpi"]["USD"]["rate_float"]\nprint(price * float(sys.argv[1]))',
+      noteExample: 'import requests\nresponse = requests.get("https://example.com")\nprint(response.status_code)'
+    },
+
+    // PSET 5
+    'Testing my twttr': {
+      skill: 'Write test functions that assert expected outputs.',
+      lecturePattern: 'from twttr import shorten\n\ndef test_lowercase():\n    assert shorten("twitter") == "twttr"',
+      noteExample: 'def square(n):\n    return n * n\n\ndef test_square():\n    assert square(2) == 4'
+    },
+    'Back to the Bank': {
+      skill: 'Test branches for multiple input categories.',
+      lecturePattern: 'from bank import value\n\ndef test_hello():\n    assert value("hello") == 0',
+      noteExample: 'def is_even(n):\n    return n % 2 == 0\n\ndef test_is_even():\n    assert is_even(4) == True'
+    },
+    'Re-requesting a Vanity Plate': {
+      skill: 'Test validation logic with valid/invalid cases.',
+      lecturePattern: 'from plates import is_valid\n\ndef test_valid():\n    assert is_valid("CS50") == True',
+      noteExample: 'def test_invalid():\n    assert function("bad") == False'
+    },
+    'Refueling': {
+      skill: 'Test numeric parsing and edge output behavior.',
+      lecturePattern: 'from fuel import convert, gauge\n\ndef test_convert():\n    assert convert("1/2") == 50',
+      noteExample: 'def test_gauge():\n    assert gauge(99) == "F"'
+    },
+
+    // PSET 6
+    'Lines of Code': {
+      skill: 'Read files and count lines based on rules.',
+      lecturePattern: 'with open("file.py") as f:\n    lines = f.readlines()\nprint(len(lines))',
+      noteExample: 'with open("names.txt") as file:\n    for line in file:\n        print(line.rstrip())'
+    },
+    'Pizza Py': {
+      skill: 'CSV reading and table display.',
+      lecturePattern: 'import csv\nwith open("menu.csv") as file:\n    reader = csv.DictReader(file)\n    for row in reader:\n        print(row)',
+      noteExample: 'import csv\nwith open("students.csv") as file:\n    reader = csv.reader(file)\n    for row in reader:\n        print(row)'
+    },
+    'Scourgify': {
+      skill: 'Parse and rewrite CSV rows with new format.',
+      lecturePattern: 'import csv\nwith open("before.csv") as before, open("after.csv", "w", newline="") as after:\n    writer = csv.DictWriter(after, fieldnames=["first", "last", "house"])',
+      noteExample: 'with open("students.csv") as file:\n    reader = csv.DictReader(file)\n    for row in reader:\n        print(row["name"], row["house"])'
+    },
+    'CS50 P-Shirt': {
+      skill: 'Image resizing and overlay with PIL.',
+      lecturePattern: 'from PIL import Image, ImageOps\nshirt = Image.open("shirt.png")\nphoto = Image.open("input.jpg")\nphoto = ImageOps.fit(photo, shirt.size)\nphoto.paste(shirt, shirt)',
+      noteExample: 'from PIL import Image\nimg = Image.open("before.jpg")\nimg.save("after.jpg")'
+    },
+
+    // PSET 7
+    'NUMB3RS': {
+      skill: 'Regex validation with full-string matching.',
+      lecturePattern: 'import re\nif re.fullmatch(r"\\d+\\.\\d+\\.\\d+\\.\\d+", ip):\n    print("Valid")',
+      noteExample: 'import re\nif re.search(r"cat", text):\n    print("Found")'
+    },
+    'Watch on YouTube': {
+      skill: 'Regex extraction from URL formats.',
+      lecturePattern: 'import re\nmatches = re.search(r"(?:youtube\\.com/watch\\?v=|youtu\\.be/)([\\w-]+)", url)',
+      noteExample: 'import re\nname = re.sub(r"^https?://", "", website)'
+    },
+    'Working 9 to 5': {
+      skill: 'Regex groups + time conversion.',
+      lecturePattern: 'import re\nmatch = re.search(r"^(\\d{1,2})(?::(\\d{2}))? (AM|PM) to", s)',
+      noteExample: 'import re\nif re.fullmatch(r"\\d{1,2}:\\d{2}", t):\n    print("ok")'
+    },
+    'Regular, um, Expressions': {
+      skill: 'Regex substitution/counting.',
+      lecturePattern: 'import re\ncount = len(re.findall(r"\\bum\\b", text, re.IGNORECASE))',
+      noteExample: 'import re\nclean = re.sub(r"\\s+", " ", text).strip()'
+    },
+    'Response Validation': {
+      skill: 'Validate email-like input with regex.',
+      lecturePattern: 'import re\nif re.fullmatch(r"[^@]+@[^@]+\\.[^@]+", email):\n    print("Valid")',
+      noteExample: 'import re\nif re.search(r"@", email):\n    print("Has @")'
+    },
+
+    // PSET 8
+    'Seasons of Love': {
+      skill: 'Date calculations and text conversion.',
+      lecturePattern: 'from datetime import date\nborn = date.fromisoformat(input("Date of Birth: "))\nminutes = int((date.today() - born).total_seconds() / 60)',
+      noteExample: 'from datetime import date\nprint(date.today())'
+    },
+    'Cookie Jar': {
+      skill: 'Define class with constructor and methods.',
+      lecturePattern: 'class Jar:\n    def __init__(self, capacity=12):\n        self.capacity = capacity\n        self.size = 0',
+      noteExample: 'class Student:\n    def __init__(self, name):\n        self.name = name'
+    },
+    'CS50 Shirtificate': {
+      skill: 'Generate PDF output with FPDF.',
+      lecturePattern: 'from fpdf import FPDF\npdf = FPDF()\npdf.add_page()\npdf.set_font("Helvetica", size=24)',
+      noteExample: 'from fpdf import FPDF\npdf = FPDF()\npdf.add_page()\npdf.output("out.pdf")'
+    }
+  };
+
   function setStatus(text, ready = false) {
     if (!statusEl) return;
     statusEl.textContent = text;
@@ -101,21 +299,29 @@
   }
 
   function problemStarter(problem) {
+    const aligned = PROBLEM_ALIGNMENT[problem.title];
+    if (aligned?.starter) return aligned.starter;
     if (problem.starter) return problem.starter;
     return `# Starter for ${problem.title}\n# TODO: Read the official spec first\n\n\ndef main():\n    # TODO: implement ${problem.title}\n    pass\n\n\nif __name__ == "__main__":\n    main()`;
   }
 
   function problemWorked(problem) {
+    const aligned = PROBLEM_ALIGNMENT[problem.title];
+    if (aligned?.worked) return aligned.worked;
     if (problem.worked) return problem.worked;
     return `# Worked practice pattern for ${problem.title}\n# Similar practice only, not the exact CS50 solution.\n\ntext = input("Input: ").strip()\nprint("You entered:", text)`;
   }
 
   function problemLecturePattern(problem) {
+    const aligned = PROBLEM_ALIGNMENT[problem.title];
+    if (aligned?.lecturePattern) return aligned.lecturePattern;
     if (problem.lecturePattern) return problem.lecturePattern;
     return `for _ in range(3):\n    print("practice")`;
   }
 
   function problemNoteExample(problem) {
+    const aligned = PROBLEM_ALIGNMENT[problem.title];
+    if (aligned?.noteExample) return aligned.noteExample;
     if (problem.noteExample) return problem.noteExample;
     return `for _ in range(3):\n    print("meow")`;
   }
@@ -216,7 +422,7 @@
 
       panel.innerHTML = `
         <h3 style="margin:0 0 8px">${safeHtml(problem.title)}</h3>
-        <p><strong>Focus skill:</strong> ${safeHtml(problem.skill || 'Use loops, conditions, and string/list/dict tools from this week.')}</p>
+        <p><strong>Focus skill:</strong> ${safeHtml(problem.skill || PROBLEM_ALIGNMENT[problem.title]?.skill || 'Use loops, conditions, and string/list/dict tools from this week.')}</p>
         <div class="hint">
           <strong>Lecture pattern</strong>
           <pre><code>${safeHtml(problemLecturePattern(problem))}</code></pre>
