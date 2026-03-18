@@ -1,0 +1,738 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CS50P Problem Set 2 – Interactive Student Guide</title>
+    <meta name="description"
+        content="Student-facing interactive support guide for CS50P Problem Set 2 with lecture concept mapping, official CS50 links, and an in-browser Python runner." />
+    <link rel="icon" href="data:," />
+    <style>
+        :root {
+            --bg: #f4f7fc;
+            --card: #ffffff;
+            --text: #0f172a;
+            --muted: #475569;
+            --accent: #2563eb;
+            --accent-2: #1d4ed8;
+            --border: #d9e1ef;
+            --ok: #166534;
+            --ok-bg: #dcfce7;
+            --warn: #92400e;
+            --warn-bg: #fef3c7;
+            --shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            font-family: Inter, Segoe UI, Roboto, Arial, sans-serif;
+            color: var(--text);
+            background: linear-gradient(180deg, #ebf2ff 0%, var(--bg) 64%);
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 24px 16px 42px;
+        }
+
+        .topbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .chip {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            background: #f8fbff;
+            color: var(--muted);
+            font-weight: 600;
+            font-size: 0.82rem;
+        }
+
+        .home-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .home-link:hover,
+        .home-link:focus-visible {
+            text-decoration: underline;
+        }
+
+        h1 {
+            margin: 0 0 6px;
+            font-size: clamp(1.6rem, 2.4vw, 2.1rem);
+        }
+
+        .lead {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.45;
+        }
+
+        .layout {
+            margin-top: 18px;
+            display: grid;
+            grid-template-columns: 1.55fr 1fr;
+            gap: 14px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            box-shadow: var(--shadow);
+            padding: 14px;
+        }
+
+        h2 {
+            margin: 0 0 10px;
+            font-size: 1.14rem;
+        }
+
+        h3 {
+            margin: 0 0 8px;
+            font-size: 1.02rem;
+        }
+
+        p {
+            margin: 8px 0;
+        }
+
+        .subtle {
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .problem {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px;
+            background: #fbfdff;
+        }
+
+        .problem-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .problem a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .problem a:hover,
+        .problem a:focus-visible {
+            text-decoration: underline;
+        }
+
+        .pill-ok {
+            display: inline-block;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            color: var(--ok);
+            background: var(--ok-bg);
+            border: 1px solid #86efac;
+        }
+
+        .hint {
+            border-left: 4px solid #93c5fd;
+            padding: 8px 10px;
+            border-radius: 8px;
+            background: #eff6ff;
+            margin: 8px 0;
+        }
+
+        pre {
+            margin: 6px 0 0;
+            background: #0b1224;
+            color: #e2e8f0;
+            border-radius: 10px;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            overflow: auto;
+        }
+
+        code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+            font-size: 0.86rem;
+        }
+
+        ol,
+        ul {
+            margin: 8px 0 0 20px;
+            padding: 0;
+            line-height: 1.42;
+        }
+
+        li+li {
+            margin-top: 4px;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        button {
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 8px 12px;
+            background: var(--accent);
+            color: #ffffff;
+        }
+
+        button:hover,
+        button:focus-visible {
+            background: var(--accent-2);
+        }
+
+        button.ghost {
+            background: transparent;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+        }
+
+        button.ghost:hover,
+        button.ghost:focus-visible {
+            background: #eff6ff;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 8px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 9px 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: #eff6ff;
+            font-size: 0.9rem;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .docs ul {
+            margin-top: 8px;
+        }
+
+        .docs a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .docs a:hover,
+        .docs a:focus-visible {
+            text-decoration: underline;
+        }
+
+        .runner textarea {
+            width: 100%;
+            min-height: 250px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            padding: 10px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+            font-size: 0.9rem;
+            resize: vertical;
+            background: #0b1224;
+            color: #e2e8f0;
+        }
+
+        .runner-output {
+            margin-top: 10px;
+        }
+
+        .runner-output pre {
+            min-height: 130px;
+            max-height: 280px;
+            margin: 6px 0 0;
+        }
+
+        .status {
+            display: inline-block;
+            border-radius: 999px;
+            padding: 3px 10px;
+            border: 1px solid #fcd34d;
+            background: var(--warn-bg);
+            color: var(--warn);
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .status.ready {
+            border-color: #86efac;
+            color: var(--ok);
+            background: var(--ok-bg);
+        }
+
+        .checklist {
+            margin-top: 8px;
+            display: grid;
+            gap: 6px;
+        }
+
+        .checklist label {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+            color: var(--text);
+            font-size: 0.94rem;
+        }
+
+        .callout {
+            margin-top: 10px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #f8fbff;
+            padding: 10px;
+            color: var(--muted);
+            font-size: 0.92rem;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 980px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <script defer src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+</head>
+
+<body>
+    <main class="wrap">
+        <div class="topbar">
+            <a class="home-link" href="index.html" aria-label="Return to project hub">← Back to Project Hub</a>
+            <span class="chip">CS50P</span>
+            <span class="chip">Problem Set 2</span>
+            <span class="chip">Student Support</span>
+        </div>
+
+        <h1>CS50P – Problem Set 2 Student Support Guide</h1>
+        <p class="lead">Every problem in this set comes directly from Week 2 lecture patterns. When you feel stuck,
+            ask: <strong>“Which lecture concept is this problem asking me to use?”</strong></p>
+
+        <div class="layout">
+            <section class="card">
+                <h2>Problem-by-Problem Guide</h2>
+                <p class="subtle">Use each section as a pattern reminder. This guide gives structure and hints, not full
+                    solutions.</p>
+
+                <div class="grid">
+                    <article class="problem" id="camel">
+                        <div class="problem-header">
+                            <h3>Problem 1 – camel.py</h3>
+                            <span class="pill-ok">Concept: Character iteration</span>
+                        </div>
+                        <p><strong>Task:</strong> Convert camelCase text into snake_case.</p>
+                        <div class="hint">
+                            <strong>Lecture pattern</strong>
+                            <pre><code>for c in text:
+    print(c)
+
+c.isupper()</code></pre>
+                        </div>
+                        <ol>
+                            <li>Ask for input.</li>
+                            <li>Loop through each character.</li>
+                            <li>If uppercase, add <code>_</code> then lowercase version.</li>
+                            <li>Otherwise add the character normally.</li>
+                        </ol>
+                        <div class="row" style="margin-top:10px">
+                            <a href="https://cs50.harvard.edu/python/2022/psets/2/camel/" target="_blank"
+                                rel="noopener noreferrer">Official CS50 camel.py spec</a>
+                            <button class="load-template" data-template="camel">Load starter in runner</button>
+                        </div>
+                    </article>
+
+                    <article class="problem" id="coke">
+                        <div class="problem-header">
+                            <h3>Problem 2 – coke.py</h3>
+                            <span class="pill-ok">Concept: while loop control</span>
+                        </div>
+                        <p><strong>Task:</strong> Simulate a vending machine with a 50-cent price and accepted coins 25,
+                            10, 5.</p>
+                        <div class="hint">
+                            <strong>Lecture pattern</strong>
+                            <pre><code>while amount_due &gt; 0:
+    ...</code></pre>
+                        </div>
+                        <ol>
+                            <li>Start with <code>amount_due = 50</code>.</li>
+                            <li>Prompt for coin while amount due is above zero.</li>
+                            <li>Only subtract valid coins; ignore invalid values.</li>
+                            <li>Print change owed at the end.</li>
+                        </ol>
+                        <div class="row" style="margin-top:10px">
+                            <a href="https://cs50.harvard.edu/python/2022/psets/2/coke/" target="_blank"
+                                rel="noopener noreferrer">Official CS50 coke.py spec</a>
+                            <button class="load-template" data-template="coke">Load starter in runner</button>
+                        </div>
+                    </article>
+
+                    <article class="problem" id="twttr">
+                        <div class="problem-header">
+                            <h3>Problem 3 – twttr.py</h3>
+                            <span class="pill-ok">Concept: Filtering characters</span>
+                        </div>
+                        <p><strong>Task:</strong> Remove all vowels from input text.</p>
+                        <div class="hint">
+                            <strong>Lecture pattern</strong>
+                            <pre><code>for c in text:
+    ...</code></pre>
+                        </div>
+                        <ol>
+                            <li>Ask for input text.</li>
+                            <li>Loop through characters.</li>
+                            <li>Print or collect only non-vowel characters.</li>
+                            <li>Handle uppercase and lowercase vowels.</li>
+                        </ol>
+                        <div class="row" style="margin-top:10px">
+                            <a href="https://cs50.harvard.edu/python/2022/psets/2/twttr/" target="_blank"
+                                rel="noopener noreferrer">Official CS50 twttr.py spec</a>
+                            <button class="load-template" data-template="twttr">Load starter in runner</button>
+                        </div>
+                    </article>
+
+                    <article class="problem" id="plates">
+                        <div class="problem-header">
+                            <h3>Problem 4 – plates.py</h3>
+                            <span class="pill-ok">Concept: String validation</span>
+                        </div>
+                        <p><strong>Task:</strong> Validate license plates against the assignment rules.</p>
+                        <ul>
+                            <li>Starts with two letters</li>
+                            <li>Length is 2 to 6</li>
+                            <li>Numbers appear only at the end</li>
+                            <li>First number cannot be 0</li>
+                            <li>No punctuation or spaces</li>
+                        </ul>
+                        <div class="hint">
+                            <strong>Lecture pattern</strong>
+                            <pre><code>s.isalpha()
+s.isdigit()</code></pre>
+                        </div>
+                        <div class="row" style="margin-top:10px">
+                            <a href="https://cs50.harvard.edu/python/2022/psets/2/plates/" target="_blank"
+                                rel="noopener noreferrer">Official CS50 plates.py spec</a>
+                            <button class="load-template" data-template="plates">Load starter in runner</button>
+                        </div>
+                    </article>
+
+                    <article class="problem" id="nutrition">
+                        <div class="problem-header">
+                            <h3>Problem 5 – nutrition.py</h3>
+                            <span class="pill-ok">Concept: Dictionaries</span>
+                        </div>
+                        <p><strong>Task:</strong> Print calories for a fruit using dictionary lookups.</p>
+                        <div class="hint">
+                            <strong>Lecture pattern</strong>
+                            <pre><code>fruits = {
+    "apple": 130,
+    "banana": 110
+}
+
+if fruit in fruits:
+    ...</code></pre>
+                        </div>
+                        <ol>
+                            <li>Create the fruit/calorie dictionary.</li>
+                            <li>Ask for fruit name and normalize to lowercase.</li>
+                            <li>If in dictionary, print calorie output format.</li>
+                        </ol>
+                        <div class="row" style="margin-top:10px">
+                            <a href="https://cs50.harvard.edu/python/2022/psets/2/nutrition/" target="_blank"
+                                rel="noopener noreferrer">Official CS50 nutrition.py spec</a>
+                            <button class="load-template" data-template="nutrition">Load starter in runner</button>
+                        </div>
+                    </article>
+                </div>
+
+                <section class="card" style="margin-top:12px">
+                    <h2 style="margin:0">Quick Reference</h2>
+                    <div class="table-wrap">
+                        <table aria-label="Problem to concept map">
+                            <thead>
+                                <tr>
+                                    <th>Problem</th>
+                                    <th>Concept from Lecture</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>camel.py</td>
+                                    <td>Loop through characters</td>
+                                </tr>
+                                <tr>
+                                    <td>coke.py</td>
+                                    <td>While loops</td>
+                                </tr>
+                                <tr>
+                                    <td>twttr.py</td>
+                                    <td>Filtering characters</td>
+                                </tr>
+                                <tr>
+                                    <td>plates.py</td>
+                                    <td>String validation</td>
+                                </tr>
+                                <tr>
+                                    <td>nutrition.py</td>
+                                    <td>Dictionaries</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </section>
+
+            <section class="grid">
+                <article class="card docs">
+                    <h2>Official CS50 Links</h2>
+                    <ul>
+                        <li><a href="https://cs50.harvard.edu/python/2022/weeks/2/" target="_blank"
+                                rel="noopener noreferrer">Week 2 Lecture Notes and Materials</a></li>
+                        <li><a href="https://cs50.harvard.edu/python/2022/psets/2/" target="_blank"
+                                rel="noopener noreferrer">Problem Set 2 Overview</a></li>
+                        <li><a href="https://cs50.harvard.edu/python/2022/shorts/" target="_blank"
+                                rel="noopener noreferrer">CS50P Shorts Library</a></li>
+                    </ul>
+                    <div class="callout">Use the official problem specs for exact requirements, input/output formats,
+                        and edge-case expectations.</div>
+                </article>
+
+                <article class="card runner" id="runner">
+                    <div class="row" style="justify-content:space-between">
+                        <h2 style="margin:0">Run Python in this Page</h2>
+                        <span class="status" id="pyStatus">Loading Python…</span>
+                    </div>
+                    <p class="subtle">Powered by Pyodide. Use <strong>Ctrl+Enter</strong> to run. If your code uses
+                        <code>input()</code>, the page will prompt you.
+                    </p>
+                    <textarea id="pyCode" spellcheck="false">print("CS50P Week 2 practice runner")
+
+# Try loading one of the problem starters from the buttons on the left.
+</textarea>
+                    <div class="row" style="margin-top:10px">
+                        <button id="runPy">Run Code</button>
+                        <button class="ghost" id="clearPyOut">Clear Output</button>
+                    </div>
+                    <div class="runner-output">
+                        <strong>Output</strong>
+                        <pre id="pyOut" aria-live="polite"></pre>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <h2>Debugging Checklist</h2>
+                    <div class="checklist">
+                        <label><input type="checkbox" /> Printed key variables to inspect values</label>
+                        <label><input type="checkbox" /> Tested a small piece of code first</label>
+                        <label><input type="checkbox" /> Checked indentation carefully</label>
+                        <label><input type="checkbox" /> Re-read the official problem instructions</label>
+                    </div>
+                    <div class="callout">Most bugs happen when code behavior and your expectation are different. Check
+                        assumptions one line at a time.</div>
+                </article>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        const STARTER_TEMPLATES = {
+            camel: `# camel.py starter pattern (not full solution)
+text = input("camelCase: ")
+result = ""
+
+for c in text:
+    # TODO: if uppercase, add underscore + lowercase letter
+    # TODO: otherwise add character as-is
+    pass
+
+print("snake_case:", result)`,
+            coke: `# coke.py starter pattern (not full solution)
+amount_due = 50
+
+while amount_due > 0:
+    print("Amount Due:", amount_due)
+    coin = int(input("Insert Coin: "))
+    # TODO: if coin is 25, 10, or 5, subtract it
+    # TODO: ignore invalid coins
+
+print("Change Owed:", abs(amount_due))`,
+            twttr: `# twttr.py starter pattern (not full solution)
+text = input("Input: ")
+output = ""
+
+for c in text:
+    # TODO: if c is NOT a vowel, add to output
+    pass
+
+print("Output:", output)`,
+            plates: `# plates.py starter pattern (not full solution)
+plate = input("Plate: ")
+
+def is_valid(s):
+    # TODO: check length 2-6
+    # TODO: first two characters letters
+    # TODO: numbers only at end and first number not 0
+    # TODO: no punctuation/spaces
+    return False
+
+if is_valid(plate):
+    print("Valid")
+else:
+    print("Invalid")`,
+            nutrition: `# nutrition.py starter pattern (not full solution)
+fruits = {
+    "apple": 130,
+    "avocado": 50,
+    "banana": 110,
+    "cantaloupe": 50,
+    "grapefruit": 60,
+    "grapes": 90,
+    "honeydew melon": 50,
+    "kiwifruit": 90,
+    "lemon": 15,
+    "lime": 20,
+    "nectarine": 60,
+    "orange": 80,
+    "peach": 60,
+    "pear": 100,
+    "pineapple": 50,
+    "plums": 70,
+    "strawberries": 50,
+    "sweet cherries": 100,
+    "tangerine": 50,
+    "watermelon": 80,
+}
+
+fruit = input("Item: ").strip().lower()
+
+if fruit in fruits:
+    print("Calories:", fruits[fruit])`
+        };
+
+        const pyStatus = document.getElementById('pyStatus');
+        const pyCode = document.getElementById('pyCode');
+        const pyOut = document.getElementById('pyOut');
+        const runBtn = document.getElementById('runPy');
+        const clearBtn = document.getElementById('clearPyOut');
+        let pyodide = null;
+
+        function setStatus(text, ready = false) {
+            pyStatus.textContent = text;
+            pyStatus.classList.toggle('ready', ready);
+        }
+
+        function appendOutput(line) {
+            pyOut.textContent += line;
+            pyOut.scrollTop = pyOut.scrollHeight;
+        }
+
+        async function ensurePyodide() {
+            if (pyodide) return pyodide;
+            if (typeof loadPyodide !== 'function') {
+                throw new Error('Pyodide failed to load from CDN.');
+            }
+            setStatus('Downloading Python…');
+            pyodide = await loadPyodide({
+                indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/',
+                stdout: (message) => appendOutput(message + '\n'),
+                stderr: (message) => appendOutput(message + '\n')
+            });
+            if (pyodide.setStdin) {
+                pyodide.setStdin({
+                    stdin: () => (window.prompt('Python input() — enter a line:') ?? '') + '\n'
+                });
+            }
+            setStatus('Ready', true);
+            return pyodide;
+        }
+
+        async function runPythonFromEditor() {
+            pyOut.textContent = '';
+            runBtn.disabled = true;
+            try {
+                const runtime = await ensurePyodide();
+                await runtime.runPythonAsync(pyCode.value);
+            } catch (error) {
+                appendOutput(String(error) + '\n');
+            } finally {
+                runBtn.disabled = false;
+            }
+        }
+
+        document.querySelectorAll('.load-template').forEach((button) => {
+            button.addEventListener('click', () => {
+                const key = button.dataset.template;
+                pyCode.value = STARTER_TEMPLATES[key] || '';
+                document.getElementById('runner').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+
+        runBtn.addEventListener('click', runPythonFromEditor);
+        clearBtn.addEventListener('click', () => {
+            pyOut.textContent = '';
+        });
+
+        pyCode.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+                event.preventDefault();
+                runPythonFromEditor();
+            }
+        });
+
+        ensurePyodide().catch((error) => {
+            setStatus('Failed to load', false);
+            appendOutput(String(error) + '\n');
+        });
+    </script>
+</body>
+
+</html>
