@@ -253,6 +253,13 @@
             overflow: auto;
         }
 
+        .mini-snippet-editor {
+            margin: 6px 0 0;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            overflow: hidden;
+        }
+
         code {
             font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
             font-size: 0.86rem;
@@ -858,9 +865,10 @@ amount_due = 50
 
 while amount_due > 0:
     print("Amount Due:", amount_due)
-    coin = int(input("Insert Coin: "))
-    ## TODO: if coin is
-    ## 25, 10, or 5, subtract it
+    coin_text = input("Insert Coin: ").strip()
+    ## TODO: if coin_text is digits,
+    ## convert to int and check whether
+    ## coin is 25, 10, or 5, then subtract it
     ## TODO: ignore invalid coins
 
 print("Change Owed:", abs(amount_due))`,
@@ -938,10 +946,12 @@ amount_due = 65
 
 while amount_due > 0:
     print("Amount Due:", amount_due)
-    coin = int(input("Insert Coin: "))
+    coin_text = input("Insert Coin: ").strip()
 
-    if coin == 25 or coin == 10 or coin == 5:
-        amount_due -= coin
+    if coin_text.isdigit():
+        coin = int(coin_text)
+        if coin == 25 or coin == 10 or coin == 5:
+            amount_due -= coin
 
 print("Change Owed:", abs(amount_due))`,
             twttr: `## Complete similar example:
@@ -1004,28 +1014,28 @@ else:
         const NOTE_EXAMPLE_TEMPLATES = {
             camel: `students = ["Hermione", "Harry", "Ron"]
 
-    for student in students:
-        print(student)`,
+for student in students:
+    print(student)`,
             coke: `i = 0
-    while i < 3:
-        print("meow")
-        i += 1`,
+while i < 3:
+    print("meow")
+    i += 1`,
             twttr: `for _ in range(3):
-        print("meow")`,
+    print("meow")`,
             plates: `students = {
-        "Hermione": "Gryffindor",
-        "Harry": "Gryffindor",
-    }
+    "Hermione": "Gryffindor",
+    "Harry": "Gryffindor",
+}
 
-    for student in students:
-        print(student, students[student], sep=", ")`,
+for student in students:
+    print(student, students[student], sep=", ")`,
             nutrition: `students = {
-        "Hermione": "Gryffindor",
-        "Harry": "Gryffindor",
-        "Ron": "Gryffindor",
-    }
+    "Hermione": "Gryffindor",
+    "Harry": "Gryffindor",
+    "Ron": "Gryffindor",
+}
 
-    print(students["Hermione"])`
+print(students["Hermione"])`
         };
 
         const EXAMPLE_DESCRIPTIONS = {
@@ -1114,6 +1124,47 @@ else:
             adjustEditorHeight();
         }
 
+        function enhanceLectureSnippetsWithMonaco() {
+            if (typeof monaco === 'undefined' || !monaco.editor) return;
+
+            document.querySelectorAll('.hint pre').forEach((preBlock) => {
+                if (preBlock.dataset.monacoEnhanced === 'true') return;
+
+                const codeBlock = preBlock.querySelector('code');
+                if (!codeBlock) return;
+
+                const sourceCode = codeBlock.textContent || '';
+                const host = document.createElement('div');
+                host.className = 'mini-snippet-editor';
+
+                const lineHeight = 20;
+                const lines = Math.max(1, sourceCode.split('\n').length);
+                const hostHeight = Math.max(70, Math.min(320, lines * lineHeight + 18));
+                host.style.height = `${hostHeight}px`;
+
+                preBlock.insertAdjacentElement('afterend', host);
+
+                monaco.editor.create(host, {
+                    value: sourceCode,
+                    language: 'python',
+                    theme: 'vs-dark',
+                    readOnly: true,
+                    lineNumbers: 'on',
+                    minimap: { enabled: false },
+                    scrollBeyondLastLine: false,
+                    wordWrap: 'on',
+                    automaticLayout: true,
+                    lineHeight,
+                    fontSize: 13,
+                    renderLineHighlight: 'none',
+                    ariaLabel: 'Lecture and notes code example'
+                });
+
+                preBlock.hidden = true;
+                preBlock.dataset.monacoEnhanced = 'true';
+            });
+        }
+
         async function loadExternalScript(url) {
             await new Promise((resolve, reject) => {
                 const script = document.createElement('script');
@@ -1174,6 +1225,7 @@ else:
                 pyEditorHost.style.display = 'block';
                 pyCode.style.display = 'none';
                 adjustEditorHeight();
+                enhanceLectureSnippetsWithMonaco();
                 if (editorNote) {
                     editorNote.textContent = 'Editor mode: color highlighting is on.';
                 }
@@ -1309,6 +1361,8 @@ else:
             });
 
             activeProblemKey = problemKey;
+
+            enhanceLectureSnippetsWithMonaco();
 
             if (shouldClearEditor) {
                 resetRunnerForProblemChange();
