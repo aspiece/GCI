@@ -400,7 +400,8 @@ c.isupper()</code></pre>
                         <div class="row" style="margin-top:10px">
                             <a href="https://cs50.harvard.edu/python/2022/psets/2/camel/" target="_blank"
                                 rel="noopener noreferrer">Official CS50 camel.py spec</a>
-                            <button class="load-template" data-template="camel">Load starter in runner</button>
+                            <button class="load-example" data-example="camel">Load complete similar example</button>
+                            <button class="ghost load-template" data-template="camel">Load starter for this problem</button>
                         </div>
                     </article>
 
@@ -425,7 +426,8 @@ c.isupper()</code></pre>
                         <div class="row" style="margin-top:10px">
                             <a href="https://cs50.harvard.edu/python/2022/psets/2/coke/" target="_blank"
                                 rel="noopener noreferrer">Official CS50 coke.py spec</a>
-                            <button class="load-template" data-template="coke">Load starter in runner</button>
+                            <button class="load-example" data-example="coke">Load complete similar example</button>
+                            <button class="ghost load-template" data-template="coke">Load starter for this problem</button>
                         </div>
                     </article>
 
@@ -449,7 +451,8 @@ c.isupper()</code></pre>
                         <div class="row" style="margin-top:10px">
                             <a href="https://cs50.harvard.edu/python/2022/psets/2/twttr/" target="_blank"
                                 rel="noopener noreferrer">Official CS50 twttr.py spec</a>
-                            <button class="load-template" data-template="twttr">Load starter in runner</button>
+                            <button class="load-example" data-example="twttr">Load complete similar example</button>
+                            <button class="ghost load-template" data-template="twttr">Load starter for this problem</button>
                         </div>
                     </article>
 
@@ -474,7 +477,8 @@ s.isdigit()</code></pre>
                         <div class="row" style="margin-top:10px">
                             <a href="https://cs50.harvard.edu/python/2022/psets/2/plates/" target="_blank"
                                 rel="noopener noreferrer">Official CS50 plates.py spec</a>
-                            <button class="load-template" data-template="plates">Load starter in runner</button>
+                            <button class="load-example" data-example="plates">Load complete similar example</button>
+                            <button class="ghost load-template" data-template="plates">Load starter for this problem</button>
                         </div>
                     </article>
 
@@ -502,7 +506,8 @@ if fruit in fruits:
                         <div class="row" style="margin-top:10px">
                             <a href="https://cs50.harvard.edu/python/2022/psets/2/nutrition/" target="_blank"
                                 rel="noopener noreferrer">Official CS50 nutrition.py spec</a>
-                            <button class="load-template" data-template="nutrition">Load starter in runner</button>
+                            <button class="load-example" data-example="nutrition">Load complete similar example</button>
+                            <button class="ghost load-template" data-template="nutrition">Load starter for this problem</button>
                         </div>
                     </article>
                 </div>
@@ -657,6 +662,84 @@ if fruit in fruits:
     print("Calories:", fruits[fruit])`
         };
 
+        const EXAMPLE_TEMPLATES = {
+            camel: `# Complete similar example: convert mixedCase -> under_score_case
+text = input("mixedCase: ")
+converted = ""
+
+for ch in text:
+    if ch.isupper():
+        converted += "_" + ch.lower()
+    else:
+        converted += ch
+
+print("under_score_case:", converted)`,
+            coke: `# Complete similar example: snack machine costs 65 cents
+amount_due = 65
+accepted = {25, 10, 5}
+
+while amount_due > 0:
+    print("Amount Due:", amount_due)
+    try:
+        coin = int(input("Insert Coin: "))
+    except ValueError:
+        continue
+
+    if coin in accepted:
+        amount_due -= coin
+
+print("Change Owed:", abs(amount_due))`,
+            twttr: `# Complete similar example: remove vowels from a message
+message = input("Message: ")
+vowels = "aeiouAEIOU"
+filtered = ""
+
+for ch in message:
+    if ch not in vowels:
+        filtered += ch
+
+print("Result:", filtered)`,
+            plates: `# Complete similar example: validate a custom ID tag
+tag = input("Tag: ")
+
+def valid_tag(s):
+    if len(s) < 2 or len(s) > 6:
+        return False
+    if not s[:2].isalpha():
+        return False
+    if not s.isalnum():
+        return False
+
+    seen_digit = False
+    for ch in s:
+        if ch.isdigit():
+            if not seen_digit:
+                if ch == "0":
+                    return False
+                seen_digit = True
+        elif seen_digit:
+            return False
+
+    return True
+
+print("Valid" if valid_tag(tag) else "Invalid")`,
+            nutrition: `# Complete similar example: look up points by snack name
+snack_points = {
+    "apple": 130,
+    "banana": 110,
+    "orange": 80,
+    "pear": 100,
+    "strawberries": 50,
+}
+
+item = input("Item: ").strip().lower()
+
+if item in snack_points:
+    print("Points:", snack_points[item])
+else:
+    print("Item not found")`
+        };
+
         const pyStatus = document.getElementById('pyStatus');
         const pyCode = document.getElementById('pyCode');
         const pyOut = document.getElementById('pyOut');
@@ -780,11 +863,22 @@ if fruit in fruits:
             }
         }
 
+        function loadIntoRunner(code) {
+            pyCode.value = code || '';
+            document.getElementById('runner').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
         document.querySelectorAll('.load-template').forEach((button) => {
             button.addEventListener('click', () => {
                 const key = button.dataset.template;
-                pyCode.value = STARTER_TEMPLATES[key] || '';
-                document.getElementById('runner').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                loadIntoRunner(STARTER_TEMPLATES[key]);
+            });
+        });
+
+        document.querySelectorAll('.load-example').forEach((button) => {
+            button.addEventListener('click', () => {
+                const key = button.dataset.example;
+                loadIntoRunner(EXAMPLE_TEMPLATES[key]);
             });
         });
 
