@@ -400,9 +400,9 @@
             <span class="chip">Student Support</span>
         </div>
 
-        <h1>CS50P – Problem Set 2 Student Support Guide</h1>
-        <p class="lead">Every problem in this set comes directly from Week 2 lecture patterns. When you feel stuck,
-            ask: <strong>“Which lecture concept is this problem asking me to use?”</strong></p>
+        <h1>CS50P – Problem Set 2 Help Page</h1>
+        <p class="lead">This page helps you practice each Problem Set 2 skill step by step. If you get stuck, ask:
+            <strong>“Which Week 2 idea does this problem want me to use?”</strong></p>
 
         <section class="card docs" style="margin-top:12px">
             <h2>Official CS50 Links</h2>
@@ -418,26 +418,37 @@
             and edge-case expectations.</div>
         </section>
 
+        <section class="card" style="margin-top:12px">
+            <h2>How to Use This Page</h2>
+            <ol>
+                <li>Click a problem tab.</li>
+                <li>Read the task and steps.</li>
+                <li>Click <strong>Load worked example</strong> to see a complete similar program.</li>
+                <li>Click <strong>Load starter code</strong> to begin your own version.</li>
+                <li>Press <strong>Run Code</strong> (or Ctrl+Enter) to test.</li>
+            </ol>
+        </section>
+
         <div class="layout">
             <section class="card">
-                <h2>Problem-by-Problem Guide</h2>
-                <p class="subtle">Use each section as a pattern reminder. This guide gives structure and hints, not full
-                    solutions.</p>
+                <h2>Pick a Problem</h2>
+                <p class="subtle">Each tab shows a quick plan and lecture pattern. Use it to guide your work without
+                    giving away your final CS50 answer.</p>
                 <div class="problem-tabs" role="tablist" aria-label="Problem tabs">
-                    <button class="problem-tab active" role="tab" aria-selected="true" data-tab="camel">Problem 1</button>
-                    <button class="problem-tab" role="tab" aria-selected="false" data-tab="coke">Problem 2</button>
-                    <button class="problem-tab" role="tab" aria-selected="false" data-tab="twttr">Problem 3</button>
-                    <button class="problem-tab" role="tab" aria-selected="false" data-tab="plates">Problem 4</button>
-                    <button class="problem-tab" role="tab" aria-selected="false" data-tab="nutrition">Problem 5</button>
+                    <button class="problem-tab active" role="tab" aria-selected="true" data-tab="camel">1. camel.py</button>
+                    <button class="problem-tab" role="tab" aria-selected="false" data-tab="coke">2. coke.py</button>
+                    <button class="problem-tab" role="tab" aria-selected="false" data-tab="twttr">3. twttr.py</button>
+                    <button class="problem-tab" role="tab" aria-selected="false" data-tab="plates">4. plates.py</button>
+                    <button class="problem-tab" role="tab" aria-selected="false" data-tab="nutrition">5. nutrition.py</button>
                 </div>
 
                 <div class="grid">
                     <article class="problem" id="camel" data-problem="camel">
                         <div class="problem-header">
                             <h3>Problem 1 – camel.py</h3>
-                            <span class="pill-ok">Concept: Character iteration</span>
+                            <span class="pill-ok">Skill: Loop through letters</span>
                         </div>
-                        <p><strong>Task:</strong> Convert camelCase text into snake_case.</p>
+                        <p><strong>Your goal:</strong> Change camelCase text into snake_case.</p>
                         <div class="hint">
                             <strong>Lecture pattern</strong>
                             <pre><code>for c in text:
@@ -446,26 +457,26 @@
 c.isupper()</code></pre>
                         </div>
                         <ol>
-                            <li>Ask for input.</li>
-                            <li>Loop through each character.</li>
-                            <li>If uppercase, add <code>_</code> then lowercase version.</li>
-                            <li>Otherwise add the character normally.</li>
+                            <li>Ask the user to type text.</li>
+                            <li>Check one character at a time.</li>
+                            <li>If the character is uppercase, add <code>_</code> and the lowercase letter.</li>
+                            <li>If not uppercase, add the character as-is.</li>
                         </ol>
                         <div class="row" style="margin-top:10px">
                             <a href="https://cs50.harvard.edu/python/2022/psets/2/camel/" target="_blank"
                                 rel="noopener noreferrer">Official CS50 camel.py spec</a>
-                            <button class="load-example" data-example="camel">Load complete similar example</button>
-                            <button class="ghost load-template" data-template="camel">Load starter for this problem</button>
+                            <button class="load-example" data-example="camel">Load worked example</button>
+                            <button class="ghost load-template" data-template="camel">Load starter code</button>
                         </div>
                     </article>
 
                     <article class="problem hidden" id="coke" data-problem="coke">
                         <div class="problem-header">
                             <h3>Problem 2 – coke.py</h3>
-                            <span class="pill-ok">Concept: while loop control</span>
+                            <span class="pill-ok">Skill: while loop</span>
                         </div>
-                        <p><strong>Task:</strong> Simulate a vending machine with a 50-cent price and accepted coins 25,
-                            10, 5.</p>
+                        <p><strong>Your goal:</strong> Build a vending machine that starts at 50 cents and only accepts
+                            25, 10, and 5.</p>
                         <div class="hint">
                             <strong>Lecture pattern</strong>
                             <pre><code>while amount_due &gt; 0:
@@ -473,49 +484,49 @@ c.isupper()</code></pre>
                         </div>
                         <ol>
                             <li>Start with <code>amount_due = 50</code>.</li>
-                            <li>Prompt for coin while amount due is above zero.</li>
-                            <li>Only subtract valid coins; ignore invalid values.</li>
-                            <li>Print change owed at the end.</li>
+                            <li>Keep asking for coins while money is still due.</li>
+                            <li>Only subtract valid coins; ignore anything else.</li>
+                            <li>When done, print the change owed.</li>
                         </ol>
                         <div class="row" style="margin-top:10px">
                             <a href="https://cs50.harvard.edu/python/2022/psets/2/coke/" target="_blank"
                                 rel="noopener noreferrer">Official CS50 coke.py spec</a>
-                            <button class="load-example" data-example="coke">Load complete similar example</button>
-                            <button class="ghost load-template" data-template="coke">Load starter for this problem</button>
+                            <button class="load-example" data-example="coke">Load worked example</button>
+                            <button class="ghost load-template" data-template="coke">Load starter code</button>
                         </div>
                     </article>
 
                     <article class="problem hidden" id="twttr" data-problem="twttr">
                         <div class="problem-header">
                             <h3>Problem 3 – twttr.py</h3>
-                            <span class="pill-ok">Concept: Filtering characters</span>
+                            <span class="pill-ok">Skill: Filter characters</span>
                         </div>
-                        <p><strong>Task:</strong> Remove all vowels from input text.</p>
+                        <p><strong>Your goal:</strong> Remove all vowels from the text.</p>
                         <div class="hint">
                             <strong>Lecture pattern</strong>
                             <pre><code>for c in text:
     ...</code></pre>
                         </div>
                         <ol>
-                            <li>Ask for input text.</li>
+                            <li>Ask the user for text.</li>
                             <li>Loop through characters.</li>
-                            <li>Print or collect only non-vowel characters.</li>
-                            <li>Handle uppercase and lowercase vowels.</li>
+                            <li>Keep only characters that are not vowels.</li>
+                            <li>Remember both lowercase and uppercase vowels.</li>
                         </ol>
                         <div class="row" style="margin-top:10px">
                             <a href="https://cs50.harvard.edu/python/2022/psets/2/twttr/" target="_blank"
                                 rel="noopener noreferrer">Official CS50 twttr.py spec</a>
-                            <button class="load-example" data-example="twttr">Load complete similar example</button>
-                            <button class="ghost load-template" data-template="twttr">Load starter for this problem</button>
+                            <button class="load-example" data-example="twttr">Load worked example</button>
+                            <button class="ghost load-template" data-template="twttr">Load starter code</button>
                         </div>
                     </article>
 
                     <article class="problem hidden" id="plates" data-problem="plates">
                         <div class="problem-header">
                             <h3>Problem 4 – plates.py</h3>
-                            <span class="pill-ok">Concept: String validation</span>
+                            <span class="pill-ok">Skill: Check text rules</span>
                         </div>
-                        <p><strong>Task:</strong> Validate license plates against the assignment rules.</p>
+                        <p><strong>Your goal:</strong> Check if a license plate follows every rule.</p>
                         <ul>
                             <li>Starts with two letters</li>
                             <li>Length is 2 to 6</li>
@@ -531,17 +542,17 @@ s.isdigit()</code></pre>
                         <div class="row" style="margin-top:10px">
                             <a href="https://cs50.harvard.edu/python/2022/psets/2/plates/" target="_blank"
                                 rel="noopener noreferrer">Official CS50 plates.py spec</a>
-                            <button class="load-example" data-example="plates">Load complete similar example</button>
-                            <button class="ghost load-template" data-template="plates">Load starter for this problem</button>
+                            <button class="load-example" data-example="plates">Load worked example</button>
+                            <button class="ghost load-template" data-template="plates">Load starter code</button>
                         </div>
                     </article>
 
                     <article class="problem hidden" id="nutrition" data-problem="nutrition">
                         <div class="problem-header">
                             <h3>Problem 5 – nutrition.py</h3>
-                            <span class="pill-ok">Concept: Dictionaries</span>
+                            <span class="pill-ok">Skill: Dictionary lookups</span>
                         </div>
-                        <p><strong>Task:</strong> Print calories for a fruit using dictionary lookups.</p>
+                        <p><strong>Your goal:</strong> Use a dictionary to print calories for a fruit.</p>
                         <div class="hint">
                             <strong>Lecture pattern</strong>
                             <pre><code>fruits = {
@@ -553,21 +564,21 @@ if fruit in fruits:
     ...</code></pre>
                         </div>
                         <ol>
-                            <li>Create the fruit/calorie dictionary.</li>
-                            <li>Ask for fruit name and normalize to lowercase.</li>
-                            <li>If in dictionary, print calorie output format.</li>
+                            <li>Make a dictionary of fruits and calories.</li>
+                            <li>Ask for a fruit and change it to lowercase.</li>
+                            <li>If the fruit exists, print its calories.</li>
                         </ol>
                         <div class="row" style="margin-top:10px">
                             <a href="https://cs50.harvard.edu/python/2022/psets/2/nutrition/" target="_blank"
                                 rel="noopener noreferrer">Official CS50 nutrition.py spec</a>
-                            <button class="load-example" data-example="nutrition">Load complete similar example</button>
-                            <button class="ghost load-template" data-template="nutrition">Load starter for this problem</button>
+                            <button class="load-example" data-example="nutrition">Load worked example</button>
+                            <button class="ghost load-template" data-template="nutrition">Load starter code</button>
                         </div>
                     </article>
                 </div>
 
                 <section class="card" style="margin-top:12px">
-                    <h2 style="margin:0">Quick Reference</h2>
+                    <h2 style="margin:0">Quick Reference (At a Glance)</h2>
                     <div class="table-wrap">
                         <table aria-label="Problem to concept map">
                             <thead>
@@ -606,14 +617,14 @@ if fruit in fruits:
             <section class="grid">
                 <article class="card runner" id="runner">
                     <div class="row" style="justify-content:space-between">
-                        <h2 style="margin:0">Run Python in this Page</h2>
+                        <h2 style="margin:0">Try Code Here</h2>
                         <span class="status" id="pyStatus">Loading Python…</span>
                     </div>
                     <div class="callout" id="loadedExampleInfo" style="margin-top:8px">
-                        Loaded example: none yet.
+                        Loaded code info: none yet.
                     </div>
-                    <p class="subtle">Powered by Pyodide. Use <strong>Ctrl+Enter</strong> to run. If your code uses
-                        <code>input()</code>, the page will prompt you.
+                    <p class="subtle">Use <strong>Ctrl+Enter</strong> to run. If your code has
+                        <code>input()</code>, a pop-up will ask for your answer.
                     </p>
                     <div id="pyEditor" class="editor-host" aria-label="Python code editor"></div>
                     <textarea id="pyCode" spellcheck="false">print("CS50P Week 2 practice runner")
@@ -621,7 +632,7 @@ if fruit in fruits:
 ## Try loading one of the problem starters
 ## from the buttons on the left.
 </textarea>
-                    <div id="editorNote" class="editor-note">Editor mode: standard textarea (loading VS Code-style highlighting…)</div>
+                    <div id="editorNote" class="editor-note">Editor mode: basic editor (trying to load color highlighting…)</div>
                     <div class="row" style="margin-top:10px">
                         <button id="runPy">Run Code</button>
                         <button class="ghost" id="clearPyOut">Clear Output</button>
@@ -635,13 +646,13 @@ if fruit in fruits:
                 <article class="card">
                     <h2>Debugging Checklist</h2>
                     <div class="checklist">
-                        <label><input type="checkbox" /> Printed key variables to inspect values</label>
-                        <label><input type="checkbox" /> Tested a small piece of code first</label>
-                        <label><input type="checkbox" /> Checked indentation carefully</label>
+                        <label><input type="checkbox" /> Print variables to see what values your program is using</label>
+                        <label><input type="checkbox" /> Test one small part of your code first</label>
+                        <label><input type="checkbox" /> Check spaces and indentation</label>
                         <label><input type="checkbox" /> Re-read the official problem instructions</label>
                     </div>
-                    <div class="callout">Most bugs happen when code behavior and your expectation are different. Check
-                        assumptions one line at a time.</div>
+                    <div class="callout">Most bugs happen when code does something different than you expected.
+                        Check one line at a time.</div>
                 </article>
             </section>
         </div>
@@ -811,11 +822,11 @@ else:
         };
 
         const EXAMPLE_DESCRIPTIONS = {
-            camel: 'Converts mixedCase text into under_score_case by inserting underscores before uppercase letters.',
-            coke: 'Simulates a snack machine that accepts only specific coins until the amount due reaches zero or less.',
-            twttr: 'Builds a filtered message by removing all vowels while preserving punctuation and consonants.',
-            plates: 'Validates a custom ID tag with length, letter prefix, digit placement, and no punctuation rules.',
-            nutrition: 'Looks up a normalized item name in a dictionary and prints a value when the key exists.'
+            camel: 'Turns mixedCase text into under_score_case by adding underscores before capital letters.',
+            coke: 'Runs a coin machine loop until the amount due is paid.',
+            twttr: 'Removes vowels from a message while keeping other characters.',
+            plates: 'Checks a custom plate string using length, letters, and number-position rules.',
+            nutrition: 'Finds an item in a dictionary and prints its value if it exists.'
         };
 
         const pyStatus = document.getElementById('pyStatus');
@@ -924,14 +935,14 @@ else:
                 pyEditorHost.style.display = 'block';
                 pyCode.style.display = 'none';
                 if (editorNote) {
-                    editorNote.textContent = 'Editor mode: VS Code-style syntax highlighting active.';
+                    editorNote.textContent = 'Editor mode: color highlighting is on.';
                 }
             } catch (_) {
                 pyEditor = null;
                 pyEditorHost.style.display = 'none';
                 pyCode.style.display = 'block';
                 if (editorNote) {
-                    editorNote.textContent = 'Editor mode: standard textarea (Monaco blocked or unavailable on this network).';
+                    editorNote.textContent = 'Editor mode: basic editor (color highlighting may be blocked on this network).';
                 }
             }
         }
@@ -1027,7 +1038,7 @@ else:
 
         function setLoadedExampleText(text) {
             if (!loadedExampleInfo) return;
-            loadedExampleInfo.textContent = text || 'Loaded example: none yet.';
+            loadedExampleInfo.textContent = text || 'Loaded code info: none yet.';
         }
 
         function activateProblemTab(problemKey) {
@@ -1058,15 +1069,15 @@ else:
         document.querySelectorAll('.load-template').forEach((button) => {
             button.addEventListener('click', () => {
                 const key = button.dataset.template;
-                loadIntoRunner(STARTER_TEMPLATES[key], `Loaded starter for ${key}.`);
+                loadIntoRunner(STARTER_TEMPLATES[key], `Loaded starter code for ${key}.`);
             });
         });
 
         document.querySelectorAll('.load-example').forEach((button) => {
             button.addEventListener('click', () => {
                 const key = button.dataset.example;
-                const description = EXAMPLE_DESCRIPTIONS[key] || 'Loaded complete similar example.';
-                loadIntoRunner(EXAMPLE_TEMPLATES[key], `Loaded example (${key}): ${description}`);
+                const description = EXAMPLE_DESCRIPTIONS[key] || 'Loaded worked example.';
+                loadIntoRunner(EXAMPLE_TEMPLATES[key], `Loaded worked example for ${key}: ${description}`);
             });
         });
 
