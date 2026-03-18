@@ -122,11 +122,43 @@
             gap: 12px;
         }
 
+        .problem-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .problem-tab {
+            border: 1px solid var(--border);
+            background: #f8fbff;
+            color: var(--text);
+            border-radius: 10px;
+            font-weight: 700;
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        .problem-tab:hover,
+        .problem-tab:focus-visible {
+            background: #eff6ff;
+        }
+
+        .problem-tab.active {
+            background: var(--accent);
+            color: #ffffff;
+            border-color: var(--accent);
+        }
+
         .problem {
             border: 1px solid var(--border);
             border-radius: 12px;
             padding: 12px;
             background: #fbfdff;
+        }
+
+        .problem.hidden {
+            display: none;
         }
 
         .problem-header {
@@ -391,9 +423,16 @@
                 <h2>Problem-by-Problem Guide</h2>
                 <p class="subtle">Use each section as a pattern reminder. This guide gives structure and hints, not full
                     solutions.</p>
+                <div class="problem-tabs" role="tablist" aria-label="Problem tabs">
+                    <button class="problem-tab active" role="tab" aria-selected="true" data-tab="camel">Problem 1</button>
+                    <button class="problem-tab" role="tab" aria-selected="false" data-tab="coke">Problem 2</button>
+                    <button class="problem-tab" role="tab" aria-selected="false" data-tab="twttr">Problem 3</button>
+                    <button class="problem-tab" role="tab" aria-selected="false" data-tab="plates">Problem 4</button>
+                    <button class="problem-tab" role="tab" aria-selected="false" data-tab="nutrition">Problem 5</button>
+                </div>
 
                 <div class="grid">
-                    <article class="problem" id="camel">
+                    <article class="problem" id="camel" data-problem="camel">
                         <div class="problem-header">
                             <h3>Problem 1 – camel.py</h3>
                             <span class="pill-ok">Concept: Character iteration</span>
@@ -420,7 +459,7 @@ c.isupper()</code></pre>
                         </div>
                     </article>
 
-                    <article class="problem" id="coke">
+                    <article class="problem hidden" id="coke" data-problem="coke">
                         <div class="problem-header">
                             <h3>Problem 2 – coke.py</h3>
                             <span class="pill-ok">Concept: while loop control</span>
@@ -446,7 +485,7 @@ c.isupper()</code></pre>
                         </div>
                     </article>
 
-                    <article class="problem" id="twttr">
+                    <article class="problem hidden" id="twttr" data-problem="twttr">
                         <div class="problem-header">
                             <h3>Problem 3 – twttr.py</h3>
                             <span class="pill-ok">Concept: Filtering characters</span>
@@ -471,7 +510,7 @@ c.isupper()</code></pre>
                         </div>
                     </article>
 
-                    <article class="problem" id="plates">
+                    <article class="problem hidden" id="plates" data-problem="plates">
                         <div class="problem-header">
                             <h3>Problem 4 – plates.py</h3>
                             <span class="pill-ok">Concept: String validation</span>
@@ -497,7 +536,7 @@ s.isdigit()</code></pre>
                         </div>
                     </article>
 
-                    <article class="problem" id="nutrition">
+                    <article class="problem hidden" id="nutrition" data-problem="nutrition">
                         <div class="problem-header">
                             <h3>Problem 5 – nutrition.py</h3>
                             <span class="pill-ok">Concept: Dictionaries</span>
@@ -977,6 +1016,25 @@ else:
             if (!loadedExampleInfo) return;
             loadedExampleInfo.textContent = text || 'Loaded example: none yet.';
         }
+
+        function activateProblemTab(problemKey) {
+            document.querySelectorAll('.problem-tab').forEach((button) => {
+                const active = button.dataset.tab === problemKey;
+                button.classList.toggle('active', active);
+                button.setAttribute('aria-selected', active ? 'true' : 'false');
+            });
+
+            document.querySelectorAll('.problem[data-problem]').forEach((panel) => {
+                const active = panel.dataset.problem === problemKey;
+                panel.classList.toggle('hidden', !active);
+            });
+        }
+
+        document.querySelectorAll('.problem-tab').forEach((button) => {
+            button.addEventListener('click', () => {
+                activateProblemTab(button.dataset.tab);
+            });
+        });
 
         function loadIntoRunner(code, descriptionText = '') {
             setEditorCode(code);
