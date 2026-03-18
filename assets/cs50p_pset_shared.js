@@ -326,6 +326,16 @@
     return `for _ in range(3):\n    print("meow")`;
   }
 
+  function buildSnippetBlock(codeText, label) {
+    const encoded = encodeURIComponent(codeText);
+    return `
+      <div class="snippet-block" aria-label="${safeHtml(label)} code example">
+        <div class="snippet-editor" data-code="${encoded}" data-label="${safeHtml(label)}"></div>
+        <pre class="snippet-fallback"><code>${safeHtml(codeText)}</code></pre>
+      </div>
+    `;
+  }
+
   async function loadExternalScript(url) {
     await new Promise((resolve, reject) => {
       const script = document.createElement('script');
@@ -425,9 +435,9 @@
         <p><strong>Focus skill:</strong> ${safeHtml(problem.skill || PROBLEM_ALIGNMENT[problem.title]?.skill || 'Use loops, conditions, and string/list/dict tools from this week.')}</p>
         <div class="hint">
           <strong>Lecture pattern</strong>
-          <pre><code>${safeHtml(problemLecturePattern(problem))}</code></pre>
+          ${buildSnippetBlock(problemLecturePattern(problem), 'Lecture pattern')}
           <p><strong>Example from the notes</strong></p>
-          <pre><code>${safeHtml(problemNoteExample(problem))}</code></pre>
+          ${buildSnippetBlock(problemNoteExample(problem), 'Example from the notes')}
           <div class="row" style="margin-top:8px">
             <button type="button" class="ghost mini-load load-note" data-index="${index}">Load note example</button>
           </div>
@@ -484,6 +494,48 @@
     });
   }
 
+  function enhanceSnippetsWithMonaco() {
+    if (typeof monaco === 'undefined') return;
+
+    const editors = document.querySelectorAll('.snippet-editor[data-code]');
+    editors.forEach((host) => {
+      if (host.dataset.enhanced === 'true') return;
+
+      const code = decodeURIComponent(host.dataset.code || '');
+      const lines = Math.max(1, code.split('\n').length);
+      const lineHeight = 20;
+      const height = Math.max(70, Math.min(320, lines * lineHeight + 18));
+
+      host.style.height = `${height}px`;
+      host.style.display = 'block';
+
+      const fallback = host.parentElement ? host.parentElement.querySelector('.snippet-fallback') : null;
+      if (fallback) fallback.style.display = 'none';
+
+      monaco.editor.create(host, {
+        value: code,
+        language: 'python',
+        theme: 'vs-dark',
+        readOnly: true,
+        lineNumbers: 'on',
+        minimap: { enabled: false },
+        scrollBeyondLastLine: false,
+        wordWrap: 'on',
+        fontSize: 13,
+        lineHeight,
+        automaticLayout: true,
+        scrollbar: {
+          vertical: 'hidden',
+          horizontal: 'auto',
+          handleMouseWheel: false,
+        },
+        ariaLabel: host.dataset.label || 'Code example'
+      });
+
+      host.dataset.enhanced = 'true';
+    });
+  }
+
   function activateTab(index, clearEditor = false, focusTab = false) {
     const tabList = Array.from(tabs.querySelectorAll('.problem-tab'));
     const panelList = Array.from(panels.querySelectorAll('.problem-panel'));
@@ -507,6 +559,8 @@
       if (outputEl) outputEl.textContent = '';
       setLoadedInfo('Loaded code info: none yet.');
     }
+
+    enhanceSnippetsWithMonaco();
   }
 
   function scrollToRunner() {

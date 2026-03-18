@@ -160,6 +160,23 @@ input:focus-visible {
   font-size: 0.86rem;
 }
 
+.snippet-block {
+  margin-top: 6px;
+}
+
+.snippet-editor {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  overflow: hidden;
+  display: none;
+  background: #0b1224;
+}
+
+.snippet-fallback {
+  margin: 0;
+}
+
 .mini-load {
   min-height: 34px;
   padding: 6px 10px;
