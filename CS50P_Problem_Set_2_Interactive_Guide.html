@@ -284,6 +284,21 @@
             color: #e2e8f0;
         }
 
+        .editor-host {
+            width: 100%;
+            height: 320px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .editor-note {
+            margin-top: 6px;
+            color: var(--muted);
+            font-size: 0.84rem;
+        }
+
         .runner-output {
             margin-top: 10px;
         }
@@ -555,13 +570,18 @@ if fruit in fruits:
                         <h2 style="margin:0">Run Python in this Page</h2>
                         <span class="status" id="pyStatus">Loading Python…</span>
                     </div>
+                    <div class="callout" id="loadedExampleInfo" style="margin-top:8px">
+                        Loaded example: none yet.
+                    </div>
                     <p class="subtle">Powered by Pyodide. Use <strong>Ctrl+Enter</strong> to run. If your code uses
                         <code>input()</code>, the page will prompt you.
                     </p>
+                    <div id="pyEditor" class="editor-host" aria-label="Python code editor"></div>
                     <textarea id="pyCode" spellcheck="false">print("CS50P Week 2 practice runner")
 
 # Try loading one of the problem starters from the buttons on the left.
 </textarea>
+                    <div id="editorNote" class="editor-note">Editor mode: standard textarea (loading VS Code-style highlighting…)</div>
                     <div class="row" style="margin-top:10px">
                         <button id="runPy">Run Code</button>
                         <button class="ghost" id="clearPyOut">Clear Output</button>
@@ -740,12 +760,24 @@ else:
     print("Item not found")`
         };
 
+        const EXAMPLE_DESCRIPTIONS = {
+            camel: 'Converts mixedCase text into under_score_case by inserting underscores before uppercase letters.',
+            coke: 'Simulates a snack machine that accepts only specific coins until the amount due reaches zero or less.',
+            twttr: 'Builds a filtered message by removing all vowels while preserving punctuation and consonants.',
+            plates: 'Validates a custom ID tag with length, letter prefix, digit placement, and no punctuation rules.',
+            nutrition: 'Looks up a normalized item name in a dictionary and prints a value when the key exists.'
+        };
+
         const pyStatus = document.getElementById('pyStatus');
         const pyCode = document.getElementById('pyCode');
+        const pyEditorHost = document.getElementById('pyEditor');
+        const editorNote = document.getElementById('editorNote');
         const pyOut = document.getElementById('pyOut');
+        const loadedExampleInfo = document.getElementById('loadedExampleInfo');
         const runBtn = document.getElementById('runPy');
         const clearBtn = document.getElementById('clearPyOut');
         let pyodide = null;
+        let pyEditor = null;
         let pyodideIndexURL = null;
         const attemptedScripts = new Set();
 
@@ -772,6 +804,84 @@ else:
         function appendOutput(line) {
             pyOut.textContent += line;
             pyOut.scrollTop = pyOut.scrollHeight;
+        }
+
+        function getEditorCode() {
+            if (pyEditor) return pyEditor.getValue();
+            return pyCode.value;
+        }
+
+        function setEditorCode(code) {
+            const nextCode = code || '';
+            if (pyEditor) {
+                pyEditor.setValue(nextCode);
+            }
+            pyCode.value = nextCode;
+        }
+
+        async function loadExternalScript(url) {
+            await new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = url;
+                script.async = true;
+                script.onload = () => resolve();
+                script.onerror = () => reject(new Error(`Failed to load: ${url}`));
+                document.head.appendChild(script);
+            });
+        }
+
+        async function initializeMonacoEditor() {
+            try {
+                if (!window.require) {
+                    await loadExternalScript('https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/loader.js');
+                }
+                if (!window.require) {
+                    throw new Error('Monaco loader unavailable');
+                }
+
+                const monacoBase = 'https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/';
+                window.MonacoEnvironment = {
+                    getWorkerUrl: function () {
+                        return `data:text/javascript;charset=utf-8,${encodeURIComponent(
+                            `self.MonacoEnvironment={baseUrl:'${monacoBase}'};importScripts('${monacoBase}vs/base/worker/workerMain.js');`
+                        )}`;
+                    }
+                };
+
+                await new Promise((resolve, reject) => {
+                    window.require.config({ paths: { vs: monacoBase + 'vs' } });
+                    window.require(['vs/editor/editor.main'], resolve, reject);
+                });
+
+                pyEditor = monaco.editor.create(pyEditorHost, {
+                    value: pyCode.value,
+                    language: 'python',
+                    theme: 'vs-dark',
+                    automaticLayout: true,
+                    minimap: { enabled: false },
+                    fontSize: 14,
+                    tabSize: 4,
+                    insertSpaces: true,
+                    scrollBeyondLastLine: false,
+                });
+
+                pyEditor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
+                    runPythonFromEditor();
+                });
+
+                pyEditorHost.style.display = 'block';
+                pyCode.style.display = 'none';
+                if (editorNote) {
+                    editorNote.textContent = 'Editor mode: VS Code-style syntax highlighting active.';
+                }
+            } catch (_) {
+                pyEditor = null;
+                pyEditorHost.style.display = 'none';
+                pyCode.style.display = 'block';
+                if (editorNote) {
+                    editorNote.textContent = 'Editor mode: standard textarea (Monaco blocked or unavailable on this network).';
+                }
+            }
         }
 
         function delay(ms) {
@@ -855,7 +965,7 @@ else:
             runBtn.disabled = true;
             try {
                 const runtime = await ensurePyodide();
-                await runtime.runPythonAsync(pyCode.value);
+                await runtime.runPythonAsync(getEditorCode());
             } catch (error) {
                 appendOutput(String(error) + '\n');
             } finally {
@@ -863,22 +973,29 @@ else:
             }
         }
 
-        function loadIntoRunner(code) {
-            pyCode.value = code || '';
+        function setLoadedExampleText(text) {
+            if (!loadedExampleInfo) return;
+            loadedExampleInfo.textContent = text || 'Loaded example: none yet.';
+        }
+
+        function loadIntoRunner(code, descriptionText = '') {
+            setEditorCode(code);
+            setLoadedExampleText(descriptionText);
             document.getElementById('runner').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         document.querySelectorAll('.load-template').forEach((button) => {
             button.addEventListener('click', () => {
                 const key = button.dataset.template;
-                loadIntoRunner(STARTER_TEMPLATES[key]);
+                loadIntoRunner(STARTER_TEMPLATES[key], `Loaded starter for ${key}.`);
             });
         });
 
         document.querySelectorAll('.load-example').forEach((button) => {
             button.addEventListener('click', () => {
                 const key = button.dataset.example;
-                loadIntoRunner(EXAMPLE_TEMPLATES[key]);
+                const description = EXAMPLE_DESCRIPTIONS[key] || 'Loaded complete similar example.';
+                loadIntoRunner(EXAMPLE_TEMPLATES[key], `Loaded example (${key}): ${description}`);
             });
         });
 
@@ -893,6 +1010,8 @@ else:
                 runPythonFromEditor();
             }
         });
+
+        initializeMonacoEditor();
 
         ensurePyodide().catch(() => {
             setStatus('Python not ready (click Run to retry)', false);
