@@ -131,119 +131,113 @@
             background: #ffe066;
             color: #333;
         }
+
+        /* ...existing code... */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            box-shadow: var(--shadow);
+            padding: 14px;
+        }
+
+        h2 {
+            margin: 0 0 10px;
+            font-size: 1.14rem;
+        }
+
+        h3 {
+            margin: 0 0 8px;
+            font-size: 1.02rem;
+        }
+
+        p {
+            margin: 8px 0;
+        }
+
+        .subtle {
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .problem-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .problem-tab {
+            border: 1px solid var(--border);
+            background: #f8fbff;
+            color: var(--text);
+            border-radius: 10px;
+            font-weight: 700;
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        .problem-tab:hover,
+        .problem-tab:focus-visible {
+            background: #eff6ff;
+        }
+
+        .problem-tab.active {
+            background: var(--accent);
+            color: #ffffff;
+            border-color: var(--accent);
+        }
+
+        .problem {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px;
+            background: #fbfdff;
+        }
+
+        .problem.hidden {
+            display: none;
+        }
+
+        .problem-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .problem a {
+            color: var(--accent);
+            text-decoration: underline;
+            text-underline-offset: 0.18em;
+            font-weight: 700;
+        }
+
+        .problem a:hover,
+        .problem a:focus-visible {
+            text-decoration: underline;
+        }
+
+        .pill-ok {
+            display: inline-block;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            color: var(--ok);
+            background: var(--ok-bg);
+            border: 1px solid #86efac;
+        }
+
+        /* ...existing code... */
     </style>
-
-    .card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    box-shadow: var(--shadow);
-    padding: 14px;
-    }
-
-    h2 {
-    margin: 0 0 10px;
-    font-size: 1.14rem;
-    }
-
-    h3 {
-    margin: 0 0 8px;
-    font-size: 1.02rem;
-    }
-
-    p {
-    margin: 8px 0;
-    }
-
-    .subtle {
-    color: var(--muted);
-    font-size: 0.95rem;
-    }
-
-    .grid {
-    display: grid;
-    gap: 12px;
-    }
-
-    .problem-tabs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 10px;
-    }
-
-    .problem-tab {
-    border: 1px solid var(--border);
-    background: #f8fbff;
-    color: var(--text);
-    border-radius: 10px;
-    font-weight: 700;
-    padding: 8px 12px;
-    cursor: pointer;
-    }
-
-    .problem-tab:hover,
-    .problem-tab:focus-visible {
-    background: #eff6ff;
-    }
-
-    .problem-tab.active {
-    background: var(--accent);
-    color: #ffffff;
-    border-color: var(--accent);
-    }
-
-    .problem {
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 12px;
-    background: #fbfdff;
-    }
-
-    .problem.hidden {
-    display: none;
-    }
-
-    .problem-header {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 8px;
-    align-items: center;
-    margin-bottom: 8px;
-    }
-
-    .problem a {
-    color: var(--accent);
-    text-decoration: underline;
-    text-underline-offset: 0.18em;
-    font-weight: 700;
-    }
-
-    .problem a:hover,
-    .problem a:focus-visible {
-    text-decoration: underline;
-    }
-
-    .pill-ok {
-    display: inline-block;
-    border-radius: 999px;
-    font-size: 0.78rem;
-    font-weight: 700;
-    padding: 4px 10px;
-    color: var(--ok);
-    background: var(--ok-bg);
-    border: 1px solid #86efac;
-    }
-
-    .hint {
-    border-left: 4px solid #0ea5e9;
-    padding: 8px 10px;
-    border-radius: 8px;
-    background: #e0f2fe;
-    color: #1e293b;
-    margin: 8px 0;
-    }
 
     pre {
     margin: 6px 0 0;
