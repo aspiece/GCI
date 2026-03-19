@@ -780,18 +780,7 @@
             font-size: 1rem;
         }
 
-        .accessibility-controls details {
-            margin-top: 8px;
-        }
-
-        .accessibility-controls summary {
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: var(--accent);
-        }
-
-        .accessibility-controls summary+div {
+        .accessibility-controls .tools-body {
             margin-top: 8px;
         }
 
@@ -837,19 +826,11 @@
             padding: 10px 12px;
         }
 
-        .compact-collapsible details {
-            margin-top: 2px;
-        }
-
-        .compact-collapsible summary {
-            cursor: pointer;
-            font-weight: 700;
+        .compact-collapsible .static-title {
+            margin: 0 0 8px;
             color: var(--accent);
+            font-weight: 700;
             font-size: 0.95rem;
-        }
-
-        .compact-collapsible details>div {
-            margin-top: 8px;
         }
 
         .now-next {
@@ -888,15 +869,27 @@
             background: #f8fafc;
         }
 
-        .runner-flow summary {
-            cursor: pointer;
+        .runner-flow .flow-title {
             color: var(--accent);
             font-weight: 700;
             font-size: 0.9rem;
+            margin-bottom: 6px;
         }
 
         .runner-flow .checklist {
             margin-top: 8px;
+        }
+
+        .layout>.grid>.card {
+            padding: 10px 12px;
+        }
+
+        .layout>.grid>.card>*:last-child {
+            margin-bottom: 0;
+        }
+
+        .layout>.grid>.card .callout {
+            margin-bottom: 0;
         }
 
         /* ── Error decoder ── */
@@ -1026,49 +1019,44 @@
 
             <section class="card accessibility-controls compact-top" aria-labelledby="accessibility-tools-title">
                 <h2 id="accessibility-tools-title">Accessibility Tools</h2>
-                <details open>
-                    <summary>Tools</summary>
-                    <div>
-                        <div class="control-grid">
-                            <label><input id="toggleFocusMode" type="checkbox" /> One Problem at a Time mode</label>
-                            <label><input id="toggleCalmColors" type="checkbox" /> Softer colors</label>
-                            <label><input id="toggleSpaciousText" type="checkbox" /> Extra line spacing</label>
-                            <label><input id="toggleLargeText" type="checkbox" /> Larger text</label>
-                            <label><input id="toggleReduceMotion" type="checkbox" /> Reduce motion</label>
-                        </div>
-                        <div class="focus-nav" aria-label="Focus mode navigation">
-                            <button type="button" class="ghost" id="prevProblemBtn" hidden>Previous Problem</button>
-                            <button type="button" class="ghost" id="nextProblemBtn" hidden>Next Problem</button>
-                        </div>
-                        <div class="focus-note" id="focusModeNote">Focus mode is off. You can see all problem tabs.
-                        </div>
+                <div class="tools-body">
+                    <p class="static-title">Applied Accessibility Settings</p>
+                    <ul class="subtle" style="margin:0 0 0 18px;">
+                        <li>One Problem at a Time mode is on</li>
+                        <li>Softer colors are on</li>
+                        <li>Extra line spacing is on</li>
+                        <li>Larger text is on</li>
+                        <li>Reduced motion is on</li>
+                    </ul>
+                    <div class="focus-nav" aria-label="Focus mode navigation">
+                        <button type="button" class="ghost" id="prevProblemBtn">Previous Problem</button>
+                        <button type="button" class="ghost" id="nextProblemBtn">Next Problem</button>
                     </div>
-                </details>
+                    <div class="focus-note" id="focusModeNote">Focus mode is on. Use Previous/Next to move one
+                        problem at a time.
+                    </div>
+                </div>
             </section>
         </section>
 
         <section class="card compact-collapsible" aria-label="Usage guidelines">
-            <details open>
-                <summary>Usage Guidelines (Do / Don't)</summary>
-                <div>
-                    <div class="do-dont">
-                        <div class="dont-box">
-                            <strong>🚫 Do NOT:</strong>
-                            <ul>
-                                <li>Copy code from this page directly into your CS50 submission</li>
-                                <li>Skip reading the official CS50 problem description</li>
-                            </ul>
-                        </div>
-                        <div class="do-box">
-                            <strong>✅ DO:</strong>
-                            <ul>
-                                <li>Use this page to understand patterns and approaches</li>
-                                <li>Write your own version in your CS50 codespace</li>
-                            </ul>
-                        </div>
-                    </div>
+            <p class="static-title">Usage Guidelines (Do / Don't)</p>
+            <div class="do-dont">
+                <div class="dont-box">
+                    <strong>🚫 Do NOT:</strong>
+                    <ul>
+                        <li>Copy code from this page directly into your CS50 submission</li>
+                        <li>Skip reading the official CS50 problem description</li>
+                    </ul>
                 </div>
-            </details>
+                <div class="do-box">
+                    <strong>✅ DO:</strong>
+                    <ul>
+                        <li>Use this page to understand patterns and approaches</li>
+                        <li>Write your own version in your CS50 codespace</li>
+                    </ul>
+                </div>
+            </div>
         </section>
 
         <div class="layout">
@@ -1553,92 +1541,82 @@ print(students["Hermione"])</code></pre>
                 </div>
 
                 <section class="card compact-collapsible" style="margin-top:8px">
-                    <details open>
-                        <summary>Quick Reference (At a Glance)</summary>
-                        <div class="table-wrap">
-                            <table aria-label="Problem to concept map">
-                                <caption class="sr-only">Quick reference table showing each CS50P problem and its main
-                                    Week
-                                    2 concept.</caption>
-                                <thead>
-                                    <tr>
-                                        <th>Problem</th>
-                                        <th>Concept from Lecture</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>camel.py</td>
-                                        <td>Loop through characters</td>
-                                    </tr>
-                                    <tr>
-                                        <td>coke.py</td>
-                                        <td>While loops</td>
-                                    </tr>
-                                    <tr>
-                                        <td>twttr.py</td>
-                                        <td>Filtering characters</td>
-                                    </tr>
-                                    <tr>
-                                        <td>plates.py</td>
-                                        <td>String validation</td>
-                                    </tr>
-                                    <tr>
-                                        <td>nutrition.py</td>
-                                        <td>Dictionaries</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </details>
+                    <p class="static-title">Quick Reference (At a Glance)</p>
+                    <div class="table-wrap">
+                        <table aria-label="Problem to concept map">
+                            <caption class="sr-only">Quick reference table showing each CS50P problem and its main
+                                Week
+                                2 concept.</caption>
+                            <thead>
+                                <tr>
+                                    <th>Problem</th>
+                                    <th>Concept from Lecture</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>camel.py</td>
+                                    <td>Loop through characters</td>
+                                </tr>
+                                <tr>
+                                    <td>coke.py</td>
+                                    <td>While loops</td>
+                                </tr>
+                                <tr>
+                                    <td>twttr.py</td>
+                                    <td>Filtering characters</td>
+                                </tr>
+                                <tr>
+                                    <td>plates.py</td>
+                                    <td>String validation</td>
+                                </tr>
+                                <tr>
+                                    <td>nutrition.py</td>
+                                    <td>Dictionaries</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </section>
             </section>
 
             <section class="grid">
                 <article class="card error-decoder compact-collapsible" aria-labelledby="error-decoder-title">
-                    <details open>
-                        <summary id="error-decoder-title">Error Decoder</summary>
-                        <div>
-                            <p class="subtle">If your code fails, match the error type to the next step:</p>
-                            <ul>
-                                <li><strong><code>IndentationError</code></strong> → Check spacing inside your
-                                    <code>if</code>,
-                                    <code>for</code>, and <code>while</code> blocks.
-                                </li>
-                                <li><strong><code>NameError</code></strong> → Check spelling and capitalization of
-                                    variable/function names.</li>
-                                <li><strong><code>SyntaxError</code></strong> → Look for missing <code>:</code>, quotes,
-                                    or
-                                    parentheses on the reported line.</li>
-                                <li><strong><code>ValueError</code></strong> → Validate input before converting (for
-                                    example,
-                                    check <code>.isdigit()</code> first).</li>
-                                <li><strong><code>TypeError</code></strong> → Confirm you are combining compatible types
-                                    (string
-                                    vs number).</li>
-                            </ul>
-                            <div class="callout">Tip: Start with the first line in the traceback that points to
-                                <strong>your</strong> code.
-                            </div>
-                        </div>
-                    </details>
+                    <p class="static-title" id="error-decoder-title">Error Decoder</p>
+                    <p class="subtle">If your code fails, match the error type to the next step:</p>
+                    <ul>
+                        <li><strong><code>IndentationError</code></strong> → Check spacing inside your
+                            <code>if</code>,
+                            <code>for</code>, and <code>while</code> blocks.
+                        </li>
+                        <li><strong><code>NameError</code></strong> → Check spelling and capitalization of
+                            variable/function names.</li>
+                        <li><strong><code>SyntaxError</code></strong> → Look for missing <code>:</code>, quotes,
+                            or
+                            parentheses on the reported line.</li>
+                        <li><strong><code>ValueError</code></strong> → Validate input before converting (for
+                            example,
+                            check <code>.isdigit()</code> first).</li>
+                        <li><strong><code>TypeError</code></strong> → Confirm you are combining compatible types
+                            (string
+                            vs number).</li>
+                    </ul>
+                    <div class="callout">Tip: Start with the first line in the traceback that points to
+                        <strong>your</strong> code.
+                    </div>
                 </article>
 
                 <article class="card compact-collapsible" aria-labelledby="debugging-checklist-title">
-                    <details open>
-                        <summary id="debugging-checklist-title">Debugging Checklist</summary>
-                        <div>
-                            <div class="checklist">
-                                <label><input type="checkbox" /> Print variables to see what values your program is
-                                    using</label>
-                                <label><input type="checkbox" /> Test one small part of your code first</label>
-                                <label><input type="checkbox" /> Check spaces and indentation</label>
-                                <label><input type="checkbox" /> Re-read the official problem instructions</label>
-                            </div>
-                            <div class="callout">Most bugs happen when code does something different than you expected.
-                                Check one line at a time.</div>
-                        </div>
-                    </details>
+                    <p class="static-title" id="debugging-checklist-title">Debugging Checklist</p>
+                    <div class="checklist">
+                        <label><input type="checkbox" /> Print variables to see what values your program is
+                            using</label>
+                        <label><input type="checkbox" /> Test one small part of your code first</label>
+                        <label><input type="checkbox" /> Check spaces and indentation</label>
+                        <label><input type="checkbox" /> Re-read the official problem instructions</label>
+                    </div>
+                    <div class="callout">Most bugs happen when code does something different than you expected.
+                        Check one line at a time.</div>
                 </article>
 
                 <article class="card runner" id="runner">
@@ -1652,15 +1630,15 @@ print(students["Hermione"])</code></pre>
                     <p class="subtle">Use <strong>Ctrl+Enter</strong> to run. If your code has
                         <code>input()</code>, a pop-up will ask for your answer.
                     </p>
-                    <details class="runner-flow" open>
-                        <summary>Instructional Workflow Checklist</summary>
+                    <div class="runner-flow" aria-label="Instructional Workflow Checklist">
+                        <p class="flow-title">Instructional Workflow Checklist</p>
                         <div class="checklist">
                             <label><input type="checkbox" /> I read the official spec for this problem</label>
                             <label><input type="checkbox" /> I wrote a minimal version first</label>
                             <label><input type="checkbox" /> I ran at least one example input</label>
                             <label><input type="checkbox" /> I fixed one bug based on output/error</label>
                         </div>
-                    </details>
+                    </div>
                     <div id="pyEditor" class="editor-host" aria-label="Python code editor"></div>
                     <label class="sr-only" for="pyCode">Python code editor</label>
                     <textarea id="pyCode" spellcheck="false" aria-describedby="editorNote" wrap="soft">print("CS50P Week 2 practice runner")
@@ -1896,11 +1874,6 @@ print(students["Hermione"])`
         const instructionalCue = document.getElementById('instructionalCue');
         const runBtn = document.getElementById('runPy');
         const clearBtn = document.getElementById('clearPyOut');
-        const toggleFocusMode = document.getElementById('toggleFocusMode');
-        const toggleCalmColors = document.getElementById('toggleCalmColors');
-        const toggleSpaciousText = document.getElementById('toggleSpaciousText');
-        const toggleLargeText = document.getElementById('toggleLargeText');
-        const toggleReduceMotion = document.getElementById('toggleReduceMotion');
         const prevProblemBtn = document.getElementById('prevProblemBtn');
         const nextProblemBtn = document.getElementById('nextProblemBtn');
         const focusModeNote = document.getElementById('focusModeNote');
@@ -1914,7 +1887,7 @@ print(students["Hermione"])`
         let pyEditor = null;
         let pyodideIndexURL = null;
         let activeProblemKey = 'camel';
-        let focusModeEnabled = false;
+        let focusModeEnabled = true;
         const attemptedScripts = new Set();
 
         const PYODIDE_CANDIDATES = [
@@ -1959,11 +1932,6 @@ print(students["Hermione"])`
         function getResumeState() {
             return {
                 activeProblemKey,
-                focusModeEnabled,
-                calmColors: !!(toggleCalmColors && toggleCalmColors.checked),
-                spaciousText: !!(toggleSpaciousText && toggleSpaciousText.checked),
-                largeText: !!(toggleLargeText && toggleLargeText.checked),
-                reduceMotion: !!(toggleReduceMotion && toggleReduceMotion.checked),
                 editorCode: getEditorCode(),
                 loadedInfoText: loadedExampleInfo ? loadedExampleInfo.textContent : ''
             };
@@ -1988,37 +1956,23 @@ print(students["Hermione"])`
         }
 
         function applySensoryModes() {
-            document.body.classList.toggle('mode-focus', focusModeEnabled);
-            document.body.classList.toggle('mode-calm', !!(toggleCalmColors && toggleCalmColors.checked));
-            document.body.classList.toggle('mode-spacious', !!(toggleSpaciousText && toggleSpaciousText.checked));
-            document.body.classList.toggle('mode-large', !!(toggleLargeText && toggleLargeText.checked));
-            document.body.classList.toggle('mode-motionless', !!(toggleReduceMotion && toggleReduceMotion.checked));
+            document.body.classList.add('mode-focus');
+            document.body.classList.add('mode-calm');
+            document.body.classList.add('mode-spacious');
+            document.body.classList.add('mode-large');
+            document.body.classList.add('mode-motionless');
         }
 
         function updateFocusModeUI() {
             const currentIndex = problemTabs.findIndex((tab) => tab.dataset.tab === activeProblemKey);
             const problemLabel = currentIndex >= 0 ? problemTabs[currentIndex].textContent.trim() : activeProblemKey;
 
-            if (prevProblemBtn) prevProblemBtn.hidden = !focusModeEnabled;
-            if (nextProblemBtn) nextProblemBtn.hidden = !focusModeEnabled;
+            if (prevProblemBtn) prevProblemBtn.hidden = false;
+            if (nextProblemBtn) nextProblemBtn.hidden = false;
 
             if (focusModeNote) {
-                if (focusModeEnabled) {
-                    focusModeNote.textContent = `Focus mode is on. Now showing only ${problemLabel}. Use Previous/Next to move one problem at a time.`;
-                } else {
-                    focusModeNote.textContent = 'Focus mode is off. You can see all problem tabs.';
-                }
+                focusModeNote.textContent = `Focus mode is on. Now showing only ${problemLabel}. Use Previous/Next to move one problem at a time.`;
             }
-        }
-
-        function setFocusMode(enabled) {
-            focusModeEnabled = !!enabled;
-            if (toggleFocusMode) {
-                toggleFocusMode.checked = focusModeEnabled;
-            }
-            applySensoryModes();
-            updateFocusModeUI();
-            saveResumeState();
         }
 
         function appendOutput(line) {
@@ -2398,40 +2352,6 @@ print(students["Hermione"])`
             saveResumeState();
         });
 
-        if (toggleFocusMode) {
-            toggleFocusMode.addEventListener('change', () => {
-                setFocusMode(toggleFocusMode.checked);
-            });
-        }
-
-        if (toggleCalmColors) {
-            toggleCalmColors.addEventListener('change', () => {
-                applySensoryModes();
-                saveResumeState();
-            });
-        }
-
-        if (toggleSpaciousText) {
-            toggleSpaciousText.addEventListener('change', () => {
-                applySensoryModes();
-                saveResumeState();
-            });
-        }
-
-        if (toggleLargeText) {
-            toggleLargeText.addEventListener('change', () => {
-                applySensoryModes();
-                saveResumeState();
-            });
-        }
-
-        if (toggleReduceMotion) {
-            toggleReduceMotion.addEventListener('change', () => {
-                applySensoryModes();
-                saveResumeState();
-            });
-        }
-
         if (prevProblemBtn) {
             prevProblemBtn.addEventListener('click', () => {
                 stepProblemBy(-1);
@@ -2455,11 +2375,6 @@ print(students["Hermione"])`
 
         const restoredState = loadResumeState();
         if (restoredState) {
-            if (toggleCalmColors) toggleCalmColors.checked = !!restoredState.calmColors;
-            if (toggleSpaciousText) toggleSpaciousText.checked = !!restoredState.spaciousText;
-            if (toggleLargeText) toggleLargeText.checked = !!restoredState.largeText;
-            if (toggleReduceMotion) toggleReduceMotion.checked = !!restoredState.reduceMotion;
-
             if (typeof restoredState.editorCode === 'string' && restoredState.editorCode.trim()) {
                 pyCode.value = restoredState.editorCode;
             }
@@ -2471,13 +2386,13 @@ print(students["Hermione"])`
             if (typeof restoredState.activeProblemKey === 'string') {
                 activateProblemTab(restoredState.activeProblemKey, { clearEditor: false });
             }
-
-            setFocusMode(!!restoredState.focusModeEnabled);
         } else {
-            setFocusMode(false);
             applySensoryModes();
             updateFocusModeUI();
         }
+
+        applySensoryModes();
+        updateFocusModeUI();
 
         initializeMonacoEditor();
         adjustEditorHeight();
