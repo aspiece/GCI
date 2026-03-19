@@ -1005,7 +1005,7 @@
             </div>
         </section>
 
-        <section class="intro-grid" aria-label="How to use and accessibility tools" style="margin-top:8px">
+        <section class="intro-grid" aria-label="How to use" style="margin-top:8px">
             <section class="card compact-top" aria-labelledby="how-to-use-title">
                 <h2 id="how-to-use-title">How to Use This Page</h2>
                 <ol>
@@ -1015,27 +1015,6 @@
                     <li>Click <strong>Load starter code</strong> to begin your own version.</li>
                     <li>Press <strong>Run Code</strong> (or Ctrl+Enter) to test.</li>
                 </ol>
-            </section>
-
-            <section class="card accessibility-controls compact-top" aria-labelledby="accessibility-tools-title">
-                <h2 id="accessibility-tools-title">Accessibility Tools</h2>
-                <div class="tools-body">
-                    <p class="static-title">Applied Accessibility Settings</p>
-                    <ul class="subtle" style="margin:0 0 0 18px;">
-                        <li>One Problem at a Time mode is on</li>
-                        <li>Softer colors are on</li>
-                        <li>Extra line spacing is on</li>
-                        <li>Larger text is on</li>
-                        <li>Reduced motion is on</li>
-                    </ul>
-                    <div class="focus-nav" aria-label="Focus mode navigation">
-                        <button type="button" class="ghost" id="prevProblemBtn">Previous Problem</button>
-                        <button type="button" class="ghost" id="nextProblemBtn">Next Problem</button>
-                    </div>
-                    <div class="focus-note" id="focusModeNote">Focus mode is on. Use Previous/Next to move one
-                        problem at a time.
-                    </div>
-                </div>
             </section>
         </section>
 
@@ -1655,6 +1634,11 @@ print(students["Hermione"])</code></pre>
                     <div class="runner-output">
                         <strong>Output</strong>
                         <pre id="pyOut" aria-live="polite" tabindex="0" aria-label="Python program output"></pre>
+                    </div>
+                    <div class="focus-nav" aria-label="Navigate between problems"
+                        style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border)">
+                        <button type="button" class="ghost" id="prevProblemBtn">← Previous Problem</button>
+                        <button type="button" class="ghost" id="nextProblemBtn">Next Problem →</button>
                     </div>
                 </article>
             </section>
