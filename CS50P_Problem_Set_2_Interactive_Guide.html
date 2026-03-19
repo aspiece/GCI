@@ -748,6 +748,105 @@
             margin-bottom: 6px;
         }
 
+        /* ── Accessibility controls ── */
+        .accessibility-controls {
+            margin-top: 12px;
+        }
+
+        .control-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 8px 14px;
+        }
+
+        .control-grid label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.93rem;
+        }
+
+        .focus-nav {
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .focus-nav .ghost[hidden] {
+            display: none;
+        }
+
+        .focus-note {
+            margin-top: 6px;
+            color: var(--muted);
+            font-size: 0.86rem;
+        }
+
+        /* ── Error decoder ── */
+        .error-decoder ul {
+            margin-top: 8px;
+        }
+
+        .error-decoder li {
+            margin-bottom: 6px;
+        }
+
+        .error-decoder code {
+            font-size: 0.84rem;
+        }
+
+        /* ── One-problem focus mode ── */
+        body.mode-focus .problem-tabs {
+            gap: 0;
+        }
+
+        body.mode-focus .problem-tab {
+            display: none;
+        }
+
+        body.mode-focus .problem-tab.active {
+            display: inline-block;
+        }
+
+        /* ── Sensory preference modes ── */
+        body.mode-calm {
+            background: linear-gradient(180deg, #f6f8fc 0%, #f7fafc 64%);
+        }
+
+        body.mode-calm .card,
+        body.mode-calm .problem,
+        body.mode-calm .callout,
+        body.mode-calm .specs-bar,
+        body.mode-calm .start-here,
+        body.mode-calm .if-stuck,
+        body.mode-calm .io-example {
+            box-shadow: none;
+            filter: saturate(0.85);
+        }
+
+        body.mode-spacious p,
+        body.mode-spacious li,
+        body.mode-spacious td,
+        body.mode-spacious th,
+        body.mode-spacious .subtle,
+        body.mode-spacious .callout {
+            line-height: 1.7;
+        }
+
+        body.mode-large {
+            font-size: 1.08rem;
+        }
+
+        body.mode-motionless *,
+        body.mode-motionless *::before,
+        body.mode-motionless *::after {
+            animation: none !important;
+            transition: none !important;
+            scroll-behavior: auto !important;
+        }
+
         @media (max-width: 600px) {
             .do-dont {
                 grid-template-columns: 1fr;
@@ -812,6 +911,22 @@
                     </ul>
                 </div>
             </div>
+        </section>
+
+        <section class="card accessibility-controls" aria-labelledby="accessibility-tools-title">
+            <h2 id="accessibility-tools-title">Accessibility Tools</h2>
+            <div class="control-grid">
+                <label><input id="toggleFocusMode" type="checkbox" /> One Problem at a Time mode</label>
+                <label><input id="toggleCalmColors" type="checkbox" /> Softer colors</label>
+                <label><input id="toggleSpaciousText" type="checkbox" /> Extra line spacing</label>
+                <label><input id="toggleLargeText" type="checkbox" /> Larger text</label>
+                <label><input id="toggleReduceMotion" type="checkbox" /> Reduce motion</label>
+            </div>
+            <div class="focus-nav" aria-label="Focus mode navigation">
+                <button type="button" class="ghost" id="prevProblemBtn" hidden>Previous Problem</button>
+                <button type="button" class="ghost" id="nextProblemBtn" hidden>Next Problem</button>
+            </div>
+            <div class="focus-note" id="focusModeNote">Focus mode is off. You can see all problem tabs.</div>
         </section>
 
         <div class="layout">
@@ -1356,6 +1471,27 @@ print(students["Hermione"])</code></pre>
                     </div>
                 </article>
 
+                <article class="card error-decoder" aria-labelledby="error-decoder-title">
+                    <h2 id="error-decoder-title">Error Decoder</h2>
+                    <p class="subtle">If your code fails, match the error type to the next step:</p>
+                    <ul>
+                        <li><strong><code>IndentationError</code></strong> → Check spacing inside your <code>if</code>,
+                            <code>for</code>, and <code>while</code> blocks.
+                        </li>
+                        <li><strong><code>NameError</code></strong> → Check spelling and capitalization of
+                            variable/function names.</li>
+                        <li><strong><code>SyntaxError</code></strong> → Look for missing <code>:</code>, quotes, or
+                            parentheses on the reported line.</li>
+                        <li><strong><code>ValueError</code></strong> → Validate input before converting (for example,
+                            check <code>.isdigit()</code> first).</li>
+                        <li><strong><code>TypeError</code></strong> → Confirm you are combining compatible types (string
+                            vs number).</li>
+                    </ul>
+                    <div class="callout">Tip: Start with the first line in the traceback that points to
+                        <strong>your</strong> code.
+                    </div>
+                </article>
+
                 <article class="card" aria-labelledby="debugging-checklist-title">
                     <h2 id="debugging-checklist-title">Debugging Checklist</h2>
                     <div class="checklist">
@@ -1584,7 +1720,16 @@ print(students["Hermione"])`
         const loadedExampleInfo = document.getElementById('loadedExampleInfo');
         const runBtn = document.getElementById('runPy');
         const clearBtn = document.getElementById('clearPyOut');
+        const toggleFocusMode = document.getElementById('toggleFocusMode');
+        const toggleCalmColors = document.getElementById('toggleCalmColors');
+        const toggleSpaciousText = document.getElementById('toggleSpaciousText');
+        const toggleLargeText = document.getElementById('toggleLargeText');
+        const toggleReduceMotion = document.getElementById('toggleReduceMotion');
+        const prevProblemBtn = document.getElementById('prevProblemBtn');
+        const nextProblemBtn = document.getElementById('nextProblemBtn');
+        const focusModeNote = document.getElementById('focusModeNote');
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        const RESUME_STATE_KEY = 'cs50p_pset2_resume_state_v1';
         const DEFAULT_EDITOR_TEXT = `print("CS50P Week 2 practice runner")
 
     ## Try loading one of the problem starters
@@ -1593,6 +1738,7 @@ print(students["Hermione"])`
         let pyEditor = null;
         let pyodideIndexURL = null;
         let activeProblemKey = 'camel';
+        let focusModeEnabled = false;
         const attemptedScripts = new Set();
 
         const PYODIDE_CANDIDATES = [
@@ -1613,6 +1759,71 @@ print(students["Hermione"])`
         function setStatus(text, ready = false) {
             pyStatus.textContent = text;
             pyStatus.classList.toggle('ready', ready);
+        }
+
+        function getResumeState() {
+            return {
+                activeProblemKey,
+                focusModeEnabled,
+                calmColors: !!(toggleCalmColors && toggleCalmColors.checked),
+                spaciousText: !!(toggleSpaciousText && toggleSpaciousText.checked),
+                largeText: !!(toggleLargeText && toggleLargeText.checked),
+                reduceMotion: !!(toggleReduceMotion && toggleReduceMotion.checked),
+                editorCode: getEditorCode(),
+                loadedInfoText: loadedExampleInfo ? loadedExampleInfo.textContent : ''
+            };
+        }
+
+        function saveResumeState() {
+            try {
+                localStorage.setItem(RESUME_STATE_KEY, JSON.stringify(getResumeState()));
+            } catch (_) {
+                // Local storage may be blocked in restricted environments.
+            }
+        }
+
+        function loadResumeState() {
+            try {
+                const raw = localStorage.getItem(RESUME_STATE_KEY);
+                if (!raw) return null;
+                return JSON.parse(raw);
+            } catch (_) {
+                return null;
+            }
+        }
+
+        function applySensoryModes() {
+            document.body.classList.toggle('mode-focus', focusModeEnabled);
+            document.body.classList.toggle('mode-calm', !!(toggleCalmColors && toggleCalmColors.checked));
+            document.body.classList.toggle('mode-spacious', !!(toggleSpaciousText && toggleSpaciousText.checked));
+            document.body.classList.toggle('mode-large', !!(toggleLargeText && toggleLargeText.checked));
+            document.body.classList.toggle('mode-motionless', !!(toggleReduceMotion && toggleReduceMotion.checked));
+        }
+
+        function updateFocusModeUI() {
+            const currentIndex = problemTabs.findIndex((tab) => tab.dataset.tab === activeProblemKey);
+            const problemLabel = currentIndex >= 0 ? problemTabs[currentIndex].textContent.trim() : activeProblemKey;
+
+            if (prevProblemBtn) prevProblemBtn.hidden = !focusModeEnabled;
+            if (nextProblemBtn) nextProblemBtn.hidden = !focusModeEnabled;
+
+            if (focusModeNote) {
+                if (focusModeEnabled) {
+                    focusModeNote.textContent = `Focus mode is on. Now showing only ${problemLabel}. Use Previous/Next to move one problem at a time.`;
+                } else {
+                    focusModeNote.textContent = 'Focus mode is off. You can see all problem tabs.';
+                }
+            }
+        }
+
+        function setFocusMode(enabled) {
+            focusModeEnabled = !!enabled;
+            if (toggleFocusMode) {
+                toggleFocusMode.checked = focusModeEnabled;
+            }
+            applySensoryModes();
+            updateFocusModeUI();
+            saveResumeState();
         }
 
         function appendOutput(line) {
@@ -1652,6 +1863,7 @@ print(students["Hermione"])`
             }
             pyCode.value = nextCode;
             adjustEditorHeight();
+            saveResumeState();
         }
 
         function enhanceLectureSnippetsWithMonaco() {
@@ -1750,6 +1962,7 @@ print(students["Hermione"])`
 
                 pyEditor.onDidChangeModelContent(() => {
                     adjustEditorHeight();
+                    saveResumeState();
                 });
 
                 pyEditorHost.style.display = 'block';
@@ -1873,6 +2086,7 @@ print(students["Hermione"])`
         function setLoadedExampleText(text) {
             if (!loadedExampleInfo) return;
             loadedExampleInfo.textContent = text || 'Loaded code info: none yet.';
+            saveResumeState();
         }
 
         function resetRunnerForProblemChange() {
@@ -1898,6 +2112,9 @@ print(students["Hermione"])`
             });
 
             activeProblemKey = problemKey;
+            applySensoryModes();
+            updateFocusModeUI();
+            saveResumeState();
 
             enhanceLectureSnippetsWithMonaco();
 
@@ -1907,6 +2124,12 @@ print(students["Hermione"])`
         }
 
         const problemTabs = Array.from(document.querySelectorAll('.problem-tab'));
+
+        function stepProblemBy(delta) {
+            const currentIndex = problemTabs.findIndex((tab) => tab.dataset.tab === activeProblemKey);
+            if (currentIndex === -1) return;
+            focusProblemTab(currentIndex + delta);
+        }
 
         function focusProblemTab(index) {
             const normalized = (index + problemTabs.length) % problemTabs.length;
@@ -1974,7 +2197,54 @@ print(students["Hermione"])`
         runBtn.addEventListener('click', runPythonFromEditor);
         clearBtn.addEventListener('click', () => {
             pyOut.textContent = '';
+            saveResumeState();
         });
+
+        if (toggleFocusMode) {
+            toggleFocusMode.addEventListener('change', () => {
+                setFocusMode(toggleFocusMode.checked);
+            });
+        }
+
+        if (toggleCalmColors) {
+            toggleCalmColors.addEventListener('change', () => {
+                applySensoryModes();
+                saveResumeState();
+            });
+        }
+
+        if (toggleSpaciousText) {
+            toggleSpaciousText.addEventListener('change', () => {
+                applySensoryModes();
+                saveResumeState();
+            });
+        }
+
+        if (toggleLargeText) {
+            toggleLargeText.addEventListener('change', () => {
+                applySensoryModes();
+                saveResumeState();
+            });
+        }
+
+        if (toggleReduceMotion) {
+            toggleReduceMotion.addEventListener('change', () => {
+                applySensoryModes();
+                saveResumeState();
+            });
+        }
+
+        if (prevProblemBtn) {
+            prevProblemBtn.addEventListener('click', () => {
+                stepProblemBy(-1);
+            });
+        }
+
+        if (nextProblemBtn) {
+            nextProblemBtn.addEventListener('click', () => {
+                stepProblemBy(1);
+            });
+        }
 
         pyCode.addEventListener('keydown', (event) => {
             if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
@@ -1984,6 +2254,32 @@ print(students["Hermione"])`
         });
 
         pyCode.addEventListener('input', adjustEditorHeight);
+
+        const restoredState = loadResumeState();
+        if (restoredState) {
+            if (toggleCalmColors) toggleCalmColors.checked = !!restoredState.calmColors;
+            if (toggleSpaciousText) toggleSpaciousText.checked = !!restoredState.spaciousText;
+            if (toggleLargeText) toggleLargeText.checked = !!restoredState.largeText;
+            if (toggleReduceMotion) toggleReduceMotion.checked = !!restoredState.reduceMotion;
+
+            if (typeof restoredState.editorCode === 'string' && restoredState.editorCode.trim()) {
+                pyCode.value = restoredState.editorCode;
+            }
+
+            if (typeof restoredState.loadedInfoText === 'string' && restoredState.loadedInfoText.trim()) {
+                setLoadedExampleText(restoredState.loadedInfoText);
+            }
+
+            if (typeof restoredState.activeProblemKey === 'string') {
+                activateProblemTab(restoredState.activeProblemKey, { clearEditor: false });
+            }
+
+            setFocusMode(!!restoredState.focusModeEnabled);
+        } else {
+            setFocusMode(false);
+            applySensoryModes();
+            updateFocusModeUI();
+        }
 
         initializeMonacoEditor();
         adjustEditorHeight();
