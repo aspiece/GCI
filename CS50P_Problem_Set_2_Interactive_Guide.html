@@ -561,6 +561,18 @@
             color: var(--border);
         }
 
+        .top-hero {
+            margin-top: 8px;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(270px, 330px);
+            gap: 12px;
+            align-items: start;
+        }
+
+        .top-hero-main h1 {
+            margin-top: 2px;
+        }
+
         /* ── Progress tracker ── */
         .progress-tracker {
             margin-top: 12px;
@@ -750,13 +762,37 @@
 
         /* ── Accessibility controls ── */
         .accessibility-controls {
-            margin-top: 12px;
+            margin-top: 0;
+            position: sticky;
+            top: 10px;
+            z-index: 3;
+            padding: 10px 12px;
+        }
+
+        .accessibility-controls h2 {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .accessibility-controls details {
+            margin-top: 8px;
+        }
+
+        .accessibility-controls summary {
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .accessibility-controls summary+div {
+            margin-top: 8px;
         }
 
         .control-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 8px 14px;
+            grid-template-columns: 1fr;
+            gap: 6px;
         }
 
         .control-grid label {
@@ -767,11 +803,17 @@
         }
 
         .focus-nav {
-            margin-top: 10px;
+            margin-top: 8px;
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
             align-items: center;
+        }
+
+        .focus-nav .ghost {
+            min-height: 36px;
+            padding: 6px 10px;
+            font-size: 0.82rem;
         }
 
         .focus-nav .ghost[hidden] {
@@ -852,6 +894,16 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        @media (max-width: 980px) {
+            .top-hero {
+                grid-template-columns: 1fr;
+            }
+
+            .accessibility-controls {
+                position: static;
+            }
+        }
     </style>
 </head>
 
@@ -866,22 +918,52 @@
             <span class="chip">Student Support</span>
         </div>
 
-        <h1>CS50P – Problem Set 2 Help Page</h1>
-        <p class="lead">This page helps you practice each Problem Set 2 skill step by step. If you get stuck, ask:
-            <strong>“Which Week 2 idea does this problem want me to use?”</strong>
-        </p>
+        <section class="top-hero" aria-label="Page heading and quick tools">
+            <div class="top-hero-main">
+                <h1>CS50P – Problem Set 2 Help Page</h1>
+                <p class="lead">This page helps you practice each Problem Set 2 skill step by step. If you get stuck,
+                    ask:
+                    <strong>“Which Week 2 idea does this problem want me to use?”</strong>
+                </p>
 
-        <nav class="specs-bar" aria-label="Official CS50 problem specifications">
-            <strong>📋 Official Specs:</strong>
-            <a href="https://cs50.harvard.edu/python/2022/psets/2/" target="_blank" rel="noopener noreferrer">Problem
-                Set 2 Overview</a>
-            <span class="sep" aria-hidden="true">·</span>
-            <a href="https://cs50.harvard.edu/python/2022/weeks/2/" target="_blank" rel="noopener noreferrer">Week 2
-                Lecture Notes</a>
-            <span class="sep" aria-hidden="true">·</span>
-            <a href="https://cs50.harvard.edu/python/2022/shorts/" target="_blank" rel="noopener noreferrer">CS50P
-                Shorts Library</a>
-        </nav>
+                <nav class="specs-bar" aria-label="Official CS50 problem specifications">
+                    <strong>📋 Official Specs:</strong>
+                    <a href="https://cs50.harvard.edu/python/2022/psets/2/" target="_blank"
+                        rel="noopener noreferrer">Problem
+                        Set 2 Overview</a>
+                    <span class="sep" aria-hidden="true">·</span>
+                    <a href="https://cs50.harvard.edu/python/2022/weeks/2/" target="_blank"
+                        rel="noopener noreferrer">Week
+                        2 Lecture Notes</a>
+                    <span class="sep" aria-hidden="true">·</span>
+                    <a href="https://cs50.harvard.edu/python/2022/shorts/" target="_blank"
+                        rel="noopener noreferrer">CS50P
+                        Shorts Library</a>
+                </nav>
+            </div>
+
+            <section class="card accessibility-controls" aria-labelledby="accessibility-tools-title">
+                <h2 id="accessibility-tools-title">Accessibility Tools</h2>
+                <details>
+                    <summary>Show tools</summary>
+                    <div>
+                        <div class="control-grid">
+                            <label><input id="toggleFocusMode" type="checkbox" /> One Problem at a Time mode</label>
+                            <label><input id="toggleCalmColors" type="checkbox" /> Softer colors</label>
+                            <label><input id="toggleSpaciousText" type="checkbox" /> Extra line spacing</label>
+                            <label><input id="toggleLargeText" type="checkbox" /> Larger text</label>
+                            <label><input id="toggleReduceMotion" type="checkbox" /> Reduce motion</label>
+                        </div>
+                        <div class="focus-nav" aria-label="Focus mode navigation">
+                            <button type="button" class="ghost" id="prevProblemBtn" hidden>Previous Problem</button>
+                            <button type="button" class="ghost" id="nextProblemBtn" hidden>Next Problem</button>
+                        </div>
+                        <div class="focus-note" id="focusModeNote">Focus mode is off. You can see all problem tabs.
+                        </div>
+                    </div>
+                </details>
+            </section>
+        </section>
 
         <section class="card" aria-labelledby="how-to-use-title" style="margin-top:12px">
             <h2 id="how-to-use-title">How to Use This Page</h2>
@@ -911,22 +993,6 @@
                     </ul>
                 </div>
             </div>
-        </section>
-
-        <section class="card accessibility-controls" aria-labelledby="accessibility-tools-title">
-            <h2 id="accessibility-tools-title">Accessibility Tools</h2>
-            <div class="control-grid">
-                <label><input id="toggleFocusMode" type="checkbox" /> One Problem at a Time mode</label>
-                <label><input id="toggleCalmColors" type="checkbox" /> Softer colors</label>
-                <label><input id="toggleSpaciousText" type="checkbox" /> Extra line spacing</label>
-                <label><input id="toggleLargeText" type="checkbox" /> Larger text</label>
-                <label><input id="toggleReduceMotion" type="checkbox" /> Reduce motion</label>
-            </div>
-            <div class="focus-nav" aria-label="Focus mode navigation">
-                <button type="button" class="ghost" id="prevProblemBtn" hidden>Previous Problem</button>
-                <button type="button" class="ghost" id="nextProblemBtn" hidden>Next Problem</button>
-            </div>
-            <div class="focus-note" id="focusModeNote">Focus mode is off. You can see all problem tabs.</div>
         </section>
 
         <div class="layout">
