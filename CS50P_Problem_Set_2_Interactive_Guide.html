@@ -895,6 +895,7 @@
         /* ── Error decoder ── */
         .error-decoder ul {
             margin-top: 8px;
+            margin-bottom: 0;
         }
 
         .error-decoder li {
@@ -903,6 +904,17 @@
 
         .error-decoder code {
             font-size: 0.84rem;
+        }
+
+        .error-decoder,
+        .debugging-checklist-card {
+            padding-bottom: 8px;
+        }
+
+        .error-decoder .callout,
+        .debugging-checklist-card .callout,
+        .debugging-checklist-card .checklist {
+            margin-bottom: 0;
         }
 
         /* ── One-problem focus mode ── */
@@ -1017,8 +1029,8 @@
                 </ol>
             </section>
 
-            <section class="card compact-top" aria-label="Usage guidelines">
-                <p class="static-title">Usage Guidelines (Do / Don't)</p>
+            <section class="card compact-top" aria-labelledby="usage-guidelines-title">
+                <h2 id="usage-guidelines-title">Usage Guidelines (Do / Don't)</h2>
                 <div class="do-dont">
                     <div class="dont-box">
                         <strong>🚫 Do NOT:</strong>
@@ -1560,44 +1572,6 @@ print(students["Hermione"])</code></pre>
             </section>
 
             <section class="grid">
-                <article class="card error-decoder compact-collapsible" aria-labelledby="error-decoder-title">
-                    <p class="static-title" id="error-decoder-title">Error Decoder</p>
-                    <p class="subtle">If your code fails, match the error type to the next step:</p>
-                    <ul>
-                        <li><strong><code>IndentationError</code></strong> → Check spacing inside your
-                            <code>if</code>,
-                            <code>for</code>, and <code>while</code> blocks.
-                        </li>
-                        <li><strong><code>NameError</code></strong> → Check spelling and capitalization of
-                            variable/function names.</li>
-                        <li><strong><code>SyntaxError</code></strong> → Look for missing <code>:</code>, quotes,
-                            or
-                            parentheses on the reported line.</li>
-                        <li><strong><code>ValueError</code></strong> → Validate input before converting (for
-                            example,
-                            check <code>.isdigit()</code> first).</li>
-                        <li><strong><code>TypeError</code></strong> → Confirm you are combining compatible types
-                            (string
-                            vs number).</li>
-                    </ul>
-                    <div class="callout">Tip: Start with the first line in the traceback that points to
-                        <strong>your</strong> code.
-                    </div>
-                </article>
-
-                <article class="card compact-collapsible" aria-labelledby="debugging-checklist-title">
-                    <p class="static-title" id="debugging-checklist-title">Debugging Checklist</p>
-                    <div class="checklist">
-                        <label><input type="checkbox" /> Print variables to see what values your program is
-                            using</label>
-                        <label><input type="checkbox" /> Test one small part of your code first</label>
-                        <label><input type="checkbox" /> Check spaces and indentation</label>
-                        <label><input type="checkbox" /> Re-read the official problem instructions</label>
-                    </div>
-                    <div class="callout">Most bugs happen when code does something different than you expected.
-                        Check one line at a time.</div>
-                </article>
-
                 <article class="card runner" id="runner">
                     <div class="row" style="justify-content:space-between">
                         <h2 style="margin:0">Try Code Here</h2>
@@ -1640,6 +1614,44 @@ print(students["Hermione"])</code></pre>
                         <button type="button" class="ghost" id="prevProblemBtn">← Previous Problem</button>
                         <button type="button" class="ghost" id="nextProblemBtn">Next Problem →</button>
                     </div>
+                </article>
+                <article class="card error-decoder compact-collapsible" aria-labelledby="error-decoder-title">
+                    <p class="static-title" id="error-decoder-title">Error Decoder</p>
+                    <p class="subtle">If your code fails, match the error type to the next step:</p>
+                    <ul>
+                        <li><strong><code>IndentationError</code></strong> → Check spacing inside your
+                            <code>if</code>,
+                            <code>for</code>, and <code>while</code> blocks.
+                        </li>
+                        <li><strong><code>NameError</code></strong> → Check spelling and capitalization of
+                            variable/function names.</li>
+                        <li><strong><code>SyntaxError</code></strong> → Look for missing <code>:</code>, quotes,
+                            or
+                            parentheses on the reported line.</li>
+                        <li><strong><code>ValueError</code></strong> → Validate input before converting (for
+                            example,
+                            check <code>.isdigit()</code> first).</li>
+                        <li><strong><code>TypeError</code></strong> → Confirm you are combining compatible types
+                            (string
+                            vs number).</li>
+                    </ul>
+                    <div class="callout">Tip: Start with the first line in the traceback that points to
+                        <strong>your</strong> code.
+                    </div>
+                </article>
+
+                <article class="card compact-collapsible debugging-checklist-card"
+                    aria-labelledby="debugging-checklist-title">
+                    <p class="static-title" id="debugging-checklist-title">Debugging Checklist</p>
+                    <div class="checklist">
+                        <label><input type="checkbox" /> Print variables to see what values your program is
+                            using</label>
+                        <label><input type="checkbox" /> Test one small part of your code first</label>
+                        <label><input type="checkbox" /> Check spaces and indentation</label>
+                        <label><input type="checkbox" /> Re-read the official problem instructions</label>
+                    </div>
+                    <div class="callout">Most bugs happen when code does something different than you expected.
+                        Check one line at a time.</div>
                 </article>
             </section>
         </div>
