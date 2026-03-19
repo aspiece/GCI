@@ -852,6 +852,53 @@
             margin-top: 8px;
         }
 
+        .now-next {
+            margin: 6px 0 8px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid #bfdbfe;
+            background: #eff6ff;
+            font-size: 0.9rem;
+            color: #1e3a8a;
+        }
+
+        .path-steps {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .path-step {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            background: #f8fbff;
+            color: var(--muted);
+            font-size: 0.8rem;
+            padding: 2px 9px;
+        }
+
+        .runner-flow {
+            margin-top: 8px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            background: #f8fafc;
+        }
+
+        .runner-flow summary {
+            cursor: pointer;
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .runner-flow .checklist {
+            margin-top: 8px;
+        }
+
         /* ── Error decoder ── */
         .error-decoder ul {
             margin-top: 8px;
@@ -1029,6 +1076,15 @@
                 <h2 id="problem-guide-title">Pick a Problem</h2>
                 <p class="subtle">Each tab shows a quick plan and lecture pattern. Use it to guide your work without
                     giving away your final CS50 answer.</p>
+                <div id="instructionalCue" class="now-next" role="status" aria-live="polite">Now: Read the task for
+                    camel.py, then load starter code and run once.</div>
+                <div class="path-steps" aria-label="Instructional path">
+                    <span class="path-step">1. Read goal</span>
+                    <span class="path-step">2. Start Here</span>
+                    <span class="path-step">3. Load starter</span>
+                    <span class="path-step">4. Run once</span>
+                    <span class="path-step">5. Fix + retest</span>
+                </div>
                 <div class="problem-tabs" role="tablist" aria-label="Problem tabs">
                     <button class="problem-tab active" id="tab-camel" type="button" role="tab" aria-selected="true"
                         aria-controls="panel-camel" tabindex="0" data-tab="camel">1. camel.py</button>
@@ -1550,6 +1606,15 @@ print(students["Hermione"])</code></pre>
                     <p class="subtle">Use <strong>Ctrl+Enter</strong> to run. If your code has
                         <code>input()</code>, a pop-up will ask for your answer.
                     </p>
+                    <details class="runner-flow">
+                        <summary>Instructional Workflow Checklist</summary>
+                        <div class="checklist">
+                            <label><input type="checkbox" /> I read the official spec for this problem</label>
+                            <label><input type="checkbox" /> I wrote a minimal version first</label>
+                            <label><input type="checkbox" /> I ran at least one example input</label>
+                            <label><input type="checkbox" /> I fixed one bug based on output/error</label>
+                        </div>
+                    </details>
                     <div id="pyEditor" class="editor-host" aria-label="Python code editor"></div>
                     <label class="sr-only" for="pyCode">Python code editor</label>
                     <textarea id="pyCode" spellcheck="false" aria-describedby="editorNote" wrap="soft">print("CS50P Week 2 practice runner")
@@ -1828,6 +1893,7 @@ print(students["Hermione"])`
         const editorNote = document.getElementById('editorNote');
         const pyOut = document.getElementById('pyOut');
         const loadedExampleInfo = document.getElementById('loadedExampleInfo');
+        const instructionalCue = document.getElementById('instructionalCue');
         const runBtn = document.getElementById('runPy');
         const clearBtn = document.getElementById('clearPyOut');
         const toggleFocusMode = document.getElementById('toggleFocusMode');
@@ -1869,6 +1935,25 @@ print(students["Hermione"])`
         function setStatus(text, ready = false) {
             pyStatus.textContent = text;
             pyStatus.classList.toggle('ready', ready);
+        }
+
+        function updateInstructionalCue(problemKey, phase = 'start') {
+            if (!instructionalCue) return;
+
+            const baseActionByProblem = {
+                camel: 'loop through each character and check uppercase letters',
+                coke: 'build the while loop and validate allowed coin values',
+                twttr: 'filter vowels from the input text',
+                plates: 'apply each plate validation rule one at a time',
+                nutrition: 'normalize input and perform dictionary lookup'
+            };
+
+            const action = baseActionByProblem[problemKey] || 'read the task and start with the starter code';
+            if (phase === 'ran') {
+                instructionalCue.textContent = `Now: Review your output for ${problemKey}. If needed, fix one thing and run again.`;
+                return;
+            }
+            instructionalCue.textContent = `Now: For ${problemKey}, ${action}. Then load starter code and run once.`;
         }
 
         function getResumeState() {
@@ -2181,6 +2266,7 @@ print(students["Hermione"])`
             try {
                 const runtime = await ensurePyodide();
                 await runtime.runPythonAsync(getEditorCode());
+                updateInstructionalCue(activeProblemKey, 'ran');
             } catch (error) {
                 const msg = String(error);
                 if (msg.includes('SystemExit')) {
@@ -2188,6 +2274,7 @@ print(students["Hermione"])`
                 } else {
                     appendOutput(msg + '\n');
                 }
+                updateInstructionalCue(activeProblemKey, 'ran');
             } finally {
                 runBtn.disabled = false;
             }
@@ -2224,6 +2311,7 @@ print(students["Hermione"])`
             activeProblemKey = problemKey;
             applySensoryModes();
             updateFocusModeUI();
+            updateInstructionalCue(problemKey, 'start');
             saveResumeState();
 
             enhanceLectureSnippetsWithMonaco();
@@ -2393,6 +2481,7 @@ print(students["Hermione"])`
 
         initializeMonacoEditor();
         adjustEditorHeight();
+        updateInstructionalCue(activeProblemKey, 'start');
 
         ensurePyodide().catch(() => {
             setStatus('Python not ready (click Run to retry)', false);
