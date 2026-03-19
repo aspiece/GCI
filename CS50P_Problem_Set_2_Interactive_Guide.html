@@ -1076,6 +1076,11 @@
                     <button class="problem-tab" id="tab-nutrition" type="button" role="tab" aria-selected="false"
                         aria-controls="panel-nutrition" tabindex="-1" data-tab="nutrition">5. nutrition.py</button>
                 </div>
+                <div class="focus-nav" aria-label="Navigate between problems"
+                    style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border)">
+                    <button type="button" class="ghost" id="prevProblemBtn">← Previous Problem</button>
+                    <button type="button" class="ghost" id="nextProblemBtn">Next Problem →</button>
+                </div>
 
                 <div class="grid">
                     <article class="problem" id="panel-camel" data-problem="camel" role="tabpanel"
@@ -1608,11 +1613,6 @@ print(students["Hermione"])</code></pre>
                     <div class="runner-output">
                         <strong>Output</strong>
                         <pre id="pyOut" aria-live="polite" tabindex="0" aria-label="Python program output"></pre>
-                    </div>
-                    <div class="focus-nav" aria-label="Navigate between problems"
-                        style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border)">
-                        <button type="button" class="ghost" id="prevProblemBtn">← Previous Problem</button>
-                        <button type="button" class="ghost" id="nextProblemBtn">Next Problem →</button>
                     </div>
                 </article>
                 <article class="card error-decoder compact-collapsible" aria-labelledby="error-decoder-title">
