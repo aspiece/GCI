@@ -120,8 +120,8 @@
             gap: 14px;
         }
 
-        .layout > section,
-        .intro-grid > section {
+        .layout>section,
+        .intro-grid>section {
             min-width: 0;
         }
 
@@ -501,6 +501,7 @@
         }
 
         @media (forced-colors: active) {
+
             .skip-link,
             .card,
             .problem,
@@ -527,6 +528,199 @@
                 color: HighlightText;
             }
         }
+
+        /* ── Progress tracker ── */
+        .progress-tracker {
+            margin-top: 12px;
+            padding: 12px 18px;
+            background: #f0f7ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 12px;
+        }
+
+        .progress-tracker h2 {
+            margin: 0 0 8px;
+            font-size: 1rem;
+            color: var(--accent);
+        }
+
+        .progress-tracker .items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 24px;
+        }
+
+        .progress-tracker label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.92rem;
+            cursor: pointer;
+        }
+
+        .progress-tracker label input[type="checkbox"]:checked+span {
+            text-decoration: line-through;
+            color: var(--muted);
+        }
+
+        /* ── Section type labels ── */
+        .section-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+            font-size: 0.87rem;
+            margin: 12px 0 4px;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .section-label.build {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .section-label.know {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+
+        .section-label.steps {
+            background: #dcfce7;
+            color: #14532d;
+        }
+
+        .section-label.mistakes {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .section-label.try {
+            background: #f1f5f9;
+            color: #334155;
+        }
+
+        .section-label.io {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        /* ── Time / challenge bar ── */
+        .time-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 4px 0 8px;
+        }
+
+        .time-bar span {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 2px 10px;
+            font-size: 0.83rem;
+            color: var(--muted);
+        }
+
+        /* ── Why this matters ── */
+        .why-matters {
+            margin: 0 0 8px;
+            font-size: 0.88rem;
+            color: #374151;
+            border-left: 3px solid #93c5fd;
+            padding: 4px 8px;
+            background: #f8fbff;
+            border-radius: 0 6px 6px 0;
+        }
+
+        /* ── Input / Output example ── */
+        .io-example {
+            background: #0b1224;
+            color: #e2e8f0;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin: 4px 0 6px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+            font-size: 0.84rem;
+            line-height: 1.8;
+        }
+
+        .io-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .io-label {
+            color: #94a3b8;
+            min-width: 64px;
+        }
+
+        /* ── Start Here box ── */
+        .start-here {
+            background: #f0fdf4;
+            border: 1px solid #86efac;
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin: 6px 0;
+        }
+
+        .start-here strong {
+            display: block;
+            margin-bottom: 4px;
+            color: #14532d;
+        }
+
+        /* ── If You're Stuck box ── */
+        .if-stuck {
+            background: #fff7ed;
+            border: 1px solid #fdba74;
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin: 6px 0;
+            font-size: 0.9rem;
+        }
+
+        .if-stuck strong {
+            display: block;
+            margin-bottom: 4px;
+            color: #7c2d12;
+        }
+
+        /* ── Do / Don't card ── */
+        .do-dont {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .dont-box {
+            background: #fee2e2;
+            border: 1px solid #fca5a5;
+            border-radius: 10px;
+            padding: 10px 12px;
+        }
+
+        .do-box {
+            background: #dcfce7;
+            border: 1px solid #86efac;
+            border-radius: 10px;
+            padding: 10px 12px;
+        }
+
+        .do-box strong,
+        .dont-box strong {
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        @media (max-width: 600px) {
+            .do-dont {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 
@@ -534,7 +728,8 @@
     <a class="skip-link" href="#main-content">Skip to main content</a>
     <main class="wrap" id="main-content">
         <div class="topbar">
-            <a class="home-link" href="CS50P_Problem_Sets_Home.html" aria-label="Return to CS50P problem sets home">← Back to CS50P Problem Sets Home</a>
+            <a class="home-link" href="CS50P_Problem_Sets_Home.html" aria-label="Return to CS50P problem sets home">←
+                Back to CS50P Problem Sets Home</a>
             <span class="chip">CS50P</span>
             <span class="chip">Problem Set 2</span>
             <span class="chip">Student Support</span>
@@ -542,7 +737,8 @@
 
         <h1>CS50P – Problem Set 2 Help Page</h1>
         <p class="lead">This page helps you practice each Problem Set 2 skill step by step. If you get stuck, ask:
-            <strong>“Which Week 2 idea does this problem want me to use?”</strong></p>
+            <strong>“Which Week 2 idea does this problem want me to use?”</strong>
+        </p>
 
         <section class="intro-grid" aria-label="Page introduction cards">
             <section class="card" aria-labelledby="how-to-use-title">
@@ -559,16 +755,35 @@
             <section class="card docs" aria-labelledby="official-links-title">
                 <h2 id="official-links-title">Official CS50 Links</h2>
                 <ul>
-                <li><a href="https://cs50.harvard.edu/python/2022/weeks/2/" target="_blank"
-                    rel="noopener noreferrer">Week 2 Lecture Notes and Materials</a></li>
-                <li><a href="https://cs50.harvard.edu/python/2022/psets/2/" target="_blank"
-                    rel="noopener noreferrer">Problem Set 2 Overview</a></li>
-                <li><a href="https://cs50.harvard.edu/python/2022/shorts/" target="_blank"
-                    rel="noopener noreferrer">CS50P Shorts Library</a></li>
+                    <li><a href="https://cs50.harvard.edu/python/2022/weeks/2/" target="_blank"
+                            rel="noopener noreferrer">Week 2 Lecture Notes and Materials</a></li>
+                    <li><a href="https://cs50.harvard.edu/python/2022/psets/2/" target="_blank"
+                            rel="noopener noreferrer">Problem Set 2 Overview</a></li>
+                    <li><a href="https://cs50.harvard.edu/python/2022/shorts/" target="_blank"
+                            rel="noopener noreferrer">CS50P Shorts Library</a></li>
                 </ul>
                 <div class="callout">Use the official problem specs for exact requirements, input/output formats,
-                and edge-case expectations.</div>
+                    and edge-case expectations.</div>
             </section>
+        </section>
+
+        <section class="card" aria-label="Usage guidelines" style="margin-top:12px">
+            <div class="do-dont">
+                <div class="dont-box">
+                    <strong>🚫 Do NOT:</strong>
+                    <ul>
+                        <li>Copy code from this page directly into your CS50 submission</li>
+                        <li>Skip reading the official CS50 problem description</li>
+                    </ul>
+                </div>
+                <div class="do-box">
+                    <strong>✅ DO:</strong>
+                    <ul>
+                        <li>Use this page to understand patterns and approaches</li>
+                        <li>Write your own version in your CS50 codespace</li>
+                    </ul>
+                </div>
+            </div>
         </section>
 
         <div class="layout">
@@ -577,20 +792,35 @@
                 <p class="subtle">Each tab shows a quick plan and lecture pattern. Use it to guide your work without
                     giving away your final CS50 answer.</p>
                 <div class="problem-tabs" role="tablist" aria-label="Problem tabs">
-                    <button class="problem-tab active" id="tab-camel" type="button" role="tab" aria-selected="true" aria-controls="panel-camel" tabindex="0" data-tab="camel">1. camel.py</button>
-                    <button class="problem-tab" id="tab-coke" type="button" role="tab" aria-selected="false" aria-controls="panel-coke" tabindex="-1" data-tab="coke">2. coke.py</button>
-                    <button class="problem-tab" id="tab-twttr" type="button" role="tab" aria-selected="false" aria-controls="panel-twttr" tabindex="-1" data-tab="twttr">3. twttr.py</button>
-                    <button class="problem-tab" id="tab-plates" type="button" role="tab" aria-selected="false" aria-controls="panel-plates" tabindex="-1" data-tab="plates">4. plates.py</button>
-                    <button class="problem-tab" id="tab-nutrition" type="button" role="tab" aria-selected="false" aria-controls="panel-nutrition" tabindex="-1" data-tab="nutrition">5. nutrition.py</button>
+                    <button class="problem-tab active" id="tab-camel" type="button" role="tab" aria-selected="true"
+                        aria-controls="panel-camel" tabindex="0" data-tab="camel">1. camel.py</button>
+                    <button class="problem-tab" id="tab-coke" type="button" role="tab" aria-selected="false"
+                        aria-controls="panel-coke" tabindex="-1" data-tab="coke">2. coke.py</button>
+                    <button class="problem-tab" id="tab-twttr" type="button" role="tab" aria-selected="false"
+                        aria-controls="panel-twttr" tabindex="-1" data-tab="twttr">3. twttr.py</button>
+                    <button class="problem-tab" id="tab-plates" type="button" role="tab" aria-selected="false"
+                        aria-controls="panel-plates" tabindex="-1" data-tab="plates">4. plates.py</button>
+                    <button class="problem-tab" id="tab-nutrition" type="button" role="tab" aria-selected="false"
+                        aria-controls="panel-nutrition" tabindex="-1" data-tab="nutrition">5. nutrition.py</button>
                 </div>
 
                 <div class="grid">
-                    <article class="problem" id="panel-camel" data-problem="camel" role="tabpanel" aria-labelledby="tab-camel" tabindex="0">
+                    <article class="problem" id="panel-camel" data-problem="camel" role="tabpanel"
+                        aria-labelledby="tab-camel" tabindex="0">
                         <div class="problem-header">
                             <h3>Problem 1 – camel.py</h3>
                             <span class="pill-ok">Skill: Loop through letters</span>
                         </div>
-                        <p><strong>Your goal:</strong> Change camelCase text into snake_case.</p>
+                        <div class="time-bar">
+                            <span>⏱️ Expected: 20–25 min</span>
+                            <span>⚡ Challenge: Easy–Medium</span>
+                        </div>
+                        <p class="why-matters">💡 This is how code formatters and APIs convert variable styles — used in
+                            every major codebase.</p>
+                        <div class="section-label build">🟦 What You Are Building</div>
+                        <p>Convert a <strong>camelCase</strong> word typed by the user into <strong>snake_case</strong>.
+                        </p>
+                        <div class="section-label know">🟨 What You Need to Know</div>
                         <div class="hint">
                             <strong>Lecture pattern</strong>
                             <pre><code>for c in text:
@@ -603,16 +833,55 @@ c.isupper()</code></pre>
 for student in students:
     print(student)</code></pre>
                             <div class="row" style="margin-top:8px">
-                                <button type="button" class="ghost mini-load load-note-example" data-note-example="camel">Load note example</button>
+                                <button type="button" class="ghost mini-load load-note-example"
+                                    data-note-example="camel">Load note example</button>
                             </div>
                         </div>
+                        <div class="section-label steps">🟩 Step-by-Step Thinking</div>
                         <ol>
                             <li>Ask the user to type text.</li>
                             <li>Check one character at a time.</li>
                             <li>If the character is uppercase, add <code>_</code> and the lowercase letter.</li>
                             <li>If not uppercase, add the character as-is.</li>
                         </ol>
-                        <div class="row" style="margin-top:10px">
+                        <div class="start-here">
+                            <strong>👉 Start Here</strong>
+                            <ol>
+                                <li>Create your file: <code>camel.py</code></li>
+                                <li>Add <code>text = input("camelCase: ")</code></li>
+                                <li>Set <code>result = ""</code></li>
+                                <li>Write a <code>for c in text:</code> loop</li>
+                                <li>Print the result (even if wrong at first)</li>
+                            </ol>
+                        </div>
+                        <div class="section-label io">📥 Example Input / Output</div>
+                        <div class="io-example">
+                            <div class="io-row"><span class="io-label">Input:</span><span>helloWorld</span></div>
+                            <div class="io-row"><span class="io-label">Output:</span><span>hello_world</span></div>
+                            <div class="io-row" style="margin-top:6px"><span
+                                    class="io-label">Input:</span><span>camelCase</span></div>
+                            <div class="io-row"><span class="io-label">Output:</span><span>camel_case</span></div>
+                        </div>
+                        <div class="section-label mistakes">🟥 Common Mistakes</div>
+                        <ul>
+                            <li>Adding <code>_</code> but forgetting to <strong>lowercase</strong> the letter after it
+                            </li>
+                            <li>Printing one character at a time instead of building a <code>result</code> string</li>
+                            <li>Using <code>print()</code> inside the loop instead of appending to <code>result</code>
+                            </li>
+                        </ul>
+                        <div class="if-stuck">
+                            <strong>🔁 If You're Stuck</strong>
+                            <ul>
+                                <li><strong>Can't start?</strong> → Load starter code below</li>
+                                <li><strong>Wrong output?</strong> → Add <code>print(c)</code> inside your loop to see
+                                    each character</li>
+                                <li><strong>Error message?</strong> → Check the colon after <code>for c in text:</code>
+                                    and your indentation</li>
+                            </ul>
+                        </div>
+                        <div class="section-label try">⬜ Try It Yourself</div>
+                        <div class="row" style="margin-top:6px">
                             <a href="https://cs50.harvard.edu/python/2022/psets/2/camel/" target="_blank"
                                 rel="noopener noreferrer">Official CS50 camel.py spec</a>
                             <button class="load-example" data-example="camel">Load worked example</button>
@@ -620,13 +889,22 @@ for student in students:
                         </div>
                     </article>
 
-                    <article class="problem hidden" id="panel-coke" data-problem="coke" role="tabpanel" aria-labelledby="tab-coke" tabindex="0" hidden>
+                    <article class="problem hidden" id="panel-coke" data-problem="coke" role="tabpanel"
+                        aria-labelledby="tab-coke" tabindex="0" hidden>
                         <div class="problem-header">
                             <h3>Problem 2 – coke.py</h3>
                             <span class="pill-ok">Skill: while loop</span>
                         </div>
-                        <p><strong>Your goal:</strong> Build a vending machine that starts at 50 cents and only accepts
-                            25, 10, and 5.</p>
+                        <div class="time-bar">
+                            <span>⏱️ Expected: 25–35 min</span>
+                            <span>⚡ Challenge: Medium</span>
+                        </div>
+                        <p class="why-matters">💡 Vending machine logic is how real payment systems validate
+                            transactions and track running balances.</p>
+                        <div class="section-label build">🟦 What You Are Building</div>
+                        <p>A coin machine that starts at <strong>50 cents</strong> and only accepts coins of <strong>25,
+                                10, and 5</strong>.</p>
+                        <div class="section-label know">🟨 What You Need to Know</div>
                         <div class="hint">
                             <strong>Lecture pattern</strong>
                             <pre><code>while amount_due &gt; 0:
@@ -637,16 +915,58 @@ while i &lt; 3:
     print("meow")
     i += 1</code></pre>
                             <div class="row" style="margin-top:8px">
-                                <button type="button" class="ghost mini-load load-note-example" data-note-example="coke">Load note example</button>
+                                <button type="button" class="ghost mini-load load-note-example"
+                                    data-note-example="coke">Load note example</button>
                             </div>
                         </div>
+                        <div class="section-label steps">🟩 Step-by-Step Thinking</div>
                         <ol>
                             <li>Start with <code>amount_due = 50</code>.</li>
                             <li>Keep asking for coins while money is still due.</li>
-                            <li>Only subtract valid coins; ignore anything else.</li>
+                            <li>Only subtract valid coins (25, 10, or 5); ignore anything else.</li>
                             <li>When done, print the change owed.</li>
                         </ol>
-                        <div class="row" style="margin-top:10px">
+                        <div class="start-here">
+                            <strong>👉 Start Here</strong>
+                            <ol>
+                                <li>Create your file: <code>coke.py</code></li>
+                                <li>Set <code>amount_due = 50</code></li>
+                                <li>Write a <code>while amount_due &gt; 0:</code> loop</li>
+                                <li>Print <code>"Amount Due:"</code> inside the loop</li>
+                                <li>Add input and test it — then add the valid-coin check</li>
+                            </ol>
+                        </div>
+                        <div class="section-label io">📥 Example Input / Output</div>
+                        <div class="io-example">
+                            <div class="io-row"><span class="io-label">Insert:</span><span>25 → Amount Due: 25</span>
+                            </div>
+                            <div class="io-row"><span class="io-label">Insert:</span><span>25 → Change Owed: 0</span>
+                            </div>
+                            <div class="io-row" style="margin-top:6px"><span class="io-label">Insert:</span><span>30 →
+                                    (ignored, not a valid coin)</span></div>
+                            <div class="io-row"><span class="io-label">Insert:</span><span>10 → Amount Due: 40</span>
+                            </div>
+                        </div>
+                        <div class="section-label mistakes">🟥 Common Mistakes</div>
+                        <ul>
+                            <li>Not checking <code>.isdigit()</code> before converting to int — causes a crash on bad
+                                input</li>
+                            <li>Accepting any coin value, not just 25, 10, and 5</li>
+                            <li>Printing "Amount Due" after the loop ends instead of inside it</li>
+                        </ul>
+                        <div class="if-stuck">
+                            <strong>🔁 If You're Stuck</strong>
+                            <ul>
+                                <li><strong>Can't start?</strong> → Load starter code below</li>
+                                <li><strong>Infinite loop?</strong> → Make sure you subtract from
+                                    <code>amount_due</code> inside the loop
+                                </li>
+                                <li><strong>Crashes on bad input?</strong> → Add <code>if coin_text.isdigit():</code>
+                                    before converting</li>
+                            </ul>
+                        </div>
+                        <div class="section-label try">⬜ Try It Yourself</div>
+                        <div class="row" style="margin-top:6px">
                             <a href="https://cs50.harvard.edu/python/2022/psets/2/coke/" target="_blank"
                                 rel="noopener noreferrer">Official CS50 coke.py spec</a>
                             <button class="load-example" data-example="coke">Load worked example</button>
@@ -654,30 +974,86 @@ while i &lt; 3:
                         </div>
                     </article>
 
-                    <article class="problem hidden" id="panel-twttr" data-problem="twttr" role="tabpanel" aria-labelledby="tab-twttr" tabindex="0" hidden>
+                    <article class="problem hidden" id="panel-twttr" data-problem="twttr" role="tabpanel"
+                        aria-labelledby="tab-twttr" tabindex="0" hidden>
                         <div class="problem-header">
                             <h3>Problem 3 – twttr.py</h3>
                             <span class="pill-ok">Skill: Filter characters</span>
                         </div>
-                        <p><strong>Your goal:</strong> Remove all vowels from the text.</p>
+                        <div class="time-bar">
+                            <span>⏱️ Expected: 15–20 min</span>
+                            <span>⚡ Challenge: Easy</span>
+                        </div>
+                        <p class="why-matters">💡 Text filtering like this is used in content moderation tools, social
+                            media apps, and chat pipelines.</p>
+                        <div class="section-label build">🟦 What You Are Building</div>
+                        <p>Remove all <strong>vowels</strong> (a, e, i, o, u — upper and lower) from text the user
+                            types.</p>
+                        <div class="section-label know">🟨 What You Need to Know</div>
                         <div class="hint">
                             <strong>Lecture pattern</strong>
                             <pre><code>for c in text:
     ...</code></pre>
+                            <p><strong>Key tools:</strong></p>
+                            <ul>
+                                <li><code>"aeiouAEIOU"</code> — a string of all vowels to check against</li>
+                                <li><code>if c not in vowels:</code> — keep non-vowels only</li>
+                            </ul>
                             <p><strong>Example from the notes</strong></p>
                             <pre><code>for _ in range(3):
     print("meow")</code></pre>
                             <div class="row" style="margin-top:8px">
-                                <button type="button" class="ghost mini-load load-note-example" data-note-example="twttr">Load note example</button>
+                                <button type="button" class="ghost mini-load load-note-example"
+                                    data-note-example="twttr">Load note example</button>
                             </div>
                         </div>
+                        <div class="section-label steps">🟩 Step-by-Step Thinking</div>
                         <ol>
                             <li>Ask the user for text.</li>
-                            <li>Loop through characters.</li>
-                            <li>Keep only characters that are not vowels.</li>
-                            <li>Remember both lowercase and uppercase vowels.</li>
+                            <li>Loop through each character.</li>
+                            <li>Keep only characters that are NOT vowels.</li>
+                            <li>Include both lowercase (<code>aeiou</code>) and uppercase (<code>AEIOU</code>).</li>
                         </ol>
-                        <div class="row" style="margin-top:10px">
+                        <div class="start-here">
+                            <strong>👉 Start Here</strong>
+                            <ol>
+                                <li>Create your file: <code>twttr.py</code></li>
+                                <li>Add <code>text = input("Input: ")</code></li>
+                                <li>Set <code>output = ""</code></li>
+                                <li>Write a <code>for c in text:</code> loop</li>
+                                <li>Print <code>output</code> (fix vowels after it works)</li>
+                            </ol>
+                        </div>
+                        <div class="section-label io">📥 Example Input / Output</div>
+                        <div class="io-example">
+                            <div class="io-row"><span class="io-label">Input:</span><span>Hello</span></div>
+                            <div class="io-row"><span class="io-label">Output:</span><span>Hll</span></div>
+                            <div class="io-row" style="margin-top:6px"><span
+                                    class="io-label">Input:</span><span>Twitter</span></div>
+                            <div class="io-row"><span class="io-label">Output:</span><span>Twttr</span></div>
+                        </div>
+                        <div class="section-label mistakes">🟥 Common Mistakes</div>
+                        <ul>
+                            <li>Only listing lowercase <code>"aeiou"</code> and missing uppercase vowels like
+                                <code>A</code>, <code>E</code>
+                            </li>
+                            <li>Printing each character inside the loop instead of building a result string</li>
+                            <li>Using the wrong output label — check the exact format in the CS50 spec</li>
+                        </ul>
+                        <div class="if-stuck">
+                            <strong>🔁 If You're Stuck</strong>
+                            <ul>
+                                <li><strong>Can't start?</strong> → Load starter code below</li>
+                                <li><strong>Vowels still appearing?</strong> → Check your vowels string includes
+                                    <code>AEIOU</code>
+                                </li>
+                                <li><strong>Error message?</strong> → Check indentation and colon after your
+                                    <code>for</code> line
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="section-label try">⬜ Try It Yourself</div>
+                        <div class="row" style="margin-top:6px">
                             <a href="https://cs50.harvard.edu/python/2022/psets/2/twttr/" target="_blank"
                                 rel="noopener noreferrer">Official CS50 twttr.py spec</a>
                             <button class="load-example" data-example="twttr">Load worked example</button>
@@ -685,19 +1061,28 @@ while i &lt; 3:
                         </div>
                     </article>
 
-                    <article class="problem hidden" id="panel-plates" data-problem="plates" role="tabpanel" aria-labelledby="tab-plates" tabindex="0" hidden>
+                    <article class="problem hidden" id="panel-plates" data-problem="plates" role="tabpanel"
+                        aria-labelledby="tab-plates" tabindex="0" hidden>
                         <div class="problem-header">
                             <h3>Problem 4 – plates.py</h3>
                             <span class="pill-ok">Skill: Check text rules</span>
                         </div>
-                        <p><strong>Your goal:</strong> Check if a license plate follows every rule.</p>
+                        <div class="time-bar">
+                            <span>⏱️ Expected: 35–50 min</span>
+                            <span>⚡ Challenge: Hard</span>
+                        </div>
+                        <p class="why-matters">💡 This is validation logic — the same pattern used in web forms, app
+                            sign-ups, and ID verification systems.</p>
+                        <div class="section-label build">🟦 What You Are Building</div>
+                        <p>Check if a license plate string follows <em>every</em> rule:</p>
                         <ul>
                             <li>Starts with two letters</li>
-                            <li>Length is 2 to 6</li>
+                            <li>Length is 2 to 6 characters</li>
                             <li>Numbers appear only at the end</li>
                             <li>First number cannot be 0</li>
                             <li>No punctuation or spaces</li>
                         </ul>
+                        <div class="section-label know">🟨 What You Need to Know</div>
                         <div class="hint">
                             <strong>Lecture pattern</strong>
                             <pre><code>s.isalpha()
@@ -714,10 +1099,62 @@ re.fullmatch(r"[A-Za-z0-9]+", s)</code></pre>
 for student in students:
     print(student, students[student], sep=", ")</code></pre>
                             <div class="row" style="margin-top:8px">
-                                <button type="button" class="ghost mini-load load-note-example" data-note-example="plates">Load note example</button>
+                                <button type="button" class="ghost mini-load load-note-example"
+                                    data-note-example="plates">Load note example</button>
                             </div>
                         </div>
-                        <div class="row" style="margin-top:10px">
+                        <div class="section-label steps">🟩 Step-by-Step Thinking</div>
+                        <ol>
+                            <li>Write a function <code>is_valid(s)</code> that returns <code>True</code> or
+                                <code>False</code>.
+                            </li>
+                            <li>Check length first (must be 2–6).</li>
+                            <li>Check that the first two characters are letters.</li>
+                            <li>Check that numbers only appear at the end (no letter after a digit).</li>
+                            <li>Check that the first digit is not <code>0</code>.</li>
+                            <li>Check that only letters and digits appear (no spaces or punctuation).</li>
+                        </ol>
+                        <div class="start-here">
+                            <strong>👉 Start Here</strong>
+                            <ol>
+                                <li>Create your file: <code>plates.py</code></li>
+                                <li>Write <code>def is_valid(s):</code> and <code>return False</code> for now</li>
+                                <li>Test mentally: <code>"AA10"</code> should be Valid</li>
+                                <li>Add <strong>one rule at a time</strong> and test after each</li>
+                                <li>Add the <code>input()</code> call last</li>
+                            </ol>
+                        </div>
+                        <div class="section-label io">📥 Example Input / Output</div>
+                        <div class="io-example">
+                            <div class="io-row"><span class="io-label">Input:</span><span>AA10 → Valid</span></div>
+                            <div class="io-row"><span class="io-label">Input:</span><span>AA01 → Invalid (first digit is
+                                    0)</span></div>
+                            <div class="io-row" style="margin-top:6px"><span class="io-label">Input:</span><span>AB →
+                                    Valid (letters only, length 2)</span></div>
+                            <div class="io-row"><span class="io-label">Input:</span><span>1A → Invalid (must start with
+                                    2 letters)</span></div>
+                        </div>
+                        <div class="section-label mistakes">🟥 Common Mistakes</div>
+                        <ul>
+                            <li>Checking rules in the wrong order — check length first</li>
+                            <li>Forgetting that a letter <em>after</em> a digit makes the plate invalid</li>
+                            <li>Not returning <code>True</code> at the end after all checks pass</li>
+                            <li>Missing that "first digit can't be 0" is a separate rule from "no punctuation"</li>
+                        </ul>
+                        <div class="if-stuck">
+                            <strong>🔁 If You're Stuck</strong>
+                            <ul>
+                                <li><strong>Can't start?</strong> → Load starter code below</li>
+                                <li><strong>Always returns Invalid?</strong> → Make sure you <code>return True</code> at
+                                    the end of the function</li>
+                                <li><strong>Confused about number rules?</strong> → Re-read the official CS50 spec
+                                    carefully</li>
+                                <li><strong>Error message?</strong> → Check your function is defined <em>before</em> you
+                                    call it</li>
+                            </ul>
+                        </div>
+                        <div class="section-label try">⬜ Try It Yourself</div>
+                        <div class="row" style="margin-top:6px">
                             <a href="https://cs50.harvard.edu/python/2022/psets/2/plates/" target="_blank"
                                 rel="noopener noreferrer">Official CS50 plates.py spec</a>
                             <button class="load-example" data-example="plates">Load worked example</button>
@@ -725,12 +1162,22 @@ for student in students:
                         </div>
                     </article>
 
-                    <article class="problem hidden" id="panel-nutrition" data-problem="nutrition" role="tabpanel" aria-labelledby="tab-nutrition" tabindex="0" hidden>
+                    <article class="problem hidden" id="panel-nutrition" data-problem="nutrition" role="tabpanel"
+                        aria-labelledby="tab-nutrition" tabindex="0" hidden>
                         <div class="problem-header">
                             <h3>Problem 5 – nutrition.py</h3>
                             <span class="pill-ok">Skill: Dictionary lookups</span>
                         </div>
-                        <p><strong>Your goal:</strong> Use a dictionary to print calories for a fruit.</p>
+                        <div class="time-bar">
+                            <span>⏱️ Expected: 20–30 min</span>
+                            <span>⚡ Challenge: Easy–Medium</span>
+                        </div>
+                        <p class="why-matters">💡 Dictionary lookups are how databases and APIs retrieve information by
+                            key — used in every app that stores data.</p>
+                        <div class="section-label build">🟦 What You Are Building</div>
+                        <p>Look up a fruit the user types and print its <strong>calorie count</strong> using a
+                            dictionary.</p>
+                        <div class="section-label know">🟨 What You Need to Know</div>
                         <div class="hint">
                             <strong>Lecture pattern</strong>
                             <pre><code>fruits = {
@@ -740,6 +1187,12 @@ for student in students:
 
 if fruit in fruits:
     ...</code></pre>
+                            <p><strong>Key tools:</strong></p>
+                            <ul>
+                                <li><code>.strip()</code> → removes extra spaces</li>
+                                <li><code>.lower()</code> → makes comparison case-insensitive</li>
+                                <li><code>if key in dict:</code> → safe lookup before accessing</li>
+                            </ul>
                             <p><strong>Example from the notes</strong></p>
                             <pre><code>students = {
     "Hermione": "Gryffindor",
@@ -749,15 +1202,54 @@ if fruit in fruits:
 
 print(students["Hermione"])</code></pre>
                             <div class="row" style="margin-top:8px">
-                                <button type="button" class="ghost mini-load load-note-example" data-note-example="nutrition">Load note example</button>
+                                <button type="button" class="ghost mini-load load-note-example"
+                                    data-note-example="nutrition">Load note example</button>
                             </div>
                         </div>
+                        <div class="section-label steps">🟩 Step-by-Step Thinking</div>
                         <ol>
-                            <li>Make a dictionary of fruits and calories.</li>
-                            <li>Ask for a fruit and change it to lowercase.</li>
-                            <li>If the fruit exists, print its calories.</li>
+                            <li>Create a dictionary of fruits and their calorie counts.</li>
+                            <li>Ask for a fruit using <code>input("Item: ")</code>.</li>
+                            <li>Use <code>.strip().lower()</code> to normalize the input.</li>
+                            <li>If the fruit exists in the dictionary, print its calories.</li>
                         </ol>
-                        <div class="row" style="margin-top:10px">
+                        <div class="start-here">
+                            <strong>👉 Start Here</strong>
+                            <ol>
+                                <li>Create your file: <code>nutrition.py</code></li>
+                                <li>Add the fruit dictionary from the official CS50 spec</li>
+                                <li>Add <code>fruit = input("Item: ").strip().lower()</code></li>
+                                <li>Add an <code>if</code> check and print the calories</li>
+                            </ol>
+                        </div>
+                        <div class="section-label io">📥 Example Input / Output</div>
+                        <div class="io-example">
+                            <div class="io-row"><span class="io-label">Input:</span><span>Apple</span></div>
+                            <div class="io-row"><span class="io-label">Output:</span><span>Calories: 130</span></div>
+                            <div class="io-row" style="margin-top:6px"><span
+                                    class="io-label">Input:</span><span>Watermelon</span></div>
+                            <div class="io-row"><span class="io-label">Output:</span><span>Calories: 80</span></div>
+                        </div>
+                        <div class="section-label mistakes">🟥 Common Mistakes</div>
+                        <ul>
+                            <li>Not using <code>.lower()</code> — <code>"Apple"</code> and <code>"apple"</code> are
+                                different keys</li>
+                            <li>Printing something when the fruit is not found (check the spec — it expects silence)
+                            </li>
+                            <li>Not including the full fruit list from the official CS50 problem</li>
+                        </ul>
+                        <div class="if-stuck">
+                            <strong>🔁 If You're Stuck</strong>
+                            <ul>
+                                <li><strong>Can't start?</strong> → Load starter code below</li>
+                                <li><strong>Nothing prints?</strong> → Add <code>.lower()</code> to your input and check
+                                    spelling</li>
+                                <li><strong>Key error?</strong> → Use <code>if fruit in fruits:</code> before accessing
+                                    the dictionary</li>
+                            </ul>
+                        </div>
+                        <div class="section-label try">⬜ Try It Yourself</div>
+                        <div class="row" style="margin-top:6px">
                             <a href="https://cs50.harvard.edu/python/2022/psets/2/nutrition/" target="_blank"
                                 rel="noopener noreferrer">Official CS50 nutrition.py spec</a>
                             <button class="load-example" data-example="nutrition">Load worked example</button>
@@ -770,7 +1262,8 @@ print(students["Hermione"])</code></pre>
                     <h2 style="margin:0">Quick Reference (At a Glance)</h2>
                     <div class="table-wrap">
                         <table aria-label="Problem to concept map">
-                            <caption class="sr-only">Quick reference table showing each CS50P problem and its main Week 2 concept.</caption>
+                            <caption class="sr-only">Quick reference table showing each CS50P problem and its main Week
+                                2 concept.</caption>
                             <thead>
                                 <tr>
                                     <th>Problem</th>
@@ -823,7 +1316,8 @@ print(students["Hermione"])</code></pre>
 ## Try loading one of the problem starters
 ## from the buttons on the left.
 </textarea>
-                    <div id="editorNote" class="editor-note">Editor mode: basic editor (trying to load color highlighting…)</div>
+                    <div id="editorNote" class="editor-note">Editor mode: basic editor (trying to load color
+                        highlighting…)</div>
                     <div class="row" style="margin-top:10px">
                         <button id="runPy">Run Code</button>
                         <button class="ghost" id="clearPyOut">Clear Output</button>
@@ -837,7 +1331,8 @@ print(students["Hermione"])</code></pre>
                 <article class="card" aria-labelledby="debugging-checklist-title">
                     <h2 id="debugging-checklist-title">Debugging Checklist</h2>
                     <div class="checklist">
-                        <label><input type="checkbox" /> Print variables to see what values your program is using</label>
+                        <label><input type="checkbox" /> Print variables to see what values your program is
+                            using</label>
                         <label><input type="checkbox" /> Test one small part of your code first</label>
                         <label><input type="checkbox" /> Check spaces and indentation</label>
                         <label><input type="checkbox" /> Re-read the official problem instructions</label>
@@ -1325,7 +1820,7 @@ print(students["Hermione"])`
             }
             setStatus('Ready', true);
             // Pre-load standard library modules students commonly use in Week 2
-            try { await pyodide.runPythonAsync('import re, sys, string, random'); } catch (_) {}
+            try { await pyodide.runPythonAsync('import re, sys, string, random'); } catch (_) { }
             return pyodide;
         }
 
