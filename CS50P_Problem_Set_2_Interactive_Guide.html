@@ -196,22 +196,6 @@
             <a class="resource-link" href="https://cs50.harvard.edu/python/gradebook/" target="_blank">Check your CS50
                 Gradebook</a>
         </div>
-        <div class="string-methods-ref"
-            style="margin:24px 0 12px 0;padding:18px;background:#e0f7fa;border-radius:10px;border-left:4px solid #1e3a8a;">
-            <strong>Python String Methods Reference:</strong>
-            <ul style="margin-top:8px;">
-                <li><b>isupper()</b>: Returns True if the character is uppercase.<br><code>c.isupper()</code></li>
-                <li><b>lower()</b>: Converts a string or character to lowercase.<br><code>name.lower()</code></li>
-                <li><b>isalpha()</b>: Returns True if all characters are alphabetic.<br><code>plate.isalpha()</code>
-                </li>
-                <li><b>len()</b>: Returns the length of a string.<br><code>len(plate)</code></li>
-                <li><b>in</b>: Checks if a character or substring exists in a string.<br><code>c in vowels</code></li>
-                <li><b>not in</b>: Checks if a character or substring does not exist in a
-                    string.<br><code>c not in vowels</code></li>
-                <li><b>lower()</b>: Converts input to lowercase for case-insensitive
-                    comparison.<br><code>fruit = input("Item: ").lower()</code></li>
-            </ul>
-        </div>
         <div class="problem-tabs" role="tablist">
             <button class="problem-tab active" data-problem="camel">camelCase</button>
             <button class="problem-tab" data-problem="coke">Coke Machine</button>
@@ -225,6 +209,8 @@
                 <button class="accordion-btn active" data-section="guidance">Guidance</button>
                 <button class="accordion-btn" data-section="example">Worked Example</button>
                 <button class="accordion-btn" data-section="starter">Starter Code</button>
+                <button class="accordion-btn" data-section="stringref">String Methods Reference</button>
+                <button class="accordion-btn" data-section="video">Video Lecture</button>
             </div>
             <div class="accordion-content active" id="guidance-content">
                 <div class="guidance-card" id="guidance-camel">
@@ -299,59 +285,59 @@
             <div class="accordion-content" id="example-content">
                 <div class="example-card" id="example-camel">
                     <strong>Worked Example:</strong>
-                    <pre class="language-python"><code>name = "myVariableName"
+                    <textarea id="example-editor-camel" rows="8" style="width:100%;font-family:monospace;">name = "myVariableName"
 result = ""
 for c in name:
     if c.isupper():
         result += "_" + c.lower()
     else:
         result += c
-print(result)  # Output: my_variable_name</code></pre>
+print(result)  # Output: my_variable_name</textarea>
                     <button class="run-btn" data-run="camel-example">Run Example</button>
                     <div class="output-block" id="output-camel-example"></div>
                 </div>
                 <div class="example-card" id="example-coke" style="display:none;">
                     <strong>Worked Example:</strong>
-                    <pre class="language-python"><code>amount_due = 100
+                    <textarea id="example-editor-coke" rows="8" style="width:100%;font-family:monospace;">amount_due = 100
 while amount_due > 0:
     print(f"Amount Due: {amount_due}")
     coin = 25  # Example input
     if coin in [25, 10, 5]:
         amount_due -= coin
-print("Change Owed:", abs(amount_due))</code></pre>
+print("Change Owed:", abs(amount_due))</textarea>
                     <button class="run-btn" data-run="coke-example">Run Example</button>
                     <div class="output-block" id="output-coke-example"></div>
                 </div>
                 <div class="example-card" id="example-twttr" style="display:none;">
                     <strong>Worked Example:</strong>
-                    <pre class="language-python"><code>text = "Twitter"
+                    <textarea id="example-editor-twttr" rows="8" style="width:100%;font-family:monospace;">text = "Twitter"
 vowels = "aeiouAEIOU"
 result = ""
 for c in text:
     if c not in vowels:
         result += c
-print(result)  # Output: Twttr</code></pre>
+print(result)  # Output: Twttr</textarea>
                     <button class="run-btn" data-run="twttr-example">Run Example</button>
                     <div class="output-block" id="output-twttr-example"></div>
                 </div>
                 <div class="example-card" id="example-plates" style="display:none;">
                     <strong>Worked Example:</strong>
-                    <pre class="language-python"><code>plate = "CS50"
+                    <textarea id="example-editor-plates" rows="8" style="width:100%;font-family:monospace;">plate = "CS50"
 if plate.isalpha():
     print("Valid")
 else:
-    print("Invalid")  # Output: Valid</code></pre>
+    print("Invalid")  # Output: Valid</textarea>
                     <button class="run-btn" data-run="plates-example">Run Example</button>
                     <div class="output-block" id="output-plates-example"></div>
                 </div>
                 <div class="example-card" id="example-nutrition" style="display:none;">
                     <strong>Worked Example:</strong>
-                    <pre class="language-python"><code>fruit = "apple"
+                    <textarea id="example-editor-nutrition" rows="8" style="width:100%;font-family:monospace;">fruit = "apple"
 calories = {"apple": 130, "avocado": 50}
 if fruit in calories:
     print(f"Calories: {calories[fruit]}")
 else:
-    print("Item not found")  # Output: Calories: 130</code></pre>
+    print("Item not found")  # Output: Calories: 130</textarea>
                     <button class="run-btn" data-run="nutrition-example">Run Example</button>
                     <div class="output-block" id="output-nutrition-example"></div>
                 </div>
@@ -402,26 +388,17 @@ print(result)</code></pre>
                 </div>
                 <div class="starter-card" id="starter-plates" style="display:none;">
                     <strong>Starter Code:</strong>
-                    <pre class="language-python"><code># Starter code for Vanity Plates
-plate = input("Plate: ")
-# Add validation logic here
-if plate.isalpha():
-    print("Valid")
-else:
-    print("Invalid")</code></pre>
+                    <pre
+                        class="language-python"><code># Starter code for Vanity Plates
+plate = input("Plate: ")\n# Add validation logic here\nif plate.isalpha():\n    print("Valid")\nelse:\n    print("Invalid")</code></pre>
                     <textarea id="editor-plates" rows="8" style="width:100%;font-family:monospace;"></textarea>
                     <button class="run-btn" data-run="plates-starter">Run Starter</button>
                     <div class="output-block" id="output-plates-starter"></div>
                 </div>
                 <div class="starter-card" id="starter-nutrition" style="display:none;">
                     <strong>Starter Code:</strong>
-                    <pre class="language-python"><code># Starter code for Nutrition Facts
-fruit = input("Item: ").lower()
-calories = {"apple": 130, "avocado": 50}
-if fruit in calories:
-    print(f"Calories: {calories[fruit]}")
-else:
-    print("Item not found")</code></pre>
+                    <pre
+                        class="language-python"><code># Starter code for Nutrition Facts\nfruit = input("Item: ").lower()\ncalories = {"apple": 130, "avocado": 50}\nif fruit in calories:\n    print(f"Calories: {calories[fruit]}")\nelse:\n    print("Item not found")</code></pre>
                     <textarea id="editor-nutrition" rows="8" style="width:100%;font-family:monospace;"></textarea>
                     <button class="run-btn" data-run="nutrition-starter">Run Starter</button>
                     <div class="output-block" id="output-nutrition-starter"></div>
@@ -513,21 +490,25 @@ else:
             guidance: document.getElementById('guidance-content'),
             example: document.getElementById('example-content'),
             starter: document.getElementById('starter-content'),
+            stringref: document.getElementById('stringref-content'),
             video: document.getElementById('video-content')
         };
         function showAccordionSection(section) {
             Object.keys(accordionContents).forEach(key => {
                 accordionContents[key].classList.remove('active');
             });
-            if (section !== 'video') {
-                accordionContents[section].classList.add('active');
-            }
+            accordionContents[section].classList.add('active');
         }
         accordionBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 accordionBtns.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 showAccordionSection(btn.dataset.section);
+                // Show correct video for current problem
+                if (btn.dataset.section === 'video') {
+                    document.querySelectorAll('.video-section').forEach(v => v.style.display = 'none');
+                    document.getElementById('video-' + currentProblem).style.display = '';
+                }
             });
         });
         // Starter code for each problem
@@ -541,6 +522,43 @@ else:
         Object.keys(starterBlocks).forEach(problem => {
             editors[problem].value = starterBlocks[problem];
         });
+        // Example code editors
+        const exampleEditors = {
+            camel: document.getElementById('example-editor-camel'),
+            coke: document.getElementById('example-editor-coke'),
+            twttr: document.getElementById('example-editor-twttr'),
+            plates: document.getElementById('example-editor-plates'),
+            nutrition: document.getElementById('example-editor-nutrition')
+        };
+        async function runExample(problem) {
+            await loadPyodide();
+            const code = exampleEditors[problem].value;
+            let outputElem = document.getElementById(`output-${problem}-example`);
+            outputElem.textContent = 'Running...';
+            // Input simulation for examples
+            let inputPrompt = async () => {
+                let val = await new Promise(resolve => {
+                    let promptBox = document.createElement('div');
+                    promptBox.style.margin = '8px 0';
+                    promptBox.innerHTML = '<label>Input: <input type="text" style="width:180px;" /></label> <button>Submit</button>';
+                    outputElem.appendChild(promptBox);
+                    promptBox.querySelector('button').onclick = () => {
+                        let v = promptBox.querySelector('input').value;
+                        promptBox.remove();
+                        resolve(v);
+                    };
+                });
+                return val;
+            };
+            pyodide.setStdout(s => { outputElem.textContent += s + '\n'; });
+            pyodide.setStderr(s => { outputElem.textContent += 'Error: ' + s + '\n'; });
+            pyodide.globals.set('input', inputPrompt);
+            try {
+                await pyodide.runPythonAsync(code);
+            } catch (err) {
+                outputElem.textContent += '\nError: ' + err;
+            }
+        }
         // Run Example (static output)
         function runExample(problem) {
             let output = '';
@@ -563,7 +581,7 @@ else:
             }
             document.getElementById(`output-${problem}-example`).textContent = output;
         }
-        // Run Starter (with Pyodide)
+        // Run Starter (with Pyodide and input support)
         let pyodideReady = false;
         let pyodide;
         async function loadPyodide() {
@@ -577,11 +595,30 @@ else:
             const code = editors[problem].value;
             let outputElem = document.getElementById(`output-${problem}-starter`);
             outputElem.textContent = 'Running...';
+            // Input simulation
+            let inputValues = [];
+            let inputIndex = 0;
+            let inputPrompt = async () => {
+                let val = await new Promise(resolve => {
+                    let promptBox = document.createElement('div');
+                    promptBox.style.margin = '8px 0';
+                    promptBox.innerHTML = '<label>Input: <input type="text" style="width:180px;" /></label> <button>Submit</button>';
+                    outputElem.appendChild(promptBox);
+                    promptBox.querySelector('button').onclick = () => {
+                        let v = promptBox.querySelector('input').value;
+                        promptBox.remove();
+                        resolve(v);
+                    };
+                });
+                return val;
+            };
+            pyodide.setStdout(s => { outputElem.textContent += s + '\n'; });
+            pyodide.setStderr(s => { outputElem.textContent += 'Error: ' + s + '\n'; });
+            pyodide.globals.set('input', inputPrompt);
             try {
-                let result = await pyodide.runPythonAsync(code);
-                outputElem.textContent = result !== undefined ? result : 'Code ran successfully.';
+                await pyodide.runPythonAsync(code);
             } catch (err) {
-                outputElem.textContent = 'Error: ' + err;
+                outputElem.textContent += '\nError: ' + err;
             }
         }
         document.querySelectorAll('.run-btn').forEach(btn => {
