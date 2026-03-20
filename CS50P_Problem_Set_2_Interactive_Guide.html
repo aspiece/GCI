@@ -4,32 +4,15 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>CS50P Problem Set 2 – Interactive Student Guide</title>
-    <meta name="description"
-        content="Student-facing interactive support guide for CS50P Problem Set 2 with lecture concept mapping, official CS50 links, and an in-browser Python runner." />
+    <title>CS50P Problem Set 2 – Interactive Guide</title>
     <link rel="icon" href="data:," />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
     <style>
-        :root {
-            --accent: #1e3a8a;
-            --accent-2: #172554;
-            --border: #64748b;
-            --muted: #1e293b;
-            --card: #f8fbff;
-            --shadow: 0 2px 8px rgba(30, 58, 138, 0.08);
-            --ok: #198754;
-            --ok-bg: #e6ffed;
-            --warn: #b91c1c;
-            --warn-bg: #fff3f3;
-            --text: #1e293b;
-        }
-
         body {
             font-family: 'Inter', Arial, sans-serif;
             background: #fbfdff;
-            color: var(--text);
+            color: #1e293b;
             margin: 0;
-            min-height: 100vh;
         }
 
         .container {
@@ -38,36 +21,36 @@
             padding: 24px 12px;
         }
 
-        .problem-tabs {
+        .top-nav {
             display: flex;
             gap: 8px;
             margin-bottom: 18px;
             flex-wrap: wrap;
         }
 
-        .problem-tab {
-            background: var(--card);
-            border: 1px solid var(--border);
+        .top-nav-btn {
+            background: #f8fbff;
+            border: 1px solid #64748b;
             border-radius: 10px;
             font-weight: 700;
             padding: 8px 16px;
             cursor: pointer;
-            color: var(--accent);
+            color: #1e3a8a;
             transition: background 0.2s;
         }
 
-        .problem-tab.active {
-            background: var(--accent);
+        .top-nav-btn.active {
+            background: #1e3a8a;
             color: #fff;
         }
 
-        .problem-main {
+        .main-layout {
             display: flex;
             gap: 24px;
             min-height: 400px;
         }
 
-        .accordion-nav {
+        .side-tabs {
             width: 220px;
             min-width: 180px;
             display: flex;
@@ -75,525 +58,173 @@
             gap: 8px;
         }
 
-        .accordion-btn {
-            background: var(--card);
-            border: 1px solid var(--border);
+        .side-tab-btn {
+            background: #f8fbff;
+            border: 1px solid #64748b;
             border-radius: 8px;
             font-weight: 600;
             padding: 10px 14px;
             cursor: pointer;
-            color: var(--accent);
+            color: #1e3a8a;
             text-align: left;
             transition: background 0.2s;
         }
 
-        .accordion-btn.active {
-            background: var(--accent);
+        .side-tab-btn.active {
+            background: #1e3a8a;
             color: #fff;
         }
 
-        .accordion-content {
+        .tab-content {
             flex: 1;
             display: none;
-            border: 1px solid var(--border);
+            border: 1px solid #64748b;
             border-radius: 12px;
             padding: 18px;
             background: #fff;
             min-width: 0;
         }
 
-        .accordion-content.active {
+        .tab-content.active {
             display: block;
         }
 
-        .guidance-card {
-            background: #fffbe6;
-            border-left: 4px solid #ffe066;
+        .section-card {
+            background: #e0f7fa;
             border-radius: 8px;
             padding: 10px 14px;
             margin: 10px 0;
-            color: #333;
-        }
-
-        .guidance-steps {
-            margin: 12px 0;
-            padding-left: 18px;
-        }
-
-        .example-card,
-        .starter-card {
-            background: #e0f2fe;
-            border-radius: 8px;
-            padding: 10px 14px;
-            margin: 10px 0;
-        }
-
-        .starter-card {
-            background: #f8fbff;
-            border: 1px dashed #64748b;
-        }
-
-        .run-btn {
-            margin-top: 8px;
-            padding: 6px 16px;
-            border-radius: 6px;
-            border: none;
-            background: var(--accent);
-            color: #fff;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .output-block {
-            background: #0b1224;
-            color: #e2e8f0;
-            border-radius: 8px;
-            padding: 10px 14px;
-            margin: 8px 0;
-            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
-            font-size: 0.95em;
-            line-height: 1.8;
-            min-height: 24px;
-        }
-
-        pre[class*="language-"] {
-            font-size: 1em;
-            border-radius: 8px;
-            margin: 10px 0;
-        }
-
-        .resource-link {
-            color: #1e3a8a;
-            text-decoration: underline;
-            font-weight: 600;
-        }
-
-        .video-section {
-            margin-top: 24px;
-            text-align: center;
-        }
-
-        .video-section iframe {
-            border-radius: 12px;
-            border: 1px solid #64748b;
-            width: 100%;
-            max-width: 800px;
-            height: 450px;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <h1>CS50P Problem Set 2 – Interactive Student Guide</h1>
-        <div class="hint">
-            <a class="resource-link" href="https://cs50.harvard.edu/python/psets/2/" target="_blank">Problem Set 2
-                Overview</a>
-            &nbsp;|&nbsp;
-            <a class="resource-link" href="https://cs50.harvard.edu/python/weeks/2/" target="_blank">Week 2 Lecture
-                Notes</a>
-            &nbsp;|&nbsp;
-            <a class="resource-link" href="https://cs50.harvard.edu/python/gradebook/" target="_blank">Check your CS50
-                Gradebook</a>
+        <h1>CS50P Problem Set 2 – Interactive Guide</h1>
+        <div class="top-nav" role="tablist">
+            <button class="top-nav-btn active" data-problem="camel">camelCase</button>
+            <button class="top-nav-btn" data-problem="coke">Coke Machine</button>
+            <button class="top-nav-btn" data-problem="twttr">Just setting up my twttr</button>
+            <button class="top-nav-btn" data-problem="plates">Vanity Plates</button>
+            <button class="top-nav-btn" data-problem="nutrition">Nutrition Facts</button>
         </div>
-        <div class="problem-tabs" role="tablist">
-            <button class="problem-tab active" data-problem="camel">camelCase</button>
-            <button class="problem-tab" data-problem="coke">Coke Machine</button>
-            <button class="problem-tab" data-problem="twttr">Just setting up my twttr</button>
-            <button class="problem-tab" data-problem="plates">Vanity Plates</button>
-            <button class="problem-tab" data-problem="nutrition">Nutrition Facts</button>
-            <button class="problem-tab" data-problem="video">Lecture Video</button>
-        </div>
-        <div class="problem-main">
-            <div class="accordion-nav" id="accordion-nav">
-                <button class="accordion-btn active" data-section="guidance">Guidance</button>
-                <button class="accordion-btn" data-section="example">Worked Example</button>
-                <button class="accordion-btn" data-section="starter">Starter Code</button>
-                <button class="accordion-btn" data-section="stringref">String Methods Reference</button>
-                <button class="accordion-btn" data-section="video">Video Lecture</button>
+        <div class="main-layout">
+            <div class="side-tabs" id="side-tabs">
+                <button class="side-tab-btn active" data-section="guidance">Guidance</button>
+                <button class="side-tab-btn" data-section="lecture">Lecture Video</button>
+                <button class="side-tab-btn" data-section="shorts">Shorts</button>
+                <button class="side-tab-btn" data-section="example">Worked Example</button>
+                <button class="side-tab-btn" data-section="starter">Starter Code</button>
+                <button class="side-tab-btn" data-section="stringref">String Methods Reference</button>
             </div>
-            <div class="accordion-content active" id="guidance-content">
-                <div class="guidance-card" id="guidance-camel">
-                    <strong>camelCase Guidance:</strong><br>
-                    <ol class="guidance-steps">
-                        <li>Read the problem description: Convert a variable name from camelCase to snake_case.</li>
-                        <li>Loop through each character in the string.</li>
-                        <li>If the character is uppercase, add an underscore and its lowercase version to the result.
-                        </li>
-                        <li>Else, add the character as is.</li>
-                        <li>Print the result.</li>
-                    </ol>
-                    <em>Lecture Example:</em> See <a class="resource-link"
-                        href="https://cs50.harvard.edu/python/notes/2/#string-methods" target="_blank">String
-                        Methods</a>.<br>
-                    <em>Tip:</em> Use <code>isupper()</code> and <code>lower()</code> methods.
+            <div class="tab-content active" id="guidance-content">
+                <div class="section-card" id="guidance-camel">Guidance for camelCase (placeholder)</div>
+                <div class="section-card" id="guidance-coke" style="display:none;">Guidance for Coke Machine
+                    (placeholder)</div>
+                <div class="section-card" id="guidance-twttr" style="display:none;">Guidance for twttr (placeholder)
                 </div>
-                <div class="guidance-card" id="guidance-coke" style="display:none;">
-                    <strong>Coke Machine Guidance:</strong><br>
-                    <ol class="guidance-steps">
-                        <li>Initialize <code>amount_due</code> to 100.</li>
-                        <li>Use a <code>while</code> loop to keep asking for coins until <code>amount_due</code> is 0 or
-                            less.</li>
-                        <li>Accept only 5, 10, or 25 cent coins.</li>
-                        <li>Subtract the coin value from <code>amount_due</code> if valid.</li>
-                        <li>Print the change owed at the end.</li>
-                    </ol>
-                    <em>Lecture Example:</em> See <a class="resource-link"
-                        href="https://cs50.harvard.edu/python/notes/2/#loops" target="_blank">Loops</a>.<br>
-                    <em>Tip:</em> Use <code>while</code> and <code>if</code> statements.
-                </div>
-                <div class="guidance-card" id="guidance-twttr" style="display:none;">
-                    <strong>Just setting up my twttr Guidance:</strong><br>
-                    <ol class="guidance-steps">
-                        <li>Read the input string.</li>
-                        <li>Loop through each character.</li>
-                        <li>If the character is not a vowel, add it to the result.</li>
-                        <li>Print the result.</li>
-                    </ol>
-                    <em>Lecture Example:</em> See <a class="resource-link"
-                        href="https://cs50.harvard.edu/python/notes/2/#string-methods" target="_blank">String
-                        Methods</a>.<br>
-                    <em>Tip:</em> Use a string of vowels and <code>not in</code> to filter.</em>
-                </div>
-                <div class="guidance-card" id="guidance-plates" style="display:none;">
-                    <strong>Vanity Plates Guidance:</strong><br>
-                    <ol class="guidance-steps">
-                        <li>Read the plate input.</li>
-                        <li>Check if the plate is alphabetic and meets length requirements.</li>
-                        <li>Apply all validation rules as described in the problem.</li>
-                        <li>Print "Valid" or "Invalid".</li>
-                    </ol>
-                    <em>Lecture Example:</em> See <a class="resource-link"
-                        href="https://cs50.harvard.edu/python/notes/2/#conditionals"
-                        target="_blank">Conditionals</a>.<br>
-                    <em>Tip:</em> Use <code>isalpha()</code> and <code>len()</code>.
-                </div>
-                <div class="guidance-card" id="guidance-nutrition" style="display:none;">
-                    <strong>Nutrition Facts Guidance:</strong><br>
-                    <ol class="guidance-steps">
-                        <li>Read the fruit input and convert to lowercase.</li>
-                        <li>Use a dictionary to map fruit names to calories.</li>
-                        <li>Check if the fruit is in the dictionary.</li>
-                        <li>Print the calories or "Item not found".</li>
-                    </ol>
-                    <em>Lecture Example:</em> See <a class="resource-link"
-                        href="https://cs50.harvard.edu/python/notes/2/#dictionaries"
-                        target="_blank">Dictionaries</a>.<br>
-                    <em>Tip:</em> Use <code>dict</code> and <code>lower()</code>.
-                </div>
+                <div class="section-card" id="guidance-plates" style="display:none;">Guidance for Vanity Plates
+                    (placeholder)</div>
+                <div class="section-card" id="guidance-nutrition" style="display:none;">Guidance for Nutrition Facts
+                    (placeholder)</div>
             </div>
-            <div class="accordion-content" id="example-content">
-                <div class="example-card" id="example-camel">
-                    <strong>Worked Example:</strong>
-                    <textarea id="example-editor-camel" rows="8" style="width:100%;font-family:monospace;">name = "myVariableName"
-result = ""
-for c in name:
-    if c.isupper():
-        result += "_" + c.lower()
-    else:
-        result += c
-print(result)  # Output: my_variable_name</textarea>
-                    <button class="run-btn" data-run="camel-example">Run Example</button>
-                    <div class="output-block" id="output-camel-example"></div>
+            <div class="tab-content" id="lecture-content">
+                <div class="section-card" id="lecture-camel">Lecture Video for camelCase (placeholder)</div>
+                <div class="section-card" id="lecture-coke" style="display:none;">Lecture Video for Coke Machine
+                    (placeholder)</div>
+                <div class="section-card" id="lecture-twttr" style="display:none;">Lecture Video for twttr (placeholder)
                 </div>
-                <div class="example-card" id="example-coke" style="display:none;">
-                    <strong>Worked Example:</strong>
-                    <textarea id="example-editor-coke" rows="8" style="width:100%;font-family:monospace;">amount_due = 100
-while amount_due > 0:
-    print(f"Amount Due: {amount_due}")
-    coin = 25  # Example input
-    if coin in [25, 10, 5]:
-        amount_due -= coin
-print("Change Owed:", abs(amount_due))</textarea>
-                    <button class="run-btn" data-run="coke-example">Run Example</button>
-                    <div class="output-block" id="output-coke-example"></div>
-                </div>
-                <div class="example-card" id="example-twttr" style="display:none;">
-                    <strong>Worked Example:</strong>
-                    <textarea id="example-editor-twttr" rows="8" style="width:100%;font-family:monospace;">text = "Twitter"
-vowels = "aeiouAEIOU"
-result = ""
-for c in text:
-    if c not in vowels:
-        result += c
-print(result)  # Output: Twttr</textarea>
-                    <button class="run-btn" data-run="twttr-example">Run Example</button>
-                    <div class="output-block" id="output-twttr-example"></div>
-                </div>
-                <div class="example-card" id="example-plates" style="display:none;">
-                    <strong>Worked Example:</strong>
-                    <textarea id="example-editor-plates" rows="8" style="width:100%;font-family:monospace;">plate = "CS50"
-if plate.isalpha():
-    print("Valid")
-else:
-    print("Invalid")  # Output: Valid</textarea>
-                    <button class="run-btn" data-run="plates-example">Run Example</button>
-                    <div class="output-block" id="output-plates-example"></div>
-                </div>
-                <div class="example-card" id="example-nutrition" style="display:none;">
-                    <strong>Worked Example:</strong>
-                    <textarea id="example-editor-nutrition" rows="8" style="width:100%;font-family:monospace;">fruit = "apple"
-calories = {"apple": 130, "avocado": 50}
-if fruit in calories:
-    print(f"Calories: {calories[fruit]}")
-else:
-    print("Item not found")  # Output: Calories: 130</textarea>
-                    <button class="run-btn" data-run="nutrition-example">Run Example</button>
-                    <div class="output-block" id="output-nutrition-example"></div>
-                </div>
+                <div class="section-card" id="lecture-plates" style="display:none;">Lecture Video for Vanity Plates
+                    (placeholder)</div>
+                <div class="section-card" id="lecture-nutrition" style="display:none;">Lecture Video for Nutrition Facts
+                    (placeholder)</div>
             </div>
-            <div class="accordion-content" id="starter-content">
-                <div class="starter-card" id="starter-camel">
-                    <strong>Starter Code:</strong>
-                    <pre class="language-python"><code># Starter code for camelCase
-name = input("camelCase: ")
-result = ""
-for c in name:
-    if c.isupper():
-        result += "_" + c.lower()
-    else:
-        result += c
-print(result)</code></pre>
-                    <textarea id="editor-camel" rows="8" style="width:100%;font-family:monospace;"></textarea>
-                    <button class="run-btn" data-run="camel-starter">Run Starter</button>
-                    <div class="output-block" id="output-camel-starter"></div>
+            <div class="tab-content" id="shorts-content">
+                <div class="section-card" id="shorts-camel">Shorts for camelCase (placeholder)</div>
+                <div class="section-card" id="shorts-coke" style="display:none;">Shorts for Coke Machine (placeholder)
                 </div>
-                <div class="starter-card" id="starter-coke" style="display:none;">
-                    <strong>Starter Code:</strong>
-                    <pre class="language-python"><code># Starter code for Coke Machine
-amount_due = 100
-while amount_due > 0:
-    print(f"Amount Due: {amount_due}")
-    coin = int(input("Insert Coin: "))
-    if coin in [25, 10, 5]:
-        amount_due -= coin
-print("Change Owed:", abs(amount_due))</code></pre>
-                    <textarea id="editor-coke" rows="8" style="width:100%;font-family:monospace;"></textarea>
-                    <button class="run-btn" data-run="coke-starter">Run Starter</button>
-                    <div class="output-block" id="output-coke-starter"></div>
-                </div>
-                <div class="starter-card" id="starter-twttr" style="display:none;">
-                    <strong>Starter Code:</strong>
-                    <pre class="language-python"><code># Starter code for twttr
-text = input("Input: ")
-vowels = "aeiouAEIOU"
-result = ""
-for c in text:
-    if c not in vowels:
-        result += c
-print(result)</code></pre>
-                    <textarea id="editor-twttr" rows="8" style="width:100%;font-family:monospace;"></textarea>
-                    <button class="run-btn" data-run="twttr-starter">Run Starter</button>
-                    <div class="output-block" id="output-twttr-starter"></div>
-                </div>
-                <div class="starter-card" id="starter-plates" style="display:none;">
-                    <strong>Starter Code:</strong>
-                    <pre
-                        class="language-python"><code># Starter code for Vanity Plates
-plate = input("Plate: ")\n# Add validation logic here\nif plate.isalpha():\n    print("Valid")\nelse:\n    print("Invalid")</code></pre>
-                    <textarea id="editor-plates" rows="8" style="width:100%;font-family:monospace;"></textarea>
-                    <button class="run-btn" data-run="plates-starter">Run Starter</button>
-                    <div class="output-block" id="output-plates-starter"></div>
-                </div>
-                <div class="starter-card" id="starter-nutrition" style="display:none;">
-                    <strong>Starter Code:</strong>
-                    <pre
-                        class="language-python"><code># Starter code for Nutrition Facts\nfruit = input("Item: ").lower()\ncalories = {"apple": 130, "avocado": 50}\nif fruit in calories:\n    print(f"Calories: {calories[fruit]}")\nelse:\n    print("Item not found")</code></pre>
-                    <textarea id="editor-nutrition" rows="8" style="width:100%;font-family:monospace;"></textarea>
-                    <button class="run-btn" data-run="nutrition-starter">Run Starter</button>
-                    <div class="output-block" id="output-nutrition-starter"></div>
-                </div>
+                <div class="section-card" id="shorts-twttr" style="display:none;">Shorts for twttr (placeholder)</div>
+                <div class="section-card" id="shorts-plates" style="display:none;">Shorts for Vanity Plates
+                    (placeholder)</div>
+                <div class="section-card" id="shorts-nutrition" style="display:none;">Shorts for Nutrition Facts
+                    (placeholder)</div>
             </div>
-            <div class="accordion-content" id="video-content" style="display:none;">
-                <div class="video-section" id="video-camel">
-                    <strong>Week 2 Lecture Video (camelCase):</strong><br>
-                    <iframe src="https://www.youtube.com/embed/-7xg8pGcP6w?start=120" allowfullscreen></iframe>
-                    <div style="font-size:0.95em;color:#555;margin-top:8px;">Jump to <b>String Methods</b> (2:00)</div>
+            <div class="tab-content" id="example-content">
+                <div class="section-card" id="example-camel">Worked Example for camelCase (placeholder)</div>
+                <div class="section-card" id="example-coke" style="display:none;">Worked Example for Coke Machine
+                    (placeholder)</div>
+                <div class="section-card" id="example-twttr" style="display:none;">Worked Example for twttr
+                    (placeholder)</div>
+                <div class="section-card" id="example-plates" style="display:none;">Worked Example for Vanity Plates
+                    (placeholder)</div>
+                <div class="section-card" id="example-nutrition" style="display:none;">Worked Example for Nutrition
+                    Facts (placeholder)</div>
+            </div>
+            <div class="tab-content" id="starter-content">
+                <div class="section-card" id="starter-camel">Starter Code for camelCase (placeholder)</div>
+                <div class="section-card" id="starter-coke" style="display:none;">Starter Code for Coke Machine
+                    (placeholder)</div>
+                <div class="section-card" id="starter-twttr" style="display:none;">Starter Code for twttr (placeholder)
                 </div>
-                <div class="video-section" id="video-coke" style="display:none;">
-                    <strong>Week 2 Lecture Video (Coke Machine):</strong><br>
-                    <iframe src="https://www.youtube.com/embed/-7xg8pGcP6w?start=900" allowfullscreen></iframe>
-                    <div style="font-size:0.95em;color:#555;margin-top:8px;">Jump to <b>Loops</b> (15:00)</div>
+                <div class="section-card" id="starter-plates" style="display:none;">Starter Code for Vanity Plates
+                    (placeholder)</div>
+                <div class="section-card" id="starter-nutrition" style="display:none;">Starter Code for Nutrition Facts
+                    (placeholder)</div>
+            </div>
+            <div class="tab-content" id="stringref-content">
+                <div class="section-card" id="stringref-camel">String Methods Reference for camelCase (placeholder)
                 </div>
-                <div class="video-section" id="video-twttr" style="display:none;">
-                    <strong>Week 2 Lecture Video (twttr):</strong><br>
-                    <iframe src="https://www.youtube.com/embed/-7xg8pGcP6w?start=120" allowfullscreen></iframe>
-                    <div style="font-size:0.95em;color:#555;margin-top:8px;">Jump to <b>String Methods</b> (2:00)</div>
-                </div>
-                <div class="video-section" id="video-plates" style="display:none;">
-                    <strong>Week 2 Lecture Video (Vanity Plates):</strong><br>
-                    <iframe src="https://www.youtube.com/embed/-7xg8pGcP6w?start=1800" allowfullscreen></iframe>
-                    <div style="font-size:0.95em;color:#555;margin-top:8px;">Jump to <b>Conditionals</b> (30:00)</div>
-                </div>
-                <div class="video-section" id="video-nutrition" style="display:none;">
-                    <strong>Week 2 Lecture Video (Nutrition Facts):</strong><br>
-                    <iframe src="https://www.youtube.com/embed/-7xg8pGcP6w?start=2400" allowfullscreen></iframe>
-                    <div style="font-size:0.95em;color:#555;margin-top:8px;">Jump to <b>Dictionaries</b> (40:00)</div>
-                </div>
+                <div class="section-card" id="stringref-coke" style="display:none;">String Methods Reference for Coke
+                    Machine (placeholder)</div>
+                <div class="section-card" id="stringref-twttr" style="display:none;">String Methods Reference for twttr
+                    (placeholder)</div>
+                <div class="section-card" id="stringref-plates" style="display:none;">String Methods Reference for
+                    Vanity Plates (placeholder)</div>
+                <div class="section-card" id="stringref-nutrition" style="display:none;">String Methods Reference for
+                    Nutrition Facts (placeholder)</div>
             </div>
         </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
     <script>
-        // Top problem tabs
-        const tabs = document.querySelectorAll('.problem-tab');
-        const guidanceCards = document.querySelectorAll('.guidance-card');
-        const exampleCards = document.querySelectorAll('.example-card');
-        const starterCards = document.querySelectorAll('.starter-card');
-        const stringrefContent = document.getElementById('stringref-content');
-        const videoContent = document.getElementById('video-content');
-        const accordionBtns = document.querySelectorAll('.accordion-btn');
-        const accordionContents = {
+        // Navigation logic
+        const topNavBtns = document.querySelectorAll('.top-nav-btn');
+        const sideTabBtns = document.querySelectorAll('.side-tab-btn');
+        const tabContents = {
             guidance: document.getElementById('guidance-content'),
+            lecture: document.getElementById('lecture-content'),
+            shorts: document.getElementById('shorts-content'),
             example: document.getElementById('example-content'),
             starter: document.getElementById('starter-content'),
-            stringref: document.getElementById('stringref-content'),
-            video: document.getElementById('video-content')
+            stringref: document.getElementById('stringref-content')
         };
         let currentProblem = 'camel';
-        // Utility: Hide all accordion-content and all problem-specific cards
-        function hideAllContent() {
-            Object.keys(accordionContents).forEach(key => {
-                accordionContents[key].classList.remove('active');
-                accordionContents[key].style.display = 'none';
-            });
-            guidanceCards.forEach(card => card.style.display = 'none');
-            exampleCards.forEach(card => card.style.display = 'none');
-            starterCards.forEach(card => card.style.display = 'none');
-            document.querySelectorAll('.video-section').forEach(v => v.style.display = 'none');
-            stringrefContent.style.display = 'none';
+        let currentSection = 'guidance';
+        function showSection(section) {
+            Object.values(tabContents).forEach(tc => tc.classList.remove('active'));
+            tabContents[section].classList.add('active');
+            // Hide all cards for all problems
+            document.querySelectorAll('.section-card').forEach(card => card.style.display = 'none');
+            // Show only the card for the current problem
+            document.getElementById(section + '-' + currentProblem).style.display = '';
         }
-        function showAccordionSection(section) {
-            hideAllContent();
-            // Show only the selected accordion-content section
-            accordionContents[section].classList.add('active');
-            accordionContents[section].style.display = '';
-            // Show only the relevant card for the current problem
-            if (section === 'guidance') {
-                document.getElementById('guidance-' + currentProblem).style.display = '';
-            } else if (section === 'example') {
-                document.getElementById('example-' + currentProblem).style.display = '';
-            } else if (section === 'starter') {
-                document.getElementById('starter-' + currentProblem).style.display = '';
-            } else if (section === 'video') {
-                document.getElementById('video-' + currentProblem).style.display = '';
-            } else if (section === 'stringref') {
-                stringrefContent.style.display = '';
-            }
-        }
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                tabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                currentProblem = tab.dataset.problem;
-                showAccordionSection(document.querySelector('.accordion-btn.active').dataset.section);
-                localStorage.setItem('pset2-selected-problem', currentProblem);
-            });
-        });
-        accordionBtns.forEach(btn => {
+        topNavBtns.forEach(btn => {
             btn.addEventListener('click', () => {
-                accordionBtns.forEach(b => b.classList.remove('active'));
+                topNavBtns.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-                showAccordionSection(btn.dataset.section);
-                localStorage.setItem('pset2-selected-section', btn.dataset.section);
+                currentProblem = btn.dataset.problem;
+                showSection(currentSection);
             });
         });
-        function restoreState() {
-            const savedProblem = localStorage.getItem('pset2-selected-problem');
-            const savedSection = localStorage.getItem('pset2-selected-section');
-            let problem = savedProblem || 'camel';
-            let section = savedSection || 'guidance';
-            // Set tab
-            const tab = Array.from(tabs).find(t => t.dataset.problem === problem);
-            if (tab) {
-                tabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                currentProblem = problem;
-            }
-            // Set accordion
-            const btn = Array.from(accordionBtns).find(b => b.dataset.section === section);
-            if (btn) {
-                accordionBtns.forEach(b => b.classList.remove('active'));
+        sideTabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                sideTabBtns.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-            }
-            showAccordionSection(section);
-        }
-        window.addEventListener('DOMContentLoaded', restoreState);
-        // Run Example (static output)
-        function runExample(problem) {
-            let output = '';
-            switch (problem) {
-                case 'camel':
-                    output = 'my_variable_name';
-                    break;
-                case 'coke':
-                    output = 'Amount Due: 75\nAmount Due: 50\nAmount Due: 0\nChange Owed: 0';
-                    break;
-                case 'twttr':
-                    output = 'Twttr';
-                    break;
-                case 'plates':
-                    output = 'Valid';
-                    break;
-                case 'nutrition':
-                    output = 'Calories: 130';
-                    break;
-            }
-            document.getElementById(`output-${problem}-example`).textContent = output;
-        }
-        // Run Starter (with Pyodide and input support)
-        let pyodideReady = false;
-        let pyodide;
-        async function loadPyodide() {
-            if (!pyodideReady) {
-                pyodide = await window.loadPyodide();
-                pyodideReady = true;
-            }
-        }
-        async function runStarter(problem) {
-            await loadPyodide();
-            const code = editors[problem].value;
-            let outputElem = document.getElementById(`output-${problem}-starter`);
-            outputElem.textContent = 'Running...';
-            // Input simulation
-            let inputValues = [];
-            let inputIndex = 0;
-            let inputPrompt = async () => {
-                let val = await new Promise(resolve => {
-                    let promptBox = document.createElement('div');
-                    promptBox.style.margin = '8px 0';
-                    promptBox.innerHTML = '<label>Input: <input type="text" style="width:180px;" /></label> <button>Submit</button>';
-                    outputElem.appendChild(promptBox);
-                    promptBox.querySelector('button').onclick = () => {
-                        let v = promptBox.querySelector('input').value;
-                        promptBox.remove();
-                        resolve(v);
-                    };
-                });
-                return val;
-            };
-            pyodide.setStdout(s => { outputElem.textContent += s + '\n'; });
-            pyodide.setStderr(s => { outputElem.textContent += 'Error: ' + s + '\n'; });
-            pyodide.globals.set('input', inputPrompt);
-            try {
-                await pyodide.runPythonAsync(code);
-            } catch (err) {
-                outputElem.textContent += '\nError: ' + err;
-            }
-        }
-        document.querySelectorAll('.run-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                const [problem, type] = this.dataset.run.split('-');
-                if (type === 'example') runExample(problem);
-                else runStarter(problem);
+                currentSection = btn.dataset.section;
+                showSection(currentSection);
             });
         });
-        // Dark mode auto
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.body.classList.add('dark-mode');
-        }
+        // Initial display
+        showSection(currentSection);
     </script>
 </body>
 
