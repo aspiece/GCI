@@ -4,524 +4,2398 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>CS50P Problem Set 2 – Interactive Guide</title>
+    <title>CS50P Problem Set 2 – Interactive Student Guide</title>
+    <meta name="description"
+        content="Student-facing interactive support guide for CS50P Problem Set 2 with lecture concept mapping, official CS50 links, and an in-browser Python runner." />
     <link rel="icon" href="data:," />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/material-darker.min.css">
-    <style id="theme-style"></style>
     <style>
+        :root {
+            --bg: #f4f7fc;
+            --card: #ffffff;
+            --text: #0f172a;
+            --muted: #334155;
+            --accent: #1d4ed8;
+            --accent-2: #1e40af;
+            --border: #b8c5d6;
+            --ok: #14532d;
+            --ok-bg: #dcfce7;
+            --warn: #7c2d12;
+            --warn-bg: #ffedd5;
+            --shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
         body {
-            font-family: 'Inter', Arial, sans-serif;
-            background: #fbfdff;
-            color: #1e293b;
             margin: 0;
+            font-family: Inter, Segoe UI, Roboto, Arial, sans-serif;
+            color: var(--text);
+            background: linear-gradient(180deg, #ebf2ff 0%, var(--bg) 64%);
         }
 
-        .container {
-            max-width: 1100px;
+        .wrap {
+            max-width: 1240px;
             margin: 0 auto;
-            padding: 24px 12px;
+            padding: 24px 16px 42px;
         }
 
-        .top-nav {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 18px;
-            flex-wrap: wrap;
-        }
-
-        .top-nav-btn {
-            background: #f8fbff;
-            border: 1px solid #64748b;
-            border-radius: 10px;
-            font-weight: 700;
-            padding: 8px 16px;
-            cursor: pointer;
-            color: #1e3a8a;
-            transition: background 0.2s;
-        }
-
-        .top-nav-btn.active {
-            background: #1e3a8a;
-            color: #fff;
-        }
-
-        .main-layout {
-            display: flex;
-            gap: 24px;
-            min-height: 400px;
-        }
-
-        .side-tabs {
-            width: 220px;
-            min-width: 180px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .side-tab-btn {
-            background: #f8fbff;
-            border: 1px solid #64748b;
-            border-radius: 8px;
-            font-weight: 600;
+        .skip-link {
+            position: absolute;
+            left: 16px;
+            top: -48px;
+            z-index: 1000;
             padding: 10px 14px;
-            cursor: pointer;
-            color: #1e3a8a;
-            text-align: left;
-            transition: background 0.2s;
+            border-radius: 10px;
+            background: #111827;
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 700;
         }
 
-        .side-tab-btn.active {
-            background: #1e3a8a;
-            color: #fff;
+        .skip-link:focus {
+            top: 12px;
         }
 
-        .tab-content {
-            flex: 1;
-            display: none;
-            border: 1px solid #64748b;
-            border-radius: 12px;
-            padding: 18px;
-            background: #fff;
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .topbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .chip {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            background: #f8fbff;
+            color: var(--muted);
+            font-weight: 600;
+            font-size: 0.82rem;
+        }
+
+        .home-link {
+            color: var(--accent);
+            text-decoration: underline;
+            text-underline-offset: 0.18em;
+            font-weight: 700;
+        }
+
+        .home-link:hover,
+        .home-link:focus-visible {
+            text-decoration: underline;
+        }
+
+        h1 {
+            margin: 0 0 6px;
+            font-size: clamp(1.6rem, 2.4vw, 2.1rem);
+        }
+
+        .lead {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.45;
+        }
+
+        .layout {
+            margin-top: 18px;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .layout>section,
+        .intro-grid>section {
             min-width: 0;
         }
 
-        .tab-content.active {
-            display: block;
+        .intro-grid {
+            margin-top: 12px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
         }
 
-        .section-card {
-            background: #e0f7fa;
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            box-shadow: var(--shadow);
+            padding: 14px;
+        }
+
+        h2 {
+            margin: 0 0 10px;
+            font-size: 1.14rem;
+        }
+
+        h3 {
+            margin: 0 0 8px;
+            font-size: 1.02rem;
+        }
+
+        p {
+            margin: 8px 0;
+        }
+
+        .subtle {
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .problem-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .problem-tab {
+            border: 1px solid var(--border);
+            background: #f8fbff;
+            color: var(--text);
+            border-radius: 10px;
+            font-weight: 700;
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        .problem-tab:hover,
+        .problem-tab:focus-visible {
+            background: #eff6ff;
+        }
+
+        .problem-tab.active {
+            background: var(--accent);
+            color: #ffffff;
+            border-color: var(--accent);
+        }
+
+        .problem {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px;
+            background: #fbfdff;
+        }
+
+        .problem.hidden {
+            display: none;
+        }
+
+        .problem-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .problem a {
+            color: var(--accent);
+            text-decoration: underline;
+            text-underline-offset: 0.18em;
+            font-weight: 700;
+        }
+
+        .problem a:hover,
+        .problem a:focus-visible {
+            text-decoration: underline;
+        }
+
+        .pill-ok {
+            display: inline-block;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            color: var(--ok);
+            background: var(--ok-bg);
+            border: 1px solid #86efac;
+        }
+
+        .hint {
+            border-left: 4px solid #93c5fd;
+            padding: 8px 10px;
+            border-radius: 8px;
+            background: #eff6ff;
+            margin: 8px 0;
+        }
+
+        pre {
+            margin: 6px 0 0;
+            background: #0b1224;
+            color: #e2e8f0;
+            border-radius: 10px;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            overflow: auto;
+        }
+
+        .mini-snippet-editor {
+            margin: 6px 0 0;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            overflow: hidden;
+        }
+
+        code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+            font-size: 0.86rem;
+        }
+
+        ol,
+        ul {
+            margin: 8px 0 0 20px;
+            padding: 0;
+            line-height: 1.42;
+        }
+
+        li+li {
+            margin-top: 4px;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        button {
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 8px 12px;
+            min-height: 44px;
+            background: var(--accent);
+            color: #ffffff;
+        }
+
+        a:focus-visible,
+        button:focus-visible,
+        textarea:focus-visible,
+        input:focus-visible,
+        .problem-tab:focus-visible {
+            outline: 3px solid #111827;
+            outline-offset: 3px;
+        }
+
+        button:hover,
+        button:focus-visible {
+            background: var(--accent-2);
+        }
+
+        button.ghost {
+            background: transparent;
+            color: var(--accent);
+            border: 2px solid var(--accent);
+        }
+
+        button.ghost:hover,
+        button.ghost:focus-visible {
+            background: #eff6ff;
+        }
+
+        button.mini-load {
+            min-height: 34px;
+            padding: 6px 10px;
+            font-size: 0.82rem;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 8px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 9px 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: #eff6ff;
+            font-size: 0.9rem;
+        }
+
+        caption {
+            color: var(--muted);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .docs ul {
+            margin-top: 8px;
+        }
+
+        .docs a {
+            color: var(--accent);
+            text-decoration: underline;
+            text-underline-offset: 0.18em;
+            font-weight: 700;
+        }
+
+        .docs a:hover,
+        .docs a:focus-visible {
+            text-decoration: underline;
+        }
+
+        .runner textarea {
+            width: 100%;
+            min-height: 320px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            padding: 10px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+            font-size: 0.9rem;
+            resize: vertical;
+            background: #0b1224;
+            color: #e2e8f0;
+        }
+
+        .runner textarea:focus-visible {
+            border-color: #93c5fd;
+        }
+
+        .editor-host {
+            width: 100%;
+            height: 420px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .editor-note {
+            margin-top: 6px;
+            color: var(--muted);
+            font-size: 0.84rem;
+        }
+
+        .runner-output {
+            margin-top: 10px;
+        }
+
+        .runner-output pre {
+            min-height: 130px;
+            max-height: 280px;
+            margin: 6px 0 0;
+        }
+
+        .status {
+            display: inline-block;
+            border-radius: 999px;
+            padding: 3px 10px;
+            border: 1px solid #fdba74;
+            background: var(--warn-bg);
+            color: var(--warn);
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .status.ready {
+            border-color: #86efac;
+            color: var(--ok);
+            background: var(--ok-bg);
+        }
+
+        .checklist {
+            margin-top: 8px;
+            display: grid;
+            gap: 6px;
+        }
+
+        .checklist label {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+            color: var(--text);
+            font-size: 0.94rem;
+        }
+
+        .callout {
+            margin-top: 10px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #f8fbff;
+            padding: 10px;
+            color: var(--muted);
+            font-size: 0.92rem;
+            line-height: 1.4;
+        }
+
+        @media (prefers-contrast: more) {
+            :root {
+                --muted: #1e293b;
+                --accent: #1e3a8a;
+                --accent-2: #172554;
+                --border: #64748b;
+            }
+
+            .card,
+            .problem,
+            .callout,
+            table,
+            .editor-host,
+            .runner textarea {
+                border-width: 2px;
+            }
+
+            .pill-ok,
+            .status,
+            .problem-tab,
+            button,
+            button.ghost {
+                border-width: 2px;
+            }
+        }
+
+        @media (max-width: 980px) {
+            .intro-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html:focus-within {
+                scroll-behavior: auto;
+            }
+        }
+
+        @media (forced-colors: active) {
+
+            .skip-link,
+            .card,
+            .problem,
+            .problem-tab,
+            button,
+            button.ghost,
+            .status,
+            .pill-ok,
+            .callout,
+            .runner textarea,
+            .editor-host,
+            table,
+            th,
+            td {
+                forced-color-adjust: auto;
+                border: 1px solid CanvasText;
+            }
+
+            .problem-tab.active,
+            button,
+            .status.ready,
+            .pill-ok {
+                background: Highlight;
+                color: HighlightText;
+            }
+        }
+
+        /* ── Official specs bar ── */
+        .specs-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px 16px;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-left: 4px solid var(--accent);
+            border-radius: 10px;
+            padding: 10px 16px;
+            margin-top: 12px;
+        }
+
+        .specs-bar strong {
+            font-size: 0.88rem;
+            color: var(--accent);
+            white-space: nowrap;
+        }
+
+        .specs-bar a {
+            color: var(--accent);
+            text-decoration: underline;
+            text-underline-offset: 0.18em;
+            font-weight: 700;
+            font-size: 0.88rem;
+        }
+
+        .specs-bar .sep {
+            color: var(--border);
+        }
+
+        .top-hero {
+            margin-top: 8px;
+        }
+
+        .top-hero-main h1 {
+            margin-top: 2px;
+        }
+
+        .compact-top.card {
+            padding: 10px 12px;
+        }
+
+        .compact-top h2 {
+            margin: 0 0 6px;
+            font-size: 1.02rem;
+        }
+
+        .compact-top ol {
+            margin-top: 6px;
+        }
+
+        /* ── Progress tracker ── */
+        .progress-tracker {
+            margin-top: 12px;
+            padding: 12px 18px;
+            background: #f0f7ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 12px;
+        }
+
+        .progress-tracker h2 {
+            margin: 0 0 8px;
+            font-size: 1rem;
+            color: var(--accent);
+        }
+
+        .progress-tracker .items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 24px;
+        }
+
+        .progress-tracker label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.92rem;
+            cursor: pointer;
+        }
+
+        .progress-tracker label input[type="checkbox"]:checked+span {
+            text-decoration: line-through;
+            color: var(--muted);
+        }
+
+        /* ── Section type labels ── */
+        .section-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+            font-size: 0.87rem;
+            margin: 12px 0 4px;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .section-label.build {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .section-label.know {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+
+        .section-label.steps {
+            background: #dcfce7;
+            color: #14532d;
+        }
+
+        .section-label.mistakes {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .section-label.try {
+            background: #f1f5f9;
+            color: #334155;
+        }
+
+        .section-label.io {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        /* ── Time / challenge bar ── */
+        .time-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 4px 0 8px;
+        }
+
+        .time-bar span {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 2px 10px;
+            font-size: 0.83rem;
+            color: var(--muted);
+        }
+
+        /* ── Why this matters ── */
+        .why-matters {
+            margin: 0 0 8px;
+            font-size: 0.88rem;
+            color: #374151;
+            border-left: 3px solid #93c5fd;
+            padding: 4px 8px;
+            background: #f8fbff;
+            border-radius: 0 6px 6px 0;
+        }
+
+        /* ── Input / Output example ── */
+        .io-example {
+            background: #0b1224;
+            color: #e2e8f0;
             border-radius: 8px;
             padding: 10px 14px;
-            margin: 10px 0;
+            margin: 4px 0 6px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+            font-size: 0.84rem;
+            line-height: 1.8;
+        }
+
+        .io-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .io-label {
+            color: #94a3b8;
+            min-width: 64px;
+        }
+
+        /* ── Start Here box ── */
+        .start-here {
+            background: #f0fdf4;
+            border: 1px solid #86efac;
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin: 6px 0;
+        }
+
+        .start-here strong {
+            display: block;
+            margin-bottom: 4px;
+            color: #14532d;
+        }
+
+        /* ── If You're Stuck box ── */
+        .if-stuck {
+            background: #fff7ed;
+            border: 1px solid #fdba74;
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin: 6px 0;
+            font-size: 0.9rem;
+        }
+
+        .if-stuck strong {
+            display: block;
+            margin-bottom: 4px;
+            color: #7c2d12;
+        }
+
+        /* ── Do / Don't card ── */
+        .do-dont {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .dont-box {
+            background: #fee2e2;
+            border: 1px solid #fca5a5;
+            border-radius: 10px;
+            padding: 10px 12px;
+        }
+
+        .do-box {
+            background: #dcfce7;
+            border: 1px solid #86efac;
+            border-radius: 10px;
+            padding: 10px 12px;
+        }
+
+        .do-box strong,
+        .dont-box strong {
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        /* ── Accessibility controls ── */
+        .accessibility-controls {
+            margin-top: 0;
+            padding: 10px 12px;
+        }
+
+        .accessibility-controls h2 {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .accessibility-controls .tools-body {
+            margin-top: 8px;
+        }
+
+        .control-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 6px;
+        }
+
+        .control-grid label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.93rem;
+        }
+
+        .focus-nav {
+            margin-top: 8px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .focus-nav .ghost {
+            min-height: 36px;
+            padding: 6px 10px;
+            font-size: 0.82rem;
+        }
+
+        .focus-nav .ghost[hidden] {
+            display: none;
+        }
+
+        .focus-note {
+            margin-top: 6px;
+            color: var(--muted);
+            font-size: 0.86rem;
+        }
+
+        .compact-collapsible {
+            margin-top: 8px !important;
+            padding: 10px 12px;
+        }
+
+        .compact-collapsible .static-title {
+            margin: 0 0 8px;
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .now-next {
+            margin: 6px 0 8px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid #bfdbfe;
+            background: #eff6ff;
+            font-size: 0.9rem;
+            color: #1e3a8a;
+        }
+
+        .path-steps {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .path-step {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            background: #f8fbff;
+            color: var(--muted);
+            font-size: 0.8rem;
+            padding: 2px 9px;
+        }
+
+        .runner-flow {
+            margin-top: 8px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            background: #f8fafc;
+        }
+
+        .runner-flow .flow-title {
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+        }
+
+        .runner-flow .checklist {
+            margin-top: 8px;
+        }
+
+        .layout>.grid>.card {
+            padding: 10px 12px;
+        }
+
+        .layout>.grid>.card>*:last-child {
+            margin-bottom: 0;
+        }
+
+        .layout>.grid>.card .callout {
+            margin-bottom: 0;
+        }
+
+        /* ── Error decoder ── */
+        .error-decoder ul {
+            margin-top: 8px;
+            margin-bottom: 0;
+        }
+
+        .error-decoder li {
+            margin-bottom: 6px;
+        }
+
+        .error-decoder code {
+            font-size: 0.84rem;
+        }
+
+        .error-decoder,
+        .debugging-checklist-card {
+            padding-bottom: 8px;
+        }
+
+        .error-decoder .callout,
+        .debugging-checklist-card .callout,
+        .debugging-checklist-card .checklist {
+            margin-bottom: 0;
+        }
+
+        /* ── One-problem focus mode ── */
+        body.mode-focus .problem-tabs {
+            gap: 0;
+        }
+
+        body.mode-focus .problem-tab {
+            display: none;
+        }
+
+        body.mode-focus .problem-tab.active {
+            display: inline-block;
+        }
+
+        /* ── Sensory preference modes ── */
+        body.mode-calm {
+            background: linear-gradient(180deg, #f6f8fc 0%, #f7fafc 64%);
+        }
+
+        body.mode-calm .card,
+        body.mode-calm .problem,
+        body.mode-calm .callout,
+        body.mode-calm .specs-bar,
+        body.mode-calm .start-here,
+        body.mode-calm .if-stuck,
+        body.mode-calm .io-example {
+            box-shadow: none;
+            filter: saturate(0.85);
+        }
+
+        body.mode-spacious p,
+        body.mode-spacious li,
+        body.mode-spacious td,
+        body.mode-spacious th,
+        body.mode-spacious .subtle,
+        body.mode-spacious .callout {
+            line-height: 1.7;
+        }
+
+        body.mode-large {
+            font-size: 1.08rem;
+        }
+
+        body.mode-motionless *,
+        body.mode-motionless *::before,
+        body.mode-motionless *::after {
+            animation: none !important;
+            transition: none !important;
+            scroll-behavior: auto !important;
+        }
+
+        @media (max-width: 600px) {
+            .do-dont {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 980px) {
+            .top-hero {
+                margin-top: 8px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <h1>CS50P Problem Set 2 – Interactive Guide</h1>
-        <div style="margin-bottom:18px;">
-            <label for="theme-select" style="font-weight:600;margin-right:8px;">Theme:</label>
-            <select id="theme-select"
-                style="padding:6px 12px;border-radius:6px;border:1px solid #64748b;font-size:1em;">
-                <option value="auto">Auto</option>
-                <option value="light">Light</option>
-                <option value="dark">Dark</option>
-                <option value="highcontrast">High Contrast</option>
-            </select>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <main class="wrap" id="main-content">
+        <div class="topbar">
+            <a class="home-link" href="CS50P_Problem_Sets_Home.html" aria-label="Return to CS50P problem sets home">←
+                Back to CS50P Problem Sets Home</a>
+            <span class="chip">CS50P</span>
+            <span class="chip">Problem Set 2</span>
+            <span class="chip">Student Support</span>
         </div>
-        <div class="top-nav" role="tablist">
-            <button class="top-nav-btn active" data-problem="camel">camelCase</button>
-            <button class="top-nav-btn" data-problem="coke">Coke Machine</button>
-            <button class="top-nav-btn" data-problem="twttr">Just setting up my twttr</button>
-            <button class="top-nav-btn" data-problem="plates">Vanity Plates</button>
-            <button class="top-nav-btn" data-problem="nutrition">Nutrition Facts</button>
+
+        <section class="top-hero" aria-label="Page heading and quick tools">
+            <div class="top-hero-main">
+                <h1>CS50P – Problem Set 2 Help Page</h1>
+                <p class="lead">This page helps you practice each Problem Set 2 skill step by step. If you get stuck,
+                    ask:
+                    <strong>“Which Week 2 idea does this problem want me to use?”</strong>
+                </p>
+
+                <nav class="specs-bar" aria-label="Official CS50 problem specifications">
+                    <strong>📋 Official Specs:</strong>
+                    <a href="https://cs50.harvard.edu/python/2022/psets/2/" target="_blank"
+                        rel="noopener noreferrer">Problem
+                        Set 2 Overview</a>
+                    <span class="sep" aria-hidden="true">·</span>
+                    <a href="https://cs50.harvard.edu/python/2022/weeks/2/" target="_blank"
+                        rel="noopener noreferrer">Week
+                        2 Lecture Notes</a>
+                    <span class="sep" aria-hidden="true">·</span>
+                    <a href="https://cs50.harvard.edu/python/2022/shorts/" target="_blank"
+                        rel="noopener noreferrer">CS50P
+                        Shorts Library</a>
+                </nav>
+            </div>
+        </section>
+
+        <section class="intro-grid" aria-label="How to use and guidelines" style="margin-top:8px">
+            <section class="card compact-top" aria-labelledby="how-to-use-title">
+                <h2 id="how-to-use-title">How to Use This Page</h2>
+                <ol>
+                    <li>Click a problem tab.</li>
+                    <li>Read the task and steps.</li>
+                    <li>Click <strong>Load worked example</strong> to see a complete similar program.</li>
+                    <li>Click <strong>Load starter code</strong> to begin your own version.</li>
+                    <li>Press <strong>Run Code</strong> (or Ctrl+Enter) to test.</li>
+                </ol>
+            </section>
+
+            <section class="card compact-top" aria-labelledby="usage-guidelines-title">
+                <h2 id="usage-guidelines-title">Usage Guidelines (Do / Don't)</h2>
+                <div class="do-dont">
+                    <div class="dont-box">
+                        <strong>🚫 Do NOT:</strong>
+                        <ul>
+                            <li>Copy code from this page directly into your CS50 submission</li>
+                            <li>Skip reading the official CS50 problem description</li>
+                        </ul>
+                    </div>
+                    <div class="do-box">
+                        <strong>✅ DO:</strong>
+                        <ul>
+                            <li>Use this page to understand patterns and approaches</li>
+                            <li>Write your own version in your CS50 codespace</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <div class="layout">
+            <section class="card" aria-labelledby="problem-guide-title">
+                <h2 id="problem-guide-title">Pick a Problem</h2>
+                <p class="subtle">Each tab shows a quick plan and lecture pattern. Use it to guide your work without
+                    giving away your final CS50 answer.</p>
+                <div id="instructionalCue" class="now-next" role="status" aria-live="polite">Now: Read the task for
+                    camel.py, then load starter code and run once.</div>
+                <div class="path-steps" aria-label="Instructional path">
+                    <span class="path-step">1. Read goal</span>
+                    <span class="path-step">2. Start Here</span>
+                    <span class="path-step">3. Load starter</span>
+                    <span class="path-step">4. Run once</span>
+                    <span class="path-step">5. Fix + retest</span>
+                </div>
+                <div class="problem-tabs" role="tablist" aria-label="Problem tabs">
+                    <button class="problem-tab active" id="tab-camel" type="button" role="tab" aria-selected="true"
+                        aria-controls="panel-camel" tabindex="0" data-tab="camel">1. camel.py</button>
+                    <button class="problem-tab" id="tab-coke" type="button" role="tab" aria-selected="false"
+                        aria-controls="panel-coke" tabindex="-1" data-tab="coke">2. coke.py</button>
+                    <button class="problem-tab" id="tab-twttr" type="button" role="tab" aria-selected="false"
+                        aria-controls="panel-twttr" tabindex="-1" data-tab="twttr">3. twttr.py</button>
+                    <button class="problem-tab" id="tab-plates" type="button" role="tab" aria-selected="false"
+                        aria-controls="panel-plates" tabindex="-1" data-tab="plates">4. plates.py</button>
+                    <button class="problem-tab" id="tab-nutrition" type="button" role="tab" aria-selected="false"
+                        aria-controls="panel-nutrition" tabindex="-1" data-tab="nutrition">5. nutrition.py</button>
+                </div>
+                <div class="focus-nav" aria-label="Navigate between problems"
+                    style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border)">
+                    <button type="button" class="ghost" id="prevProblemBtn">← Previous Problem</button>
+                    <button type="button" class="ghost" id="nextProblemBtn">Next Problem →</button>
+                </div>
+
+                <div class="grid">
+                    <article class="problem" id="panel-camel" data-problem="camel" role="tabpanel"
+                        aria-labelledby="tab-camel" tabindex="0">
+                        <div class="problem-header">
+                            <h3>Problem 1 – camel.py</h3>
+                            <span class="pill-ok">Skill: Loop through letters</span>
+                        </div>
+                        <div class="time-bar">
+                            <span>⏱️ Expected: 20–25 min</span>
+                            <span>⚡ Challenge: Easy–Medium</span>
+                        </div>
+                        <p class="why-matters">💡 This is how code formatters and APIs convert variable styles — used in
+                            every major codebase.</p>
+                        <div class="section-label build">🟦 What You Are Building</div>
+                        <p>Convert a <strong>camelCase</strong> word typed by the user into <strong>snake_case</strong>.
+                        </p>
+                        <div class="section-label know">🟨 What You Need to Know</div>
+                        <div class="hint">
+                            <strong>Lecture pattern</strong>
+                            <pre><code>for c in text:
+    print(c)
+
+c.isupper()</code></pre>
+                            <p><strong>Example from the notes</strong></p>
+                            <pre><code>students = ["Hermione", "Harry", "Ron"]
+
+for student in students:
+    print(student)</code></pre>
+                            <div class="row" style="margin-top:8px">
+                                <button type="button" class="ghost mini-load load-note-example"
+                                    data-note-example="camel">Load note example</button>
+                            </div>
+                        </div>
+                        <div class="section-label steps">🟩 Step-by-Step Thinking</div>
+                        <ol>
+                            <li>Ask the user to type text.</li>
+                            <li>Check one character at a time.</li>
+                            <li>If the character is uppercase, add <code>_</code> and the lowercase letter.</li>
+                            <li>If not uppercase, add the character as-is.</li>
+                        </ol>
+                        <div class="start-here">
+                            <strong>👉 Start Here</strong>
+                            <ol>
+                                <li>Create your file: <code>camel.py</code></li>
+                                <li>Add <code>text = input("camelCase: ")</code></li>
+                                <li>Set <code>result = ""</code></li>
+                                <li>Write a <code>for c in text:</code> loop</li>
+                                <li>Print the result (even if wrong at first)</li>
+                            </ol>
+                        </div>
+                        <div class="section-label io">📥 Example Input / Output</div>
+                        <div class="io-example">
+                            <div class="io-row"><span class="io-label">Input:</span><span>helloWorld</span></div>
+                            <div class="io-row"><span class="io-label">Output:</span><span>hello_world</span></div>
+                            <div class="io-row" style="margin-top:6px"><span
+                                    class="io-label">Input:</span><span>camelCase</span></div>
+                            <div class="io-row"><span class="io-label">Output:</span><span>camel_case</span></div>
+                        </div>
+                        <div class="section-label mistakes">🟥 Common Mistakes</div>
+                        <ul>
+                            <li>Adding <code>_</code> but forgetting to <strong>lowercase</strong> the letter after it
+                            </li>
+                            <li>Printing one character at a time instead of building a <code>result</code> string</li>
+                            <li>Using <code>print()</code> inside the loop instead of appending to <code>result</code>
+                            </li>
+                        </ul>
+                        <div class="if-stuck">
+                            <strong>🔁 If You're Stuck</strong>
+                            <ul>
+                                <li><strong>Can't start?</strong> → Load starter code below</li>
+                                <li><strong>Wrong output?</strong> → Add <code>print(c)</code> inside your loop to see
+                                    each character</li>
+                                <li><strong>Error message?</strong> → Check the colon after <code>for c in text:</code>
+                                    and your indentation</li>
+                            </ul>
+                        </div>
+                        <div class="section-label try">⬜ Try It Yourself</div>
+                        <div class="row" style="margin-top:6px">
+                            <a href="https://cs50.harvard.edu/python/2022/psets/2/camel/" target="_blank"
+                                rel="noopener noreferrer">Official CS50 camel.py spec</a>
+                            <button class="load-example" data-example="camel">Load worked example</button>
+                            <button class="ghost load-template" data-template="camel">Load starter code</button>
+                        </div>
+                    </article>
+
+                    <article class="problem hidden" id="panel-coke" data-problem="coke" role="tabpanel"
+                        aria-labelledby="tab-coke" tabindex="0" hidden>
+                        <div class="problem-header">
+                            <h3>Problem 2 – coke.py</h3>
+                            <span class="pill-ok">Skill: while loop</span>
+                        </div>
+                        <div class="time-bar">
+                            <span>⏱️ Expected: 25–35 min</span>
+                            <span>⚡ Challenge: Medium</span>
+                        </div>
+                        <p class="why-matters">💡 Vending machine logic is how real payment systems validate
+                            transactions and track running balances.</p>
+                        <div class="section-label build">🟦 What You Are Building</div>
+                        <p>A coin machine that starts at <strong>50 cents</strong> and only accepts coins of <strong>25,
+                                10, and 5</strong>.</p>
+                        <div class="section-label know">🟨 What You Need to Know</div>
+                        <div class="hint">
+                            <strong>Lecture pattern</strong>
+                            <pre><code>while amount_due &gt; 0:
+    ...</code></pre>
+                            <p><strong>Example from the notes</strong></p>
+                            <pre><code>i = 0
+while i &lt; 3:
+    print("meow")
+    i += 1</code></pre>
+                            <div class="row" style="margin-top:8px">
+                                <button type="button" class="ghost mini-load load-note-example"
+                                    data-note-example="coke">Load note example</button>
+                            </div>
+                        </div>
+                        <div class="section-label steps">🟩 Step-by-Step Thinking</div>
+                        <ol>
+                            <li>Start with <code>amount_due = 50</code>.</li>
+                            <li>Keep asking for coins while money is still due.</li>
+                            <li>Only subtract valid coins (25, 10, or 5); ignore anything else.</li>
+                            <li>When done, print the change owed.</li>
+                        </ol>
+                        <div class="start-here">
+                            <strong>👉 Start Here</strong>
+                            <ol>
+                                <li>Create your file: <code>coke.py</code></li>
+                                <li>Set <code>amount_due = 50</code></li>
+                                <li>Write a <code>while amount_due &gt; 0:</code> loop</li>
+                                <li>Print <code>"Amount Due:"</code> inside the loop</li>
+                                <li>Add input and test it — then add the valid-coin check</li>
+                            </ol>
+                        </div>
+                        <div class="section-label io">📥 Example Input / Output</div>
+                        <div class="io-example">
+                            <div class="io-row"><span class="io-label">Insert:</span><span>25 → Amount Due: 25</span>
+                            </div>
+                            <div class="io-row"><span class="io-label">Insert:</span><span>25 → Change Owed: 0</span>
+                            </div>
+                            <div class="io-row" style="margin-top:6px"><span class="io-label">Insert:</span><span>30 →
+                                    (ignored, not a valid coin)</span></div>
+                            <div class="io-row"><span class="io-label">Insert:</span><span>10 → Amount Due: 40</span>
+                            </div>
+                        </div>
+                        <div class="section-label mistakes">🟥 Common Mistakes</div>
+                        <ul>
+                            <li>Not checking <code>.isdigit()</code> before converting to int — causes a crash on bad
+                                input</li>
+                            <li>Accepting any coin value, not just 25, 10, and 5</li>
+                            <li>Printing "Amount Due" after the loop ends instead of inside it</li>
+                        </ul>
+                        <div class="if-stuck">
+                            <strong>🔁 If You're Stuck</strong>
+                            <ul>
+                                <li><strong>Can't start?</strong> → Load starter code below</li>
+                                <li><strong>Infinite loop?</strong> → Make sure you subtract from
+                                    <code>amount_due</code> inside the loop
+                                </li>
+                                <li><strong>Crashes on bad input?</strong> → Add <code>if coin_text.isdigit():</code>
+                                    before converting</li>
+                            </ul>
+                        </div>
+                        <div class="section-label try">⬜ Try It Yourself</div>
+                        <div class="row" style="margin-top:6px">
+                            <a href="https://cs50.harvard.edu/python/2022/psets/2/coke/" target="_blank"
+                                rel="noopener noreferrer">Official CS50 coke.py spec</a>
+                            <button class="load-example" data-example="coke">Load worked example</button>
+                            <button class="ghost load-template" data-template="coke">Load starter code</button>
+                        </div>
+                    </article>
+
+                    <article class="problem hidden" id="panel-twttr" data-problem="twttr" role="tabpanel"
+                        aria-labelledby="tab-twttr" tabindex="0" hidden>
+                        <div class="problem-header">
+                            <h3>Problem 3 – twttr.py</h3>
+                            <span class="pill-ok">Skill: Filter characters</span>
+                        </div>
+                        <div class="time-bar">
+                            <span>⏱️ Expected: 15–20 min</span>
+                            <span>⚡ Challenge: Easy</span>
+                        </div>
+                        <p class="why-matters">💡 Text filtering like this is used in content moderation tools, social
+                            media apps, and chat pipelines.</p>
+                        <div class="section-label build">🟦 What You Are Building</div>
+                        <p>Remove all <strong>vowels</strong> (a, e, i, o, u — upper and lower) from text the user
+                            types.</p>
+                        <div class="section-label know">🟨 What You Need to Know</div>
+                        <div class="hint">
+                            <strong>Lecture pattern</strong>
+                            <pre><code>for c in text:
+    ...</code></pre>
+                            <p><strong>Key tools:</strong></p>
+                            <ul>
+                                <li><code>"aeiouAEIOU"</code> — a string of all vowels to check against</li>
+                                <li><code>if c not in vowels:</code> — keep non-vowels only</li>
+                            </ul>
+                            <p><strong>Example from the notes</strong></p>
+                            <pre><code>for _ in range(3):
+    print("meow")</code></pre>
+                            <div class="row" style="margin-top:8px">
+                                <button type="button" class="ghost mini-load load-note-example"
+                                    data-note-example="twttr">Load note example</button>
+                            </div>
+                        </div>
+                        <div class="section-label steps">🟩 Step-by-Step Thinking</div>
+                        <ol>
+                            <li>Ask the user for text.</li>
+                            <li>Loop through each character.</li>
+                            <li>Keep only characters that are NOT vowels.</li>
+                            <li>Include both lowercase (<code>aeiou</code>) and uppercase (<code>AEIOU</code>).</li>
+                        </ol>
+                        <div class="start-here">
+                            <strong>👉 Start Here</strong>
+                            <ol>
+                                <li>Create your file: <code>twttr.py</code></li>
+                                <li>Add <code>text = input("Input: ")</code></li>
+                                <li>Set <code>output = ""</code></li>
+                                <li>Write a <code>for c in text:</code> loop</li>
+                                <li>Print <code>output</code> (fix vowels after it works)</li>
+                            </ol>
+                        </div>
+                        <div class="section-label io">📥 Example Input / Output</div>
+                        <div class="io-example">
+                            <div class="io-row"><span class="io-label">Input:</span><span>Hello</span></div>
+                            <div class="io-row"><span class="io-label">Output:</span><span>Hll</span></div>
+                            <div class="io-row" style="margin-top:6px"><span
+                                    class="io-label">Input:</span><span>Twitter</span></div>
+                            <div class="io-row"><span class="io-label">Output:</span><span>Twttr</span></div>
+                        </div>
+                        <div class="section-label mistakes">🟥 Common Mistakes</div>
+                        <ul>
+                            <li>Only listing lowercase <code>"aeiou"</code> and missing uppercase vowels like
+                                <code>A</code>, <code>E</code>
+                            </li>
+                            <li>Printing each character inside the loop instead of building a result string</li>
+                            <li>Using the wrong output label — check the exact format in the CS50 spec</li>
+                        </ul>
+                        <div class="if-stuck">
+                            <strong>🔁 If You're Stuck</strong>
+                            <ul>
+                                <li><strong>Can't start?</strong> → Load starter code below</li>
+                                <li><strong>Vowels still appearing?</strong> → Check your vowels string includes
+                                    <code>AEIOU</code>
+                                </li>
+                                <li><strong>Error message?</strong> → Check indentation and colon after your
+                                    <code>for</code> line
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="section-label try">⬜ Try It Yourself</div>
+                        <div class="row" style="margin-top:6px">
+                            <a href="https://cs50.harvard.edu/python/2022/psets/2/twttr/" target="_blank"
+                                rel="noopener noreferrer">Official CS50 twttr.py spec</a>
+                            <button class="load-example" data-example="twttr">Load worked example</button>
+                            <button class="ghost load-template" data-template="twttr">Load starter code</button>
+                        </div>
+                    </article>
+
+                    <article class="problem hidden" id="panel-plates" data-problem="plates" role="tabpanel"
+                        aria-labelledby="tab-plates" tabindex="0" hidden>
+                        <div class="problem-header">
+                            <h3>Problem 4 – plates.py</h3>
+                            <span class="pill-ok">Skill: Check text rules</span>
+                        </div>
+                        <div class="time-bar">
+                            <span>⏱️ Expected: 35–50 min</span>
+                            <span>⚡ Challenge: Hard</span>
+                        </div>
+                        <p class="why-matters">💡 This is validation logic — the same pattern used in web forms, app
+                            sign-ups, and ID verification systems.</p>
+                        <div class="section-label build">🟦 What You Are Building</div>
+                        <p>Check if a license plate string follows <em>every</em> rule:</p>
+                        <ul>
+                            <li>Starts with two letters</li>
+                            <li>Length is 2 to 6 characters</li>
+                            <li>Numbers appear only at the end</li>
+                            <li>First number cannot be 0</li>
+                            <li>No punctuation or spaces</li>
+                        </ul>
+                        <div class="section-label know">🟨 What You Need to Know</div>
+                        <div class="hint">
+                            <strong>Lecture pattern</strong>
+                            <pre><code>s.isalpha()
+s.isdigit()</code></pre>
+                            <p><strong>Also available – <code>re</code> module</strong></p>
+                            <pre><code>import re
+re.fullmatch(r"[A-Za-z0-9]+", s)</code></pre>
+                            <p><strong>Example from the notes</strong></p>
+                            <pre><code>students = {
+    "Hermione": "Gryffindor",
+    "Harry": "Gryffindor",
+}
+
+for student in students:
+    print(student, students[student], sep=", ")</code></pre>
+                            <div class="row" style="margin-top:8px">
+                                <button type="button" class="ghost mini-load load-note-example"
+                                    data-note-example="plates">Load note example</button>
+                            </div>
+                        </div>
+                        <div class="section-label steps">🟩 Step-by-Step Thinking</div>
+                        <ol>
+                            <li>Write a function <code>is_valid(s)</code> that returns <code>True</code> or
+                                <code>False</code>.
+                            </li>
+                            <li>Check length first (must be 2–6).</li>
+                            <li>Check that the first two characters are letters.</li>
+                            <li>Check that numbers only appear at the end (no letter after a digit).</li>
+                            <li>Check that the first digit is not <code>0</code>.</li>
+                            <li>Check that only letters and digits appear (no spaces or punctuation).</li>
+                        </ol>
+                        <div class="start-here">
+                            <strong>👉 Start Here</strong>
+                            <ol>
+                                <li>Create your file: <code>plates.py</code></li>
+                                <li>Write <code>def is_valid(s):</code> and <code>return False</code> for now</li>
+                                <li>Test mentally: <code>"AA10"</code> should be Valid</li>
+                                <li>Add <strong>one rule at a time</strong> and test after each</li>
+                                <li>Add the <code>input()</code> call last</li>
+                            </ol>
+                        </div>
+                        <div class="section-label io">📥 Example Input / Output</div>
+                        <div class="io-example">
+                            <div class="io-row"><span class="io-label">Input:</span><span>AA10 → Valid</span></div>
+                            <div class="io-row"><span class="io-label">Input:</span><span>AA01 → Invalid (first digit is
+                                    0)</span></div>
+                            <div class="io-row" style="margin-top:6px"><span class="io-label">Input:</span><span>AB →
+                                    Valid (letters only, length 2)</span></div>
+                            <div class="io-row"><span class="io-label">Input:</span><span>1A → Invalid (must start with
+                                    2 letters)</span></div>
+                        </div>
+                        <div class="section-label mistakes">🟥 Common Mistakes</div>
+                        <ul>
+                            <li>Checking rules in the wrong order — check length first</li>
+                            <li>Forgetting that a letter <em>after</em> a digit makes the plate invalid</li>
+                            <li>Not returning <code>True</code> at the end after all checks pass</li>
+                            <li>Missing that "first digit can't be 0" is a separate rule from "no punctuation"</li>
+                        </ul>
+                        <div class="if-stuck">
+                            <strong>🔁 If You're Stuck</strong>
+                            <ul>
+                                <li><strong>Can't start?</strong> → Load starter code below</li>
+                                <li><strong>Always returns Invalid?</strong> → Make sure you <code>return True</code> at
+                                    the end of the function</li>
+                                <li><strong>Confused about number rules?</strong> → Re-read the official CS50 spec
+                                    carefully</li>
+                                <li><strong>Error message?</strong> → Check your function is defined <em>before</em> you
+                                    call it</li>
+                            </ul>
+                        </div>
+                        <div class="section-label try">⬜ Try It Yourself</div>
+                        <div class="row" style="margin-top:6px">
+                            <a href="https://cs50.harvard.edu/python/2022/psets/2/plates/" target="_blank"
+                                rel="noopener noreferrer">Official CS50 plates.py spec</a>
+                            <button class="load-example" data-example="plates">Load worked example</button>
+                            <button class="ghost load-template" data-template="plates">Load starter code</button>
+                        </div>
+                    </article>
+
+                    <article class="problem hidden" id="panel-nutrition" data-problem="nutrition" role="tabpanel"
+                        aria-labelledby="tab-nutrition" tabindex="0" hidden>
+                        <div class="problem-header">
+                            <h3>Problem 5 – nutrition.py</h3>
+                            <span class="pill-ok">Skill: Dictionary lookups</span>
+                        </div>
+                        <div class="time-bar">
+                            <span>⏱️ Expected: 20–30 min</span>
+                            <span>⚡ Challenge: Easy–Medium</span>
+                        </div>
+                        <p class="why-matters">💡 Dictionary lookups are how databases and APIs retrieve information by
+                            key — used in every app that stores data.</p>
+                        <div class="section-label build">🟦 What You Are Building</div>
+                        <p>Look up a fruit the user types and print its <strong>calorie count</strong> using a
+                            dictionary.</p>
+                        <div class="section-label know">🟨 What You Need to Know</div>
+                        <div class="hint">
+                            <strong>Lecture pattern</strong>
+                            <pre><code>fruits = {
+    "apple": 130,
+    "banana": 110
+}
+
+if fruit in fruits:
+    ...</code></pre>
+                            <p><strong>Key tools:</strong></p>
+                            <ul>
+                                <li><code>.strip()</code> → removes extra spaces</li>
+                                <li><code>.lower()</code> → makes comparison case-insensitive</li>
+                                <li><code>if key in dict:</code> → safe lookup before accessing</li>
+                            </ul>
+                            <p><strong>Example from the notes</strong></p>
+                            <pre><code>students = {
+    "Hermione": "Gryffindor",
+    "Harry": "Gryffindor",
+    "Ron": "Gryffindor",
+}
+
+print(students["Hermione"])</code></pre>
+                            <div class="row" style="margin-top:8px">
+                                <button type="button" class="ghost mini-load load-note-example"
+                                    data-note-example="nutrition">Load note example</button>
+                            </div>
+                        </div>
+                        <div class="section-label steps">🟩 Step-by-Step Thinking</div>
+                        <ol>
+                            <li>Create a dictionary of fruits and their calorie counts.</li>
+                            <li>Ask for a fruit using <code>input("Item: ")</code>.</li>
+                            <li>Use <code>.strip().lower()</code> to normalize the input.</li>
+                            <li>If the fruit exists in the dictionary, print its calories.</li>
+                        </ol>
+                        <div class="start-here">
+                            <strong>👉 Start Here</strong>
+                            <ol>
+                                <li>Create your file: <code>nutrition.py</code></li>
+                                <li>Add the fruit dictionary from the official CS50 spec</li>
+                                <li>Add <code>fruit = input("Item: ").strip().lower()</code></li>
+                                <li>Add an <code>if</code> check and print the calories</li>
+                            </ol>
+                        </div>
+                        <div class="section-label io">📥 Example Input / Output</div>
+                        <div class="io-example">
+                            <div class="io-row"><span class="io-label">Input:</span><span>Apple</span></div>
+                            <div class="io-row"><span class="io-label">Output:</span><span>Calories: 130</span></div>
+                            <div class="io-row" style="margin-top:6px"><span
+                                    class="io-label">Input:</span><span>Watermelon</span></div>
+                            <div class="io-row"><span class="io-label">Output:</span><span>Calories: 80</span></div>
+                        </div>
+                        <div class="section-label mistakes">🟥 Common Mistakes</div>
+                        <ul>
+                            <li>Not using <code>.lower()</code> — <code>"Apple"</code> and <code>"apple"</code> are
+                                different keys</li>
+                            <li>Printing something when the fruit is not found (check the spec — it expects silence)
+                            </li>
+                            <li>Not including the full fruit list from the official CS50 problem</li>
+                        </ul>
+                        <div class="if-stuck">
+                            <strong>🔁 If You're Stuck</strong>
+                            <ul>
+                                <li><strong>Can't start?</strong> → Load starter code below</li>
+                                <li><strong>Nothing prints?</strong> → Add <code>.lower()</code> to your input and check
+                                    spelling</li>
+                                <li><strong>Key error?</strong> → Use <code>if fruit in fruits:</code> before accessing
+                                    the dictionary</li>
+                            </ul>
+                        </div>
+                        <div class="section-label try">⬜ Try It Yourself</div>
+                        <div class="row" style="margin-top:6px">
+                            <a href="https://cs50.harvard.edu/python/2022/psets/2/nutrition/" target="_blank"
+                                rel="noopener noreferrer">Official CS50 nutrition.py spec</a>
+                            <button class="load-example" data-example="nutrition">Load worked example</button>
+                            <button class="ghost load-template" data-template="nutrition">Load starter code</button>
+                        </div>
+                    </article>
+                </div>
+
+                <section class="card compact-collapsible" style="margin-top:8px">
+                    <p class="static-title">Quick Reference (At a Glance)</p>
+                    <div class="table-wrap">
+                        <table aria-label="Problem to concept map">
+                            <caption class="sr-only">Quick reference table showing each CS50P problem and its main
+                                Week
+                                2 concept.</caption>
+                            <thead>
+                                <tr>
+                                    <th>Problem</th>
+                                    <th>Concept from Lecture</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>camel.py</td>
+                                    <td>Loop through characters</td>
+                                </tr>
+                                <tr>
+                                    <td>coke.py</td>
+                                    <td>While loops</td>
+                                </tr>
+                                <tr>
+                                    <td>twttr.py</td>
+                                    <td>Filtering characters</td>
+                                </tr>
+                                <tr>
+                                    <td>plates.py</td>
+                                    <td>String validation</td>
+                                </tr>
+                                <tr>
+                                    <td>nutrition.py</td>
+                                    <td>Dictionaries</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </section>
+
+            <section class="grid">
+                <article class="card runner" id="runner">
+                    <div class="row" style="justify-content:space-between">
+                        <h2 style="margin:0">Try Code Here</h2>
+                        <span class="status" id="pyStatus" role="status" aria-live="polite">Loading Python…</span>
+                    </div>
+                    <div class="callout" id="loadedExampleInfo" style="margin-top:8px" role="status" aria-live="polite">
+                        Loaded code info: none yet.
+                    </div>
+                    <p class="subtle">Use <strong>Ctrl+Enter</strong> to run. If your code has
+                        <code>input()</code>, a pop-up will ask for your answer.
+                    </p>
+                    <div class="runner-flow" aria-label="Instructional Workflow Checklist">
+                        <p class="flow-title">Instructional Workflow Checklist</p>
+                        <div class="checklist">
+                            <label><input type="checkbox" /> I read the official spec for this problem</label>
+                            <label><input type="checkbox" /> I wrote a minimal version first</label>
+                            <label><input type="checkbox" /> I ran at least one example input</label>
+                            <label><input type="checkbox" /> I fixed one bug based on output/error</label>
+                        </div>
+                    </div>
+                    <div id="pyEditor" class="editor-host" aria-label="Python code editor"></div>
+                    <label class="sr-only" for="pyCode">Python code editor</label>
+                    <textarea id="pyCode" spellcheck="false" aria-describedby="editorNote" wrap="soft">print("CS50P Week 2 practice runner")
+
+## Try loading one of the problem starters
+## from the buttons on the left.
+</textarea>
+                    <div id="editorNote" class="editor-note">Editor mode: basic editor (trying to load color
+                        highlighting…)</div>
+                    <div class="row" style="margin-top:10px">
+                        <button id="runPy">Run Code</button>
+                        <button class="ghost" id="clearPyOut">Clear Output</button>
+                    </div>
+                    <div class="runner-output">
+                        <strong>Output</strong>
+                        <pre id="pyOut" aria-live="polite" tabindex="0" aria-label="Python program output"></pre>
+                    </div>
+                </article>
+                <article class="card error-decoder compact-collapsible" aria-labelledby="error-decoder-title">
+                    <p class="static-title" id="error-decoder-title">Error Decoder</p>
+                    <p class="subtle">If your code fails, match the error type to the next step:</p>
+                    <ul>
+                        <li><strong><code>IndentationError</code></strong> → Check spacing inside your
+                            <code>if</code>,
+                            <code>for</code>, and <code>while</code> blocks.
+                        </li>
+                        <li><strong><code>NameError</code></strong> → Check spelling and capitalization of
+                            variable/function names.</li>
+                        <li><strong><code>SyntaxError</code></strong> → Look for missing <code>:</code>, quotes,
+                            or
+                            parentheses on the reported line.</li>
+                        <li><strong><code>ValueError</code></strong> → Validate input before converting (for
+                            example,
+                            check <code>.isdigit()</code> first).</li>
+                        <li><strong><code>TypeError</code></strong> → Confirm you are combining compatible types
+                            (string
+                            vs number).</li>
+                    </ul>
+                    <div class="callout">Tip: Start with the first line in the traceback that points to
+                        <strong>your</strong> code.
+                    </div>
+                </article>
+
+                <article class="card compact-collapsible debugging-checklist-card"
+                    aria-labelledby="debugging-checklist-title">
+                    <p class="static-title" id="debugging-checklist-title">Debugging Checklist</p>
+                    <div class="checklist">
+                        <label><input type="checkbox" /> Print variables to see what values your program is
+                            using</label>
+                        <label><input type="checkbox" /> Test one small part of your code first</label>
+                        <label><input type="checkbox" /> Check spaces and indentation</label>
+                        <label><input type="checkbox" /> Re-read the official problem instructions</label>
+                    </div>
+                    <div class="callout">Most bugs happen when code does something different than you expected.
+                        Check one line at a time.</div>
+                </article>
+            </section>
         </div>
-        <div class="main-layout">
-            <div class="side-tabs" id="side-tabs">
-                <button class="side-tab-btn active" data-section="guidance">Guidance</button>
-                <button class="side-tab-btn" data-section="lecture">Lecture Video</button>
-                <button class="side-tab-btn" data-section="shorts">Shorts</button>
-                <button class="side-tab-btn" data-section="example">Worked Example</button>
-                <button class="side-tab-btn" data-section="starter">Starter Code</button>
-                <button class="side-tab-btn" data-section="stringref">String Methods Reference</button>
-            </div>
-            <div class="tab-content active" id="guidance-content">
-                <div class="section-card" id="guidance-camel">
-                    <strong>Guidance for camelCase</strong><br>
-                    <a href="https://cs50.harvard.edu/python/psets/2/camel/" target="_blank"
-                        style="color:#1e3a8a;text-decoration:underline;font-weight:600;">View Problem Page</a>
-                    <ol style="margin-top:10px;">
-                        <li>Read the input variable name in camelCase format.
-                            <div class="guidance-example">
-                                <pre><code>name = "myVariableName"</code></pre>
-                            </div>
-                        </li>
-                        <li>Loop through each character in the string.
-                            <div class="guidance-example">
-                                <pre><code>for c in name:
-                print(c)</code></pre>
-                            </div>
-                        </li>
-                        <li>If the character is uppercase, add an underscore and its lowercase version to the result.
-                            <div class="guidance-example">
-                                <pre><code>if c.isupper():
-                result += "_" + c.lower()</code></pre>
-                            </div>
-                        </li>
-                        <li>Else, add the character as is.
-                            <div class="guidance-example">
-                                <pre><code>else:
-                result += c</code></pre>
-                            </div>
-                        </li>
-                        <li>Print the result in snake_case.
-                            <div class="guidance-example">
-                                <pre><code>print(result)</code></pre>
-                            </div>
-                        </li>
-                    </ol>
-                </div>
-                <div class="section-card" id="guidance-coke" style="display:none;">
-                    <strong>Guidance for Coke Machine</strong><br>
-                    <a href="https://cs50.harvard.edu/python/psets/2/coke/" target="_blank"
-                        style="color:#1e3a8a;text-decoration:underline;font-weight:600;">View Problem Page</a>
-                    <ol style="margin-top:10px;">
-                        <li>Initialize <code>amount_due</code> to 100.</li>
-                        <li>Use a <code>while</code> loop to keep asking for coins until <code>amount_due</code> is 0 or
-                            less.</li>
-                        <li>Accept only 5, 10, or 25 cent coins.</li>
-                        <li>Subtract the coin value from <code>amount_due</code> if valid.</li>
-                        <li>Print the change owed at the end.</li>
-                    </ol>
-                </div>
-                <div class="section-card" id="guidance-twttr" style="display:none;">
-                    <strong>Guidance for twttr</strong><br>
-                    <a href="https://cs50.harvard.edu/python/psets/2/twttr/" target="_blank"
-                        style="color:#1e3a8a;text-decoration:underline;font-weight:600;">View Problem Page</a>
-                    <ol style="margin-top:10px;">
-                        <li>Read the input string.</li>
-                        <li>Loop through each character.</li>
-                        <li>If the character is not a vowel, add it to the result.</li>
-                        <li>Print the result.</li>
-                    </ol>
-                </div>
-                <div class="section-card" id="guidance-plates" style="display:none;">
-                    <strong>Guidance for Vanity Plates</strong><br>
-                    <a href="https://cs50.harvard.edu/python/psets/2/plates/" target="_blank"
-                        style="color:#1e3a8a;text-decoration:underline;font-weight:600;">View Problem Page</a>
-                    <ol style="margin-top:10px;">
-                        <li>Read the plate input.</li>
-                        <li>Check if the plate is alphabetic and meets length requirements.</li>
-                        <li>Apply all validation rules as described in the problem.</li>
-                        <li>Print "Valid" or "Invalid".</li>
-                    </ol>
-                </div>
-                <div class="section-card" id="guidance-nutrition" style="display:none;">
-                    <strong>Guidance for Nutrition Facts</strong><br>
-                    <a href="https://cs50.harvard.edu/python/psets/2/nutrition/" target="_blank"
-                        style="color:#1e3a8a;text-decoration:underline;font-weight:600;">View Problem Page</a>
-                    <ol style="margin-top:10px;">
-                        <li>Read the fruit input and convert to lowercase.</li>
-                        <li>Use a dictionary to map fruit names to calories.</li>
-                        <li>Check if the fruit is in the dictionary.</li>
-                        <li>Print the calories or "Item not found".</li>
-                    </ol>
-                </div>
-            </div>
-            <div class="tab-content" id="lecture-content">
-                <div class="section-card" id="lecture-camel">
-                    <strong>Lecture Video for camelCase</strong><br>
-                    <iframe width="100%" height="315" src="https://www.youtube.com/embed/-7xg8pGcP6w" frameborder="0"
-                        allowfullscreen style="border-radius:8px;border:1px solid #64748b;"></iframe>
-                </div>
-                <div class="section-card" id="lecture-coke" style="display:none;">
-                    <strong>Lecture Video for Coke Machine</strong><br>
-                    <iframe width="100%" height="315" src="https://www.youtube.com/embed/-7xg8pGcP6w" frameborder="0"
-                        allowfullscreen style="border-radius:8px;border:1px solid #64748b;"></iframe>
-                </div>
-                <div class="section-card" id="lecture-twttr" style="display:none;">
-                    <strong>Lecture Video for twttr</strong><br>
-                    <iframe width="100%" height="315" src="https://www.youtube.com/embed/-7xg8pGcP6w" frameborder="0"
-                        allowfullscreen style="border-radius:8px;border:1px solid #64748b;"></iframe>
-                </div>
-                <div class="section-card" id="lecture-plates" style="display:none;">
-                    <strong>Lecture Video for Vanity Plates</strong><br>
-                    <iframe width="100%" height="315" src="https://www.youtube.com/embed/-7xg8pGcP6w" frameborder="0"
-                        allowfullscreen style="border-radius:8px;border:1px solid #64748b;"></iframe>
-                </div>
-                <div class="section-card" id="lecture-nutrition" style="display:none;">
-                    <strong>Lecture Video for Nutrition Facts</strong><br>
-                    <iframe width="100%" height="315" src="https://www.youtube.com/embed/-7xg8pGcP6w" frameborder="0"
-                        allowfullscreen style="border-radius:8px;border:1px solid #64748b;"></iframe>
-                </div>
-            </div>
-            <div class="tab-content" id="shorts-content">
-                <div class="section-card" id="shorts-camel">Shorts for camelCase (placeholder)</div>
-                <div class="section-card" id="shorts-coke" style="display:none;">Shorts for Coke Machine (placeholder)
-                </div>
-                <div class="section-card" id="shorts-twttr" style="display:none;">Shorts for twttr (placeholder)</div>
-                <div class="section-card" id="shorts-plates" style="display:none;">Shorts for Vanity Plates
-                    (placeholder)</div>
-                <div class="section-card" id="shorts-nutrition" style="display:none;">Shorts for Nutrition Facts
-                    (placeholder)</div>
-            </div>
-            <div class="tab-content" id="example-content">
-                <div class="section-card" id="example-camel">
-                    <strong>Worked Example for camelCase</strong><br>
-                    <textarea id="example-editor-camel" spellcheck="false" aria-label="Python code editor"
-                        style="width:100%;min-height:220px;border-radius:6px;border:2px solid #007acc;background:#222;color:#fff;font-family:monospace;font-size:1.1em;padding:8px;"></textarea>
-                    <div class="row" style="margin-top:8px">
-                        <button class="run-btn" data-run="camel"
-                            style="background:#007acc;color:#fff;border:none;padding:8px 16px;border-radius:4px;font-weight:600;box-shadow:0 1px 4px #007acc33;">Run
-                            Example</button>
-                        <button class="clear-btn" data-clear="camel"
-                            style="background:#fff;color:#007acc;border:2px solid #007acc;padding:8px 16px;border-radius:4px;font-weight:600;margin-left:8px;">Clear
-                            Output</button>
-                    </div>
-                    <pre class="output-block" id="output-camel" aria-label="Python output" tabindex="0"
-                        style="background:#222;color:#fff;font-family:monospace;min-height:40px;white-space:pre;border-radius:4px;margin-top:8px;padding:8px;border:2px solid #007acc;font-size:1.1em;"></pre>
-                </div>
-                <div class="section-card" id="example-coke" style="display:none;">
-                    <strong>Worked Example for Coke Machine</strong><br>
-                    <textarea id="example-editor-coke" spellcheck="false" aria-label="Python code editor"
-                        style="width:100%;min-height:220px;border-radius:6px;border:2px solid #007acc;background:#222;color:#fff;font-family:monospace;font-size:1.1em;padding:8px;"></textarea>
-                    <div class="row" style="margin-top:8px">
-                        <button class="run-btn" data-run="coke"
-                            style="background:#007acc;color:#fff;border:none;padding:8px 16px;border-radius:4px;font-weight:600;box-shadow:0 1px 4px #007acc33;">Run
-                            Example</button>
-                        <button class="clear-btn" data-clear="coke"
-                            style="background:#fff;color:#007acc;border:2px solid #007acc;padding:8px 16px;border-radius:4px;font-weight:600;margin-left:8px;">Clear
-                            Output</button>
-                    </div>
-                    <pre class="output-block" id="output-coke" aria-label="Python output" tabindex="0"
-                        style="background:#222;color:#fff;font-family:monospace;min-height:40px;white-space:pre;border-radius:4px;margin-top:8px;padding:8px;border:2px solid #007acc;font-size:1.1em;"></pre>
-                </div>
-                <div class="section-card" id="example-twttr" style="display:none;">
-                    <strong>Worked Example for twttr</strong><br>
-                    <textarea id="example-editor-twttr" spellcheck="false" aria-label="Python code editor"
-                        style="width:100%;min-height:220px;border-radius:6px;border:2px solid #007acc;background:#222;color:#fff;font-family:monospace;font-size:1.1em;padding:8px;"></textarea>
-                    <div class="row" style="margin-top:8px">
-                        <button class="run-btn" data-run="twttr"
-                            style="background:#007acc;color:#fff;border:none;padding:8px 16px;border-radius:4px;font-weight:600;box-shadow:0 1px 4px #007acc33;">Run
-                            Example</button>
-                        <button class="clear-btn" data-clear="twttr"
-                            style="background:#fff;color:#007acc;border:2px solid #007acc;padding:8px 16px;border-radius:4px;font-weight:600;margin-left:8px;">Clear
-                            Output</button>
-                    </div>
-                    <pre class="output-block" id="output-twttr" aria-label="Python output" tabindex="0"
-                        style="background:#222;color:#fff;font-family:monospace;min-height:40px;white-space:pre;border-radius:4px;margin-top:8px;padding:8px;border:2px solid #007acc;font-size:1.1em;"></pre>
-                </div>
-                <div class="section-card" id="example-plates" style="display:none;">
-                    <strong>Worked Example for Vanity Plates</strong><br>
-                    <textarea id="example-editor-plates" spellcheck="false" aria-label="Python code editor"
-                        style="width:100%;min-height:220px;border-radius:6px;border:2px solid #007acc;background:#222;color:#fff;font-family:monospace;font-size:1.1em;padding:8px;"></textarea>
-                    <div class="row" style="margin-top:8px">
-                        <button class="run-btn" data-run="plates"
-                            style="background:#007acc;color:#fff;border:none;padding:8px 16px;border-radius:4px;font-weight:600;box-shadow:0 1px 4px #007acc33;">Run
-                            Example</button>
-                        <button class="clear-btn" data-clear="plates"
-                            style="background:#fff;color:#007acc;border:2px solid #007acc;padding:8px 16px;border-radius:4px;font-weight:600;margin-left:8px;">Clear
-                            Output</button>
-                    </div>
-                    <pre class="output-block" id="output-plates" aria-label="Python output" tabindex="0"
-                        style="background:#222;color:#fff;font-family:monospace;min-height:40px;white-space:pre;border-radius:4px;margin-top:8px;padding:8px;border:2px solid #007acc;font-size:1.1em;"></pre>
-                </div>
-                <div class="section-card" id="example-nutrition" style="display:none;">
-                    <strong>Worked Example for Nutrition Facts</strong><br>
-                    <textarea id="example-editor-nutrition" spellcheck="false" aria-label="Python code editor"
-                        style="width:100%;min-height:220px;border-radius:6px;border:2px solid #007acc;background:#222;color:#fff;font-family:monospace;font-size:1.1em;padding:8px;"></textarea>
-                    <div class="row" style="margin-top:8px">
-                        <button class="run-btn" data-run="nutrition"
-                            style="background:#007acc;color:#fff;border:none;padding:8px 16px;border-radius:4px;font-weight:600;box-shadow:0 1px 4px #007acc33;">Run
-                            Example</button>
-                        <button class="clear-btn" data-clear="nutrition"
-                            style="background:#fff;color:#007acc;border:2px solid #007acc;padding:8px 16px;border-radius:4px;font-weight:600;margin-left:8px;">Clear
-                            Output</button>
-                    </div>
-                    <pre class="output-block" id="output-nutrition" aria-label="Python output" tabindex="0"
-                        style="background:#222;color:#fff;font-family:monospace;min-height:40px;white-space:pre;border-radius:4px;margin-top:8px;padding:8px;border:2px solid #007acc;font-size:1.1em;"></pre>
-                </div>
-            </div>
-            <div class="tab-content" id="starter-content">
-                <div class="section-card" id="starter-camel">Starter Code for camelCase (placeholder)</div>
-                <div class="section-card" id="starter-coke" style="display:none;">Starter Code for Coke Machine
-                    (placeholder)</div>
-                <div class="section-card" id="starter-twttr" style="display:none;">Starter Code for twttr (placeholder)
-                </div>
-                <div class="section-card" id="starter-plates" style="display:none;">Starter Code for Vanity Plates
-                    (placeholder)</div>
-                <div class="section-card" id="starter-nutrition" style="display:none;">Starter Code for Nutrition Facts
-                    (placeholder)</div>
-            </div>
-            <div class="tab-content" id="stringref-content">
-                <div class="section-card" id="stringref-camel">String Methods Reference for camelCase (placeholder)
-                </div>
-                <div class="section-card" id="stringref-coke" style="display:none;">String Methods Reference for Coke
-                    Machine (placeholder)</div>
-                <div class="section-card" id="stringref-twttr" style="display:none;">String Methods Reference for twttr
-                    (placeholder)</div>
-                <div class="section-card" id="stringref-plates" style="display:none;">String Methods Reference for
-                    Vanity Plates (placeholder)</div>
-                <div class="section-card" id="stringref-nutrition" style="display:none;">String Methods Reference for
-                    Nutrition Facts (placeholder)</div>
-            </div>
-        </div>
-    </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    </main>
+
     <script>
-        // Theme logic
-        const themeStyles = {
-            light: `body { background: #ffffff; color: #181818; }
-                .top-nav-btn, .side-tab-btn { background: #f1f5f9; color: #181818; border: 1px solid #181818; }
-                .top-nav-btn.active, .side-tab-btn.active { background: #181818; color: #fff; border: 1px solid #181818; }
-                .tab-content { background: #fff; color: #181818; border: 1px solid #181818; }
-                .section-card { background: #e3e3e3; color: #181818; border: 1px solid #181818; }
-                .output-block { background: #181818; color: #fff; border: 1px solid #181818; }
-            `,
-            dark: `body { background: #181a1b; color: #f8f8f8; }
-                .top-nav-btn, .side-tab-btn { background: #23272e; color: #f8f8f8; border: 1px solid #f8f8f8; }
-                .top-nav-btn.active, .side-tab-btn.active { background: #f8f8f8; color: #181a1b; border: 1px solid #f8f8f8; }
-                .tab-content { background: #23272e; color: #f8f8f8; border: 1px solid #f8f8f8; }
-                .section-card { background: #23272e; color: #fff; border: 1px solid #f8f8f8; }
-                .output-block { background: #181a1b; color: #fff; border: 1px solid #f8f8f8; }
-            `,
-            highcontrast: `body { background: #000; color: #fff; }
-                .top-nav-btn, .side-tab-btn { background: #000; color: #fff; border: 2px solid #fff; }
-                .top-nav-btn.active, .side-tab-btn.active { background: #fff; color: #000; border: 2px solid #fff; }
-                .tab-content { background: #000; color: #fff; border: 2px solid #fff; }
-                .section-card { background: #000; color: #fff; border: 2px solid #fff; }
-                .output-block { background: #000; color: #fff; border: 2px solid #fff; }
-            `
+        const STARTER_TEMPLATES = {
+            camel: `# camel.py starter pattern (not full solution)
+text = input("camelCase: ")
+result = ""
+
+for c in text:
+    ## TODO: if uppercase,
+    ## add underscore + lowercase letter
+    ## TODO: otherwise add
+    ## character as-is
+    pass
+
+print("snake_case:", result)`,
+            coke: `# coke.py starter pattern (not full solution)
+amount_due = 50
+
+while amount_due > 0:
+    print("Amount Due:", amount_due)
+    coin_text = input("Insert Coin: ").strip()
+    ## TODO: if coin_text is digits,
+    ## convert to int and check whether
+    ## coin is 25, 10, or 5, then subtract it
+    ## TODO: ignore invalid coins
+
+print("Change Owed:", abs(amount_due))`,
+            twttr: `# twttr.py starter pattern (not full solution)
+text = input("Input: ")
+output = ""
+
+for c in text:
+    ## TODO: if c is NOT
+    ## a vowel, add to output
+    pass
+
+print("Output:", output)`,
+            plates: `# plates.py starter pattern (not full solution)
+# Tip: import re lets you use re.fullmatch() to check for allowed characters
+# import re
+
+plate = input("Plate: ")
+
+def is_valid(s):
+    ## TODO: check length 2-6
+    ## TODO: first two chars are letters
+    ## TODO: numbers only at end
+    ## TODO: first number not 0
+    ## TODO: no punctuation/spaces (re.fullmatch can help here)
+    return False
+
+if is_valid(plate):
+    print("Valid")
+else:
+    print("Invalid")`,
+            nutrition: `# nutrition.py starter pattern (not full solution)
+fruits = {
+    "apple": 130,
+    "avocado": 50,
+    "banana": 110,
+    "cantaloupe": 50,
+    "grapefruit": 60,
+    "grapes": 90,
+    "honeydew melon": 50,
+    "kiwifruit": 90,
+    "lemon": 15,
+    "lime": 20,
+    "nectarine": 60,
+    "orange": 80,
+    "peach": 60,
+    "pear": 100,
+    "pineapple": 50,
+    "plums": 70,
+    "strawberries": 50,
+    "sweet cherries": 100,
+    "tangerine": 50,
+    "watermelon": 80,
+}
+
+fruit = input("Item: ").strip().lower()
+
+if fruit in fruits:
+    print("Calories:", fruits[fruit])`
         };
-        function applyTheme(theme) {
-            const styleElem = document.getElementById('theme-style');
-            if (theme === 'auto') {
-                // Use system preference
-                const mq = window.matchMedia('(prefers-color-scheme: dark)');
-                styleElem.textContent = mq.matches ? themeStyles.dark : themeStyles.light;
-                mq.onchange = e => {
-                    if (document.getElementById('theme-select').value === 'auto') {
-                        styleElem.textContent = e.matches ? themeStyles.dark : themeStyles.light;
+
+        const EXAMPLE_TEMPLATES = {
+            camel: `## Complete similar example:
+## convert mixedCase -> under_score_case
+text = input("mixedCase: ")
+converted = ""
+
+for ch in text:
+    if ch.isupper():
+        converted += "_" + ch.lower()
+    else:
+        converted += ch
+
+print("under_score_case:", converted)`,
+            coke: `## Complete similar example:
+## snack machine costs 65 cents
+amount_due = 65
+
+while amount_due > 0:
+    print("Amount Due:", amount_due)
+    coin_text = input("Insert Coin: ").strip()
+
+    if coin_text.isdigit():
+        coin = int(coin_text)
+        if coin == 25 or coin == 10 or coin == 5:
+            amount_due -= coin
+
+print("Change Owed:", abs(amount_due))`,
+            twttr: `## Complete similar example:
+## remove vowels from a message
+message = input("Message: ")
+vowels = "aeiouAEIOU"
+filtered = ""
+
+for ch in message:
+    if ch not in vowels:
+        filtered += ch
+
+print("Result:", filtered)`,
+            plates: `## Complete similar example (uses re module):
+## validate a custom ID tag
+import re
+
+tag = input("Tag: ")
+
+def valid_tag(s):
+    if len(s) < 2 or len(s) > 6:
+        return False
+    if not s[:2].isalpha():
+        return False
+    ## re.fullmatch confirms only letters/digits — no spaces or punctuation
+    if not re.fullmatch(r"[A-Za-z0-9]+", s):
+        return False
+    seen_digit = False
+    for ch in s:
+        if ch.isdigit():
+            if not seen_digit:
+                if ch == "0":
+                    return False
+                seen_digit = True
+        elif seen_digit:
+            return False
+    return True
+
+if valid_tag(tag):
+    print("Valid")
+else:
+    print("Invalid")`,
+            nutrition: `## Complete similar example:
+## look up points by snack name
+snack_points = {
+    "apple": 130,
+    "banana": 110,
+    "orange": 80,
+    "pear": 100,
+    "strawberries": 50,
+}
+
+item = input("Item: ").strip().lower()
+
+if item in snack_points:
+    print("Points:", snack_points[item])
+else:
+    print("Item not found")`
+        };
+
+        const NOTE_EXAMPLE_TEMPLATES = {
+            camel: `students = ["Hermione", "Harry", "Ron"]
+
+for student in students:
+    print(student)`,
+            coke: `i = 0
+while i < 3:
+    print("meow")
+    i += 1`,
+            twttr: `for _ in range(3):
+    print("meow")`,
+            plates: `students = {
+    "Hermione": "Gryffindor",
+    "Harry": "Gryffindor",
+}
+
+for student in students:
+    print(student, students[student], sep=", ")`,
+            nutrition: `students = {
+    "Hermione": "Gryffindor",
+    "Harry": "Gryffindor",
+    "Ron": "Gryffindor",
+}
+
+print(students["Hermione"])`
+        };
+
+        const EXAMPLE_DESCRIPTIONS = {
+            camel: 'Turns mixedCase text into under_score_case by adding underscores before capital letters.',
+            coke: 'Runs a coin machine loop until the amount due is paid.',
+            twttr: 'Removes vowels from a message while keeping other characters.',
+            plates: 'Checks a custom plate string using length, letters, and number-position rules.',
+            nutrition: 'Finds an item in a dictionary and prints its value if it exists.'
+        };
+
+        const pyStatus = document.getElementById('pyStatus');
+        const pyCode = document.getElementById('pyCode');
+        const pyEditorHost = document.getElementById('pyEditor');
+        const editorNote = document.getElementById('editorNote');
+        const pyOut = document.getElementById('pyOut');
+        const loadedExampleInfo = document.getElementById('loadedExampleInfo');
+        const instructionalCue = document.getElementById('instructionalCue');
+        const runBtn = document.getElementById('runPy');
+        const clearBtn = document.getElementById('clearPyOut');
+        const prevProblemBtn = document.getElementById('prevProblemBtn');
+        const nextProblemBtn = document.getElementById('nextProblemBtn');
+        const focusModeNote = document.getElementById('focusModeNote');
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        const RESUME_STATE_KEY = 'cs50p_pset2_resume_state_v1';
+        const DEFAULT_EDITOR_TEXT = `print("CS50P Week 2 practice runner")
+
+    ## Try loading one of the problem starters
+    ## from the buttons on the left.`;
+        let pyodide = null;
+        let pyEditor = null;
+        let pyodideIndexURL = null;
+        let activeProblemKey = 'camel';
+        let focusModeEnabled = true;
+        const attemptedScripts = new Set();
+
+        const PYODIDE_CANDIDATES = [
+            {
+                scriptURL: 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js',
+                indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/'
+            },
+            {
+                scriptURL: 'https://cdn.jsdelivr.net/npm/pyodide@0.24.1/pyodide.js',
+                indexURL: 'https://cdn.jsdelivr.net/npm/pyodide@0.24.1/'
+            },
+            {
+                scriptURL: 'https://unpkg.com/pyodide@0.24.1/pyodide.js',
+                indexURL: 'https://unpkg.com/pyodide@0.24.1/'
+            }
+        ];
+
+        function setStatus(text, ready = false) {
+            pyStatus.textContent = text;
+            pyStatus.classList.toggle('ready', ready);
+        }
+
+        function updateInstructionalCue(problemKey, phase = 'start') {
+            if (!instructionalCue) return;
+
+            const baseActionByProblem = {
+                camel: 'loop through each character and check uppercase letters',
+                coke: 'build the while loop and validate allowed coin values',
+                twttr: 'filter vowels from the input text',
+                plates: 'apply each plate validation rule one at a time',
+                nutrition: 'normalize input and perform dictionary lookup'
+            };
+
+            const action = baseActionByProblem[problemKey] || 'read the task and start with the starter code';
+            if (phase === 'ran') {
+                instructionalCue.textContent = `Now: Review your output for ${problemKey}. If needed, fix one thing and run again.`;
+                return;
+            }
+            instructionalCue.textContent = `Now: For ${problemKey}, ${action}. Then load starter code and run once.`;
+        }
+
+        function getResumeState() {
+            return {
+                activeProblemKey,
+                editorCode: getEditorCode(),
+                loadedInfoText: loadedExampleInfo ? loadedExampleInfo.textContent : ''
+            };
+        }
+
+        function saveResumeState() {
+            try {
+                localStorage.setItem(RESUME_STATE_KEY, JSON.stringify(getResumeState()));
+            } catch (_) {
+                // Local storage may be blocked in restricted environments.
+            }
+        }
+
+        function loadResumeState() {
+            try {
+                const raw = localStorage.getItem(RESUME_STATE_KEY);
+                if (!raw) return null;
+                return JSON.parse(raw);
+            } catch (_) {
+                return null;
+            }
+        }
+
+        function applySensoryModes() {
+            document.body.classList.add('mode-focus');
+            document.body.classList.add('mode-calm');
+            document.body.classList.add('mode-spacious');
+            document.body.classList.add('mode-large');
+            document.body.classList.add('mode-motionless');
+        }
+
+        function updateFocusModeUI() {
+            const currentIndex = problemTabs.findIndex((tab) => tab.dataset.tab === activeProblemKey);
+            const problemLabel = currentIndex >= 0 ? problemTabs[currentIndex].textContent.trim() : activeProblemKey;
+
+            if (prevProblemBtn) prevProblemBtn.hidden = false;
+            if (nextProblemBtn) nextProblemBtn.hidden = false;
+
+            if (focusModeNote) {
+                focusModeNote.textContent = `Focus mode is on. Now showing only ${problemLabel}. Use Previous/Next to move one problem at a time.`;
+            }
+        }
+
+        function appendOutput(line) {
+            pyOut.textContent += line;
+            pyOut.scrollTop = pyOut.scrollHeight;
+        }
+
+        function getEditorCode() {
+            if (pyEditor) return pyEditor.getValue();
+            return pyCode.value;
+        }
+
+        function adjustEditorHeight() {
+            const minHeight = 320;
+            const maxHeight = 780;
+
+            if (pyEditor) {
+                const model = pyEditor.getModel();
+                const lineCount = model ? model.getLineCount() : 1;
+                const lineHeight = pyEditor.getOption(monaco.editor.EditorOption.lineHeight) || 20;
+                const contentHeight = Math.ceil(lineCount * lineHeight + 44);
+                const nextHeight = Math.max(minHeight, Math.min(maxHeight, contentHeight));
+                pyEditorHost.style.height = `${nextHeight}px`;
+                pyEditor.layout();
+                return;
+            }
+
+            pyCode.style.height = 'auto';
+            const nextHeight = Math.max(minHeight, Math.min(maxHeight, pyCode.scrollHeight + 6));
+            pyCode.style.height = `${nextHeight}px`;
+        }
+
+        function setEditorCode(code) {
+            const nextCode = code || '';
+            if (pyEditor) {
+                pyEditor.setValue(nextCode);
+            }
+            pyCode.value = nextCode;
+            adjustEditorHeight();
+            saveResumeState();
+        }
+
+        function enhanceLectureSnippetsWithMonaco() {
+            if (typeof monaco === 'undefined' || !monaco.editor) return;
+
+            document.querySelectorAll('.hint pre').forEach((preBlock) => {
+                if (preBlock.dataset.monacoEnhanced === 'true') return;
+
+                const codeBlock = preBlock.querySelector('code');
+                if (!codeBlock) return;
+
+                const sourceCode = codeBlock.textContent || '';
+                const host = document.createElement('div');
+                host.className = 'mini-snippet-editor';
+
+                const lineHeight = 20;
+                const lines = Math.max(1, sourceCode.split('\n').length);
+                const hostHeight = Math.max(70, Math.min(320, lines * lineHeight + 18));
+                host.style.height = `${hostHeight}px`;
+
+                preBlock.insertAdjacentElement('afterend', host);
+
+                monaco.editor.create(host, {
+                    value: sourceCode,
+                    language: 'python',
+                    theme: 'vs-dark',
+                    readOnly: true,
+                    lineNumbers: 'on',
+                    minimap: { enabled: false },
+                    scrollBeyondLastLine: false,
+                    wordWrap: 'on',
+                    automaticLayout: true,
+                    lineHeight,
+                    fontSize: 13,
+                    renderLineHighlight: 'none',
+                    ariaLabel: 'Lecture and notes code example'
+                });
+
+                preBlock.hidden = true;
+                preBlock.dataset.monacoEnhanced = 'true';
+            });
+        }
+
+        async function loadExternalScript(url) {
+            await new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = url;
+                script.async = true;
+                script.onload = () => resolve();
+                script.onerror = () => reject(new Error(`Failed to load: ${url}`));
+                document.head.appendChild(script);
+            });
+        }
+
+        async function initializeMonacoEditor() {
+            try {
+                if (!window.require) {
+                    await loadExternalScript('https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/loader.js');
+                }
+                if (!window.require) {
+                    throw new Error('Monaco loader unavailable');
+                }
+
+                const monacoBase = 'https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/';
+                window.MonacoEnvironment = {
+                    getWorkerUrl: function () {
+                        return `data:text/javascript;charset=utf-8,${encodeURIComponent(
+                            `self.MonacoEnvironment={baseUrl:'${monacoBase}'};importScripts('${monacoBase}vs/base/worker/workerMain.js');`
+                        )}`;
                     }
                 };
-            } else {
-                styleElem.textContent = themeStyles[theme] || themeStyles.light;
+
+                await new Promise((resolve, reject) => {
+                    window.require.config({ paths: { vs: monacoBase + 'vs' } });
+                    window.require(['vs/editor/editor.main'], resolve, reject);
+                });
+
+                pyEditor = monaco.editor.create(pyEditorHost, {
+                    value: pyCode.value,
+                    language: 'python',
+                    theme: 'vs-dark',
+                    automaticLayout: true,
+                    minimap: { enabled: false },
+                    fontSize: 14,
+                    tabSize: 4,
+                    insertSpaces: true,
+                    scrollBeyondLastLine: false,
+                    wordWrap: 'on',
+                    wrappingIndent: 'same',
+                    ariaLabel: 'Python code editor',
+                });
+
+                pyEditor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
+                    runPythonFromEditor();
+                });
+
+                pyEditor.onDidChangeModelContent(() => {
+                    adjustEditorHeight();
+                    saveResumeState();
+                });
+
+                pyEditorHost.style.display = 'block';
+                pyCode.style.display = 'none';
+                adjustEditorHeight();
+                enhanceLectureSnippetsWithMonaco();
+                if (editorNote) {
+                    editorNote.textContent = 'Editor mode: color highlighting is on.';
+                }
+            } catch (_) {
+                pyEditor = null;
+                pyEditorHost.style.display = 'none';
+                pyCode.style.display = 'block';
+                adjustEditorHeight();
+                if (editorNote) {
+                    editorNote.textContent = 'Editor mode: basic editor (color highlighting may be blocked on this network).';
+                }
             }
         }
-        const themeSelect = document.getElementById('theme-select');
-        // Load theme from localStorage or default to 'auto' (system preference)
-        let savedTheme = localStorage.getItem('theme');
-        if (!savedTheme || !['auto', 'light', 'dark', 'highcontrast'].includes(savedTheme)) {
-            savedTheme = 'auto';
-            localStorage.setItem('theme', 'auto');
+
+        function delay(ms) {
+            return new Promise((resolve) => setTimeout(resolve, ms));
         }
-        themeSelect.value = savedTheme;
-        applyTheme(savedTheme);
-        themeSelect.addEventListener('change', function () {
-            localStorage.setItem('theme', this.value);
-            applyTheme(this.value);
+
+        async function waitForGlobalLoader(timeoutMs = 2500) {
+            const started = Date.now();
+            while (Date.now() - started < timeoutMs) {
+                if (typeof loadPyodide === 'function') return true;
+                await delay(50);
+            }
+            return false;
+        }
+
+        async function loadScriptOnce(url) {
+            if (attemptedScripts.has(url)) {
+                return typeof loadPyodide === 'function';
+            }
+            attemptedScripts.add(url);
+
+            await new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = url;
+                script.async = true;
+                script.onload = () => resolve();
+                script.onerror = () => reject(new Error(`Failed to load: ${url}`));
+                document.head.appendChild(script);
+            });
+
+            return waitForGlobalLoader(3000);
+        }
+
+        async function preparePyodideLoader() {
+            if (typeof loadPyodide === 'function') {
+                if (!pyodideIndexURL) {
+                    pyodideIndexURL = PYODIDE_CANDIDATES[0].indexURL;
+                }
+                return;
+            }
+
+            for (const candidate of PYODIDE_CANDIDATES) {
+                try {
+                    const ready = await loadScriptOnce(candidate.scriptURL);
+                    if (ready) {
+                        pyodideIndexURL = candidate.indexURL;
+                        return;
+                    }
+                } catch (_) {
+                    // try next candidate
+                }
+            }
+
+            throw new Error('Unable to load Pyodide. Check internet access or school content filtering for jsdelivr/unpkg.');
+        }
+
+        async function ensurePyodide() {
+            if (pyodide) return pyodide;
+            await preparePyodideLoader();
+
+            if (typeof loadPyodide !== 'function' || !pyodideIndexURL) {
+                throw new Error('Python runtime is unavailable right now.');
+            }
+            setStatus('Downloading Python…');
+            pyodide = await loadPyodide({
+                indexURL: pyodideIndexURL,
+                stdout: (message) => appendOutput(message + '\n'),
+                stderr: (message) => appendOutput(message + '\n')
+            });
+            if (pyodide.setStdin) {
+                pyodide.setStdin({
+                    stdin: () => {
+                        const entered = window.prompt('Python input() — enter a line:') ?? '';
+                        appendOutput(`[Input entered] ${entered}\n`);
+                        return entered + '\n';
+                    }
+                });
+            }
+            setStatus('Ready', true);
+            // Pre-load standard library modules students commonly use in Week 2
+            try { await pyodide.runPythonAsync('import re, sys, string, random'); } catch (_) { }
+            return pyodide;
+        }
+
+        async function runPythonFromEditor() {
+            pyOut.textContent = '';
+            runBtn.disabled = true;
+            try {
+                const runtime = await ensurePyodide();
+                await runtime.runPythonAsync(getEditorCode());
+                updateInstructionalCue(activeProblemKey, 'ran');
+            } catch (error) {
+                const msg = String(error);
+                if (msg.includes('SystemExit')) {
+                    appendOutput('[Program exited.]\n');
+                } else {
+                    appendOutput(msg + '\n');
+                }
+                updateInstructionalCue(activeProblemKey, 'ran');
+            } finally {
+                runBtn.disabled = false;
+            }
+        }
+
+        function setLoadedExampleText(text) {
+            if (!loadedExampleInfo) return;
+            loadedExampleInfo.textContent = text || 'Loaded code info: none yet.';
+            saveResumeState();
+        }
+
+        function resetRunnerForProblemChange() {
+            setEditorCode(DEFAULT_EDITOR_TEXT);
+            pyOut.textContent = '';
+            setLoadedExampleText('Loaded code info: none yet.');
+        }
+
+        function activateProblemTab(problemKey, options = {}) {
+            const shouldClearEditor = options.clearEditor === true && problemKey !== activeProblemKey;
+
+            document.querySelectorAll('.problem-tab').forEach((button) => {
+                const active = button.dataset.tab === problemKey;
+                button.classList.toggle('active', active);
+                button.setAttribute('aria-selected', active ? 'true' : 'false');
+                button.setAttribute('tabindex', active ? '0' : '-1');
+            });
+
+            document.querySelectorAll('.problem[data-problem]').forEach((panel) => {
+                const active = panel.dataset.problem === problemKey;
+                panel.classList.toggle('hidden', !active);
+                panel.hidden = !active;
+            });
+
+            activeProblemKey = problemKey;
+            applySensoryModes();
+            updateFocusModeUI();
+            updateInstructionalCue(problemKey, 'start');
+            saveResumeState();
+
+            enhanceLectureSnippetsWithMonaco();
+
+            if (shouldClearEditor) {
+                resetRunnerForProblemChange();
+            }
+        }
+
+        const problemTabs = Array.from(document.querySelectorAll('.problem-tab'));
+
+        function stepProblemBy(delta) {
+            const currentIndex = problemTabs.findIndex((tab) => tab.dataset.tab === activeProblemKey);
+            if (currentIndex === -1) return;
+            focusProblemTab(currentIndex + delta);
+        }
+
+        function focusProblemTab(index) {
+            const normalized = (index + problemTabs.length) % problemTabs.length;
+            const nextTab = problemTabs[normalized];
+            activateProblemTab(nextTab.dataset.tab, { clearEditor: true });
+            nextTab.focus();
+        }
+
+        problemTabs.forEach((button, index) => {
+            button.addEventListener('click', () => {
+                activateProblemTab(button.dataset.tab, { clearEditor: true });
+            });
+
+            button.addEventListener('keydown', (event) => {
+                if (event.key === 'ArrowRight') {
+                    event.preventDefault();
+                    focusProblemTab(index + 1);
+                }
+                if (event.key === 'ArrowLeft') {
+                    event.preventDefault();
+                    focusProblemTab(index - 1);
+                }
+                if (event.key === 'Home') {
+                    event.preventDefault();
+                    focusProblemTab(0);
+                }
+                if (event.key === 'End') {
+                    event.preventDefault();
+                    focusProblemTab(problemTabs.length - 1);
+                }
+            });
         });
 
-        // Navigation logic
-        const topNavBtns = document.querySelectorAll('.top-nav-btn');
-        const sideTabBtns = document.querySelectorAll('.side-tab-btn');
-        const tabContents = {
-            guidance: document.getElementById('guidance-content'),
-            lecture: document.getElementById('lecture-content'),
-            shorts: document.getElementById('shorts-content'),
-            example: document.getElementById('example-content'),
-            starter: document.getElementById('starter-content'),
-            stringref: document.getElementById('stringref-content')
-        };
-        let currentProblem = 'camel';
-        let currentSection = 'guidance';
-        function showSection(section) {
-            Object.values(tabContents).forEach(tc => tc.classList.remove('active'));
-            tabContents[section].classList.add('active');
-            // Hide all cards for all problems
-            document.querySelectorAll('.section-card').forEach(card => card.style.display = 'none');
-            // Show only the card for the current problem
-            document.getElementById(section + '-' + currentProblem).style.display = '';
+        function loadIntoRunner(code, descriptionText = '') {
+            setEditorCode(code);
+            setLoadedExampleText(descriptionText);
+            document.getElementById('runner').scrollIntoView({
+                behavior: prefersReducedMotion.matches ? 'auto' : 'smooth',
+                block: 'start'
+            });
         }
-        topNavBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                topNavBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentProblem = btn.dataset.problem;
-                showSection(currentSection);
-            });
-        });
-        sideTabBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                sideTabBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentSection = btn.dataset.section;
-                showSection(currentSection);
-            });
-        });
-        // Initial display
-        showSection(currentSection);
 
-        // Textarea editor setup for each problem
-        const exampleDefaults = {
-            camel: 'name = "myVariableName"\nresult = ""\nfor c in name:\n    if c.isupper():\n        result += "_" + c.lower()\n    else:\n        result += c\nprint(result)',
-            coke: 'amount_due = 100\nwhile amount_due > 0:\n    print(f"Amount Due: {amount_due}")\n    coin = 25  # Example input\n    if coin in [25, 10, 5]:\n        amount_due -= coin\nprint("Change Owed:", abs(amount_due))',
-            twttr: 'text = "Twitter"\nvowels = "aeiouAEIOU"\nresult = ""\nfor c in text:\n    if c not in vowels:\n        result += c\nprint(result)',
-            plates: 'plate = "CS50"\nif plate.isalpha():\n    print("Valid")\nelse:\n    print("Invalid")',
-            nutrition: 'fruit = "apple"\ncalories = {"apple": 130, "avocado": 50}\nif fruit in calories:\n    print(f"Calories: {calories[fruit]}")\nelse:\n    print("Item not found")'
-        };
-        ['camel', 'coke', 'twttr', 'plates', 'nutrition'].forEach(problem => {
-            const editor = document.getElementById('example-editor-' + problem);
-            if (editor) editor.value = exampleDefaults[problem];
-        });
-        // Pyodide editor logic for Worked Example
-        let pyodideReady = false;
-        let pyodide;
-        async function loadPyodide() {
-            if (!pyodideReady) {
-                pyodide = await window.loadPyodide();
-                pyodideReady = true;
-            }
-        }
-        async function runExample(problem) {
-            await loadPyodide();
-            const editor = document.getElementById('example-editor-' + problem);
-            const code = editor ? editor.value : '';
-            const outputElem = document.getElementById('output-' + problem);
-            outputElem.textContent = '';
-            pyodide.setStdout(s => { outputElem.textContent += s + '\n'; });
-            pyodide.setStderr(s => { outputElem.textContent += 'Error: ' + s + '\n'; });
-            try {
-                await pyodide.runPythonAsync(code);
-            } catch (err) {
-                outputElem.textContent += 'Error: ' + err + '\n';
-            }
-        }
-        document.querySelectorAll('.run-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                runExample(this.dataset.run);
+        document.querySelectorAll('.load-template').forEach((button) => {
+            button.addEventListener('click', () => {
+                const key = button.dataset.template;
+                loadIntoRunner(STARTER_TEMPLATES[key], `Loaded starter code for ${key}.`);
             });
         });
-        // Clear output logic
-        document.querySelectorAll('.clear-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                const outputElem = document.getElementById('output-' + this.dataset.clear);
-                if (outputElem) outputElem.textContent = '';
+
+        document.querySelectorAll('.load-example').forEach((button) => {
+            button.addEventListener('click', () => {
+                const key = button.dataset.example;
+                const description = EXAMPLE_DESCRIPTIONS[key] || 'Loaded worked example.';
+                loadIntoRunner(EXAMPLE_TEMPLATES[key], `Loaded worked example for ${key}: ${description}`);
             });
         });
-        // Pyodide editor logic for Worked Example
-        // Removed duplicate declarations
-        async function loadPyodide() {
-            if (!pyodideReady) {
-                pyodide = await window.loadPyodide();
-                pyodideReady = true;
-            }
-        }
-        async function runExample(problem) {
-            await loadPyodide();
-            const code = cmEditors[problem].getValue();
-            const outputElem = document.getElementById('output-' + problem);
-            outputElem.textContent = '';
-            // Terminal-like output
-            pyodide.setStdout(s => { outputElem.textContent += s + '\n'; });
-            pyodide.setStderr(s => { outputElem.textContent += 'Error: ' + s + '\n'; });
-            try {
-                await pyodide.runPythonAsync(code);
-            } catch (err) {
-                outputElem.textContent += 'Error: ' + err + '\n';
-            }
-        }
-        document.querySelectorAll('.run-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                runExample(this.dataset.run);
+
+        document.querySelectorAll('.load-note-example').forEach((button) => {
+            button.addEventListener('click', () => {
+                const key = button.dataset.noteExample;
+                loadIntoRunner(NOTE_EXAMPLE_TEMPLATES[key], `Loaded note example for ${key}.`);
             });
+        });
+
+        runBtn.addEventListener('click', runPythonFromEditor);
+        clearBtn.addEventListener('click', () => {
+            pyOut.textContent = '';
+            saveResumeState();
+        });
+
+        if (prevProblemBtn) {
+            prevProblemBtn.addEventListener('click', () => {
+                stepProblemBy(-1);
+            });
+        }
+
+        if (nextProblemBtn) {
+            nextProblemBtn.addEventListener('click', () => {
+                stepProblemBy(1);
+            });
+        }
+
+        pyCode.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+                event.preventDefault();
+                runPythonFromEditor();
+            }
+        });
+
+        pyCode.addEventListener('input', adjustEditorHeight);
+
+        const restoredState = loadResumeState();
+        if (restoredState) {
+            if (typeof restoredState.editorCode === 'string' && restoredState.editorCode.trim()) {
+                pyCode.value = restoredState.editorCode;
+            }
+
+            if (typeof restoredState.loadedInfoText === 'string' && restoredState.loadedInfoText.trim()) {
+                setLoadedExampleText(restoredState.loadedInfoText);
+            }
+
+            if (typeof restoredState.activeProblemKey === 'string') {
+                activateProblemTab(restoredState.activeProblemKey, { clearEditor: false });
+            }
+        } else {
+            applySensoryModes();
+            updateFocusModeUI();
+        }
+
+        applySensoryModes();
+        updateFocusModeUI();
+
+        initializeMonacoEditor();
+        adjustEditorHeight();
+        updateInstructionalCue(activeProblemKey, 'start');
+
+        ensurePyodide().catch(() => {
+            setStatus('Python not ready (click Run to retry)', false);
         });
     </script>
 </body>
