@@ -203,12 +203,65 @@
             outline: 3px solid #111827;
             outline-offset: 3px;
         }
+
+        .resource-link {
+            color: #1e3a8a;
+            text-decoration: underline;
+            font-weight: 600;
+        }
+
+        .string-ref-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+        }
+
+        .string-ref-table th,
+        .string-ref-table td {
+            border: 1px solid #64748b;
+            padding: 6px 10px;
+            text-align: left;
+        }
+
+        .string-ref-table th {
+            background: #e0f2fe;
+        }
+
+        .string-ref-table td {
+            background: #fff;
+        }
+
+        body.dark-mode .string-ref-table th {
+            background: #172554;
+            color: #fff;
+        }
+
+        body.dark-mode .string-ref-table td {
+            background: #1e293b;
+            color: #e2e8f0;
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
         <h1>CS50P Problem Set 2 – Interactive Student Guide</h1>
+        <div class="start-here">
+            <strong>Welcome!</strong> This guide will help you complete Problem Set 2 in Harvard's CS50P curriculum. Use
+            the
+            tabs below for step-by-step support, tips, and resources.
+        </div>
+        <div class="hint">
+            <a class="resource-link" href="https://cs50.harvard.edu/python/2023/psets/2/" target="_blank">Official
+                Problem Set 2
+                Description</a>
+            &nbsp;|&nbsp;
+            <a class="resource-link" href="https://cs50.harvard.edu/python/2023/notes/" target="_blank">Lecture
+                Notes</a>
+            &nbsp;|&nbsp;
+            <a class="resource-link" href="https://cs50.harvard.edu/python/2023/reference/" target="_blank">Python
+                Reference</a>
+        </div>
         <div class="tabs" role="tablist">
             <button class="tab active" role="tab" aria-selected="true" aria-controls="build-section">Build</button>
             <button class="tab" role="tab" aria-selected="false" aria-controls="know-section">Know</button>
@@ -219,49 +272,99 @@
         </div>
         <div id="build-section" class="section active" role="tabpanel">
             <span class="section-label build">Build</span>
-            <div class="start-here">Start here: Read the problem description and requirements.</div>
-            <div class="hint">Hint: Break the problem into smaller steps.</div>
+            <div class="start-here">Start here: Read the <a class="resource-link"
+                    href="https://cs50.harvard.edu/python/2023/psets/2/" target="_blank">problem description</a> and
+                requirements.</div>
+            <div class="hint">Break the problem into smaller steps. Focus on one function or feature at a time.</div>
             <div class="do-dont">
-                <div class="do-box">Do: Write clear, readable code.</div>
-                <div class="dont-box">Don't: Overcomplicate your logic.</div>
+                <div class="do-box">Do: Write clear, readable code. Use comments to explain your logic.</div>
+                <div class="dont-box">Don't: Overcomplicate your logic or use features you haven't learned yet.</div>
             </div>
         </div>
         <div id="know-section" class="section" role="tabpanel">
             <span class="section-label know">Know</span>
-            <div class="hint">Review lecture concepts and string methods.</div>
-            <ul>
-                <li>str.lower()</li>
-                <li>str.strip()</li>
-                <li>str.replace()</li>
-                <li>str.split()</li>
-                <li>str.startswith()</li>
-                <li>str.endswith()</li>
-            </ul>
+            <div class="hint">Review lecture concepts and string methods. These are especially useful for Problem Set 2:
+            </div>
+            <table class="string-ref-table">
+                <thead>
+                    <tr>
+                        <th>Method</th>
+                        <th>What it does</th>
+                        <th>Example</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>str.lower()</td>
+                        <td>Converts all letters to lowercase</td>
+                        <td>"Hello".lower() → "hello"</td>
+                    </tr>
+                    <tr>
+                        <td>str.strip()</td>
+                        <td>Removes whitespace from both ends</td>
+                        <td>" hi ".strip() → "hi"</td>
+                    </tr>
+                    <tr>
+                        <td>str.replace(a, b)</td>
+                        <td>Replaces all occurrences of a with b</td>
+                        <td>"foo bar".replace("foo", "baz") → "baz bar"</td>
+                    </tr>
+                    <tr>
+                        <td>str.split()</td>
+                        <td>Splits string into a list by spaces</td>
+                        <td>"a b c".split() → ["a", "b", "c"]</td>
+                    </tr>
+                    <tr>
+                        <td>str.startswith(x)</td>
+                        <td>Checks if string starts with x</td>
+                        <td>"hello".startswith("he") → True</td>
+                    </tr>
+                    <tr>
+                        <td>str.endswith(x)</td>
+                        <td>Checks if string ends with x</td>
+                        <td>"hello".endswith("lo") → True</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
         <div id="steps-section" class="section" role="tabpanel">
             <span class="section-label steps">Steps</span>
             <ol>
-                <li>Read the input.</li>
-                <li>Process the string.</li>
-                <li>Check conditions.</li>
-                <li>Output the result.</li>
+                <li>Read the input (from user or file).</li>
+                <li>Process the string (use methods above).</li>
+                <li>Check conditions (if/elif/else).</li>
+                <li>Output the result (print or return).</li>
             </ol>
+            <div class="hint">For each problem, write a plan before coding. Test your code with sample inputs.</div>
         </div>
         <div id="mistakes-section" class="section" role="tabpanel">
             <span class="section-label mistakes">Mistakes</span>
-            <div class="if-stuck">Common mistakes: Not handling whitespace, not checking case sensitivity.</div>
+            <div class="if-stuck">
+                Common mistakes:
+                <ul>
+                    <li>Not handling whitespace or case sensitivity</li>
+                    <li>Using the wrong string method</li>
+                    <li>Forgetting to test edge cases</li>
+                    <li>Not reading the problem requirements carefully</li>
+                </ul>
+            </div>
         </div>
         <div id="try-section" class="section" role="tabpanel">
             <span class="section-label try">Try</span>
-            <div class="hint">Try running your code below.</div>
+            <div class="hint">Try running your code below. (Python execution is a placeholder; for real execution, use
+                your
+                local environment or <a class="resource-link" href="https://pythontutor.com/" target="_blank">Python
+                    Tutor</a>.)</div>
             <textarea id="python-editor" rows="8" style="width:100%;font-family:monospace;"></textarea>
             <button id="run-python">Run Python</button>
             <div id="output" class="io-example"></div>
         </div>
         <div id="io-section" class="section" role="tabpanel">
             <span class="section-label io">IO</span>
-            <div class="hint">Input/output examples:</div>
+            <div class="hint">Input/output examples for Problem Set 2:</div>
             <div class="io-example">Input: hello<br>Output: HELLO</div>
+            <div class="io-example">Input: Goodbye <br>Output: GOODBYE</div>
+            <div class="io-example">Input: foo bar<br>Output: FOO BAR</div>
         </div>
         <button id="toggle-dark" style="margin-top:24px;">Toggle Dark Mode</button>
     </div>
