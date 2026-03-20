@@ -240,6 +240,32 @@
             background: #1e293b;
             color: #e2e8f0;
         }
+
+        .example-block {
+            background: #e0f2fe;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin: 10px 0;
+        }
+
+        body.dark-mode .example-block {
+            background: #172554;
+            color: #fff;
+        }
+
+        .starter-block {
+            background: #f8fbff;
+            border: 1px dashed #64748b;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+
+        body.dark-mode .starter-block {
+            background: #1e293b;
+            color: #e2e8f0;
+        }
     </style>
 </head>
 
@@ -280,130 +306,179 @@
                 <div class="do-box">Do: Write clear, readable code. Use comments to explain your logic.</div>
                 <div class="dont-box">Don't: Overcomplicate your logic or use features you haven't learned yet.</div>
             </div>
-        </div>
-        <div id="know-section" class="section" role="tabpanel">
-            <span class="section-label know">Know</span>
-            <div class="hint">Review lecture concepts and string methods. These are especially useful for Problem Set 2:
+            <div class="example-block">
+                <strong>Worked Example: "Coke Machine"</strong><br>
+                Input: 25<br>
+                Output: Amount Due: 75
+                <br>Input: 25<br>
+                Output: Amount Due: 50
+                <br>Input: 50<br>
+                Output: Amount Due: 0
             </div>
-            <table class="string-ref-table">
-                <thead>
-                    <tr>
-                        <th>Method</th>
-                        <th>What it does</th>
-                        <th>Example</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>str.lower()</td>
-                        <td>Converts all letters to lowercase</td>
-                        <td>"Hello".lower() → "hello"</td>
-                    </tr>
-                    <tr>
-                        <td>str.strip()</td>
-                        <td>Removes whitespace from both ends</td>
-                        <td>" hi ".strip() → "hi"</td>
-                    </tr>
-                    <tr>
-                        <td>str.replace(a, b)</td>
-                        <td>Replaces all occurrences of a with b</td>
-                        <td>"foo bar".replace("foo", "baz") → "baz bar"</td>
-                    </tr>
-                    <tr>
-                        <td>str.split()</td>
-                        <td>Splits string into a list by spaces</td>
-                        <td>"a b c".split() → ["a", "b", "c"]</td>
-                    </tr>
-                    <tr>
-                        <td>str.startswith(x)</td>
-                        <td>Checks if string starts with x</td>
-                        <td>"hello".startswith("he") → True</td>
-                    </tr>
-                    <tr>
-                        <td>str.endswith(x)</td>
-                        <td>Checks if string ends with x</td>
-                        <td>"hello".endswith("lo") → True</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div id="steps-section" class="section" role="tabpanel">
-            <span class="section-label steps">Steps</span>
-            <ol>
-                <li>Read the input (from user or file).</li>
-                <li>Process the string (use methods above).</li>
-                <li>Check conditions (if/elif/else).</li>
-                <li>Output the result (print or return).</li>
-            </ol>
-            <div class="hint">For each problem, write a plan before coding. Test your code with sample inputs.</div>
-        </div>
-        <div id="mistakes-section" class="section" role="tabpanel">
-            <span class="section-label mistakes">Mistakes</span>
-            <div class="if-stuck">
-                Common mistakes:
-                <ul>
-                    <li>Not handling whitespace or case sensitivity</li>
-                    <li>Using the wrong string method</li>
-                    <li>Forgetting to test edge cases</li>
-                    <li>Not reading the problem requirements carefully</li>
-                </ul>
+            <div class="starter-block">
+                # Starter code for Coke Machine
+                amount_due = 100
+                while amount_due > 0:
+                print(f"Amount Due: {amount_due}")
+                coin = int(input("Insert Coin: "))
+                if coin in [25, 10, 5]:
+                amount_due -= coin
+                print("Change Owed:", abs(amount_due))
             </div>
+            <div class="example-block">
+                <strong>Worked Example: "Nutrition Facts"</strong><br>
+                Input: Apple<br>
+                Output: Calories: 130
+                <br>Input: Avocado<br>
+                Output: Calories: 50
+            </div>
+            <div class="starter-block">
+                # Starter code for Nutrition Facts
+                fruit = input("Item: ").lower()
+                if fruit == "apple":
+                print("Calories: 130")
+                elif fruit == "avocado":
+                print("Calories: 50")
+                # Add more fruits as needed
+            </div>
+            <div class="example-block">
+                <strong>Worked Example: "Meal Time"</strong><br>
+                Input: 7:00<br>
+                Output: Breakfast time
+                <br>Input: 12:30<br>
+                Output: Lunch time
+            </div>
+            <div class="starter-block">
+                # Starter code for Meal Time
+                time = input("Time: ")
+                hour, minute = map(int, time.split(":"))
+                if 7 <= hour < 8: print("Breakfast time") elif 12 <=hour < 13: print("Lunch time") # Add more conditions
+                    as needed </div>
+            </div>
+            <div id="know-section" class="section" role="tabpanel">
+                <span class="section-label know">Know</span>
+                <div class="hint">Review lecture concepts and string methods. These are especially useful for Problem
+                    Set 2:</div>
+                <table class="string-ref-table">
+                    <thead>
+                        <tr>
+                            <th>Method</th>
+                            <th>What it does</th>
+                            <th>Example</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>str.lower()</td>
+                            <td>Converts all letters to lowercase</td>
+                            <td>"Hello".lower() → "hello"</td>
+                        </tr>
+                        <tr>
+                            <td>str.strip()</td>
+                            <td>Removes whitespace from both ends</td>
+                            <td>" hi ".strip() → "hi"</td>
+                        </tr>
+                        <tr>
+                            <td>str.replace(a, b)</td>
+                            <td>Replaces all occurrences of a with b</td>
+                            <td>"foo bar".replace("foo", "baz") → "baz bar"</td>
+                        </tr>
+                        <tr>
+                            <td>str.split()</td>
+                            <td>Splits string into a list by spaces</td>
+                            <td>"a b c".split() → ["a", "b", "c"]</td>
+                        </tr>
+                        <tr>
+                            <td>str.startswith(x)</td>
+                            <td>Checks if string starts with x</td>
+                            <td>"hello".startswith("he") → True</td>
+                        </tr>
+                        <tr>
+                            <td>str.endswith(x)</td>
+                            <td>Checks if string ends with x</td>
+                            <td>"hello".endswith("lo") → True</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="steps-section" class="section" role="tabpanel">
+                <span class="section-label steps">Steps</span>
+                <ol>
+                    <li>Read the input (from user or file).</li>
+                    <li>Process the string (use methods above).</li>
+                    <li>Check conditions (if/elif/else).</li>
+                    <li>Output the result (print or return).</li>
+                </ol>
+                <div class="hint">For each problem, write a plan before coding. Test your code with sample inputs.</div>
+            </div>
+            <div id="mistakes-section" class="section" role="tabpanel">
+                <span class="section-label mistakes">Mistakes</span>
+                <div class="if-stuck">
+                    Common mistakes:
+                    <ul>
+                        <li>Not handling whitespace or case sensitivity</li>
+                        <li>Using the wrong string method</li>
+                        <li>Forgetting to test edge cases</li>
+                        <li>Not reading the problem requirements carefully</li>
+                    </ul>
+                </div>
+            </div>
+            <div id="try-section" class="section" role="tabpanel">
+                <span class="section-label try">Try</span>
+                <div class="hint">Try running your code below. (Python execution is a placeholder; for real execution,
+                    use
+                    your
+                    local environment or <a class="resource-link" href="https://pythontutor.com/" target="_blank">Python
+                        Tutor</a>.)</div>
+                <textarea id="python-editor" rows="8" style="width:100%;font-family:monospace;"></textarea>
+                <button id="run-python">Run Python</button>
+                <div id="output" class="io-example"></div>
+            </div>
+            <div id="io-section" class="section" role="tabpanel">
+                <span class="section-label io">IO</span>
+                <div class="hint">Input/output examples for Problem Set 2:</div>
+                <div class="io-example">Input: hello<br>Output: HELLO</div>
+                <div class="io-example">Input: Goodbye <br>Output: GOODBYE</div>
+                <div class="io-example">Input: foo bar<br>Output: FOO BAR</div>
+            </div>
+            <button id="toggle-dark" style="margin-top:24px;">Toggle Dark Mode</button>
         </div>
-        <div id="try-section" class="section" role="tabpanel">
-            <span class="section-label try">Try</span>
-            <div class="hint">Try running your code below. (Python execution is a placeholder; for real execution, use
-                your
-                local environment or <a class="resource-link" href="https://pythontutor.com/" target="_blank">Python
-                    Tutor</a>.)</div>
-            <textarea id="python-editor" rows="8" style="width:100%;font-family:monospace;"></textarea>
-            <button id="run-python">Run Python</button>
-            <div id="output" class="io-example"></div>
-        </div>
-        <div id="io-section" class="section" role="tabpanel">
-            <span class="section-label io">IO</span>
-            <div class="hint">Input/output examples for Problem Set 2:</div>
-            <div class="io-example">Input: hello<br>Output: HELLO</div>
-            <div class="io-example">Input: Goodbye <br>Output: GOODBYE</div>
-            <div class="io-example">Input: foo bar<br>Output: FOO BAR</div>
-        </div>
-        <button id="toggle-dark" style="margin-top:24px;">Toggle Dark Mode</button>
-    </div>
-    <script>
-        // Tab logic
-        const tabs = document.querySelectorAll('.tab');
-        const sections = document.querySelectorAll('.section');
-        tabs.forEach((tab, idx) => {
-            tab.addEventListener('click', () => {
-                tabs.forEach(t => t.classList.remove('active'));
-                sections.forEach(s => s.classList.remove('active'));
-                tab.classList.add('active');
-                sections[idx].classList.add('active');
-                tabs.forEach((t, i) => t.setAttribute('aria-selected', i === idx));
+        <script>
+            // Tab logic
+            const tabs = document.querySelectorAll('.tab');
+            const sections = document.querySelectorAll('.section');
+            tabs.forEach((tab, idx) => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    sections.forEach(s => s.classList.remove('active'));
+                    tab.classList.add('active');
+                    sections[idx].classList.add('active');
+                    tabs.forEach((t, i) => t.setAttribute('aria-selected', i === idx));
+                });
             });
-        });
-        // Dark mode logic
-        const toggleDark = document.getElementById('toggle-dark');
-        toggleDark.addEventListener('click', () => {
-            document.body.classList.toggle('dark-mode');
-        });
-        // Python runner (Pyodide placeholder)
-        document.getElementById('run-python').addEventListener('click', () => {
-            const code = document.getElementById('python-editor').value;
-            // Placeholder: echo code
-            document.getElementById('output').textContent = 'Output:\n' + code;
-            // To enable real Python, load Pyodide and run code
-        });
-        // Keyboard shortcut for dark mode
-        document.addEventListener('keydown', e => {
-            if (e.ctrlKey && e.key.toLowerCase() === 'd') {
+            // Dark mode logic
+            const toggleDark = document.getElementById('toggle-dark');
+            toggleDark.addEventListener('click', () => {
                 document.body.classList.toggle('dark-mode');
+            });
+            // Python runner (Pyodide placeholder)
+            document.getElementById('run-python').addEventListener('click', () => {
+                const code = document.getElementById('python-editor').value;
+                // Placeholder: echo code
+                document.getElementById('output').textContent = 'Output:\n' + code;
+                // To enable real Python, load Pyodide and run code
+            });
+            // Keyboard shortcut for dark mode
+            document.addEventListener('keydown', e => {
+                if (e.ctrlKey && e.key.toLowerCase() === 'd') {
+                    document.body.classList.toggle('dark-mode');
+                }
+            });
+            // Auto dark mode based on system
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.body.classList.add('dark-mode');
             }
-        });
-        // Auto dark mode based on system
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.body.classList.add('dark-mode');
-        }
-    </script>
+        </script>
 </body>
 
 </html>
