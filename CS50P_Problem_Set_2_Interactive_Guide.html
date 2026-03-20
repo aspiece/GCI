@@ -254,148 +254,78 @@
             <div class="tab-content" id="example-content">
                 <div class="section-card" id="example-camel">
                     <strong>Worked Example for camelCase</strong><br>
-                    <div class="vscode-editor-block">
-                        <div id="monaco-editor-camel" class="monaco-editor-host"
-                            style="height:220px;border-radius:6px;box-shadow:0 2px 8px #0003;background:#222;border:2px solid #007acc;">
-                        </div>
-                        <textarea id="fallback-editor-camel"
-                            style="display:none;width:100%;min-height:220px;border-radius:6px;border:2px solid #007acc;background:#222;color:#fff;font-family:monospace;font-size:1.1em;padding:8px;"></textarea>
-                        <div class="editor-note" id="editor-note-camel"
-                            style="margin-top:6px;color:#007acc;font-size:0.95em;">Editor mode: color highlighting is
-                            on.</div>
-                        <div class="row" style="margin-top:8px">
-                            <button class="run-btn" data-run="camel"
-                                style="background:#007acc;color:#fff;border:none;padding:8px 16px;border-radius:4px;font-weight:600;box-shadow:0 1px 4px #007acc33;">Run
-                                Example</button>
-                            <button class="clear-btn" data-clear="camel"
-                                style="background:#fff;color:#007acc;border:2px solid #007acc;padding:8px 16px;border-radius:4px;font-weight:600;margin-left:8px;">Clear
-                                Output</button>
-                        </div>
-                        <div class="output-block" id="output-camel" aria-label="Python output" tabindex="0"
-                            style="background:#222;color:#fff;font-family:monospace;min-height:40px;white-space:pre;border-radius:4px;margin-top:8px;padding:8px;border:2px solid #007acc;font-size:1.1em;">
-                        </div>
+                    <textarea id="example-editor-camel" spellcheck="false" aria-label="Python code editor"
+                        style="width:100%;min-height:220px;border-radius:6px;border:2px solid #007acc;background:#222;color:#fff;font-family:monospace;font-size:1.1em;padding:8px;"></textarea>
+                    <div class="row" style="margin-top:8px">
+                        <button class="run-btn" data-run="camel"
+                            style="background:#007acc;color:#fff;border:none;padding:8px 16px;border-radius:4px;font-weight:600;box-shadow:0 1px 4px #007acc33;">Run
+                            Example</button>
+                        <button class="clear-btn" data-clear="camel"
+                            style="background:#fff;color:#007acc;border:2px solid #007acc;padding:8px 16px;border-radius:4px;font-weight:600;margin-left:8px;">Clear
+                            Output</button>
                     </div>
+                    <pre class="output-block" id="output-camel" aria-label="Python output" tabindex="0"
+                        style="background:#222;color:#fff;font-family:monospace;min-height:40px;white-space:pre;border-radius:4px;margin-top:8px;padding:8px;border:2px solid #007acc;font-size:1.1em;"></pre>
                 </div>
                 <div class="section-card" id="example-coke" style="display:none;">
                     <strong>Worked Example for Coke Machine</strong><br>
-                    <textarea id="example-editor-coke" style="display:none;"></textarea>
-                    <div id="cm-editor-coke" style="height:220px;border:1px solid #64748b;border-radius:8px;"></div>
-                    <button class="run-btn" data-run="coke">Run Example</button>
-                    <div class="output-block" id="output-coke"
-                        style="background:#222;color:#fff;font-family:monospace;min-height:40px;white-space:pre;border-radius:4px;margin-top:8px;padding:8px;border:2px solid #007acc;font-size:1.1em;">
+                    <textarea id="example-editor-coke" spellcheck="false" aria-label="Python code editor"
+                        style="width:100%;min-height:220px;border-radius:6px;border:2px solid #007acc;background:#222;color:#fff;font-family:monospace;font-size:1.1em;padding:8px;"></textarea>
+                    <div class="row" style="margin-top:8px">
+                        <button class="run-btn" data-run="coke"
+                            style="background:#007acc;color:#fff;border:none;padding:8px 16px;border-radius:4px;font-weight:600;box-shadow:0 1px 4px #007acc33;">Run
+                            Example</button>
+                        <button class="clear-btn" data-clear="coke"
+                            style="background:#fff;color:#007acc;border:2px solid #007acc;padding:8px 16px;border-radius:4px;font-weight:600;margin-left:8px;">Clear
+                            Output</button>
                     </div>
-                    <div class="vscode-editor-block" style="max-width:600px;margin:0 auto;">
-                        <div id="monaco-editor-coke" class="monaco-editor-host"
-                            style="height:220px;border-radius:6px;box-shadow:0 2px 8px #0003;background:#222;border:2px solid #007acc;">
-                        </div>
-                        <textarea id="fallback-editor-coke"
-                            style="display:none;width:100%;min-height:220px;border-radius:6px;border:2px solid #007acc;background:#222;color:#fff;font-family:monospace;font-size:1.1em;padding:8px;"></textarea>
-                        <div class="editor-note" id="editor-note-coke"
-                            style="margin-top:6px;color:#007acc;font-size:0.95em;">Editor mode: color highlighting is
-                            on.</div>
-                        <div class="row" style="margin-top:8px">
-                            <button class="run-btn" data-run="coke"
-                                style="background:#007acc;color:#fff;border:none;padding:8px 16px;border-radius:4px;font-weight:600;box-shadow:0 1px 4px #007acc33;">Run
-                                Example</button>
-                            <button class="clear-btn" data-clear="coke"
-                                style="background:#fff;color:#007acc;border:2px solid #007acc;padding:8px 16px;border-radius:4px;font-weight:600;margin-left:8px;">Clear
-                                Output</button>
-                        </div>
-                        <div class="output-block" id="output-coke" aria-label="Python output" tabindex="0"
-                            style="background:#222;color:#fff;font-family:monospace;min-height:40px;white-space:pre;border-radius:4px;margin-top:8px;padding:8px;border:2px solid #007acc;font-size:1.1em;">
-                        </div>
-                    </div>
+                    <pre class="output-block" id="output-coke" aria-label="Python output" tabindex="0"
+                        style="background:#222;color:#fff;font-family:monospace;min-height:40px;white-space:pre;border-radius:4px;margin-top:8px;padding:8px;border:2px solid #007acc;font-size:1.1em;"></pre>
                 </div>
                 <div class="section-card" id="example-twttr" style="display:none;">
                     <strong>Worked Example for twttr</strong><br>
-                    <textarea id="example-editor-twttr" style="display:none;"></textarea>
-                    <div id="cm-editor-twttr" style="height:220px;border:1px solid #64748b;border-radius:8px;"></div>
-                    <button class="run-btn" data-run="twttr">Run Example</button>
-                    <div class="output-block" id="output-twttr"
-                        style="background:#222;color:#fff;font-family:monospace;min-height:40px;white-space:pre;border-radius:4px;margin-top:8px;padding:8px;border:2px solid #007acc;font-size:1.1em;">
+                    <textarea id="example-editor-twttr" spellcheck="false" aria-label="Python code editor"
+                        style="width:100%;min-height:220px;border-radius:6px;border:2px solid #007acc;background:#222;color:#fff;font-family:monospace;font-size:1.1em;padding:8px;"></textarea>
+                    <div class="row" style="margin-top:8px">
+                        <button class="run-btn" data-run="twttr"
+                            style="background:#007acc;color:#fff;border:none;padding:8px 16px;border-radius:4px;font-weight:600;box-shadow:0 1px 4px #007acc33;">Run
+                            Example</button>
+                        <button class="clear-btn" data-clear="twttr"
+                            style="background:#fff;color:#007acc;border:2px solid #007acc;padding:8px 16px;border-radius:4px;font-weight:600;margin-left:8px;">Clear
+                            Output</button>
                     </div>
-                    <div class="vscode-editor-block" style="max-width:600px;margin:0 auto;">
-                        <div id="monaco-editor-twttr" class="monaco-editor-host"
-                            style="height:220px;border-radius:6px;box-shadow:0 2px 8px #0003;background:#222;border:2px solid #007acc;">
-                        </div>
-                        <textarea id="fallback-editor-twttr"
-                            style="display:none;width:100%;min-height:220px;border-radius:6px;border:2px solid #007acc;background:#222;color:#fff;font-family:monospace;font-size:1.1em;padding:8px;"></textarea>
-                        <div class="editor-note" id="editor-note-twttr"
-                            style="margin-top:6px;color:#007acc;font-size:0.95em;">Editor mode: color highlighting is
-                            on.</div>
-                        <div class="row" style="margin-top:8px">
-                            <button class="run-btn" data-run="twttr"
-                                style="background:#007acc;color:#fff;border:none;padding:8px 16px;border-radius:4px;font-weight:600;box-shadow:0 1px 4px #007acc33;">Run
-                                Example</button>
-                            <button class="clear-btn" data-clear="twttr"
-                                style="background:#fff;color:#007acc;border:2px solid #007acc;padding:8px 16px;border-radius:4px;font-weight:600;margin-left:8px;">Clear
-                                Output</button>
-                        </div>
-                        <div class="output-block" id="output-twttr" aria-label="Python output" tabindex="0"
-                            style="background:#222;color:#fff;font-family:monospace;min-height:40px;white-space:pre;border-radius:4px;margin-top:8px;padding:8px;border:2px solid #007acc;font-size:1.1em;">
-                        </div>
-                    </div>
+                    <pre class="output-block" id="output-twttr" aria-label="Python output" tabindex="0"
+                        style="background:#222;color:#fff;font-family:monospace;min-height:40px;white-space:pre;border-radius:4px;margin-top:8px;padding:8px;border:2px solid #007acc;font-size:1.1em;"></pre>
                 </div>
                 <div class="section-card" id="example-plates" style="display:none;">
                     <strong>Worked Example for Vanity Plates</strong><br>
-                    <textarea id="example-editor-plates" style="display:none;"></textarea>
-                    <div id="cm-editor-plates" style="height:220px;border:1px solid #64748b;border-radius:8px;"></div>
-                    <button class="run-btn" data-run="plates">Run Example</button>
-                    <div class="output-block" id="output-plates"
-                        style="background:#222;color:#fff;font-family:monospace;min-height:40px;white-space:pre;border-radius:4px;margin-top:8px;padding:8px;border:2px solid #007acc;font-size:1.1em;">
+                    <textarea id="example-editor-plates" spellcheck="false" aria-label="Python code editor"
+                        style="width:100%;min-height:220px;border-radius:6px;border:2px solid #007acc;background:#222;color:#fff;font-family:monospace;font-size:1.1em;padding:8px;"></textarea>
+                    <div class="row" style="margin-top:8px">
+                        <button class="run-btn" data-run="plates"
+                            style="background:#007acc;color:#fff;border:none;padding:8px 16px;border-radius:4px;font-weight:600;box-shadow:0 1px 4px #007acc33;">Run
+                            Example</button>
+                        <button class="clear-btn" data-clear="plates"
+                            style="background:#fff;color:#007acc;border:2px solid #007acc;padding:8px 16px;border-radius:4px;font-weight:600;margin-left:8px;">Clear
+                            Output</button>
                     </div>
-                    <div class="vscode-editor-block" style="max-width:600px;margin:0 auto;">
-                        <div id="monaco-editor-plates" class="monaco-editor-host"
-                            style="height:220px;border-radius:6px;box-shadow:0 2px 8px #0003;background:#222;border:2px solid #007acc;">
-                        </div>
-                        <textarea id="fallback-editor-plates"
-                            style="display:none;width:100%;min-height:220px;border-radius:6px;border:2px solid #007acc;background:#222;color:#fff;font-family:monospace;font-size:1.1em;padding:8px;"></textarea>
-                        <div class="editor-note" id="editor-note-plates"
-                            style="margin-top:6px;color:#007acc;font-size:0.95em;">Editor mode: color highlighting is
-                            on.</div>
-                        <div class="row" style="margin-top:8px">
-                            <button class="run-btn" data-run="plates"
-                                style="background:#007acc;color:#fff;border:none;padding:8px 16px;border-radius:4px;font-weight:600;box-shadow:0 1px 4px #007acc33;">Run
-                                Example</button>
-                            <button class="clear-btn" data-clear="plates"
-                                style="background:#fff;color:#007acc;border:2px solid #007acc;padding:8px 16px;border-radius:4px;font-weight:600;margin-left:8px;">Clear
-                                Output</button>
-                        </div>
-                        <div class="output-block" id="output-plates" aria-label="Python output" tabindex="0"
-                            style="background:#222;color:#fff;font-family:monospace;min-height:40px;white-space:pre;border-radius:4px;margin-top:8px;padding:8px;border:2px solid #007acc;font-size:1.1em;">
-                        </div>
-                    </div>
+                    <pre class="output-block" id="output-plates" aria-label="Python output" tabindex="0"
+                        style="background:#222;color:#fff;font-family:monospace;min-height:40px;white-space:pre;border-radius:4px;margin-top:8px;padding:8px;border:2px solid #007acc;font-size:1.1em;"></pre>
                 </div>
                 <div class="section-card" id="example-nutrition" style="display:none;">
                     <strong>Worked Example for Nutrition Facts</strong><br>
-                    <textarea id="example-editor-nutrition" style="display:none;"></textarea>
-                    <div id="cm-editor-nutrition" style="height:220px;border:1px solid #64748b;border-radius:8px;">
+                    <textarea id="example-editor-nutrition" spellcheck="false" aria-label="Python code editor"
+                        style="width:100%;min-height:220px;border-radius:6px;border:2px solid #007acc;background:#222;color:#fff;font-family:monospace;font-size:1.1em;padding:8px;"></textarea>
+                    <div class="row" style="margin-top:8px">
+                        <button class="run-btn" data-run="nutrition"
+                            style="background:#007acc;color:#fff;border:none;padding:8px 16px;border-radius:4px;font-weight:600;box-shadow:0 1px 4px #007acc33;">Run
+                            Example</button>
+                        <button class="clear-btn" data-clear="nutrition"
+                            style="background:#fff;color:#007acc;border:2px solid #007acc;padding:8px 16px;border-radius:4px;font-weight:600;margin-left:8px;">Clear
+                            Output</button>
                     </div>
-                    <button class="run-btn" data-run="nutrition">Run Example</button>
-                    <div class="output-block" id="output-nutrition"
-                        style="background:#222;color:#fff;font-family:monospace;min-height:40px;white-space:pre;border-radius:4px;margin-top:8px;padding:8px;border:2px solid #007acc;font-size:1.1em;">
-                    </div>
-                    <div class="vscode-editor-block" style="max-width:600px;margin:0 auto;">
-                        <div id="monaco-editor-nutrition" class="monaco-editor-host"
-                            style="height:220px;border-radius:6px;box-shadow:0 2px 8px #0003;background:#222;border:2px solid #007acc;">
-                        </div>
-                        <textarea id="fallback-editor-nutrition"
-                            style="display:none;width:100%;min-height:220px;border-radius:6px;border:2px solid #007acc;background:#222;color:#fff;font-family:monospace;font-size:1.1em;padding:8px;"></textarea>
-                        <div class="editor-note" id="editor-note-nutrition"
-                            style="margin-top:6px;color:#007acc;font-size:0.95em;">Editor mode: color highlighting is
-                            on.</div>
-                        <div class="row" style="margin-top:8px">
-                            <button class="run-btn" data-run="nutrition"
-                                style="background:#007acc;color:#fff;border:none;padding:8px 16px;border-radius:4px;font-weight:600;box-shadow:0 1px 4px #007acc33;">Run
-                                Example</button>
-                            <button class="clear-btn" data-clear="nutrition"
-                                style="background:#fff;color:#007acc;border:2px solid #007acc;padding:8px 16px;border-radius:4px;font-weight:600;margin-left:8px;">Clear
-                                Output</button>
-                        </div>
-                        <div class="output-block" id="output-nutrition" aria-label="Python output" tabindex="0"
-                            style="background:#222;color:#fff;font-family:monospace;min-height:40px;white-space:pre;border-radius:4px;margin-top:8px;padding:8px;border:2px solid #007acc;font-size:1.1em;">
-                        </div>
-                    </div>
+                    <pre class="output-block" id="output-nutrition" aria-label="Python output" tabindex="0"
+                        style="background:#222;color:#fff;font-family:monospace;min-height:40px;white-space:pre;border-radius:4px;margin-top:8px;padding:8px;border:2px solid #007acc;font-size:1.1em;"></pre>
                 </div>
             </div>
             <div class="tab-content" id="starter-content">
@@ -424,8 +354,6 @@
         </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/edit/closebrackets.min.js"></script>
     <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
     <script>
         // Theme logic
@@ -521,78 +449,18 @@
         // Initial display
         showSection(currentSection);
 
-        // Monaco Editor and fallback setup for each worked example
-        const exampleProblems = ['camel', 'coke', 'twttr', 'plates', 'nutrition'];
-        const defaultCode = {
+        // Textarea editor setup for each problem
+        const exampleDefaults = {
             camel: 'name = "myVariableName"\nresult = ""\nfor c in name:\n    if c.isupper():\n        result += "_" + c.lower()\n    else:\n        result += c\nprint(result)',
             coke: 'amount_due = 100\nwhile amount_due > 0:\n    print(f"Amount Due: {amount_due}")\n    coin = 25  # Example input\n    if coin in [25, 10, 5]:\n        amount_due -= coin\nprint("Change Owed:", abs(amount_due))',
             twttr: 'text = "Twitter"\nvowels = "aeiouAEIOU"\nresult = ""\nfor c in text:\n    if c not in vowels:\n        result += c\nprint(result)',
             plates: 'plate = "CS50"\nif plate.isalpha():\n    print("Valid")\nelse:\n    print("Invalid")',
             nutrition: 'fruit = "apple"\ncalories = {"apple": 130, "avocado": 50}\nif fruit in calories:\n    print(f"Calories: {calories[fruit]}")\nelse:\n    print("Item not found")'
         };
-        const monacoEditors = {};
-        function setupMonaco(problem) {
-            const host = document.getElementById('monaco-editor-' + problem);
-            const fallback = document.getElementById('fallback-editor-' + problem);
-            if (!host) return;
-            // Load Monaco if not already loaded
-            function enableMonaco() {
-                if (typeof window.require === 'undefined') {
-                    const script = document.createElement('script');
-                    script.src = 'https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/loader.js';
-                    script.onload = () => { createEditor(); };
-                    document.head.appendChild(script);
-                } else {
-                    createEditor();
-                }
-            }
-            function createEditor() {
-                window.MonacoEnvironment = {
-                    getWorkerUrl: function () {
-                        return `data:text/javascript;charset=utf-8,${encodeURIComponent(
-                            `self.MonacoEnvironment={baseUrl:'https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/'};importScripts('https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/base/worker/workerMain.js');`
-                        )}`;
-                    }
-                };
-                window.require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs' } });
-                window.require(['vs/editor/editor.main'], function () {
-                    try {
-                        monacoEditors[problem] = monaco.editor.create(host, {
-                            value: defaultCode[problem],
-                            language: 'python',
-                            theme: 'vs-dark',
-                            automaticLayout: true,
-                            minimap: { enabled: false },
-                            fontSize: 14,
-                            tabSize: 4,
-                            insertSpaces: true,
-                            scrollBeyondLastLine: false,
-                            wordWrap: 'on',
-                            ariaLabel: 'Python code editor',
-                        });
-                        host.style.display = 'block';
-                        fallback.style.display = 'none';
-                        document.getElementById('editor-note-' + problem).textContent = 'Editor mode: color highlighting is on.';
-                    } catch (e) {
-                        host.style.display = 'none';
-                        fallback.style.display = 'block';
-                        fallback.value = defaultCode[problem];
-                        document.getElementById('editor-note-' + problem).textContent = 'Editor mode: basic editor (color highlighting may be blocked on this network).';
-                    }
-                });
-            }
-            // Try to load Monaco, fallback to textarea
-            try {
-                enableMonaco();
-            } catch (e) {
-                host.style.display = 'none';
-                fallback.style.display = 'block';
-                fallback.value = defaultCode[problem];
-                document.getElementById('editor-note-' + problem).textContent = 'Editor mode: basic editor (color highlighting may be blocked on this network).';
-            }
-        }
-        exampleProblems.forEach(setupMonaco);
-
+        ['camel', 'coke', 'twttr', 'plates', 'nutrition'].forEach(problem => {
+            const editor = document.getElementById('example-editor-' + problem);
+            if (editor) editor.value = exampleDefaults[problem];
+        });
         // Pyodide editor logic for Worked Example
         let pyodideReady = false;
         let pyodide;
@@ -602,17 +470,10 @@
                 pyodideReady = true;
             }
         }
-        function getEditorValue(problem) {
-            if (monacoEditors[problem] && monacoEditors[problem].getValue) {
-                return monacoEditors[problem].getValue();
-            }
-            const fallback = document.getElementById('fallback-editor-' + problem);
-            if (fallback) return fallback.value;
-            return '';
-        }
         async function runExample(problem) {
             await loadPyodide();
-            const code = getEditorValue(problem);
+            const editor = document.getElementById('example-editor-' + problem);
+            const code = editor ? editor.value : '';
             const outputElem = document.getElementById('output-' + problem);
             outputElem.textContent = '';
             pyodide.setStdout(s => { outputElem.textContent += s + '\n'; });
@@ -636,8 +497,7 @@
             });
         });
         // Pyodide editor logic for Worked Example
-        let pyodideReady = false;
-        let pyodide;
+        // Removed duplicate declarations
         async function loadPyodide() {
             if (!pyodideReady) {
                 pyodide = await window.loadPyodide();
