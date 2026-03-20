@@ -8,6 +8,8 @@
     <meta name="description"
         content="Student-facing interactive support guide for CS50P Problem Set 2 with lecture concept mapping, official CS50 links, and an in-browser Python runner." />
     <link rel="icon" href="data:," />
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
     <style>
         :root {
             --accent: #1e3a8a;
@@ -259,12 +261,31 @@
             border-radius: 8px;
             padding: 10px 14px;
             margin: 10px 0;
-            font-family: monospace;
         }
 
         body.dark-mode .starter-block {
             background: #1e293b;
             color: #e2e8f0;
+        }
+
+        .problem-guidance {
+            background: #fffbe6;
+            border-left: 4px solid #ffe066;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin: 10px 0;
+            color: #333;
+        }
+
+        body.dark-mode .problem-guidance {
+            background: #ffe066;
+            color: #333;
+        }
+
+        pre[class*="language-"] {
+            font-size: 1em;
+            border-radius: 8px;
+            margin: 10px 0;
         }
     </style>
 </head>
@@ -278,15 +299,32 @@
             tabs below for step-by-step support, tips, and resources.
         </div>
         <div class="hint">
-            <a class="resource-link" href="https://cs50.harvard.edu/python/2023/psets/2/" target="_blank">Official
+            <a class="resource-link" href="https://cs50.harvard.edu/python/psets/2/" target="_blank">Official
                 Problem Set 2
-                Description</a>
+                Overview</a>
             &nbsp;|&nbsp;
-            <a class="resource-link" href="https://cs50.harvard.edu/python/2023/notes/" target="_blank">Lecture
+            <a class="resource-link" href="https://cs50.harvard.edu/python/weeks/2/" target="_blank">Week 2 Lecture
                 Notes</a>
             &nbsp;|&nbsp;
-            <a class="resource-link" href="https://cs50.harvard.edu/python/2023/reference/" target="_blank">Python
-                Reference</a>
+            <a class="resource-link" href="https://cs50.harvard.edu/python/weeks/2/" target="_blank">Week 2 Shorts &
+                Slides</a>
+            &nbsp;|&nbsp;
+            <a class="resource-link" href="https://cs50.harvard.edu/python/psets/2/camel/" target="_blank">camelCase</a>
+            &nbsp;|&nbsp;
+            <a class="resource-link" href="https://cs50.harvard.edu/python/psets/2/coke/" target="_blank">Coke
+                Machine</a>
+            &nbsp;|&nbsp;
+            <a class="resource-link" href="https://cs50.harvard.edu/python/psets/2/twttr/" target="_blank">Just setting
+                up my twttr</a>
+            &nbsp;|&nbsp;
+            <a class="resource-link" href="https://cs50.harvard.edu/python/psets/2/plates/" target="_blank">Vanity
+                Plates</a>
+            &nbsp;|&nbsp;
+            <a class="resource-link" href="https://cs50.harvard.edu/python/psets/2/nutrition/" target="_blank">Nutrition
+                Facts</a>
+            &nbsp;|&nbsp;
+            <a class="resource-link" href="https://cs50.harvard.edu/python/gradebook/" target="_blank">Check your CS50
+                Gradebook</a>
         </div>
         <div class="tabs" role="tablist">
             <button class="tab active" role="tab" aria-selected="true" aria-controls="build-section">Build</button>
@@ -299,23 +337,50 @@
         <div id="build-section" class="section active" role="tabpanel">
             <span class="section-label build">Build</span>
             <div class="start-here">Start here: Read the <a class="resource-link"
-                    href="https://cs50.harvard.edu/python/2023/psets/2/" target="_blank">problem description</a> and
+                    href="https://cs50.harvard.edu/python/psets/2/" target="_blank">Problem Set 2 Overview</a> and
                 requirements.</div>
-            <div class="hint">Break the problem into smaller steps. Focus on one function or feature at a time.</div>
-            <div class="do-dont">
-                <div class="do-box">Do: Write clear, readable code. Use comments to explain your logic.</div>
-                <div class="dont-box">Don't: Overcomplicate your logic or use features you haven't learned yet.</div>
+            <div class="problem-guidance">
+                <strong>camelCase:</strong> <br>
+                <em>Lecture tie-in:</em> String manipulation, loops, and conditionals. See <a class="resource-link"
+                    href="https://cs50.harvard.edu/python/weeks/2/" target="_blank">Week 2 Notes</a> and <a
+                    class="resource-link" href="https://cs50.harvard.edu/python/shorts/string_methods/"
+                    target="_blank">String Methods Short</a>.<br>
+                <em>Concept:</em> Convert a variable name from camelCase to snake_case. Use loops to iterate through
+                characters and conditionals to check for uppercase letters.<br>
             </div>
             <div class="example-block">
-                <strong>Worked Example: "Coke Machine"</strong><br>
+                <strong>Worked Example:</strong><br>
+                Input: "myVariableName"<br>
+                Output: "my_variable_name"
+            </div>
+            <div class="starter-block" id="starter-camel">
+                # Starter code for camelCase
+                name = input("camelCase: ")
+                result = ""
+                for c in name:
+                if c.isupper():
+                result += "_" + c.lower()
+                else:
+                result += c
+                print(result)
+            </div>
+            <div class="problem-guidance">
+                <strong>Coke Machine:</strong> <br>
+                <em>Lecture tie-in:</em> Loops, input, and arithmetic. See <a class="resource-link"
+                    href="https://cs50.harvard.edu/python/weeks/2/" target="_blank">Week 2 Notes</a>.<br>
+                <em>Concept:</em> Use a loop to repeatedly ask for coins and update the amount due. Check for valid coin
+                values.<br>
+            </div>
+            <div class="example-block">
+                <strong>Worked Example:</strong><br>
                 Input: 25<br>
-                Output: Amount Due: 75
-                <br>Input: 25<br>
-                Output: Amount Due: 50
-                <br>Input: 50<br>
+                Output: Amount Due: 75<br>
+                Input: 25<br>
+                Output: Amount Due: 50<br>
+                Input: 50<br>
                 Output: Amount Due: 0
             </div>
-            <div class="starter-block">
+            <div class="starter-block" id="starter-coke">
                 # Starter code for Coke Machine
                 amount_due = 100
                 while amount_due > 0:
@@ -325,160 +390,226 @@
                 amount_due -= coin
                 print("Change Owed:", abs(amount_due))
             </div>
+            <div class="problem-guidance">
+                <strong>Just setting up my twttr:</strong> <br>
+                <em>Lecture tie-in:</em> String manipulation, loops, and conditionals. See <a class="resource-link"
+                    href="https://cs50.harvard.edu/python/weeks/2/" target="_blank">Week 2 Notes</a>.<br>
+                <em>Concept:</em> Remove vowels from a string. Use loops and conditionals to filter characters.<br>
+            </div>
             <div class="example-block">
-                <strong>Worked Example: "Nutrition Facts"</strong><br>
-                Input: Apple<br>
-                Output: Calories: 130
-                <br>Input: Avocado<br>
+                <strong>Worked Example:</strong><br>
+                Input: "Twitter"<br>
+                Output: "Twttr"
+            </div>
+            <div class="starter-block" id="starter-twttr">
+                # Starter code for twttr
+                text = input("Input: ")
+                vowels = "aeiouAEIOU"
+                result = ""
+                for c in text:
+                if c not in vowels:
+                result += c
+                print(result)
+            </div>
+            <div class="problem-guidance">
+                <strong>Vanity Plates:</strong> <br>
+                <em>Lecture tie-in:</em> String methods, conditionals, and loops. See <a class="resource-link"
+                    href="https://cs50.harvard.edu/python/weeks/2/" target="_blank">Week 2 Notes</a>.<br>
+                <em>Concept:</em> Validate a vanity plate according to specific rules. Use string methods and
+                conditionals.<br>
+            </div>
+            <div class="example-block">
+                <strong>Worked Example:</strong><br>
+                Input: "CS50"<br>
+                Output: "Valid"
+                <br>Input: "CS05"<br>
+                Output: "Invalid"
+            </div>
+            <div class="starter-block" id="starter-plates">
+                # Starter code for Vanity Plates
+                plate = input("Plate: ")
+                # Add validation logic here
+                if plate.isalpha():
+                print("Valid")
+                else:
+                print("Invalid")
+            </div>
+            <div class="problem-guidance">
+                <strong>Nutrition Facts:</strong> <br>
+                <em>Lecture tie-in:</em> Dictionaries, conditionals, and input. See <a class="resource-link"
+                    href="https://cs50.harvard.edu/python/weeks/2/" target="_blank">Week 2 Notes</a>.<br>
+                <em>Concept:</em> Use a dictionary to map fruit names to calorie values. Use input and conditionals.<br>
+            </div>
+            <div class="example-block">
+                <strong>Worked Example:</strong><br>
+                Input: "Apple"<br>
+                Output: Calories: 130<br>
+                Input: "Avocado"<br>
                 Output: Calories: 50
             </div>
-            <div class="starter-block">
+            <div class="starter-block" id="starter-nutrition">
                 # Starter code for Nutrition Facts
                 fruit = input("Item: ").lower()
-                if fruit == "apple":
-                print("Calories: 130")
-                elif fruit == "avocado":
-                print("Calories: 50")
-                # Add more fruits as needed
+                calories = {"apple": 130, "avocado": 50}
+                if fruit in calories:
+                print(f"Calories: {calories[fruit]}")
+                else:
+                print("Item not found")
             </div>
-            <div class="example-block">
-                <strong>Worked Example: "Meal Time"</strong><br>
-                Input: 7:00<br>
-                Output: Breakfast time
-                <br>Input: 12:30<br>
-                Output: Lunch time
-            </div>
-            <div class="starter-block">
-                # Starter code for Meal Time
-                time = input("Time: ")
-                hour, minute = map(int, time.split(":"))
-                if 7 <= hour < 8: print("Breakfast time") elif 12 <=hour < 13: print("Lunch time") # Add more conditions
-                    as needed </div>
-            </div>
-            <div id="know-section" class="section" role="tabpanel">
-                <span class="section-label know">Know</span>
-                <div class="hint">Review lecture concepts and string methods. These are especially useful for Problem
-                    Set 2:</div>
-                <table class="string-ref-table">
-                    <thead>
-                        <tr>
-                            <th>Method</th>
-                            <th>What it does</th>
-                            <th>Example</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>str.lower()</td>
-                            <td>Converts all letters to lowercase</td>
-                            <td>"Hello".lower() → "hello"</td>
-                        </tr>
-                        <tr>
-                            <td>str.strip()</td>
-                            <td>Removes whitespace from both ends</td>
-                            <td>" hi ".strip() → "hi"</td>
-                        </tr>
-                        <tr>
-                            <td>str.replace(a, b)</td>
-                            <td>Replaces all occurrences of a with b</td>
-                            <td>"foo bar".replace("foo", "baz") → "baz bar"</td>
-                        </tr>
-                        <tr>
-                            <td>str.split()</td>
-                            <td>Splits string into a list by spaces</td>
-                            <td>"a b c".split() → ["a", "b", "c"]</td>
-                        </tr>
-                        <tr>
-                            <td>str.startswith(x)</td>
-                            <td>Checks if string starts with x</td>
-                            <td>"hello".startswith("he") → True</td>
-                        </tr>
-                        <tr>
-                            <td>str.endswith(x)</td>
-                            <td>Checks if string ends with x</td>
-                            <td>"hello".endswith("lo") → True</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div id="steps-section" class="section" role="tabpanel">
-                <span class="section-label steps">Steps</span>
-                <ol>
-                    <li>Read the input (from user or file).</li>
-                    <li>Process the string (use methods above).</li>
-                    <li>Check conditions (if/elif/else).</li>
-                    <li>Output the result (print or return).</li>
-                </ol>
-                <div class="hint">For each problem, write a plan before coding. Test your code with sample inputs.</div>
-            </div>
-            <div id="mistakes-section" class="section" role="tabpanel">
-                <span class="section-label mistakes">Mistakes</span>
-                <div class="if-stuck">
-                    Common mistakes:
-                    <ul>
-                        <li>Not handling whitespace or case sensitivity</li>
-                        <li>Using the wrong string method</li>
-                        <li>Forgetting to test edge cases</li>
-                        <li>Not reading the problem requirements carefully</li>
-                    </ul>
-                </div>
-            </div>
-            <div id="try-section" class="section" role="tabpanel">
-                <span class="section-label try">Try</span>
-                <div class="hint">Try running your code below. (Python execution is a placeholder; for real execution,
-                    use
-                    your
-                    local environment or <a class="resource-link" href="https://pythontutor.com/" target="_blank">Python
-                        Tutor</a>.)</div>
-                <textarea id="python-editor" rows="8" style="width:100%;font-family:monospace;"></textarea>
-                <button id="run-python">Run Python</button>
-                <div id="output" class="io-example"></div>
-            </div>
-            <div id="io-section" class="section" role="tabpanel">
-                <span class="section-label io">IO</span>
-                <div class="hint">Input/output examples for Problem Set 2:</div>
-                <div class="io-example">Input: hello<br>Output: HELLO</div>
-                <div class="io-example">Input: Goodbye <br>Output: GOODBYE</div>
-                <div class="io-example">Input: foo bar<br>Output: FOO BAR</div>
-            </div>
-            <button id="toggle-dark" style="margin-top:24px;">Toggle Dark Mode</button>
         </div>
-        <script>
-            // Tab logic
-            const tabs = document.querySelectorAll('.tab');
-            const sections = document.querySelectorAll('.section');
-            tabs.forEach((tab, idx) => {
-                tab.addEventListener('click', () => {
-                    tabs.forEach(t => t.classList.remove('active'));
-                    sections.forEach(s => s.classList.remove('active'));
-                    tab.classList.add('active');
-                    sections[idx].classList.add('active');
-                    tabs.forEach((t, i) => t.setAttribute('aria-selected', i === idx));
-                });
+        <div id="know-section" class="section" role="tabpanel">
+            <span class="section-label know">Know</span>
+            <div class="hint">Review lecture concepts and string methods. These are especially useful for Problem Set 2:
+            </div>
+            <table class="string-ref-table">
+                <thead>
+                    <tr>
+                        <th>Method</th>
+                        <th>What it does</th>
+                        <th>Example</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>str.lower()</td>
+                        <td>Converts all letters to lowercase</td>
+                        <td>"Hello".lower() → "hello"</td>
+                    </tr>
+                    <tr>
+                        <td>str.strip()</td>
+                        <td>Removes whitespace from both ends</td>
+                        <td>" hi ".strip() → "hi"</td>
+                    </tr>
+                    <tr>
+                        <td>str.replace(a, b)</td>
+                        <td>Replaces all occurrences of a with b</td>
+                        <td>"foo bar".replace("foo", "baz") → "baz bar"</td>
+                    </tr>
+                    <tr>
+                        <td>str.split()</td>
+                        <td>Splits string into a list by spaces</td>
+                        <td>"a b c".split() → ["a", "b", "c"]</td>
+                    </tr>
+                    <tr>
+                        <td>str.startswith(x)</td>
+                        <td>Checks if string starts with x</td>
+                        <td>"hello".startswith("he") → True</td>
+                    </tr>
+                    <tr>
+                        <td>str.endswith(x)</td>
+                        <td>Checks if string ends with x</td>
+                        <td>"hello".endswith("lo") → True</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="steps-section" class="section" role="tabpanel">
+            <span class="section-label steps">Steps</span>
+            <ol>
+                <li>Read the input (from user or file).</li>
+                <li>Process the string (use methods above).</li>
+                <li>Check conditions (if/elif/else).</li>
+                <li>Output the result (print or return).</li>
+            </ol>
+            <div class="hint">For each problem, write a plan before coding. Test your code with sample inputs.</div>
+        </div>
+        <div id="mistakes-section" class="section" role="tabpanel">
+            <span class="section-label mistakes">Mistakes</span>
+            <div class="if-stuck">
+                Common mistakes:
+                <ul>
+                    <li>Not handling whitespace or case sensitivity</li>
+                    <li>Using the wrong string method</li>
+                    <li>Forgetting to test edge cases</li>
+                    <li>Not reading the problem requirements carefully</li>
+                </ul>
+            </div>
+        </div>
+        <div id="try-section" class="section" role="tabpanel">
+            <span class="section-label try">Try</span>
+            <div class="hint">Select a problem below to load its starter code and worked example. Edit and run your
+                code. (Python execution is a placeholder; for real execution, use your local environment or <a
+                    class="resource-link" href="https://pythontutor.com/" target="_blank">Python Tutor</a>.)</div>
+            <select id="problem-select" style="margin-bottom:10px;">
+                <option value="starter-camel">camelCase</option>
+                <option value="starter-coke">Coke Machine</option>
+                <option value="starter-twttr">Just setting up my twttr</option>
+                <option value="starter-plates">Vanity Plates</option>
+                <option value="starter-nutrition">Nutrition Facts</option>
+            </select>
+            <pre class="language-python" id="editor-highlight"><code></code></pre>
+            <textarea id="python-editor" rows="8" style="width:100%;font-family:monospace;display:none;"></textarea>
+            <button id="run-python">Run Python</button>
+            <div id="output" class="io-example"></div>
+        </div>
+        <div id="io-section" class="section" role="tabpanel">
+            <span class="section-label io">IO</span>
+            <div class="hint">Input/output examples for Problem Set 2:</div>
+            <div class="io-example">Input: hello<br>Output: HELLO</div>
+            <div class="io-example">Input: Goodbye <br>Output: GOODBYE</div>
+            <div class="io-example">Input: foo bar<br>Output: FOO BAR</div>
+        </div>
+        <button id="toggle-dark" style="margin-top:24px;">Toggle Dark Mode</button>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script>
+        // Tab logic
+        const tabs = document.querySelectorAll('.tab');
+        const sections = document.querySelectorAll('.section');
+        tabs.forEach((tab, idx) => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                sections.forEach(s => s.classList.remove('active'));
+                tab.classList.add('active');
+                sections[idx].classList.add('active');
+                tabs.forEach((t, i) => t.setAttribute('aria-selected', i === idx));
             });
-            // Dark mode logic
-            const toggleDark = document.getElementById('toggle-dark');
-            toggleDark.addEventListener('click', () => {
+        });
+        // Dark mode logic
+        const toggleDark = document.getElementById('toggle-dark');
+        toggleDark.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+        });
+        // Problem starter code loader
+        const starterBlocks = {
+            'starter-camel': `# Starter code for camelCase\nname = input("camelCase: ")\nresult = ""\nfor c in name:\n    if c.isupper():\n        result += "_" + c.lower()\n    else:\n        result += c\nprint(result)`,
+            'starter-coke': `# Starter code for Coke Machine\namount_due = 100\nwhile amount_due > 0:\n    print(f"Amount Due: {amount_due}")\n    coin = int(input("Insert Coin: "))\n    if coin in [25, 10, 5]:\n        amount_due -= coin\nprint("Change Owed:", abs(amount_due))`,
+            'starter-twttr': `# Starter code for twttr\ntext = input("Input: ")\nvowels = "aeiouAEIOU"\nresult = ""\nfor c in text:\n    if c not in vowels:\n        result += c\nprint(result)`,
+            'starter-plates': `# Starter code for Vanity Plates\nplate = input("Plate: ")\n# Add validation logic here\nif plate.isalpha():\n    print("Valid")\nelse:\n    print("Invalid")`,
+            'starter-nutrition': `# Starter code for Nutrition Facts\nfruit = input("Item: ").lower()\ncalories = {"apple": 130, "avocado": 50}\nif fruit in calories:\n    print(f"Calories: {calories[fruit]}")\nelse:\n    print("Item not found")`
+        };
+        const problemSelect = document.getElementById('problem-select');
+        const pythonEditor = document.getElementById('python-editor');
+        const editorHighlight = document.getElementById('editor-highlight');
+        // Load starter code on select
+        function loadStarterCode(problem) {
+            pythonEditor.value = starterBlocks[problem];
+            editorHighlight.innerHTML = Prism.highlight(starterBlocks[problem], Prism.languages.python, 'python');
+        }
+        problemSelect.addEventListener('change', function () {
+            loadStarterCode(this.value);
+        });
+        // Load default starter code
+        loadStarterCode(problemSelect.value);
+        // Python runner (Pyodide placeholder)
+        document.getElementById('run-python').addEventListener('click', () => {
+            const code = pythonEditor.value;
+            // Placeholder: echo code
+            document.getElementById('output').textContent = 'Output:\n' + code;
+            // To enable real Python, load Pyodide and run code
+        });
+        // Keyboard shortcut for dark mode
+        document.addEventListener('keydown', e => {
+            if (e.ctrlKey && e.key.toLowerCase() === 'd') {
                 document.body.classList.toggle('dark-mode');
-            });
-            // Python runner (Pyodide placeholder)
-            document.getElementById('run-python').addEventListener('click', () => {
-                const code = document.getElementById('python-editor').value;
-                // Placeholder: echo code
-                document.getElementById('output').textContent = 'Output:\n' + code;
-                // To enable real Python, load Pyodide and run code
-            });
-            // Keyboard shortcut for dark mode
-            document.addEventListener('keydown', e => {
-                if (e.ctrlKey && e.key.toLowerCase() === 'd') {
-                    document.body.classList.toggle('dark-mode');
-                }
-            });
-            // Auto dark mode based on system
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                document.body.classList.add('dark-mode');
             }
-        </script>
+        });
+        // Auto dark mode based on system
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.body.classList.add('dark-mode');
+        }
+    </script>
 </body>
 
 </html>
