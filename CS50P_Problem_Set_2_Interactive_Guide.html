@@ -442,13 +442,9 @@ plate = input("Plate: ")\n# Add validation logic here\nif plate.isalpha():\n    
         const guidanceCards = document.querySelectorAll('.guidance-card');
         const exampleCards = document.querySelectorAll('.example-card');
         const starterCards = document.querySelectorAll('.starter-card');
-        const editors = {
-            camel: document.getElementById('editor-camel'),
-            coke: document.getElementById('editor-coke'),
-            twttr: document.getElementById('editor-twttr'),
-            plates: document.getElementById('editor-plates'),
-            nutrition: document.getElementById('editor-nutrition')
-        };
+        // Stringref and video content
+        const stringrefContent = document.getElementById('stringref-content');
+        const videoContent = document.getElementById('video-content');
         let currentProblem = 'camel';
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
@@ -487,8 +483,26 @@ plate = input("Plate: ")\n# Add validation logic here\nif plate.isalpha():\n    
         function showAccordionSection(section) {
             Object.keys(accordionContents).forEach(key => {
                 accordionContents[key].classList.remove('active');
+                accordionContents[key].style.display = 'none';
             });
             accordionContents[section].classList.add('active');
+            accordionContents[section].style.display = '';
+            // Show/hide problem-specific cards for section
+            guidanceCards.forEach(card => card.style.display = 'none');
+            exampleCards.forEach(card => card.style.display = 'none');
+            starterCards.forEach(card => card.style.display = 'none');
+            document.querySelectorAll('.video-section').forEach(v => v.style.display = 'none');
+            if (section === 'guidance') {
+                document.getElementById('guidance-' + currentProblem).style.display = '';
+            } else if (section === 'example') {
+                document.getElementById('example-' + currentProblem).style.display = '';
+            } else if (section === 'starter') {
+                document.getElementById('starter-' + currentProblem).style.display = '';
+            } else if (section === 'video') {
+                document.getElementById('video-' + currentProblem).style.display = '';
+            } else if (section === 'stringref') {
+                stringrefContent.style.display = '';
+            }
         }
         accordionBtns.forEach(btn => {
             btn.addEventListener('click', () => {
@@ -516,32 +530,21 @@ plate = input("Plate: ")\n# Add validation logic here\nif plate.isalpha():\n    
                 tab.classList.add('active');
                 currentProblem = problem;
             }
-            // Show relevant cards for selected problem
-            guidanceCards.forEach(card => card.style.display = 'none');
-            exampleCards.forEach(card => card.style.display = 'none');
-            starterCards.forEach(card => card.style.display = 'none');
-            document.querySelectorAll('.video-section').forEach(v => v.style.display = 'none');
-            if (currentProblem !== 'video') {
-                document.getElementById('guidance-' + currentProblem).style.display = '';
-                document.getElementById('example-' + currentProblem).style.display = '';
-                document.getElementById('starter-' + currentProblem).style.display = '';
-                document.getElementById('video-' + currentProblem).style.display = '';
-            } else {
-                document.getElementById('video-camel').style.display = '';
-            }
             // Set accordion
             const btn = Array.from(accordionBtns).find(b => b.dataset.section === section);
             if (btn) {
                 accordionBtns.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
             }
+            // Hide all accordion-content sections except the active one
+            Object.keys(accordionContents).forEach(key => {
+                accordionContents[key].classList.remove('active');
+                accordionContents[key].style.display = 'none';
+            });
+            accordionContents[section].classList.add('active');
+            accordionContents[section].style.display = '';
             // Show only active accordion section
             showAccordionSection(section);
-            // Show correct video for current problem if video section
-            if (section === 'video') {
-                document.querySelectorAll('.video-section').forEach(v => v.style.display = 'none');
-                document.getElementById('video-' + currentProblem).style.display = '';
-            }
         }
         // Save tab and accordion state to localStorage
         tabs.forEach(tab => {
