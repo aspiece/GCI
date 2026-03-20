@@ -121,15 +121,65 @@
                 <button class="side-tab-btn" data-section="stringref">String Methods Reference</button>
             </div>
             <div class="tab-content active" id="guidance-content">
-                <div class="section-card" id="guidance-camel">Guidance for camelCase (placeholder)</div>
-                <div class="section-card" id="guidance-coke" style="display:none;">Guidance for Coke Machine
-                    (placeholder)</div>
-                <div class="section-card" id="guidance-twttr" style="display:none;">Guidance for twttr (placeholder)
+                <div class="section-card" id="guidance-camel">
+                    <strong>Guidance for camelCase</strong><br>
+                    <a href="https://cs50.harvard.edu/python/psets/2/camel/" target="_blank"
+                        style="color:#1e3a8a;text-decoration:underline;font-weight:600;">View Problem Page</a>
+                    <ol style="margin-top:10px;">
+                        <li>Read the input variable name in camelCase format.</li>
+                        <li>Loop through each character in the string.</li>
+                        <li>If the character is uppercase, add an underscore and its lowercase version to the result.
+                        </li>
+                        <li>Else, add the character as is.</li>
+                        <li>Print the result in snake_case.</li>
+                    </ol>
                 </div>
-                <div class="section-card" id="guidance-plates" style="display:none;">Guidance for Vanity Plates
-                    (placeholder)</div>
-                <div class="section-card" id="guidance-nutrition" style="display:none;">Guidance for Nutrition Facts
-                    (placeholder)</div>
+                <div class="section-card" id="guidance-coke" style="display:none;">
+                    <strong>Guidance for Coke Machine</strong><br>
+                    <a href="https://cs50.harvard.edu/python/psets/2/coke/" target="_blank"
+                        style="color:#1e3a8a;text-decoration:underline;font-weight:600;">View Problem Page</a>
+                    <ol style="margin-top:10px;">
+                        <li>Initialize <code>amount_due</code> to 100.</li>
+                        <li>Use a <code>while</code> loop to keep asking for coins until <code>amount_due</code> is 0 or
+                            less.</li>
+                        <li>Accept only 5, 10, or 25 cent coins.</li>
+                        <li>Subtract the coin value from <code>amount_due</code> if valid.</li>
+                        <li>Print the change owed at the end.</li>
+                    </ol>
+                </div>
+                <div class="section-card" id="guidance-twttr" style="display:none;">
+                    <strong>Guidance for twttr</strong><br>
+                    <a href="https://cs50.harvard.edu/python/psets/2/twttr/" target="_blank"
+                        style="color:#1e3a8a;text-decoration:underline;font-weight:600;">View Problem Page</a>
+                    <ol style="margin-top:10px;">
+                        <li>Read the input string.</li>
+                        <li>Loop through each character.</li>
+                        <li>If the character is not a vowel, add it to the result.</li>
+                        <li>Print the result.</li>
+                    </ol>
+                </div>
+                <div class="section-card" id="guidance-plates" style="display:none;">
+                    <strong>Guidance for Vanity Plates</strong><br>
+                    <a href="https://cs50.harvard.edu/python/psets/2/plates/" target="_blank"
+                        style="color:#1e3a8a;text-decoration:underline;font-weight:600;">View Problem Page</a>
+                    <ol style="margin-top:10px;">
+                        <li>Read the plate input.</li>
+                        <li>Check if the plate is alphabetic and meets length requirements.</li>
+                        <li>Apply all validation rules as described in the problem.</li>
+                        <li>Print "Valid" or "Invalid".</li>
+                    </ol>
+                </div>
+                <div class="section-card" id="guidance-nutrition" style="display:none;">
+                    <strong>Guidance for Nutrition Facts</strong><br>
+                    <a href="https://cs50.harvard.edu/python/psets/2/nutrition/" target="_blank"
+                        style="color:#1e3a8a;text-decoration:underline;font-weight:600;">View Problem Page</a>
+                    <ol style="margin-top:10px;">
+                        <li>Read the fruit input and convert to lowercase.</li>
+                        <li>Use a dictionary to map fruit names to calories.</li>
+                        <li>Check if the fruit is in the dictionary.</li>
+                        <li>Print the calories or "Item not found".</li>
+                    </ol>
+                </div>
             </div>
             <div class="tab-content" id="lecture-content">
                 <div class="section-card" id="lecture-camel">
