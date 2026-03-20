@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/material-darker.min.css">
+    <style id="theme-style"></style>
     <style>
         body {
             font-family: 'Inter', Arial, sans-serif;
@@ -104,6 +105,16 @@
 <body>
     <div class="container">
         <h1>CS50P Problem Set 2 – Interactive Guide</h1>
+        <div style="margin-bottom:18px;">
+            <label for="theme-select" style="font-weight:600;margin-right:8px;">Theme:</label>
+            <select id="theme-select"
+                style="padding:6px 12px;border-radius:6px;border:1px solid #64748b;font-size:1em;">
+                <option value="auto">Auto</option>
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+                <option value="highcontrast">High Contrast</option>
+            </select>
+        </div>
         <div class="top-nav" role="tablist">
             <button class="top-nav-btn active" data-problem="camel">camelCase</button>
             <button class="top-nav-btn" data-problem="coke">Coke Machine</button>
@@ -126,12 +137,34 @@
                     <a href="https://cs50.harvard.edu/python/psets/2/camel/" target="_blank"
                         style="color:#1e3a8a;text-decoration:underline;font-weight:600;">View Problem Page</a>
                     <ol style="margin-top:10px;">
-                        <li>Read the input variable name in camelCase format.</li>
-                        <li>Loop through each character in the string.</li>
-                        <li>If the character is uppercase, add an underscore and its lowercase version to the result.
+                        <li>Read the input variable name in camelCase format.
+                            <div class="guidance-example">
+                                <pre><code>name = "myVariableName"</code></pre>
+                            </div>
                         </li>
-                        <li>Else, add the character as is.</li>
-                        <li>Print the result in snake_case.</li>
+                        <li>Loop through each character in the string.
+                            <div class="guidance-example">
+                                <pre><code>for c in name:
+                print(c)</code></pre>
+                            </div>
+                        </li>
+                        <li>If the character is uppercase, add an underscore and its lowercase version to the result.
+                            <div class="guidance-example">
+                                <pre><code>if c.isupper():
+                result += "_" + c.lower()</code></pre>
+                            </div>
+                        </li>
+                        <li>Else, add the character as is.
+                            <div class="guidance-example">
+                                <pre><code>else:
+                result += c</code></pre>
+                            </div>
+                        </li>
+                        <li>Print the result in snake_case.
+                            <div class="guidance-example">
+                                <pre><code>print(result)</code></pre>
+                            </div>
+                        </li>
                     </ol>
                 </div>
                 <div class="section-card" id="guidance-coke" style="display:none;">
@@ -221,11 +254,15 @@
             <div class="tab-content" id="example-content">
                 <div class="section-card" id="example-camel">
                     <strong>Worked Example for camelCase</strong><br>
-                    <textarea id="example-editor-camel" style="display:none;"></textarea>
-                    <div id="cm-editor-camel" style="height:220px;border:1px solid #64748b;border-radius:8px;"></div>
-                    <button class="run-btn" data-run="camel">Run Example</button>
-                    <div class="output-block" id="output-camel"
-                        style="background:#222;color:#e2e8f0;font-family:monospace;min-height:40px;white-space:pre;">
+                    <div class="vscode-editor-block">
+                        <div id="cm-editor-camel"
+                            style="height:220px;border-radius:6px;box-shadow:0 2px 8px #0002;background:#1e1e1e;"></div>
+                        <button class="run-btn" data-run="camel"
+                            style="margin-top:8px;background:#007acc;color:#fff;border:none;padding:8px 16px;border-radius:4px;font-weight:600;">Run
+                            Example</button>
+                        <div class="output-block" id="output-camel"
+                            style="background:#1e1e1e;color:#d4d4d4;font-family:monospace;min-height:40px;white-space:pre;border-radius:4px;margin-top:8px;padding:8px;border:1px solid #333;">
+                        </div>
                     </div>
                 </div>
                 <div class="section-card" id="example-coke" style="display:none;">
@@ -296,6 +333,59 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/edit/closebrackets.min.js"></script>
     <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
     <script>
+        // Theme logic
+        const themeStyles = {
+            light: `body { background: #ffffff; color: #212121; }
+                .top-nav-btn, .side-tab-btn { background: #f1f5f9; color: #212121; border: 1px solid #212121; }
+                .top-nav-btn.active, .side-tab-btn.active { background: #212121; color: #fff; border: 1px solid #212121; }
+                .tab-content { background: #fff; color: #212121; border: 1px solid #212121; }
+                .section-card { background: #e3e3e3; color: #212121; border: 1px solid #212121; }
+                .output-block { background: #212121; color: #fff; border: 1px solid #212121; }
+            `,
+            dark: `body { background: #181a1b; color: #f8f8f8; }
+                .top-nav-btn, .side-tab-btn { background: #23272e; color: #f8f8f8; border: 1px solid #f8f8f8; }
+                .top-nav-btn.active, .side-tab-btn.active { background: #f8f8f8; color: #181a1b; border: 1px solid #f8f8f8; }
+                .tab-content { background: #23272e; color: #f8f8f8; border: 1px solid #f8f8f8; }
+                .section-card { background: #222; color: #f8f8f8; border: 1px solid #f8f8f8; }
+                .output-block { background: #181a1b; color: #fff; border: 1px solid #f8f8f8; }
+            `,
+            highcontrast: `body { background: #000; color: #fff; }
+                .top-nav-btn, .side-tab-btn { background: #000; color: #fff; border: 2px solid #fff; }
+                .top-nav-btn.active, .side-tab-btn.active { background: #fff; color: #000; border: 2px solid #fff; }
+                .tab-content { background: #000; color: #fff; border: 2px solid #fff; }
+                .section-card { background: #000; color: #fff; border: 2px solid #fff; }
+                .output-block { background: #000; color: #fff; border: 2px solid #fff; }
+            `
+        };
+        function applyTheme(theme) {
+            const styleElem = document.getElementById('theme-style');
+            if (theme === 'auto') {
+                // Use system preference
+                const mq = window.matchMedia('(prefers-color-scheme: dark)');
+                styleElem.textContent = mq.matches ? themeStyles.dark : themeStyles.light;
+                mq.onchange = e => {
+                    if (document.getElementById('theme-select').value === 'auto') {
+                        styleElem.textContent = e.matches ? themeStyles.dark : themeStyles.light;
+                    }
+                };
+            } else {
+                styleElem.textContent = themeStyles[theme] || themeStyles.light;
+            }
+        }
+        const themeSelect = document.getElementById('theme-select');
+        // Load theme from localStorage or default to 'auto' (system preference)
+        let savedTheme = localStorage.getItem('theme');
+        if (!savedTheme || !['auto', 'light', 'dark', 'highcontrast'].includes(savedTheme)) {
+            savedTheme = 'auto';
+            localStorage.setItem('theme', 'auto');
+        }
+        themeSelect.value = savedTheme;
+        applyTheme(savedTheme);
+        themeSelect.addEventListener('change', function () {
+            localStorage.setItem('theme', this.value);
+            applyTheme(this.value);
+        });
+
         // Navigation logic
         const topNavBtns = document.querySelectorAll('.top-nav-btn');
         const sideTabBtns = document.querySelectorAll('.side-tab-btn');
