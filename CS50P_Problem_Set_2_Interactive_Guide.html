@@ -455,30 +455,21 @@ plate = input("Plate: ")\n# Add validation logic here\nif plate.isalpha():\n    
                 tabs.forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
                 currentProblem = tab.dataset.problem;
-                // Show only relevant guidance/example/starter/video
+                // Hide all problem-specific cards
                 guidanceCards.forEach(card => card.style.display = 'none');
                 exampleCards.forEach(card => card.style.display = 'none');
                 starterCards.forEach(card => card.style.display = 'none');
-                document.getElementById('guidance-content').style.display = '';
-                document.getElementById('example-content').style.display = '';
-                document.getElementById('starter-content').style.display = '';
-                document.getElementById('video-content').style.display = 'none';
-                // Show only relevant video section
+                // Hide all video sections
                 document.querySelectorAll('.video-section').forEach(v => v.style.display = 'none');
-                if (currentProblem === 'video') {
-                    document.getElementById('accordion-nav').style.display = 'none';
-                    document.getElementById('guidance-content').style.display = 'none';
-                    document.getElementById('example-content').style.display = 'none';
-                    document.getElementById('starter-content').style.display = 'none';
-                    document.getElementById('video-content').style.display = '';
-                    document.getElementById('video-camel').style.display = '';
-                } else {
-                    document.getElementById('accordion-nav').style.display = '';
+                // Show relevant cards for selected problem
+                if (currentProblem !== 'video') {
                     document.getElementById('guidance-' + currentProblem).style.display = '';
                     document.getElementById('example-' + currentProblem).style.display = '';
                     document.getElementById('starter-' + currentProblem).style.display = '';
-                    document.getElementById('video-content').style.display = '';
                     document.getElementById('video-' + currentProblem).style.display = '';
+                } else {
+                    // Show camel video by default for video tab
+                    document.getElementById('video-camel').style.display = '';
                 }
                 // Show only active accordion section
                 showAccordionSection(document.querySelector('.accordion-btn.active').dataset.section);
@@ -511,54 +502,32 @@ plate = input("Plate: ")\n# Add validation logic here\nif plate.isalpha():\n    
                 }
             });
         });
-        // Starter code for each problem
-        const starterBlocks = {
-            camel: `# Starter code for camelCase\nname = input("camelCase: ")\nresult = ""\nfor c in name:\n    if c.isupper():\n        result += "_" + c.lower()\n    else:\n        result += c\nprint(result)`,
-            coke: `# Starter code for Coke Machine\namount_due = 100\nwhile amount_due > 0:\n    print(f"Amount Due: {amount_due}")\n    coin = int(input("Insert Coin: "))\n    if coin in [25, 10, 5]:\n        amount_due -= coin\nprint("Change Owed:", abs(amount_due))`,
-            twttr: `# Starter code for twttr\ntext = input("Input: ")\nvowels = "aeiouAEIOU"\nresult = ""\nfor c in text:\n    if c not in vowels:\n        result += c\nprint(result)`,
-            plates: `# Starter code for Vanity Plates\nplate = input("Plate: ")\n# Add validation logic here\nif plate.isalpha():\n    print("Valid")\nelse:\n    print("Invalid")`,
-            nutrition: `# Starter code for Nutrition Facts\nfruit = input("Item: ").lower()\ncalories = {"apple": 130, "avocado": 50}\nif fruit in calories:\n    print(f"Calories: {calories[fruit]}")\nelse:\n    print("Item not found")`
-        };
-        Object.keys(starterBlocks).forEach(problem => {
-            editors[problem].value = starterBlocks[problem];
-        });
-        // Example code editors
-        const exampleEditors = {
-            camel: document.getElementById('example-editor-camel'),
-            coke: document.getElementById('example-editor-coke'),
-            twttr: document.getElementById('example-editor-twttr'),
-            plates: document.getElementById('example-editor-plates'),
-            nutrition: document.getElementById('example-editor-nutrition')
-        };
-        async function runExample(problem) {
-            await loadPyodide();
-            const code = exampleEditors[problem].value;
-            let outputElem = document.getElementById(`output-${problem}-example`);
-            outputElem.textContent = 'Running...';
-            // Input simulation for examples
-            let inputPrompt = async () => {
-                let val = await new Promise(resolve => {
-                    let promptBox = document.createElement('div');
-                    promptBox.style.margin = '8px 0';
-                    promptBox.innerHTML = '<label>Input: <input type="text" style="width:180px;" /></label> <button>Submit</button>';
-                    outputElem.appendChild(promptBox);
-                    promptBox.querySelector('button').onclick = () => {
-                        let v = promptBox.querySelector('input').value;
-                        promptBox.remove();
-                        resolve(v);
-                    };
-                });
-                return val;
-            };
-            pyodide.setStdout(s => { outputElem.textContent += s + '\n'; });
-            pyodide.setStderr(s => { outputElem.textContent += 'Error: ' + s + '\n'; });
-            pyodide.globals.set('input', inputPrompt);
-            try {
-                await pyodide.runPythonAsync(code);
-            } catch (err) {
-                outputElem.textContent += '\nError: ' + err;
+        // Restore tab and accordion state from localStorage
+        function restoreState() {
+            const savedProblem = localStorage.getItem('pset2-selected-problem');
+            const savedSection = localStorage.getItem('pset2-selected-section');
+            if (savedProblem) {
+                const tab = Array.from(tabs).find(t => t.dataset.problem === savedProblem);
+                if (tab) tab.click();
+            }
+            if (savedSection) {
+                const btn = Array.from(accordionBtns).find(b => b.dataset.section === savedSection);
+                if (btn) btn.click();
             }
         }
+        // Save tab and accordion state to localStorage
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                localStorage.setItem('pset2-selected-problem', tab.dataset.problem);
+            });
+        });
+        accordionBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                localStorage.setItem('pset2-selected-section', btn.dataset.section);
+            });
+        });
+        // Run restore on page load
+        window.addEventListener('DOMContentLoaded', restoreState);
         // Run Example (static output)
         function runExample(problem) {
             let output = '';
