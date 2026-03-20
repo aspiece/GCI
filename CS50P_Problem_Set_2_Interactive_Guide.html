@@ -7,6 +7,9 @@
     <title>CS50P Problem Set 2 – Interactive Guide</title>
     <link rel="icon" href="data:," />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/material-darker.min.css">
     <style>
         body {
             font-family: 'Inter', Arial, sans-serif;
@@ -129,15 +132,31 @@
                     (placeholder)</div>
             </div>
             <div class="tab-content" id="lecture-content">
-                <div class="section-card" id="lecture-camel">Lecture Video for camelCase (placeholder)</div>
-                <div class="section-card" id="lecture-coke" style="display:none;">Lecture Video for Coke Machine
-                    (placeholder)</div>
-                <div class="section-card" id="lecture-twttr" style="display:none;">Lecture Video for twttr (placeholder)
+                <div class="section-card" id="lecture-camel">
+                    <strong>Lecture Video for camelCase</strong><br>
+                    <iframe width="100%" height="315" src="https://www.youtube.com/embed/-7xg8pGcP6w" frameborder="0"
+                        allowfullscreen style="border-radius:8px;border:1px solid #64748b;"></iframe>
                 </div>
-                <div class="section-card" id="lecture-plates" style="display:none;">Lecture Video for Vanity Plates
-                    (placeholder)</div>
-                <div class="section-card" id="lecture-nutrition" style="display:none;">Lecture Video for Nutrition Facts
-                    (placeholder)</div>
+                <div class="section-card" id="lecture-coke" style="display:none;">
+                    <strong>Lecture Video for Coke Machine</strong><br>
+                    <iframe width="100%" height="315" src="https://www.youtube.com/embed/-7xg8pGcP6w" frameborder="0"
+                        allowfullscreen style="border-radius:8px;border:1px solid #64748b;"></iframe>
+                </div>
+                <div class="section-card" id="lecture-twttr" style="display:none;">
+                    <strong>Lecture Video for twttr</strong><br>
+                    <iframe width="100%" height="315" src="https://www.youtube.com/embed/-7xg8pGcP6w" frameborder="0"
+                        allowfullscreen style="border-radius:8px;border:1px solid #64748b;"></iframe>
+                </div>
+                <div class="section-card" id="lecture-plates" style="display:none;">
+                    <strong>Lecture Video for Vanity Plates</strong><br>
+                    <iframe width="100%" height="315" src="https://www.youtube.com/embed/-7xg8pGcP6w" frameborder="0"
+                        allowfullscreen style="border-radius:8px;border:1px solid #64748b;"></iframe>
+                </div>
+                <div class="section-card" id="lecture-nutrition" style="display:none;">
+                    <strong>Lecture Video for Nutrition Facts</strong><br>
+                    <iframe width="100%" height="315" src="https://www.youtube.com/embed/-7xg8pGcP6w" frameborder="0"
+                        allowfullscreen style="border-radius:8px;border:1px solid #64748b;"></iframe>
+                </div>
             </div>
             <div class="tab-content" id="shorts-content">
                 <div class="section-card" id="shorts-camel">Shorts for camelCase (placeholder)</div>
@@ -150,15 +169,52 @@
                     (placeholder)</div>
             </div>
             <div class="tab-content" id="example-content">
-                <div class="section-card" id="example-camel">Worked Example for camelCase (placeholder)</div>
-                <div class="section-card" id="example-coke" style="display:none;">Worked Example for Coke Machine
-                    (placeholder)</div>
-                <div class="section-card" id="example-twttr" style="display:none;">Worked Example for twttr
-                    (placeholder)</div>
-                <div class="section-card" id="example-plates" style="display:none;">Worked Example for Vanity Plates
-                    (placeholder)</div>
-                <div class="section-card" id="example-nutrition" style="display:none;">Worked Example for Nutrition
-                    Facts (placeholder)</div>
+                <div class="section-card" id="example-camel">
+                    <strong>Worked Example for camelCase</strong><br>
+                    <textarea id="example-editor-camel" style="display:none;"></textarea>
+                    <div id="cm-editor-camel" style="height:220px;border:1px solid #64748b;border-radius:8px;"></div>
+                    <button class="run-btn" data-run="camel">Run Example</button>
+                    <div class="output-block" id="output-camel"
+                        style="background:#222;color:#e2e8f0;font-family:monospace;min-height:40px;white-space:pre;">
+                    </div>
+                </div>
+                <div class="section-card" id="example-coke" style="display:none;">
+                    <strong>Worked Example for Coke Machine</strong><br>
+                    <textarea id="example-editor-coke" style="display:none;"></textarea>
+                    <div id="cm-editor-coke" style="height:220px;border:1px solid #64748b;border-radius:8px;"></div>
+                    <button class="run-btn" data-run="coke">Run Example</button>
+                    <div class="output-block" id="output-coke"
+                        style="background:#222;color:#e2e8f0;font-family:monospace;min-height:40px;white-space:pre;">
+                    </div>
+                </div>
+                <div class="section-card" id="example-twttr" style="display:none;">
+                    <strong>Worked Example for twttr</strong><br>
+                    <textarea id="example-editor-twttr" style="display:none;"></textarea>
+                    <div id="cm-editor-twttr" style="height:220px;border:1px solid #64748b;border-radius:8px;"></div>
+                    <button class="run-btn" data-run="twttr">Run Example</button>
+                    <div class="output-block" id="output-twttr"
+                        style="background:#222;color:#e2e8f0;font-family:monospace;min-height:40px;white-space:pre;">
+                    </div>
+                </div>
+                <div class="section-card" id="example-plates" style="display:none;">
+                    <strong>Worked Example for Vanity Plates</strong><br>
+                    <textarea id="example-editor-plates" style="display:none;"></textarea>
+                    <div id="cm-editor-plates" style="height:220px;border:1px solid #64748b;border-radius:8px;"></div>
+                    <button class="run-btn" data-run="plates">Run Example</button>
+                    <div class="output-block" id="output-plates"
+                        style="background:#222;color:#e2e8f0;font-family:monospace;min-height:40px;white-space:pre;">
+                    </div>
+                </div>
+                <div class="section-card" id="example-nutrition" style="display:none;">
+                    <strong>Worked Example for Nutrition Facts</strong><br>
+                    <textarea id="example-editor-nutrition" style="display:none;"></textarea>
+                    <div id="cm-editor-nutrition" style="height:220px;border:1px solid #64748b;border-radius:8px;">
+                    </div>
+                    <button class="run-btn" data-run="nutrition">Run Example</button>
+                    <div class="output-block" id="output-nutrition"
+                        style="background:#222;color:#e2e8f0;font-family:monospace;min-height:40px;white-space:pre;">
+                    </div>
+                </div>
             </div>
             <div class="tab-content" id="starter-content">
                 <div class="section-card" id="starter-camel">Starter Code for camelCase (placeholder)</div>
@@ -185,6 +241,10 @@
             </div>
         </div>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/edit/closebrackets.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
     <script>
         // Navigation logic
         const topNavBtns = document.querySelectorAll('.top-nav-btn');
@@ -225,6 +285,52 @@
         });
         // Initial display
         showSection(currentSection);
+
+        // CodeMirror setup for each problem
+        const cmDefaults = {
+            mode: 'python',
+            theme: 'material-darker',
+            lineNumbers: true,
+            autoCloseBrackets: true,
+            indentUnit: 4,
+            tabSize: 4,
+            viewportMargin: Infinity
+        };
+        const cmEditors = {
+            camel: CodeMirror(document.getElementById('cm-editor-camel'), { ...cmDefaults, value: 'name = "myVariableName"\nresult = ""\nfor c in name:\n    if c.isupper():\n        result += "_" + c.lower()\n    else:\n        result += c\nprint(result)' }),
+            coke: CodeMirror(document.getElementById('cm-editor-coke'), { ...cmDefaults, value: 'amount_due = 100\nwhile amount_due > 0:\n    print(f"Amount Due: {amount_due}")\n    coin = 25  # Example input\n    if coin in [25, 10, 5]:\n        amount_due -= coin\nprint("Change Owed:", abs(amount_due))' }),
+            twttr: CodeMirror(document.getElementById('cm-editor-twttr'), { ...cmDefaults, value: 'text = "Twitter"\nvowels = "aeiouAEIOU"\nresult = ""\nfor c in text:\n    if c not in vowels:\n        result += c\nprint(result)' }),
+            plates: CodeMirror(document.getElementById('cm-editor-plates'), { ...cmDefaults, value: 'plate = "CS50"\nif plate.isalpha():\n    print("Valid")\nelse:\n    print("Invalid")' }),
+            nutrition: CodeMirror(document.getElementById('cm-editor-nutrition'), { ...cmDefaults, value: 'fruit = "apple"\ncalories = {"apple": 130, "avocado": 50}\nif fruit in calories:\n    print(f"Calories: {calories[fruit]}")\nelse:\n    print("Item not found")' })
+        };
+        // Pyodide editor logic for Worked Example
+        let pyodideReady = false;
+        let pyodide;
+        async function loadPyodide() {
+            if (!pyodideReady) {
+                pyodide = await window.loadPyodide();
+                pyodideReady = true;
+            }
+        }
+        async function runExample(problem) {
+            await loadPyodide();
+            const code = cmEditors[problem].getValue();
+            const outputElem = document.getElementById('output-' + problem);
+            outputElem.textContent = '';
+            // Terminal-like output
+            pyodide.setStdout(s => { outputElem.textContent += s + '\n'; });
+            pyodide.setStderr(s => { outputElem.textContent += 'Error: ' + s + '\n'; });
+            try {
+                await pyodide.runPythonAsync(code);
+            } catch (err) {
+                outputElem.textContent += 'Error: ' + err + '\n';
+            }
+        }
+        document.querySelectorAll('.run-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                runExample(this.dataset.run);
+            });
+        });
     </script>
 </body>
 
