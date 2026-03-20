@@ -453,20 +453,24 @@ plate = input("Plate: ")\n# Add validation logic here\nif plate.isalpha():\n    
             video: document.getElementById('video-content')
         };
         let currentProblem = 'camel';
-        function showAccordionSection(section) {
-            // Hide all accordion-content sections
+        // Utility: Hide all accordion-content and all problem-specific cards
+        function hideAllContent() {
             Object.keys(accordionContents).forEach(key => {
                 accordionContents[key].classList.remove('active');
                 accordionContents[key].style.display = 'none';
             });
-            // Hide all problem-specific cards
             guidanceCards.forEach(card => card.style.display = 'none');
             exampleCards.forEach(card => card.style.display = 'none');
             starterCards.forEach(card => card.style.display = 'none');
             document.querySelectorAll('.video-section').forEach(v => v.style.display = 'none');
-            // Show only the selected accordion section and relevant card
+            stringrefContent.style.display = 'none';
+        }
+        function showAccordionSection(section) {
+            hideAllContent();
+            // Show only the selected accordion-content section
             accordionContents[section].classList.add('active');
             accordionContents[section].style.display = '';
+            // Show only the relevant card for the current problem
             if (section === 'guidance') {
                 document.getElementById('guidance-' + currentProblem).style.display = '';
             } else if (section === 'example') {
@@ -484,7 +488,6 @@ plate = input("Plate: ")\n# Add validation logic here\nif plate.isalpha():\n    
                 tabs.forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
                 currentProblem = tab.dataset.problem;
-                // Only show the selected accordion section and relevant card
                 showAccordionSection(document.querySelector('.accordion-btn.active').dataset.section);
                 localStorage.setItem('pset2-selected-problem', currentProblem);
             });
@@ -515,7 +518,6 @@ plate = input("Plate: ")\n# Add validation logic here\nif plate.isalpha():\n    
                 accordionBtns.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
             }
-            // Show only the selected accordion section and relevant card
             showAccordionSection(section);
         }
         window.addEventListener('DOMContentLoaded', restoreState);
