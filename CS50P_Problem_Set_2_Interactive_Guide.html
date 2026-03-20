@@ -442,36 +442,8 @@ plate = input("Plate: ")\n# Add validation logic here\nif plate.isalpha():\n    
         const guidanceCards = document.querySelectorAll('.guidance-card');
         const exampleCards = document.querySelectorAll('.example-card');
         const starterCards = document.querySelectorAll('.starter-card');
-        // Stringref and video content
         const stringrefContent = document.getElementById('stringref-content');
         const videoContent = document.getElementById('video-content');
-        let currentProblem = 'camel';
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                tabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                currentProblem = tab.dataset.problem;
-                // Hide all problem-specific cards
-                guidanceCards.forEach(card => card.style.display = 'none');
-                exampleCards.forEach(card => card.style.display = 'none');
-                starterCards.forEach(card => card.style.display = 'none');
-                // Hide all video sections
-                document.querySelectorAll('.video-section').forEach(v => v.style.display = 'none');
-                // Show relevant cards for selected problem
-                if (currentProblem !== 'video') {
-                    document.getElementById('guidance-' + currentProblem).style.display = '';
-                    document.getElementById('example-' + currentProblem).style.display = '';
-                    document.getElementById('starter-' + currentProblem).style.display = '';
-                    document.getElementById('video-' + currentProblem).style.display = '';
-                } else {
-                    // Show camel video by default for video tab
-                    document.getElementById('video-camel').style.display = '';
-                }
-                // Show only active accordion section
-                showAccordionSection(document.querySelector('.accordion-btn.active').dataset.section);
-            });
-        });
-        // Accordion navigation
         const accordionBtns = document.querySelectorAll('.accordion-btn');
         const accordionContents = {
             guidance: document.getElementById('guidance-content'),
@@ -480,18 +452,21 @@ plate = input("Plate: ")\n# Add validation logic here\nif plate.isalpha():\n    
             stringref: document.getElementById('stringref-content'),
             video: document.getElementById('video-content')
         };
+        let currentProblem = 'camel';
         function showAccordionSection(section) {
+            // Hide all accordion-content sections
             Object.keys(accordionContents).forEach(key => {
                 accordionContents[key].classList.remove('active');
                 accordionContents[key].style.display = 'none';
             });
-            accordionContents[section].classList.add('active');
-            accordionContents[section].style.display = '';
-            // Show/hide problem-specific cards for section
+            // Hide all problem-specific cards
             guidanceCards.forEach(card => card.style.display = 'none');
             exampleCards.forEach(card => card.style.display = 'none');
             starterCards.forEach(card => card.style.display = 'none');
             document.querySelectorAll('.video-section').forEach(v => v.style.display = 'none');
+            // Show only the selected accordion section and relevant card
+            accordionContents[section].classList.add('active');
+            accordionContents[section].style.display = '';
             if (section === 'guidance') {
                 document.getElementById('guidance-' + currentProblem).style.display = '';
             } else if (section === 'example') {
@@ -504,23 +479,27 @@ plate = input("Plate: ")\n# Add validation logic here\nif plate.isalpha():\n    
                 stringrefContent.style.display = '';
             }
         }
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentProblem = tab.dataset.problem;
+                // Only show the selected accordion section and relevant card
+                showAccordionSection(document.querySelector('.accordion-btn.active').dataset.section);
+                localStorage.setItem('pset2-selected-problem', currentProblem);
+            });
+        });
         accordionBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 accordionBtns.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 showAccordionSection(btn.dataset.section);
-                // Show correct video for current problem
-                if (btn.dataset.section === 'video') {
-                    document.querySelectorAll('.video-section').forEach(v => v.style.display = 'none');
-                    document.getElementById('video-' + currentProblem).style.display = '';
-                }
+                localStorage.setItem('pset2-selected-section', btn.dataset.section);
             });
         });
-        // Restore tab and accordion state from localStorage
         function restoreState() {
             const savedProblem = localStorage.getItem('pset2-selected-problem');
             const savedSection = localStorage.getItem('pset2-selected-section');
-            // Default to camel/guidance if not set
             let problem = savedProblem || 'camel';
             let section = savedSection || 'guidance';
             // Set tab
@@ -536,28 +515,9 @@ plate = input("Plate: ")\n# Add validation logic here\nif plate.isalpha():\n    
                 accordionBtns.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
             }
-            // Hide all accordion-content sections except the active one
-            Object.keys(accordionContents).forEach(key => {
-                accordionContents[key].classList.remove('active');
-                accordionContents[key].style.display = 'none';
-            });
-            accordionContents[section].classList.add('active');
-            accordionContents[section].style.display = '';
-            // Show only active accordion section
+            // Show only the selected accordion section and relevant card
             showAccordionSection(section);
         }
-        // Save tab and accordion state to localStorage
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                localStorage.setItem('pset2-selected-problem', tab.dataset.problem);
-            });
-        });
-        accordionBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                localStorage.setItem('pset2-selected-section', btn.dataset.section);
-            });
-        });
-        // Run restore on page load
         window.addEventListener('DOMContentLoaded', restoreState);
         // Run Example (static output)
         function runExample(problem) {
