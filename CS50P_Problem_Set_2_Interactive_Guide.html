@@ -115,6 +115,11 @@
             color: #333;
         }
 
+        .guidance-steps {
+            margin: 12px 0;
+            padding-left: 18px;
+        }
+
         .example-card,
         .starter-card {
             background: #e0f2fe;
@@ -162,6 +167,19 @@
             text-decoration: underline;
             font-weight: 600;
         }
+
+        .video-section {
+            margin-top: 24px;
+            text-align: center;
+        }
+
+        .video-section iframe {
+            border-radius: 12px;
+            border: 1px solid #64748b;
+            width: 100%;
+            max-width: 800px;
+            height: 450px;
+        }
     </style>
 </head>
 
@@ -184,9 +202,10 @@
             <button class="problem-tab" data-problem="twttr">Just setting up my twttr</button>
             <button class="problem-tab" data-problem="plates">Vanity Plates</button>
             <button class="problem-tab" data-problem="nutrition">Nutrition Facts</button>
+            <button class="problem-tab" data-problem="video">Lecture Video</button>
         </div>
         <div class="problem-main">
-            <div class="accordion-nav">
+            <div class="accordion-nav" id="accordion-nav">
                 <button class="accordion-btn active" data-section="guidance">Guidance</button>
                 <button class="accordion-btn" data-section="example">Worked Example</button>
                 <button class="accordion-btn" data-section="starter">Starter Code</button>
@@ -194,34 +213,71 @@
             <div class="accordion-content active" id="guidance-content">
                 <div class="guidance-card" id="guidance-camel">
                     <strong>camelCase Guidance:</strong><br>
-                    Convert camelCase to snake_case. Use loops and conditionals. See <a class="resource-link"
-                        href="https://cs50.harvard.edu/python/weeks/2/" target="_blank">Week 2 Notes</a>.<br>
-                    <em>Tip:</em> Check for uppercase letters and add an underscore before them.
+                    <ol class="guidance-steps">
+                        <li>Read the problem description: Convert a variable name from camelCase to snake_case.</li>
+                        <li>Loop through each character in the string.</li>
+                        <li>If the character is uppercase, add an underscore and its lowercase version to the result.
+                        </li>
+                        <li>Else, add the character as is.</li>
+                        <li>Print the result.</li>
+                    </ol>
+                    <em>Lecture Example:</em> See <a class="resource-link"
+                        href="https://cs50.harvard.edu/python/notes/2/#string-methods" target="_blank">String
+                        Methods</a>.<br>
+                    <em>Tip:</em> Use <code>isupper()</code> and <code>lower()</code> methods.
                 </div>
                 <div class="guidance-card" id="guidance-coke" style="display:none;">
                     <strong>Coke Machine Guidance:</strong><br>
-                    Use a loop to ask for coins and update amount due. See <a class="resource-link"
-                        href="https://cs50.harvard.edu/python/weeks/2/" target="_blank">Week 2 Notes</a>.<br>
-                    <em>Tip:</em> Only accept 5, 10, or 25 cent coins.
+                    <ol class="guidance-steps">
+                        <li>Initialize <code>amount_due</code> to 100.</li>
+                        <li>Use a <code>while</code> loop to keep asking for coins until <code>amount_due</code> is 0 or
+                            less.</li>
+                        <li>Accept only 5, 10, or 25 cent coins.</li>
+                        <li>Subtract the coin value from <code>amount_due</code> if valid.</li>
+                        <li>Print the change owed at the end.</li>
+                    </ol>
+                    <em>Lecture Example:</em> See <a class="resource-link"
+                        href="https://cs50.harvard.edu/python/notes/2/#loops" target="_blank">Loops</a>.<br>
+                    <em>Tip:</em> Use <code>while</code> and <code>if</code> statements.
                 </div>
                 <div class="guidance-card" id="guidance-twttr" style="display:none;">
                     <strong>Just setting up my twttr Guidance:</strong><br>
-                    Remove vowels from a string. Use loops and conditionals. See <a class="resource-link"
-                        href="https://cs50.harvard.edu/python/weeks/2/" target="_blank">Week 2 Notes</a>.<br>
-                    <em>Tip:</em> Use a string of vowels to check against each character.
+                    <ol class="guidance-steps">
+                        <li>Read the input string.</li>
+                        <li>Loop through each character.</li>
+                        <li>If the character is not a vowel, add it to the result.</li>
+                        <li>Print the result.</li>
+                    </ol>
+                    <em>Lecture Example:</em> See <a class="resource-link"
+                        href="https://cs50.harvard.edu/python/notes/2/#string-methods" target="_blank">String
+                        Methods</a>.<br>
+                    <em>Tip:</em> Use a string of vowels and <code>not in</code> to filter.</em>
                 </div>
                 <div class="guidance-card" id="guidance-plates" style="display:none;">
                     <strong>Vanity Plates Guidance:</strong><br>
-                    Validate a vanity plate according to rules. Use string methods and conditionals. See <a
-                        class="resource-link" href="https://cs50.harvard.edu/python/weeks/2/" target="_blank">Week 2
-                        Notes</a>.<br>
-                    <em>Tip:</em> Check for correct length and character types.
+                    <ol class="guidance-steps">
+                        <li>Read the plate input.</li>
+                        <li>Check if the plate is alphabetic and meets length requirements.</li>
+                        <li>Apply all validation rules as described in the problem.</li>
+                        <li>Print "Valid" or "Invalid".</li>
+                    </ol>
+                    <em>Lecture Example:</em> See <a class="resource-link"
+                        href="https://cs50.harvard.edu/python/notes/2/#conditionals"
+                        target="_blank">Conditionals</a>.<br>
+                    <em>Tip:</em> Use <code>isalpha()</code> and <code>len()</code>.
                 </div>
                 <div class="guidance-card" id="guidance-nutrition" style="display:none;">
                     <strong>Nutrition Facts Guidance:</strong><br>
-                    Use a dictionary to map fruit names to calories. See <a class="resource-link"
-                        href="https://cs50.harvard.edu/python/weeks/2/" target="_blank">Week 2 Notes</a>.<br>
-                    <em>Tip:</em> Use .lower() to handle case sensitivity.
+                    <ol class="guidance-steps">
+                        <li>Read the fruit input and convert to lowercase.</li>
+                        <li>Use a dictionary to map fruit names to calories.</li>
+                        <li>Check if the fruit is in the dictionary.</li>
+                        <li>Print the calories or "Item not found".</li>
+                    </ol>
+                    <em>Lecture Example:</em> See <a class="resource-link"
+                        href="https://cs50.harvard.edu/python/notes/2/#dictionaries"
+                        target="_blank">Dictionaries</a>.<br>
+                    <em>Tip:</em> Use <code>dict</code> and <code>lower()</code>.
                 </div>
             </div>
             <div class="accordion-content" id="example-content">
@@ -355,6 +411,12 @@ else:
                     <div class="output-block" id="output-nutrition-starter"></div>
                 </div>
             </div>
+            <div class="accordion-content" id="video-content" style="display:none;">
+                <div class="video-section">
+                    <strong>Week 2 Lecture Video:</strong><br>
+                    <iframe src="https://www.youtube.com/embed/-7xg8pGcP6w" allowfullscreen></iframe>
+                </div>
+            </div>
         </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
@@ -378,13 +440,26 @@ else:
                 tabs.forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
                 currentProblem = tab.dataset.problem;
-                // Show only relevant guidance/example/starter
+                // Show only relevant guidance/example/starter/video
                 guidanceCards.forEach(card => card.style.display = 'none');
                 exampleCards.forEach(card => card.style.display = 'none');
                 starterCards.forEach(card => card.style.display = 'none');
-                document.getElementById('guidance-' + currentProblem).style.display = '';
-                document.getElementById('example-' + currentProblem).style.display = '';
-                document.getElementById('starter-' + currentProblem).style.display = '';
+                document.getElementById('guidance-content').style.display = '';
+                document.getElementById('example-content').style.display = '';
+                document.getElementById('starter-content').style.display = '';
+                document.getElementById('video-content').style.display = 'none';
+                if (currentProblem === 'video') {
+                    document.getElementById('accordion-nav').style.display = 'none';
+                    document.getElementById('guidance-content').style.display = 'none';
+                    document.getElementById('example-content').style.display = 'none';
+                    document.getElementById('starter-content').style.display = 'none';
+                    document.getElementById('video-content').style.display = '';
+                } else {
+                    document.getElementById('accordion-nav').style.display = '';
+                    document.getElementById('guidance-' + currentProblem).style.display = '';
+                    document.getElementById('example-' + currentProblem).style.display = '';
+                    document.getElementById('starter-' + currentProblem).style.display = '';
+                }
                 // Show only active accordion section
                 showAccordionSection(document.querySelector('.accordion-btn.active').dataset.section);
             });
@@ -394,13 +469,16 @@ else:
         const accordionContents = {
             guidance: document.getElementById('guidance-content'),
             example: document.getElementById('example-content'),
-            starter: document.getElementById('starter-content')
+            starter: document.getElementById('starter-content'),
+            video: document.getElementById('video-content')
         };
         function showAccordionSection(section) {
             Object.keys(accordionContents).forEach(key => {
                 accordionContents[key].classList.remove('active');
             });
-            accordionContents[section].classList.add('active');
+            if (section !== 'video') {
+                accordionContents[section].classList.add('active');
+            }
         }
         accordionBtns.forEach(btn => {
             btn.addEventListener('click', () => {
