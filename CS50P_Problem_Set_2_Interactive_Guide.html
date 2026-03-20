@@ -196,6 +196,22 @@
             <a class="resource-link" href="https://cs50.harvard.edu/python/gradebook/" target="_blank">Check your CS50
                 Gradebook</a>
         </div>
+        <div class="string-methods-ref"
+            style="margin:24px 0 12px 0;padding:18px;background:#e0f7fa;border-radius:10px;border-left:4px solid #1e3a8a;">
+            <strong>Python String Methods Reference:</strong>
+            <ul style="margin-top:8px;">
+                <li><b>isupper()</b>: Returns True if the character is uppercase.<br><code>c.isupper()</code></li>
+                <li><b>lower()</b>: Converts a string or character to lowercase.<br><code>name.lower()</code></li>
+                <li><b>isalpha()</b>: Returns True if all characters are alphabetic.<br><code>plate.isalpha()</code>
+                </li>
+                <li><b>len()</b>: Returns the length of a string.<br><code>len(plate)</code></li>
+                <li><b>in</b>: Checks if a character or substring exists in a string.<br><code>c in vowels</code></li>
+                <li><b>not in</b>: Checks if a character or substring does not exist in a
+                    string.<br><code>c not in vowels</code></li>
+                <li><b>lower()</b>: Converts input to lowercase for case-insensitive
+                    comparison.<br><code>fruit = input("Item: ").lower()</code></li>
+            </ul>
+        </div>
         <div class="problem-tabs" role="tablist">
             <button class="problem-tab active" data-problem="camel">camelCase</button>
             <button class="problem-tab" data-problem="coke">Coke Machine</button>
@@ -412,15 +428,37 @@ else:
                 </div>
             </div>
             <div class="accordion-content" id="video-content" style="display:none;">
-                <div class="video-section">
-                    <strong>Week 2 Lecture Video:</strong><br>
-                    <iframe src="https://www.youtube.com/embed/-7xg8pGcP6w" allowfullscreen></iframe>
+                <div class="video-section" id="video-camel">
+                    <strong>Week 2 Lecture Video (camelCase):</strong><br>
+                    <iframe src="https://www.youtube.com/embed/-7xg8pGcP6w?start=120" allowfullscreen></iframe>
+                    <div style="font-size:0.95em;color:#555;margin-top:8px;">Jump to <b>String Methods</b> (2:00)</div>
+                </div>
+                <div class="video-section" id="video-coke" style="display:none;">
+                    <strong>Week 2 Lecture Video (Coke Machine):</strong><br>
+                    <iframe src="https://www.youtube.com/embed/-7xg8pGcP6w?start=900" allowfullscreen></iframe>
+                    <div style="font-size:0.95em;color:#555;margin-top:8px;">Jump to <b>Loops</b> (15:00)</div>
+                </div>
+                <div class="video-section" id="video-twttr" style="display:none;">
+                    <strong>Week 2 Lecture Video (twttr):</strong><br>
+                    <iframe src="https://www.youtube.com/embed/-7xg8pGcP6w?start=120" allowfullscreen></iframe>
+                    <div style="font-size:0.95em;color:#555;margin-top:8px;">Jump to <b>String Methods</b> (2:00)</div>
+                </div>
+                <div class="video-section" id="video-plates" style="display:none;">
+                    <strong>Week 2 Lecture Video (Vanity Plates):</strong><br>
+                    <iframe src="https://www.youtube.com/embed/-7xg8pGcP6w?start=1800" allowfullscreen></iframe>
+                    <div style="font-size:0.95em;color:#555;margin-top:8px;">Jump to <b>Conditionals</b> (30:00)</div>
+                </div>
+                <div class="video-section" id="video-nutrition" style="display:none;">
+                    <strong>Week 2 Lecture Video (Nutrition Facts):</strong><br>
+                    <iframe src="https://www.youtube.com/embed/-7xg8pGcP6w?start=2400" allowfullscreen></iframe>
+                    <div style="font-size:0.95em;color:#555;margin-top:8px;">Jump to <b>Dictionaries</b> (40:00)</div>
                 </div>
             </div>
         </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
     <script>
         // Top problem tabs
         const tabs = document.querySelectorAll('.problem-tab');
@@ -448,17 +486,22 @@ else:
                 document.getElementById('example-content').style.display = '';
                 document.getElementById('starter-content').style.display = '';
                 document.getElementById('video-content').style.display = 'none';
+                // Show only relevant video section
+                document.querySelectorAll('.video-section').forEach(v => v.style.display = 'none');
                 if (currentProblem === 'video') {
                     document.getElementById('accordion-nav').style.display = 'none';
                     document.getElementById('guidance-content').style.display = 'none';
                     document.getElementById('example-content').style.display = 'none';
                     document.getElementById('starter-content').style.display = 'none';
                     document.getElementById('video-content').style.display = '';
+                    document.getElementById('video-camel').style.display = '';
                 } else {
                     document.getElementById('accordion-nav').style.display = '';
                     document.getElementById('guidance-' + currentProblem).style.display = '';
                     document.getElementById('example-' + currentProblem).style.display = '';
                     document.getElementById('starter-' + currentProblem).style.display = '';
+                    document.getElementById('video-content').style.display = '';
+                    document.getElementById('video-' + currentProblem).style.display = '';
                 }
                 // Show only active accordion section
                 showAccordionSection(document.querySelector('.accordion-btn.active').dataset.section);
@@ -520,11 +563,26 @@ else:
             }
             document.getElementById(`output-${problem}-example`).textContent = output;
         }
-        // Run Starter (echo code for now)
-        function runStarter(problem) {
+        // Run Starter (with Pyodide)
+        let pyodideReady = false;
+        let pyodide;
+        async function loadPyodide() {
+            if (!pyodideReady) {
+                pyodide = await window.loadPyodide();
+                pyodideReady = true;
+            }
+        }
+        async function runStarter(problem) {
+            await loadPyodide();
             const code = editors[problem].value;
-            document.getElementById(`output-${problem}-starter`).textContent = 'Output:\n' + code;
-            // To enable real Python, load Pyodide and run code
+            let outputElem = document.getElementById(`output-${problem}-starter`);
+            outputElem.textContent = 'Running...';
+            try {
+                let result = await pyodide.runPythonAsync(code);
+                outputElem.textContent = result !== undefined ? result : 'Code ran successfully.';
+            } catch (err) {
+                outputElem.textContent = 'Error: ' + err;
+            }
         }
         document.querySelectorAll('.run-btn').forEach(btn => {
             btn.addEventListener('click', function () {
