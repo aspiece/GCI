@@ -4,11 +4,10 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description"
-        content="Intro to 3D Printing with Bambu A1: a 5-day student guide for high school computer science programs." />
+    <meta name="description" content="Intro to 3D Printing with Bambu A1: a 5-day student guide for high school computer science programs." />
     <title>Intro to 3D Printing with Bambu printers | GCI</title>
     <style>
-        :root {
+         :root {
             --bg: #0b0c0f;
             --card: #12141a;
             --text: #e8ecf2;
@@ -32,7 +31,7 @@
             --action-text: #ffffff;
             --shadow: 0 6px 24px rgba(0, 0, 0, 0.35), 0 2px 6px rgba(0, 0, 0, 0.25);
         }
-
+        
         [data-theme="light"] {
             --bg: #f5f5f5;
             --card: #ffffff;
@@ -57,7 +56,7 @@
             --action-text: #ffffff;
             --shadow: 0 2px 8px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
         }
-
+        
         [data-theme="high-contrast"] {
             --bg: #000000;
             --card: #000000;
@@ -82,11 +81,11 @@
             --action-text: #000000;
             --shadow: 0 2px 4px rgba(255, 255, 255, 0.3);
         }
-
+        
         * {
             box-sizing: border-box;
         }
-
+        
         body {
             margin: 0;
             font-family: Inter, Segoe UI, Roboto, Arial, sans-serif;
@@ -95,21 +94,21 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
-
+        
         [data-theme="light"] body {
             background: #f5f5f5;
         }
-
+        
         [data-theme="high-contrast"] body {
             background: #000000;
         }
-
+        
         .wrap {
             max-width: 960px;
             margin: 32px auto;
             padding: 0 16px 44px;
         }
-
+        
         .skip-link {
             position: absolute;
             left: 12px;
@@ -122,11 +121,11 @@
             z-index: 2000;
             text-decoration: none;
         }
-
+        
         .skip-link:focus {
             top: 12px;
         }
-
+        
         .sr-only {
             position: absolute;
             width: 1px;
@@ -138,20 +137,20 @@
             white-space: nowrap;
             border: 0;
         }
-
+        
         h1 {
             margin: 0 0 6px;
             font-size: 1.45rem;
             letter-spacing: 0.2px;
         }
-
+        
         .lead {
             margin: 0 0 16px;
             color: var(--muted);
             font-size: 0.92rem;
             line-height: 1.45;
         }
-
+        
         .meta {
             margin: 0 0 20px;
             padding: 12px;
@@ -162,20 +161,20 @@
             font-size: 0.92rem;
             line-height: 1.5;
         }
-
+        
         .day-list {
             display: grid;
             grid-template-columns: 1fr;
             gap: 14px;
         }
-
+        
         .day-nav {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
             margin: 0 0 10px;
         }
-
+        
         .sticky-mini-nav {
             position: sticky;
             top: 8px;
@@ -187,7 +186,7 @@
             background: var(--card);
             backdrop-filter: blur(4px);
         }
-
+        
         .sticky-controls {
             display: flex;
             justify-content: space-between;
@@ -196,14 +195,14 @@
             margin: 0 0 10px;
             flex-wrap: wrap;
         }
-
+        
         .sticky-help {
             margin: 0;
             color: var(--muted);
             font-size: 0.84rem;
             line-height: 1.45;
         }
-
+        
         .theme-select {
             border: 1px solid var(--border);
             background: var(--card);
@@ -214,14 +213,14 @@
             font: inherit;
             font-size: 0.9rem;
         }
-
+        
         .shortcut-hint {
             margin: 0;
             color: var(--muted);
             font-size: 0.88rem;
             font-weight: 600;
         }
-
+        
         .day-nav-btn,
         .pager-btn {
             border: 1px solid var(--border);
@@ -235,7 +234,7 @@
             font-weight: 600;
             cursor: pointer;
         }
-
+        
         .day-nav-btn:hover,
         .day-nav-btn:focus-visible,
         .pager-btn:hover,
@@ -243,7 +242,7 @@
             border-color: var(--focus-border);
             outline: none;
         }
-
+        
         button:focus-visible,
         select:focus-visible,
         a:focus-visible,
@@ -252,32 +251,32 @@
             outline: 3px solid var(--accent);
             outline-offset: 2px;
         }
-
+        
         .day-nav-btn.is-active {
             background: var(--surface-accent);
             color: var(--text);
             border-color: var(--active-border);
         }
-
+        
         .day-nav-btn.is-complete::after {
             content: ' ✓';
             color: var(--success-text);
             font-weight: 800;
         }
-
+        
         .day-pager {
             display: flex;
             align-items: center;
             gap: 10px;
             margin: 0 0 14px;
         }
-
+        
         .pager-status {
             color: var(--muted);
             font-size: 0.95rem;
             font-weight: 600;
         }
-
+        
         .day-card {
             background: var(--card);
             border: 1px solid var(--border);
@@ -285,14 +284,14 @@
             box-shadow: var(--shadow);
             padding: 18px;
         }
-
+        
         .day-card-tools {
             display: flex;
             gap: 8px;
             margin: 6px 0 10px;
             flex-wrap: wrap;
         }
-
+        
         .card-tool-btn {
             border: 1px solid var(--border);
             background: var(--surface-subtle);
@@ -304,17 +303,17 @@
             font-weight: 600;
             cursor: pointer;
         }
-
+        
         .card-tool-btn:hover,
         .card-tool-btn:focus-visible {
             border-color: var(--focus-border);
             outline: none;
         }
-
+        
         .back-top-wrap {
             margin-top: 12px;
         }
-
+        
         .day-header {
             display: flex;
             align-items: center;
@@ -323,12 +322,12 @@
             margin-bottom: 10px;
             flex-wrap: wrap;
         }
-
+        
         .day-title {
             margin: 0;
             font-size: 1.14rem;
         }
-
+        
         .pill {
             display: inline-block;
             padding: 3px 8px;
@@ -339,45 +338,45 @@
             font-size: 0.8rem;
             font-weight: 700;
         }
-
+        
         .goal {
             margin: 0 0 10px;
             color: var(--text);
             font-size: 0.98rem;
         }
-
+        
         h3 {
             margin: 14px 0 8px;
             font-size: 0.94rem;
             letter-spacing: 0.1px;
         }
-
+        
         p,
         li {
             line-height: 1.55;
         }
-
+        
         ol,
         ul {
             margin: 0;
             padding-left: 20px;
         }
-
+        
         li {
             margin-bottom: 8px;
         }
-
+        
         a {
             color: var(--accent);
             text-decoration: none;
             font-weight: 600;
         }
-
+        
         a:hover,
         a:focus-visible {
             text-decoration: underline;
         }
-
+        
         .deliverable {
             margin-top: 12px;
             padding: 10px;
@@ -386,7 +385,7 @@
             border: 1px solid var(--active-border);
             font-size: 0.95rem;
         }
-
+        
         .worksheet {
             margin-top: 14px;
             padding: 14px;
@@ -394,18 +393,18 @@
             border-radius: 12px;
             background: var(--surface-subtle);
         }
-
+        
         .worksheet-title {
             margin: 0 0 8px;
             font-size: 1.02rem;
         }
-
+        
         table {
             width: 100%;
             border-collapse: collapse;
             margin: 10px 0 12px;
         }
-
+        
         th,
         td {
             border: 1px solid var(--border);
@@ -414,11 +413,11 @@
             text-align: left;
             font-size: 0.93rem;
         }
-
+        
         th {
             background: var(--surface-alt);
         }
-
+        
         .field,
         textarea,
         input[type="text"] {
@@ -431,22 +430,22 @@
             color: inherit;
             background: rgba(0, 0, 0, 0.24);
         }
-
+        
         textarea {
             min-height: 128px;
             resize: vertical;
         }
-
+        
         .short {
             min-height: 96px;
         }
-
+        
         .checklist {
             margin: 0;
             padding: 0;
             list-style: none;
         }
-
+        
         .checklist li {
             margin: 8px 0;
             display: flex;
@@ -458,21 +457,21 @@
             background: var(--surface-subtle);
             transition: background-color 0.15s ease, border-color 0.15s ease;
         }
-
+        
         .checklist li:hover,
         .checklist li:focus-within {
             background: var(--surface-accent-soft);
             border-color: var(--active-border);
         }
-
+        
         .checklist input {
             margin-top: 3px;
         }
-
+        
         .line-input {
             margin: 6px 0;
         }
-
+        
         .worksheet-actions {
             margin: 8px 0 14px;
             display: flex;
@@ -480,7 +479,7 @@
             align-items: center;
             flex-wrap: wrap;
         }
-
+        
         .copy-btn {
             border: 1px solid var(--border);
             background: linear-gradient(180deg, var(--action-bg-start) 0%, var(--action-bg-end) 100%);
@@ -492,26 +491,26 @@
             font-weight: 600;
             cursor: pointer;
         }
-
+        
         .copy-btn:hover,
         .copy-btn:focus-visible {
             border-color: var(--focus-border);
             outline: none;
         }
-
+        
         .copy-status {
             color: var(--muted);
             font-size: 0.92rem;
             font-weight: 600;
         }
-
+        
         .guidance {
             margin: 6px 0 10px;
             color: var(--muted);
             font-size: 0.9rem;
             line-height: 1.5;
         }
-
+        
         .flow-note {
             margin: 4px 0 10px;
             padding: 8px 10px;
@@ -521,19 +520,19 @@
             font-size: 0.88rem;
             color: var(--muted);
         }
-
+        
         [data-theme="high-contrast"] a {
             color: #00ffff;
             text-decoration: underline;
         }
-
+        
         .hint-list {
             margin: 0 0 8px;
             padding-left: 18px;
             color: var(--muted);
             font-size: 0.92rem;
         }
-
+        
         .diagram {
             margin: 10px 0 12px;
             border: 1px solid var(--border);
@@ -541,7 +540,7 @@
             padding: 10px;
             background: var(--surface-subtle);
         }
-
+        
         .diagram img {
             display: block;
             width: 100%;
@@ -551,20 +550,20 @@
             border-radius: 8px;
             background: #fff;
         }
-
+        
         .diagram-note {
             margin: 8px 0 0;
             color: var(--muted);
             font-size: 0.9rem;
             line-height: 1.35;
         }
-
+        
         .media-embed {
             margin-top: 10px;
             display: grid;
             gap: 10px;
         }
-
+        
         .video-wrap {
             position: relative;
             width: 100%;
@@ -574,7 +573,7 @@
             overflow: hidden;
             background: #000;
         }
-
+        
         .video-wrap iframe {
             position: absolute;
             inset: 0;
@@ -582,7 +581,7 @@
             height: 100%;
             border: 0;
         }
-
+        
         .back-link {
             display: inline-block;
             margin-top: 20px;
@@ -596,11 +595,9 @@
     <main class="wrap" id="mainContent" tabindex="-1">
         <h1>Intro to 3D Printing with Bambu printers</h1>
         <p class="lead">A 5-Day Student Guide for High School Computer Science Programs</p>
-        <p class="meta"><strong>Classroom Note:</strong> Complete each day in order. Add screenshots, photos, and file
-            details to your Digital Notebook entry so your teacher can review your progress.</p>
-        <p class="meta"><strong>Digital Notebook:</strong> Your Digital Notebook is your daily learning log. At the end
-            of each class, click <strong>Copy Day Notes</strong> and paste your responses into that day’s notebook
-            entry (Day 1, Day 2, etc.) so you can track your growth and submit complete evidence of learning.</p>
+        <p class="meta"><strong>Classroom Note:</strong> Complete each day in order. Add screenshots, photos, and file details to your Digital Notebook entry so your teacher can review your progress.</p>
+        <p class="meta"><strong>Digital Notebook:</strong> Your Digital Notebook is your daily learning log. At the end of each class, click <strong>Copy Day Notes</strong> and paste your responses into that day’s notebook entry (Day 1, Day 2, etc.) so you can track
+            your growth and submit complete evidence of learning.</p>
 
         <div class="sticky-mini-nav" aria-label="Sticky day navigation">
             <div class="sticky-controls" aria-label="Accessibility controls">
@@ -614,9 +611,7 @@
                     </select>
                 </div>
             </div>
-            <p class="sticky-help" aria-label="Accessibility tips">Accessibility tip: Use <strong>Tab</strong> to
-                move between controls, arrow keys to change days, and switch to <strong>High Contrast</strong> for
-                stronger readability.</p>
+            <p class="sticky-help" aria-label="Accessibility tips">Accessibility tip: Use <strong>Tab</strong> to move between controls, arrow keys to change days, and switch to <strong>High Contrast</strong> for stronger readability.</p>
             <nav class="day-nav" aria-label="Select lab day">
                 <button class="day-nav-btn is-active" type="button" data-day-target="1">Day 1</button>
                 <button class="day-nav-btn" type="button" data-day-target="2">Day 2</button>
@@ -638,20 +633,18 @@
                     <h2 class="day-title">Day 1 – Intro to How 3D Printing Works</h2>
                     <span class="pill">Intro &amp; Setup</span>
                 </div>
-                <p class="goal"><strong>Goal:</strong> Build a strong foundation of how 3D printing works, then connect
-                    that knowledge to the Bambu A1 printer you will use in class.</p>
-                <p class="guidance"><strong>Quick laugh:</strong> Think of a 3D printer as a very focused robot that
-                    makes stuff one layer at a time.</p>
+                <p class="goal"><strong>Goal:</strong> Build a strong foundation of how 3D printing works, then connect that knowledge to the Bambu A1 printer you will use in class.</p>
+                <p class="guidance"><strong>Quick laugh:</strong> Think of a 3D printer as a very focused robot that makes stuff one layer at a time.</p>
                 <h3>Objectives</h3>
                 <ul>
-                    <li>Explain the difference between additive and subtractive manufacturing in your own words
-                        (<strong>Evidence:</strong> Video Connection prompt #1).</li>
-                    <li>Identify major Bambu printer components and describe each part’s function
-                        (<strong>Evidence:</strong> Component Hunt + Printer Anatomy Check).</li>
-                    <li>Describe how a digital model is turned into layers for printing
-                        (<strong>Evidence:</strong> Video Connection prompts #2 and #3).</li>
-                    <li>Document observations and reflections clearly
-                        (<strong>Evidence:</strong> Demo Observation Log + Exit Ticket).</li>
+                    <li>Explain the difference between additive and subtractive manufacturing in your own words (
+                        <strong>Evidence:</strong> Video Connection prompt #1).</li>
+                    <li>Identify major Bambu printer components and describe each part’s function (
+                        <strong>Evidence:</strong> Component Hunt + Printer Anatomy Check).</li>
+                    <li>Describe how a digital model is turned into layers for printing (
+                        <strong>Evidence:</strong> Video Connection prompts #2 and #3).</li>
+                    <li>Document observations and reflections clearly (
+                        <strong>Evidence:</strong> Demo Observation Log + Exit Ticket).</li>
                 </ul>
                 <h3>Success Criteria</h3>
                 <ul>
@@ -660,54 +653,39 @@
                     <li>I can complete all Day 1 evidence tasks and submit all required work.</li>
                 </ul>
                 <h3>Steps</h3>
-                <p class="flow-note"><strong>Instructional Flow:</strong> Learn (video/resources) → Practice (Day 1
-                    tasks) → Submit (Before You Submit Checklist + Copy Day Notes).</p>
+                <p class="flow-note"><strong>Instructional Flow:</strong> Learn (video/resources) → Practice (Day 1 tasks) → Submit (Before You Submit Checklist + Copy Day Notes).</p>
                 <ol>
-                    <li><strong>Step 1: Watch Intro Video (8 min)</strong><br />Assignment: Watch the <a
-                            href="https://www.youtube.com/watch?v=HlvK6DLwCz4" target="_blank"
-                            rel="noopener noreferrer">How 3D Printers Work warm-up video</a>, then complete
+                    <li><strong>Step 1: Watch Intro Video (8 min)</strong><br />Assignment: Watch the <a href="https://www.youtube.com/watch?v=HlvK6DLwCz4" target="_blank" rel="noopener noreferrer">How 3D Printers Work warm-up video</a>, then complete
                         <strong>Video Connection Prompts</strong> and <strong>Check for Understanding (Video
                             Transcript)</strong>.
                         <div class="media-embed" aria-label="Day 1 warm-up video">
                             <div class="video-wrap">
-                                <iframe src="https://www.youtube.com/embed/HlvK6DLwCz4?rel=0"
-                                    title="How 3D Printers Work - Lesson Kickoff" loading="lazy"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                    referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                                <iframe src="https://www.youtube.com/embed/HlvK6DLwCz4?rel=0" title="How 3D Printers Work - Lesson Kickoff" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
+                                    allowfullscreen></iframe>
                             </div>
                         </div>
                     </li>
                     <li><strong>Step 2: Locate and Identify Parts (10 min)</strong><br />Assignment: Complete
                         <strong>Timed Component Hunt (3–5 Minutes)</strong>, then complete <strong>Printer Anatomy
-                            Check</strong> for key parts (nozzle, bed, AMS, touchscreen, frame/gantry). Use the <a
-                            href="https://bambulab.com/en-us/support/academy/4/course/987021628962332672/chapter/60"
-                            target="_blank" rel="noopener noreferrer">Bambu Academy Components Reference</a> and <a
-                            href="https://bambulab.com/en-us/support/academy/4/course/987021628962332672/chapter/64"
-                            target="_blank" rel="noopener noreferrer">AMS Guide</a> while locating parts.
+                            Check</strong> for key parts (nozzle, bed, AMS, touchscreen, frame/gantry). Use the <a href="https://bambulab.com/en-us/support/academy/4/course/987021628962332672/chapter/60" target="_blank" rel="noopener noreferrer">Bambu Academy Components Reference</a>                        and <a href="https://bambulab.com/en-us/support/academy/4/course/987021628962332672/chapter/64" target="_blank" rel="noopener noreferrer">AMS Guide</a> while locating parts.
                     </li>
-                    <li><strong>Step 3: Observe Demo Print (10 min)</strong><br />Assignment: Observe a demonstration
-                        print and complete the <strong>Demo Observation Log</strong>, then review spool loading with
-                        the <a href="https://bambulab.com/en-us/support/academy/4/course/987021628962332672/chapter/63"
+                    <li><strong>Step 3: Observe Demo Print (10 min)</strong><br />Assignment: Observe a demonstration print and complete the <strong>Demo Observation Log</strong>, then review spool loading with the <a href="https://bambulab.com/en-us/support/academy/4/course/987021628962332672/chapter/63"
                             target="_blank" rel="noopener noreferrer">Load a Spool Guide</a>.</li>
-                    <li><strong>Step 4: Complete and Submit Day 1 Tasks (17 min)</strong><br />Assignment: Complete the
-                        remaining Day 1 tasks (Safety &amp; Setup Checklist, Reflection, and Exit Ticket), then
-                        finish the <a href="https://bambulab.com/en-us/support/academy/4" target="_blank"
-                            rel="noopener noreferrer">Beginner Bambu Lab course module</a>. Finally, click
+                    <li><strong>Step 4: Complete and Submit Day 1 Tasks (17 min)</strong><br />Assignment: Complete the remaining Day 1 tasks (Safety &amp; Setup Checklist, Reflection, and Exit Ticket), then finish the <a href="https://bambulab.com/en-us/support/academy/4"
+                            target="_blank" rel="noopener noreferrer">Beginner Bambu Lab course module</a>. Finally, click
                         <strong>Copy Day Notes</strong> and paste into your Digital Notebook Day 1 entry.
                     </li>
                 </ol>
                 <h3>Optional Supports</h3>
                 <ul>
-                    <li><a href="https://makerworld.com/en/models/807526-original-rubber-ducky?from=search#profileId-748243"
-                            target="_blank" rel="noopener noreferrer">Rubber Duck Model (optional demo file)</a></li>
+                    <li><a href="https://makerworld.com/en/models/807526-original-rubber-ducky?from=search#profileId-748243" target="_blank" rel="noopener noreferrer">Rubber Duck Model (optional demo file)</a></li>
                 </ul>
-                <p class="deliverable"><strong>Deliverable:</strong> Completed Day 1 tasks and labeled photo of printer
-                    setup.</p>
+                <p class="deliverable"><strong>Deliverable:</strong> Completed Day 1 tasks and labeled photo of printer setup.
+                </p>
 
                 <div class="worksheet" aria-label="Day 1 activity log">
                     <h3 class="worksheet-title">Day 1 Activity Log</h3>
-                    <p class="guidance">Guidance: Use complete sentences. Include one safety detail and one
-                        real observation from class in your answers.</p>
+                    <p class="guidance">Guidance: Use complete sentences. Include one safety detail and one real observation from class in your answers.</p>
 
                     <h3>Word Bank (Support)</h3>
                     <ul class="hint-list">
@@ -720,8 +698,7 @@
                     </ul>
 
                     <h3>Timed Component Hunt (3–5 Minutes)</h3>
-                    <p class="guidance">Before writing part functions, physically point to each part on the printer.
-                        Have a partner or teacher initial when complete.</p>
+                    <p class="guidance">Before writing part functions, physically point to each part on the printer. Have a partner or teacher initial when complete.</p>
                     <table>
                         <thead>
                             <tr>
@@ -781,13 +758,13 @@
                                 <td><input type="text" aria-label="Day 1 additive vs subtractive response" /></td>
                             </tr>
                             <tr>
-                                <td>Explain how the printer builds an object layer by layer (use the cake icing
-                                    comparison).</td>
+                                <td>Explain how the printer builds an object layer by layer (use the cake icing comparison).
+                                </td>
                                 <td><input type="text" aria-label="Day 1 layer by layer explanation" /></td>
                             </tr>
                             <tr>
-                                <td>According to the video, how does a <strong>digital model</strong> become print
-                                    instructions?</td>
+                                <td>According to the video, how does a <strong>digital model</strong> become print instructions?
+                                </td>
                                 <td><input type="text" aria-label="Day 1 digital model to print instructions" /></td>
                             </tr>
                             <tr>
@@ -802,8 +779,7 @@
                     </table>
 
                     <h3>Check for Understanding (Video Transcript)</h3>
-                    <p class="guidance">Answer using details from the Day 1 video transcript. Be specific and use key
-                        vocabulary when possible.</p>
+                    <p class="guidance">Answer using details from the Day 1 video transcript. Be specific and use key vocabulary when possible.</p>
                     <table>
                         <thead>
                             <tr>
@@ -814,17 +790,14 @@
                         <tbody>
                             <tr>
                                 <td>According to the transcript, which process builds an object by
-                                    <strong>adding</strong>
-                                    material in layers?
+                                    <strong>adding</strong> material in layers?
                                 </td>
-                                <td><input type="text"
-                                        aria-label="Day 1 transcript check additive process identification" /></td>
+                                <td><input type="text" aria-label="Day 1 transcript check additive process identification" /></td>
                             </tr>
                             <tr>
-                                <td>In <strong>subtractive</strong> manufacturing, what happens to the starting
-                                    material?</td>
-                                <td><input type="text"
-                                        aria-label="Day 1 transcript check subtractive process explanation" /></td>
+                                <td>In <strong>subtractive</strong> manufacturing, what happens to the starting material?
+                                </td>
+                                <td><input type="text" aria-label="Day 1 transcript check subtractive process explanation" /></td>
                             </tr>
                             <tr>
                                 <td>What does <strong>slicing</strong> do to a digital model before printing starts?
@@ -834,14 +807,12 @@
                             </tr>
                             <tr>
                                 <td>What comparison from the transcript helps explain layer-by-layer printing?</td>
-                                <td><input type="text"
-                                        aria-label="Day 1 transcript check layer analogy identification" /></td>
+                                <td><input type="text" aria-label="Day 1 transcript check layer analogy identification" /></td>
                             </tr>
                             <tr>
                                 <td>Name one real-world product or use case mentioned in the transcript for 3D printing.
                                 </td>
-                                <td><input type="text"
-                                        aria-label="Day 1 transcript check real world example response" /></td>
+                                <td><input type="text" aria-label="Day 1 transcript check real world example response" /></td>
                             </tr>
                         </tbody>
                     </table>
@@ -858,28 +829,19 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td><input type="text" aria-label="Day 1 observation row 1"
-                                        placeholder="I noticed..." /></td>
-                                <td><input type="text" aria-label="Day 1 why it matters row 1"
-                                        placeholder="This matters because..." /></td>
-                                <td><input type="text" aria-label="Day 1 remaining question row 1"
-                                        placeholder="I still wonder..." /></td>
+                                <td><input type="text" aria-label="Day 1 observation row 1" placeholder="I noticed..." /></td>
+                                <td><input type="text" aria-label="Day 1 why it matters row 1" placeholder="This matters because..." /></td>
+                                <td><input type="text" aria-label="Day 1 remaining question row 1" placeholder="I still wonder..." /></td>
                             </tr>
                             <tr>
-                                <td><input type="text" aria-label="Day 1 observation row 2"
-                                        placeholder="I noticed..." /></td>
-                                <td><input type="text" aria-label="Day 1 why it matters row 2"
-                                        placeholder="This matters because..." /></td>
-                                <td><input type="text" aria-label="Day 1 remaining question row 2"
-                                        placeholder="I still wonder..." /></td>
+                                <td><input type="text" aria-label="Day 1 observation row 2" placeholder="I noticed..." /></td>
+                                <td><input type="text" aria-label="Day 1 why it matters row 2" placeholder="This matters because..." /></td>
+                                <td><input type="text" aria-label="Day 1 remaining question row 2" placeholder="I still wonder..." /></td>
                             </tr>
                             <tr>
-                                <td><input type="text" aria-label="Day 1 observation row 3"
-                                        placeholder="I noticed..." /></td>
-                                <td><input type="text" aria-label="Day 1 why it matters row 3"
-                                        placeholder="This matters because..." /></td>
-                                <td><input type="text" aria-label="Day 1 remaining question row 3"
-                                        placeholder="I still wonder..." /></td>
+                                <td><input type="text" aria-label="Day 1 observation row 3" placeholder="I noticed..." /></td>
+                                <td><input type="text" aria-label="Day 1 why it matters row 3" placeholder="This matters because..." /></td>
+                                <td><input type="text" aria-label="Day 1 remaining question row 3" placeholder="I still wonder..." /></td>
                             </tr>
                         </tbody>
                     </table>
@@ -887,44 +849,33 @@
                     <ul class="hint-list">
                         <li>Match each row to the exact label wording shown on the provided diagram.</li>
                         <li>Add one note about how the part affects print quality or safety.</li>
-                        <li>Connect at least one part to the video (for example: nozzle extrudes material,
-                            slicer tells where each layer goes).</li>
+                        <li>Connect at least one part to the video (for example: nozzle extrudes material, slicer tells where each layer goes).</li>
                     </ul>
                     <div class="diagram" aria-label="Bambu printer parts diagram">
-                        <img src="https://wiki.bambulab.com/glossary/p1_series_glossary.jpg"
-                            alt="Diagram of Bambu printer parts for labeling and function reference" loading="lazy" />
-                        <p class="diagram-note">Use this diagram to identify parts and explain each part’s function in
-                            your own words. If the image does not load, open it directly:
-                            <a href="https://wiki.bambulab.com/glossary/p1_series_glossary.jpg" target="_blank"
-                                rel="noopener noreferrer">Bambu Parts Diagram</a>.
+                        <img src="https://wiki.bambulab.com/glossary/p1_series_glossary.jpg" alt="Diagram of Bambu printer parts for labeling and function reference" loading="lazy" />
+                        <p class="diagram-note">Use this diagram to identify parts and explain each part’s function in your own words. If the image does not load, open it directly:
+                            <a href="https://wiki.bambulab.com/glossary/p1_series_glossary.jpg" target="_blank" rel="noopener noreferrer">Bambu Parts Diagram</a>.
                         </p>
                     </div>
-                    <p class="guidance">Use the numbered callouts below to match the labels on the image, then write
-                        each part’s function.</p>
+                    <p class="guidance">Use the numbered callouts below to match the labels on the image, then write each part’s function.</p>
                     <ol>
                         <li><strong>Callout 1: Nozzle</strong>
-                            <div class="line-input"><input type="text" aria-label="Day 1 nozzle function notes"
-                                    placeholder="Function / notes" /></div>
+                            <div class="line-input"><input type="text" aria-label="Day 1 nozzle function notes" placeholder="Function / notes" /></div>
                         </li>
                         <li><strong>Callout 2: Print Bed</strong>
-                            <div class="line-input"><input type="text" aria-label="Day 1 print bed function notes"
-                                    placeholder="Function / notes" /></div>
+                            <div class="line-input"><input type="text" aria-label="Day 1 print bed function notes" placeholder="Function / notes" /></div>
                         </li>
                         <li><strong>Callout 3: AMS (Automatic Material System)</strong>
-                            <div class="line-input"><input type="text" aria-label="Day 1 AMS function notes"
-                                    placeholder="Function / notes" /></div>
+                            <div class="line-input"><input type="text" aria-label="Day 1 AMS function notes" placeholder="Function / notes" /></div>
                         </li>
                         <li><strong>Callout 4: Touchscreen</strong>
-                            <div class="line-input"><input type="text" aria-label="Day 1 touchscreen function notes"
-                                    placeholder="Function / notes" /></div>
+                            <div class="line-input"><input type="text" aria-label="Day 1 touchscreen function notes" placeholder="Function / notes" /></div>
                         </li>
                         <li><strong>Callout 5: Frame / Gantry</strong>
-                            <div class="line-input"><input type="text" aria-label="Day 1 frame gantry function notes"
-                                    placeholder="Function / notes" /></div>
+                            <div class="line-input"><input type="text" aria-label="Day 1 frame gantry function notes" placeholder="Function / notes" /></div>
                         </li>
                         <li><strong>Callout 6: Filament</strong>
-                            <div class="line-input"><input type="text" aria-label="Day 1 filament function notes"
-                                    placeholder="Function / notes" /></div>
+                            <div class="line-input"><input type="text" aria-label="Day 1 filament function notes" placeholder="Function / notes" /></div>
                         </li>
                     </ol>
 
@@ -949,12 +900,10 @@
 
                     <h3>Reflection</h3>
                     <p>1. What idea from the intro video helped you understand 3D printing the most, and why?</p>
-                    <textarea class="short" aria-label="Day 1 reflection question 1"
-                        placeholder="Example: The additive process made sense because..."></textarea>
-                    <p>2. Using the video, explain how slicing and the nozzle work together to create a final
-                        model.</p>
-                    <textarea class="short" aria-label="Day 1 reflection question 2"
-                        placeholder="Start with: First the model is sliced..., then the nozzle..."></textarea>
+                    <textarea class="short" aria-label="Day 1 reflection question 1" placeholder="Example: The additive process made sense because..."></textarea>
+                    <p>2. Using the video, explain how slicing and the nozzle work together to create a final model.
+                    </p>
+                    <textarea class="short" aria-label="Day 1 reflection question 2" placeholder="Start with: First the model is sliced..., then the nozzle..."></textarea>
 
                     <h3>Exit Ticket Rubric</h3>
                     <table>
@@ -1018,8 +967,7 @@
 
                     <h3>Extension (Optional Challenge)</h3>
                     <p>How might AMS improve workflow, reliability, or material use in a classroom 3D printing lab?</p>
-                    <textarea class="short" aria-label="Day 1 extension AMS workflow prompt"
-                        placeholder="Explain one practical classroom benefit of AMS and why it matters."></textarea>
+                    <textarea class="short" aria-label="Day 1 extension AMS workflow prompt" placeholder="Explain one practical classroom benefit of AMS and why it matters."></textarea>
 
                     <h3>Before You Submit Checklist</h3>
                     <ul class="checklist">
@@ -1041,18 +989,17 @@
                     <h2 class="day-title">Day 2 – Design Your First Model</h2>
                     <span class="pill">Design</span>
                 </div>
-                <p class="goal"><strong>Goal:</strong> Create a custom 3D model using Tinkercad and prepare it for
-                    slicing.</p>
-                <p class="guidance"><strong>Quick laugh:</strong> If your text is super tiny, your printer might treat
-                    it like a secret and hide it.</p>
+                <p class="goal"><strong>Goal:</strong> Create a custom 3D model using Tinkercad and prepare it for slicing.
+                </p>
+                <p class="guidance"><strong>Quick laugh:</strong> If your text is super tiny, your printer might treat it like a secret and hide it.</p>
                 <h3>Objectives</h3>
                 <ul>
-                    <li>Create a print-ready model with appropriate thickness and dimensions
-                        (<strong>Evidence:</strong> Design Checklist).</li>
-                    <li>Use basic design rules for successful 3D printing
-                        (<strong>Evidence:</strong> Design Idea + Sketch/Outline).</li>
-                    <li>Export and submit a valid STL file with supporting evidence
-                        (<strong>Evidence:</strong> Submission checklist + reflection).</li>
+                    <li>Create a print-ready model with appropriate thickness and dimensions (
+                        <strong>Evidence:</strong> Design Checklist).</li>
+                    <li>Use basic design rules for successful 3D printing (
+                        <strong>Evidence:</strong> Design Idea + Sketch/Outline).</li>
+                    <li>Export and submit a valid STL file with supporting evidence (
+                        <strong>Evidence:</strong> Submission checklist + reflection).</li>
                 </ul>
                 <h3>Success Criteria</h3>
                 <ul>
@@ -1061,65 +1008,45 @@
                     <li>I can correctly submit both the STL and screenshot evidence.</li>
                 </ul>
                 <h3>Steps</h3>
-                <p class="flow-note"><strong>Instructional Flow:</strong> Learn (tutorial/resources) → Practice (Day 2
-                    activity log) → Submit (Before You Submit Checklist + Copy Day Notes).</p>
+                <p class="flow-note"><strong>Instructional Flow:</strong> Learn (tutorial/resources) → Practice (Day 2 activity log) → Submit (Before You Submit Checklist + Copy Day Notes).</p>
                 <ol>
-                    <li><strong>Step 1: Access Tinkercad (8 min)</strong><br />Assignment: Go to <a
-                            href="https://www.tinkercad.com/join" target="_blank"
-                            rel="noopener noreferrer">Tinkercad.com</a> and log in with your school Google account.
-                        If you need a quick platform tour, watch this <a
-                            href="https://www.youtube.com/watch?v=RND5ublVFE4" target="_blank"
-                            rel="noopener noreferrer">Tinkercad Tutorial</a>.</li>
-                    <li><strong>Step 2: Build Your Model Draft (15 min)</strong><br />Assignment: Create a name tag or
-                        keychain (3 mm thick, text raised at least 1 mm), then complete <strong>Project Name</strong>,
-                        <strong>Describe your design idea</strong>, and <strong>Sketch or outline your idea</strong>.
-                        Watch this <a href="https://youtu.be/EPStja86hsM?si=C8lMJZZRW03yalk6" target="_blank"
-                            rel="noopener noreferrer">How to Make a Keychain in Tinkercad</a> video if you need a
-                        walkthrough. For adding a key ring and letters, use this <a
-                            href="https://www.tinkercad.com/learn/overview/O21M5TXL1W5N54P?collectionId=undefined"
-                            target="_blank" rel="noopener noreferrer">Tinkercad key ring + letters tutorial</a>.
-                        Need an example? View this <a
-                            href="https://makerworld.com/en/models/843118-simple-keychain-with-your-name?from=search#profileId-1297588"
-                            target="_blank" rel="noopener noreferrer">example keychain model</a>.
+                    <li><strong>Step 0: Watch TinkerCad Introduction Video (5 min)</strong><br />Assignment: Watch <a href="https://www.youtube.com/watch?v=eUQjrK1_Pas" target="_blank" rel="noopener noreferrer">this video</a> for a quick introduction to TinkerCad
+                        before you start designing.</li>
+                    <li><strong>Step 1: Access Tinkercad (8 min)</strong><br />Assignment: Go to <a href="https://www.tinkercad.com/join" target="_blank" rel="noopener noreferrer">Tinkercad.com</a> and log in with your school Google account. If you need a
+                        quick platform tour, watch this <a href="https://www.youtube.com/watch?v=RND5ublVFE4" target="_blank" rel="noopener noreferrer">Tinkercad Tutorial</a>.</li>
+                    <li><strong>Step 2: Build Your Model Draft (15 min)</strong><br />Assignment: Create a name tag or keychain (3 mm thick, text raised at least 1 mm), then complete <strong>ProjeSSct Name</strong>,
+                        <strong>Describe your design idea</strong>, and <strong>Sketch or outline your idea</strong>. Watch this <a href="https://youtu.be/EPStja86hsM?si=C8lMJZZRW03yalk6" target="_blank" rel="noopener noreferrer">How to Make a Keychain in Tinkercad</a>                        video if you need a walkthrough. For adding a key ring and letters, use this <a href="https://www.tinkercad.com/learn/overview/O21M5TXL1W5N54P?collectionId=undefined" target="_blank" rel="noopener noreferrer">Tinkercad key ring + letters tutorial</a>.
+                        Need an example? View this <a href="https://makerworld.com/en/models/843118-simple-keychain-with-your-name?from=search#profileId-1297588" target="_blank" rel="noopener noreferrer">example keychain model</a>.
                         <div class="media-embed" aria-label="Day 2 keychain tutorial video">
                             <div class="video-wrap">
-                                <iframe src="https://www.youtube.com/embed/EPStja86hsM?rel=0"
-                                    title="How to Make a Keychain in Tinkercad" loading="lazy"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                    referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                                <iframe src="https://www.youtube.com/embed/EPStja86hsM?rel=0" title="How to Make a Keychain in Tinkercad" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
+                                    allowfullscreen></iframe>
                             </div>
                         </div>
                     </li>
-                    <li><strong>Step 3: Verify Design Readiness (5 min)</strong><br />Assignment: Get a teacher or peer
-                        design check, then complete <strong>Design Checklist</strong> (confirm flat base, readable
-                        details, and size limits).
+                    <li><strong>Step 3: Verify Design Readiness (5 min)</strong><br />Assignment: Get a teacher or peer design check, then complete <strong>Design Checklist</strong> (confirm flat base, readable details, and size limits).
                     </li>
                     <li><strong>Step 4: Export STL (5 min)</strong><br />Assignment: Export your model as an STL file.
                     </li>
                     <li><strong>Step 5: Document and Submit Day 2 Work (7 min)</strong><br />Assignment: Complete
-                        <strong>Reflection</strong>, then insert your STL
-                        filename/link and screenshot in your Digital Notebook Day 2 entry and finish
+                        <strong>Reflection</strong>, then insert your STL filename/link and screenshot in your Digital Notebook Day 2 entry and finish
                         <strong>Before You Submit Checklist</strong>. <em>STL note: upload file to Google Classroom,
                             log filename/link in Notebook.</em>
                     </li>
                 </ol>
-                <p class="deliverable"><strong>Deliverable:</strong> STL filename/link and screenshot in your Digital
-                    Notebook (<strong>STL file</strong> uploaded to Google Classroom).</p>
+                <p class="deliverable"><strong>Deliverable:</strong> STL filename/link and screenshot in your Digital Notebook (<strong>STL file</strong> uploaded to Google Classroom).</p>
 
                 <div class="worksheet" aria-label="Day 2 activity log">
                     <h3 class="worksheet-title">Day 2 Activity Log</h3>
-                    <p class="guidance">Guidance: Focus on print-ready design choices. Mention size, thickness, and
-                        readability of text/details.</p>
+                    <p class="guidance">Guidance: Focus on print-ready design choices. Mention size, thickness, and readability of text/details.</p>
                     <label for="day2-project-name"><strong>Project Name:</strong></label>
                     <input id="day2-project-name" type="text" class="field" />
 
                     <h3>Describe your design idea</h3>
-                    <textarea aria-label="Day 2 design idea description"
-                        placeholder="Describe the purpose, audience, shape, and any text/icons you included."></textarea>
+                    <textarea aria-label="Day 2 design idea description" placeholder="Describe the purpose, audience, shape, and any text/icons you included."></textarea>
 
                     <h3>Sketch or outline your idea (you can draw here or attach an image)</h3>
-                    <textarea aria-label="Day 2 sketch or outline" style="min-height: 160px;"
-                        placeholder="If you are not drawing, describe top view, side view, and key dimensions."></textarea>
+                    <textarea aria-label="Day 2 sketch or outline" style="min-height: 160px;" placeholder="If you are not drawing, describe top view, side view, and key dimensions."></textarea>
 
                     <h3>Design Checklist</h3>
                     <ul class="checklist">
@@ -1139,11 +1066,9 @@
 
                     <h3>Reflection</h3>
                     <p>1. What was the hardest part of designing your model?</p>
-                    <textarea class="short" aria-label="Day 2 reflection question 1"
-                        placeholder="Identify the challenge and what you did to solve it."></textarea>
+                    <textarea class="short" aria-label="Day 2 reflection question 1" placeholder="Identify the challenge and what you did to solve it."></textarea>
                     <p>2. What are you most excited to see when it prints?</p>
-                    <textarea class="short" aria-label="Day 2 reflection question 2"
-                        placeholder="Describe one feature you hope prints clearly."></textarea>
+                    <textarea class="short" aria-label="Day 2 reflection question 2" placeholder="Describe one feature you hope prints clearly."></textarea>
 
                     <h3>Before You Submit Checklist</h3>
                     <ul class="checklist">
@@ -1164,18 +1089,16 @@
                     <h2 class="day-title">Day 3 – Slice and Start Your Print</h2>
                     <span class="pill">Slicing</span>
                 </div>
-                <p class="goal"><strong>Goal:</strong> Learn slicing basics and prepare your design for printing in
-                    Bambu Studio.</p>
-                <p class="guidance"><strong>Quick laugh:</strong> Slicing is the part where your model stops being a
-                    dream and becomes robot instructions.</p>
+                <p class="goal"><strong>Goal:</strong> Learn slicing basics and prepare your design for printing in Bambu Studio.</p>
+                <p class="guidance"><strong>Quick laugh:</strong> Slicing is the part where your model stops being a dream and becomes robot instructions.</p>
                 <h3>Objectives</h3>
                 <ul>
-                    <li>Apply core slicing settings for a basic classroom print
-                        (<strong>Evidence:</strong> Slicing Settings Log).</li>
-                    <li>Read the layer preview before final export
-                        (<strong>Evidence:</strong> Prediction + reflection responses).</li>
-                    <li>Prepare and submit a print-ready 3MF file, then begin printing with teacher approval
-                        (<strong>Evidence:</strong> Submission checklist).</li>
+                    <li>Apply core slicing settings for a basic classroom print (
+                        <strong>Evidence:</strong> Slicing Settings Log).</li>
+                    <li>Read the layer preview before final export (
+                        <strong>Evidence:</strong> Prediction + reflection responses).</li>
+                    <li>Prepare and submit a print-ready 3MF file, then begin printing with teacher approval (
+                        <strong>Evidence:</strong> Submission checklist).</li>
                 </ul>
                 <h3>Success Criteria</h3>
                 <ul>
@@ -1184,40 +1107,32 @@
                     <li>I can submit an approved 3MF and begin printing safely.</li>
                 </ul>
                 <h3>Steps</h3>
-                <p class="flow-note"><strong>Instructional Flow:</strong> Learn (slicer walkthrough) → Practice (Day
-                    3 activity log) → Submit (Before You Submit Checklist + Copy Day Notes).</p>
+                <p class="flow-note"><strong>Instructional Flow:</strong> Learn (slicer walkthrough) → Practice (Day 3 activity log) → Submit (Before You Submit Checklist + Copy Day Notes).</p>
                 <ol>
-                    <li><strong>Step 1: Review Slicer Workflow (8 min)</strong><br />Assignment: Watch the <a
-                            href="https://www.youtube.com/watch?v=rZhy0J0mXBE" target="_blank"
-                            rel="noopener noreferrer">Slicer Software Walkthrough Video</a>, then open Bambu Studio.
+                    <li><strong>Step 1: Review Slicer Workflow (8 min)</strong><br />Assignment: Watch the <a href="https://www.youtube.com/watch?v=rZhy0J0mXBE" target="_blank" rel="noopener noreferrer">Slicer Software Walkthrough Video</a>, then open Bambu
+                        Studio.
                     </li>
                     <li><strong>Step 2: Import Model File (5 min)</strong><br />Assignment: Import your STL file.</li>
-                    <li><strong>Step 3: Configure Slicing Settings (10 min)</strong><br />Assignment: Adjust settings:
-                        Layer Height 0.2 mm, Infill 15%, No Supports, and record them in
+                    <li><strong>Step 3: Configure Slicing Settings (10 min)</strong><br />Assignment: Adjust settings: Layer Height 0.2 mm, Infill 15%, No Supports, and record them in
                         <strong>Slicing Settings Log</strong>.
                     </li>
-                    <li><strong>Step 4: Preview Layers and Predict Results (7 min)</strong><br />Assignment: Preview
-                        the print layers, save your 3MF file, then complete
+                    <li><strong>Step 4: Preview Layers and Predict Results (7 min)</strong><br />Assignment: Preview the print layers, save your 3MF file, then complete
                         <strong>Prediction</strong>.
                     </li>
-                    <li><strong>Step 5: Submit for Teacher Review (5 min)</strong><br />Assignment: Insert your 3MF
-                        filename/link in your Digital Notebook Day 3 entry for teacher review before printing.
+                    <li><strong>Step 5: Submit for Teacher Review (5 min)</strong><br />Assignment: Insert your 3MF filename/link in your Digital Notebook Day 3 entry for teacher review before printing.
                         <em>3MF note: upload file to Google Classroom, log
                             filename/link in Notebook.</em>
                     </li>
-                    <li><strong>Step 6: Start Print and Finalize Notes (5 min)</strong><br />Assignment: After teacher
-                        approval, start your print, then complete
+                    <li><strong>Step 6: Start Print and Finalize Notes (5 min)</strong><br />Assignment: After teacher approval, start your print, then complete
                         <strong>Reflection</strong> and <strong>Before You Submit Checklist</strong>.
                     </li>
                 </ol>
-                <p class="deliverable"><strong>Deliverable:</strong> 3MF filename/link documented in your Digital
-                    Notebook, approved, and print started (<strong>3MF file</strong> uploaded to Google Classroom).
+                <p class="deliverable"><strong>Deliverable:</strong> 3MF filename/link documented in your Digital Notebook, approved, and print started (<strong>3MF file</strong> uploaded to Google Classroom).
                 </p>
 
                 <div class="worksheet" aria-label="Day 3 activity log">
                     <h3 class="worksheet-title">Day 3 Activity Log</h3>
-                    <p class="guidance">Guidance: Enter actual slicer values, not guesses. Use units when possible
-                        (mm, %, minutes).</p>
+                    <p class="guidance">Guidance: Enter actual slicer values, not guesses. Use units when possible (mm, %, minutes).</p>
                     <h3>Slicing Settings Log</h3>
                     <table>
                         <thead>
@@ -1251,16 +1166,13 @@
                     </table>
 
                     <p><strong>Prediction:</strong> What do you expect your print to look like?</p>
-                    <textarea class="short" aria-label="Day 3 prediction"
-                        placeholder="Predict surface quality, text clarity, and potential weak spots."></textarea>
+                    <textarea class="short" aria-label="Day 3 prediction" placeholder="Predict surface quality, text clarity, and potential weak spots."></textarea>
 
                     <h3>Reflection</h3>
                     <p>1. How does slicing translate your design into printer instructions?</p>
-                    <textarea class="short" aria-label="Day 3 reflection question 1"
-                        placeholder="Mention layer paths, movement, and extrusion instructions."></textarea>
+                    <textarea class="short" aria-label="Day 3 reflection question 1" placeholder="Mention layer paths, movement, and extrusion instructions."></textarea>
                     <p>2. What setting do you think affects print quality the most? Why?</p>
-                    <textarea class="short" aria-label="Day 3 reflection question 2"
-                        placeholder="Choose one setting and explain its visible effect."></textarea>
+                    <textarea class="short" aria-label="Day 3 reflection question 2" placeholder="Choose one setting and explain its visible effect."></textarea>
 
                     <h3>Before You Submit Checklist</h3>
                     <ul class="checklist">
@@ -1283,18 +1195,18 @@
                     <h2 class="day-title">Day 4 – Troubleshooting and Reflection</h2>
                     <span class="pill">Quality Check</span>
                 </div>
-                <p class="goal"><strong>Goal:</strong> Analyze your print results and document any issues or
-                    improvements.</p>
-                <p class="guidance"><strong>Quick laugh:</strong> A failed print is just useful data wearing a messy
-                    disguise.</p>
+                <p class="goal"><strong>Goal:</strong> Analyze your print results and document any issues or improvements.
+                </p>
+                <p class="guidance"><strong>Quick laugh:</strong> A failed print is just useful data wearing a messy disguise.
+                </p>
                 <h3>Objectives</h3>
                 <ul>
-                    <li>Evaluate print quality using specific evidence
-                        (<strong>Evidence:</strong> Print Log + photo).</li>
-                    <li>Find likely causes for common print issues
-                        (<strong>Evidence:</strong> Common Issues and Fixes table).</li>
-                    <li>Plan one clear improvement for the next print attempt
-                        (<strong>Evidence:</strong> Reflection + submission checklist).</li>
+                    <li>Evaluate print quality using specific evidence (
+                        <strong>Evidence:</strong> Print Log + photo).</li>
+                    <li>Find likely causes for common print issues (
+                        <strong>Evidence:</strong> Common Issues and Fixes table).</li>
+                    <li>Plan one clear improvement for the next print attempt (
+                        <strong>Evidence:</strong> Reflection + submission checklist).</li>
                 </ul>
                 <h3>Success Criteria</h3>
                 <ul>
@@ -1303,30 +1215,23 @@
                     <li>I can identify one high-impact change for my next print.</li>
                 </ul>
                 <h3>Steps</h3>
-                <p class="flow-note"><strong>Instructional Flow:</strong> Learn (inspect output) → Practice (Day 4
-                    activity log) → Submit (Before You Submit Checklist + Copy Day Notes).</p>
+                <p class="flow-note"><strong>Instructional Flow:</strong> Learn (inspect output) → Practice (Day 4 activity log) → Submit (Before You Submit Checklist + Copy Day Notes).</p>
                 <ol>
-                    <li><strong>Step 1: Remove Print Safely (5 min)</strong><br />Assignment: Carefully remove your
-                        print from the bed.</li>
-                    <li><strong>Step 2: Inspect Print Quality (10 min)</strong><br />Assignment: Inspect surface
-                        quality, edges, lettering, and first-layer behavior, then complete
+                    <li><strong>Step 1: Remove Print Safely (5 min)</strong><br />Assignment: Carefully remove your print from the bed.</li>
+                    <li><strong>Step 2: Inspect Print Quality (10 min)</strong><br />Assignment: Inspect surface quality, edges, lettering, and first-layer behavior, then complete
                         <strong>Print Log</strong>.
                     </li>
-                    <li><strong>Step 3: Capture Photo Evidence (5 min)</strong><br />Assignment: Take a clear photo of
-                        your print and insert it in your Digital
-                        Notebook Day 4 entry.</li>
+                    <li><strong>Step 3: Capture Photo Evidence (5 min)</strong><br />Assignment: Take a clear photo of your print and insert it in your Digital Notebook Day 4 entry.</li>
                     <li><strong>Step 4: Troubleshoot and Submit Day 4 Work (15 min)</strong><br />Assignment: Complete
                         <strong>Common Issues and Fixes</strong>,
                         <strong>Reflection</strong>, and <strong>Before You Submit Checklist</strong>.
                     </li>
                 </ol>
-                <p class="deliverable"><strong>Deliverable:</strong> Photo of your finished print and completed
-                    reflection form.</p>
+                <p class="deliverable"><strong>Deliverable:</strong> Photo of your finished print and completed reflection form.</p>
 
                 <div class="worksheet" aria-label="Day 4 activity log">
                     <h3 class="worksheet-title">Day 4 Activity Log</h3>
-                    <p class="guidance">Guidance: Use evidence from your print (photo, edges, text, first layer).
-                        Be specific about what worked and what needs improvement.</p>
+                    <p class="guidance">Guidance: Use evidence from your print (photo, edges, text, first layer). Be specific about what worked and what needs improvement.</p>
                     <h3>Print Log</h3>
                     <table>
                         <thead>
@@ -1403,19 +1308,16 @@
 
                     <h3>Reflection</h3>
                     <p>1. What went well with your print?</p>
-                    <textarea class="short" aria-label="Day 4 reflection question 1"
-                        placeholder="List 2 strengths and what settings/design choices helped."></textarea>
+                    <textarea class="short" aria-label="Day 4 reflection question 1" placeholder="List 2 strengths and what settings/design choices helped."></textarea>
                     <p>2. What issue do you want to fix next time?</p>
-                    <textarea class="short" aria-label="Day 4 reflection question 2"
-                        placeholder="Name one issue, likely cause, and your next adjustment."></textarea>
+                    <textarea class="short" aria-label="Day 4 reflection question 2" placeholder="Name one issue, likely cause, and your next adjustment."></textarea>
 
                     <h3>Before You Submit Checklist</h3>
                     <ul class="checklist">
                         <li><input type="checkbox" id="day4-evidence-photo" /><label for="day4-evidence-photo">I
                                 inserted a photo of my finished print into my Digital Notebook Day 4 entry.</label>
                         </li>
-                        <li><input type="checkbox" id="day4-evidence-reflection" /><label
-                                for="day4-evidence-reflection">I completed my troubleshooting reflection with at least
+                        <li><input type="checkbox" id="day4-evidence-reflection" /><label for="day4-evidence-reflection">I completed my troubleshooting reflection with at least
                                 one fix for next time.</label></li>
                         <li><input type="checkbox" id="day4-evidence-copy" /><label for="day4-evidence-copy">I used
                                 <strong>Copy Day Notes</strong> and pasted Day 4 responses into my Digital
@@ -1430,16 +1332,16 @@
                     <span class="pill">Capstone</span>
                 </div>
                 <p class="goal"><strong>Goal:</strong> Apply your learning by remixing or improving your model.</p>
-                <p class="guidance"><strong>Quick laugh:</strong> Today is your “director’s cut” — same idea, better
-                    version.</p>
+                <p class="guidance"><strong>Quick laugh:</strong> Today is your “director’s cut” — same idea, better version.
+                </p>
                 <h3>Objectives</h3>
                 <ul>
-                    <li>Create and apply meaningful design improvements
-                        (<strong>Evidence:</strong> Remix ideas + final summary).</li>
-                    <li>Document how your final version changed from the original
-                        (<strong>Evidence:</strong> Changes Made from Original field).</li>
-                    <li>Reflect on your design process and your next version plan
-                        (<strong>Evidence:</strong> Final reflection responses).</li>
+                    <li>Create and apply meaningful design improvements (
+                        <strong>Evidence:</strong> Remix ideas + final summary).</li>
+                    <li>Document how your final version changed from the original (
+                        <strong>Evidence:</strong> Changes Made from Original field).</li>
+                    <li>Reflect on your design process and your next version plan (
+                        <strong>Evidence:</strong> Final reflection responses).</li>
                 </ul>
                 <h3>Success Criteria</h3>
                 <ul>
@@ -1448,35 +1350,27 @@
                     <li>I can propose next-step improvements based on what I learned this week.</li>
                 </ul>
                 <h3>Steps</h3>
-                <p class="flow-note"><strong>Instructional Flow:</strong> Learn (review + remix plan) → Practice (Day
-                    5 activity log) → Submit (Before You Submit Checklist + Copy Day Notes).</p>
+                <p class="flow-note"><strong>Instructional Flow:</strong> Learn (review + remix plan) → Practice (Day 5 activity log) → Submit (Before You Submit Checklist + Copy Day Notes).</p>
                 <ol>
-                    <li><strong>Step 1: Choose Remix Direction (7 min)</strong><br />Assignment: Choose one: remix a
-                        model from <a href="https://www.printables.com" target="_blank"
-                            rel="noopener noreferrer">Printables.com</a> or improve your previous design.</li>
-                    <li><strong>Step 2: Redesign in Tinkercad (15 min)</strong><br />Assignment: Modify or redesign in
-                        Tinkercad, then record ideas in
+                    <li><strong>Step 1: Choose Remix Direction (7 min)</strong><br />Assignment: Choose one: remix a model from <a href="https://www.printables.com" target="_blank" rel="noopener noreferrer">Printables.com</a> or improve your previous design.</li>
+                    <li><strong>Step 2: Redesign in Tinkercad (15 min)</strong><br />Assignment: Modify or redesign in Tinkercad, then record ideas in
                         <strong>List three changes or remix ideas</strong>.
                     </li>
-                    <li><strong>Step 3: Export and Capture Evidence (8 min)</strong><br />Assignment: Export the final
-                        STL file, then take a screenshot of your new model.
+                    <li><strong>Step 3: Export and Capture Evidence (8 min)</strong><br />Assignment: Export the final STL file, then take a screenshot of your new model.
                     </li>
                     <li><strong>Step 4: Complete and Submit Final Work (10 min)</strong><br />Assignment: Complete
                         <strong>Final Design Summary</strong>,
-                        <strong>Final Reflection</strong>, and <strong>Before You Submit Checklist</strong>, then
-                        insert your final STL filename/link plus screenshot into your Digital Notebook Day 5 entry.
+                        <strong>Final Reflection</strong>, and <strong>Before You Submit Checklist</strong>, then insert your final STL filename/link plus screenshot into your Digital Notebook Day 5 entry.
                         <em>STL note: upload file to Google
                             Classroom, log filename/link in Notebook.</em>
                     </li>
                 </ol>
-                <p class="deliverable"><strong>Deliverable:</strong> Final STL filename/link, screenshot, and
-                    reflection paragraph in your Digital Notebook (<strong>STL file</strong> uploaded to Google
-                    Classroom).</p>
+                <p class="deliverable"><strong>Deliverable:</strong> Final STL filename/link, screenshot, and reflection paragraph in your Digital Notebook (<strong>STL file</strong> uploaded to Google Classroom).
+                </p>
 
                 <div class="worksheet" aria-label="Day 5 activity log">
                     <h3 class="worksheet-title">Day 5 Activity Log</h3>
-                    <p class="guidance">Guidance: Show growth from your first design. Explain what changed and why
-                        those changes improve function or quality.</p>
+                    <p class="guidance">Guidance: Show growth from your first design. Explain what changed and why those changes improve function or quality.</p>
                     <h3>List three changes or remix ideas</h3>
                     <div class="line-input"><input type="text" aria-label="Day 5 remix idea 1" placeholder="1." /></div>
                     <div class="line-input"><input type="text" aria-label="Day 5 remix idea 2" placeholder="2." /></div>
@@ -1507,14 +1401,11 @@
                     </table>
 
                     <h3>Final Reflection</h3>
-                    <p>1. What is one design decision you changed during this project, and how did that improve your
-                        final print?</p>
-                    <textarea class="short" aria-label="Day 5 final reflection question 1"
-                        placeholder="Explain the original choice, what you changed, and the result."></textarea>
-                    <p>2. What would your next version include, and what steps would you take to make it print
-                        successfully?</p>
-                    <textarea class="short" aria-label="Day 5 final reflection question 2"
-                        placeholder="List at least two improvements and one slicing or setup setting you would adjust."></textarea>
+                    <p>1. What is one design decision you changed during this project, and how did that improve your final print?</p>
+                    <textarea class="short" aria-label="Day 5 final reflection question 1" placeholder="Explain the original choice, what you changed, and the result."></textarea>
+                    <p>2. What would your next version include, and what steps would you take to make it print successfully?
+                    </p>
+                    <textarea class="short" aria-label="Day 5 final reflection question 2" placeholder="List at least two improvements and one slicing or setup setting you would adjust."></textarea>
 
                     <h3>Before You Submit Checklist</h3>
                     <ul class="checklist">
@@ -1524,8 +1415,7 @@
                         <li><input type="checkbox" id="day5-evidence-screen" /><label for="day5-evidence-screen">I
                                 inserted a screenshot of my final model into my Digital Notebook Day 5 entry.</label>
                         </li>
-                        <li><input type="checkbox" id="day5-evidence-reflection" /><label
-                                for="day5-evidence-reflection">I completed my final reflection.</label></li>
+                        <li><input type="checkbox" id="day5-evidence-reflection" /><label for="day5-evidence-reflection">I completed my final reflection.</label></li>
                         <li><input type="checkbox" id="day5-evidence-copy" /><label for="day5-evidence-copy">I used
                                 <strong>Copy Day Notes</strong> and pasted Day 5 responses into my Digital
                                 Notebook.</label></li>
@@ -1543,7 +1433,7 @@
     </main>
 
     <script>
-        (function () {
+        (function() {
             const dayCards = Array.from(document.querySelectorAll('.day-card[data-day]'));
             const dayButtons = Array.from(document.querySelectorAll('.day-nav-btn'));
             const prevButton = document.getElementById('prev-day');
@@ -1613,7 +1503,10 @@
                         jumpButton.className = 'card-tool-btn';
                         jumpButton.textContent = 'Jump to Day Tasks';
                         jumpButton.addEventListener('click', () => {
-                            worksheet.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            worksheet.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
                         });
 
                         tools.appendChild(jumpButton);
@@ -1629,7 +1522,10 @@
                         backTopButton.className = 'card-tool-btn';
                         backTopButton.textContent = 'Back to Top';
                         backTopButton.addEventListener('click', () => {
-                            pageTopAnchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            pageTopAnchor.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
                         });
 
                         wrap.appendChild(backTopButton);
@@ -1660,7 +1556,7 @@
                         if (control.type === 'checkbox') {
                             control.checked = Boolean(saved[key]);
                         } else {
-                            control.value = saved[key] ?? '';
+                            control.value = saved[key] ? ? '';
                         }
                     });
                 } catch (error) {
@@ -1698,7 +1594,9 @@
             }
 
             function setDay(day, options = {}) {
-                const { updateHash = true } = options;
+                const {
+                    updateHash = true
+                } = options;
                 currentDay = Math.max(1, Math.min(maxDay, day));
 
                 dayCards.forEach((card) => {
@@ -1726,20 +1624,20 @@
             }
 
             dayButtons.forEach((button) => {
-                button.addEventListener('click', function () {
+                button.addEventListener('click', function() {
                     setDay(Number(this.dataset.dayTarget));
                 });
             });
 
-            prevButton.addEventListener('click', function () {
+            prevButton.addEventListener('click', function() {
                 setDay(currentDay - 1);
             });
 
-            nextButton.addEventListener('click', function () {
+            nextButton.addEventListener('click', function() {
                 setDay(currentDay + 1);
             });
 
-            document.addEventListener('keydown', function (event) {
+            document.addEventListener('keydown', function(event) {
                 const target = event.target;
                 const typing = target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT' || target.isContentEditable);
                 if (typing) {
@@ -1755,10 +1653,12 @@
                 }
             });
 
-            window.addEventListener('hashchange', function () {
+            window.addEventListener('hashchange', function() {
                 const dayFromHash = parseDayFromHash();
                 if (dayFromHash !== null) {
-                    setDay(dayFromHash, { updateHash: false });
+                    setDay(dayFromHash, {
+                        updateHash: false
+                    });
                 }
             });
 
@@ -1768,7 +1668,7 @@
                     return '';
                 }
 
-                const dayTitle = card.querySelector('.day-title')?.textContent.trim() || 'Day';
+                const dayTitle = card.querySelector('.day-title') ? .textContent.trim() || 'Day';
                 const worksheet = card.querySelector('.worksheet');
                 if (!worksheet) {
                     return '';
@@ -1837,7 +1737,7 @@
 
             copyButton.addEventListener('click', copyWorksheetNotes);
             if (themeSelector) {
-                themeSelector.addEventListener('change', function () {
+                themeSelector.addEventListener('change', function() {
                     applyTheme(this.value);
                 });
             }
@@ -1856,7 +1756,9 @@
             restoreAutosaveData();
             updateCompletionMarkers();
             const dayFromHash = parseDayFromHash();
-            setDay(dayFromHash ?? 1, { updateHash: dayFromHash === null });
+            setDay(dayFromHash ? ? 1, {
+                updateHash: dayFromHash === null
+            });
         })();
     </script>
 </body>
