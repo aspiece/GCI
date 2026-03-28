@@ -313,7 +313,111 @@
             }
         }
     </style>
-    </style>
+    /* Preview Box (1) */
+    .preview-box {
+        background: var(--card);
+        border-left: 6px solid var(--accent);
+        margin: 1.5rem auto 1rem auto;
+        padding: 1rem 1.5rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        max-width: 700px;
+    }
+    .preview-box h2 { margin-top: 0; }
+    .icon { font-size: 1.3em; vertical-align: middle; margin-right: 0.3em; }
+    /* Badges (5) */
+    .required-badge {
+        background: #e57373;
+        color: #fff;
+        border-radius: 1em;
+        padding: 0.2em 0.7em;
+        margin-left: 0.5em;
+        font-size: 0.85em;
+        vertical-align: middle;
+    }
+    .optional-badge {
+        background: #ffd54f;
+        color: #333;
+        border-radius: 1em;
+        padding: 0.2em 0.7em;
+        margin-left: 0.5em;
+        font-size: 0.85em;
+        vertical-align: middle;
+    }
+    /* Sentence Starters (3) */
+    .sentence-starters {
+        background: #f5f5f5;
+        color: #222;
+        border-left: 4px solid var(--accent);
+        margin: 0.7em 0 0.7em 0;
+        padding: 0.5em 1em;
+        border-radius: 0.3em;
+        font-size: 0.97em;
+    }
+    /* Flexible Input (9) */
+    .input-flex {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1em;
+        margin: 0.5em 0 1em 0;
+        align-items: center;
+    }
+    .input-flex label { font-size: 0.95em; }
+    /* Help Section (7) */
+    .help-section {
+        background: #e3f2fd;
+        border-left: 6px solid #1976d2;
+        margin: 2rem auto 1rem auto;
+        padding: 1rem 1.5rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        max-width: 700px;
+    }
+    .help-section h2 { margin-top: 0; }
+    /* Quiet Mode (6) */
+    .quiet-toggle {
+        position: fixed;
+        top: 1.2em;
+        right: 1.2em;
+        z-index: 100;
+        background: #fff;
+        color: #333;
+        border: 2px solid var(--accent);
+        border-radius: 2em;
+        padding: 0.5em 1.2em;
+        font-size: 1em;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    }
+    body.quiet-mode .hero, body.quiet-mode nav, body.quiet-mode .progress-tracker, body.quiet-mode .icon, body.quiet-mode .help-section, body.quiet-mode .optional-badge {
+        display: none !important;
+    }
+    body.quiet-mode .day-card, body.quiet-mode .preview-box {
+        background: #f9f9f9 !important;
+        color: #222 !important;
+    }
+    body.quiet-mode {
+        background: #f4f4f4 !important;
+    }
+    /* Accessibility Improvements (10) */
+    .day-card:focus-within, .day-card:focus {
+        outline: 3px solid var(--accent);
+        outline-offset: 2px;
+    }
+    .day-card {
+        transition: box-shadow 0.2s;
+    }
+    .day-card:focus-within {
+        box-shadow: 0 0 0 3px var(--accent);
+    }
+    a:focus, button:focus, input:focus, textarea:focus {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+    }
+    /* High contrast for badges and icons */
+    .required-badge, .optional-badge { filter: contrast(1.5); }
+    .icon { filter: contrast(1.3); }
+</style>
 </head>
 
 <body>
@@ -359,8 +463,23 @@
             <!-- Part 1: Intro Video & Check for Understanding -->
             <article class="day-card" data-part="1" tabindex="0" aria-labelledby="part1-title">
                 <div class="day-header">
+                    <span class="icon" aria-hidden="true">🎬</span>
                     <h2 class="day-title">Part 1 – Introduction to 3D Printing</h2>
-                    <span class="pill">Video &amp; Check</span>
+                    <span class="pill required-badge" aria-label="Required activity">Required</span>
+                </div>
+                <div class="sentence-starters" aria-label="Sentence starters">
+                    <strong>Sentence starters:</strong>
+                    <ul>
+                        <li>I learned that...</li>
+                        <li>One thing that surprised me was...</li>
+                        <li>Now I wonder...</li>
+                    </ul>
+                </div>
+                <div class="input-flex">
+                    <label for="part1-drawing">Or upload a drawing:</label>
+                    <input type="file" id="part1-drawing" accept="image/*" aria-label="Upload a drawing">
+                    <label for="part1-audio">Or record audio:</label>
+                    <input type="file" id="part1-audio" accept="audio/*" aria-label="Upload audio response">
                 </div>
                 <p class="goal"><strong>Goal:</strong> Watch the introduction video and check your understanding with
                     interactive questions.</p>
@@ -406,8 +525,16 @@
             <!-- Part 2: Printer Introduction & Comparison -->
             <article class="day-card" data-part="2" tabindex="0" aria-labelledby="part2-title">
                 <div class="day-header">
+                    <span class="icon" aria-hidden="true">🖼️</span>
                     <h2 class="day-title">Part 2 – Meet the Bambu A1 Printer</h2>
-                    <span class="pill">Printer Components</span>
+                    <span class="pill required-badge" aria-label="Required activity">Required</span>
+                </div>
+                <div class="sentence-starters" aria-label="Sentence starters">
+                    <strong>Sentence starters:</strong>
+                    <ul>
+                        <li>I think this part is called...</li>
+                        <li>I noticed that...</li>
+                    </ul>
                 </div>
                 <p class="goal"><strong>Goal:</strong> Identify the major Bambu A1 printer components and describe each
                     part’s function.</p>
@@ -445,8 +572,23 @@
             <!-- Part 3: Observation & Reflection -->
             <article class="day-card" data-part="3" tabindex="0" aria-labelledby="part3-title">
                 <div class="day-header">
+                    <span class="icon" aria-hidden="true">👀</span>
                     <h2 class="day-title">Part 3 – Observe a Demo Print</h2>
-                    <span class="pill">Observation</span>
+                    <span class="pill optional-badge" aria-label="Optional activity">Optional</span>
+                </div>
+                <div class="sentence-starters" aria-label="Sentence starters">
+                    <strong>Sentence starters:</strong>
+                    <ul>
+                        <li>I noticed that...</li>
+                        <li>I wonder if...</li>
+                        <li>It was interesting when...</li>
+                    </ul>
+                </div>
+                <div class="input-flex">
+                    <label for="part3-drawing">Or upload a drawing:</label>
+                    <input type="file" id="part3-drawing" accept="image/*" aria-label="Upload a drawing">
+                    <label for="part3-audio">Or record audio:</label>
+                    <input type="file" id="part3-audio" accept="audio/*" aria-label="Upload audio response">
                 </div>
                 <p class="goal"><strong>Goal:</strong> Observe a demonstration print and document your observations and
                     questions.</p>
@@ -479,8 +621,9 @@
             <!-- Part 4: Bambu Academy Video & Check -->
             <article class="day-card" data-part="4">
                 <div class="day-header">
+                    <span class="icon" aria-hidden="true">🎓</span>
                     <h2 class="day-title">Part 4 – Bambu Academy: Beginner Course</h2>
-                    <span class="pill">Video &amp; Check</span>
+                    <span class="pill optional-badge" aria-label="Optional activity">Optional</span>
                 </div>
                 <p class="goal"><strong>Goal:</strong> Watch the Bambu Academy beginner course video and answer the
                     check for understanding questions.</p>
@@ -506,8 +649,23 @@
             <!-- Part 5: Optional Demo & Reflection -->
             <article class="day-card" data-part="5">
                 <div class="day-header">
-                    <h2 class="day-title">Part 5 – Optional Demo &amp; Reflection</h2>
-                    <span class="pill">Demo &amp; Reflection</span>
+                    <span class="icon" aria-hidden="true">💬</span>
+                    <h2 class="day-title">Part 5 – Optional Demo & Reflection</h2>
+                    <span class="pill optional-badge" aria-label="Optional activity">Optional</span>
+                </div>
+                <div class="sentence-starters" aria-label="Sentence starters">
+                    <strong>Sentence starters:</strong>
+                    <ul>
+                        <li>I still wonder...</li>
+                        <li>I'm curious about...</li>
+                        <li>Can you explain more about...</li>
+                    </ul>
+                </div>
+                <div class="input-flex">
+                    <label for="part5-drawing">Or upload a drawing:</label>
+                    <input type="file" id="part5-drawing" accept="image/*" aria-label="Upload a drawing">
+                    <label for="part5-audio">Or record audio:</label>
+                    <input type="file" id="part5-audio" accept="audio/*" aria-label="Upload audio response">
                 </div>
                 <p class="goal"><strong>Goal:</strong> Explore an optional demo print and reflect on your learning.</p>
                 <div class="media-embed" aria-label="Optional demo video">
@@ -524,7 +682,30 @@
                 </div>
             </article>
         </section>
+        <!-- Preview Box (1) -->
+        <section class="preview-box" aria-label="Preview of today's activities">
+            <h2><span class="icon" aria-hidden="true">🔎</span> Today's Preview</h2>
+            <ul>
+                <li>Learn about 3D printers and their parts</li>
+                <li>Explore the classroom printer with a hands-on component hunt</li>
+                <li>Test your knowledge with a quick quiz</li>
+                <li>Track your progress and reflect on your learning</li>
+            </ul>
         </section>
+        <!-- Help Section (7) -->
+        <section class="day-card help-section" aria-label="Help and Support">
+            <div class="day-header">
+                <span class="icon" aria-hidden="true">🆘</span>
+                <h2 class="day-title">Need Help?</h2>
+            </div>
+            <ul>
+                <li><strong>FAQ:</strong> <a href="#" aria-label="Frequently Asked Questions">Frequently Asked Questions</a></li>
+                <li><strong>Ask a Teacher:</strong> <a href="mailto:teacher@example.com" aria-label="Email your teacher">Email your teacher</a></li>
+                <li><strong>Support Links:</strong> <a href="https://www.autismspeaks.org/tool-kit-examples" target="_blank" rel="noopener" aria-label="Autism support resources">Autism Support Resources</a></li>
+            </ul>
+        </section>
+        <!-- Quiet Mode Toggle (6) -->
+        <button id="quiet-mode-toggle" class="quiet-toggle" aria-pressed="false" aria-label="Toggle quiet mode">Quiet Mode</button>
     </main>
     <script>
         (function () {
