@@ -1,0 +1,870 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Intro to 3D Printing with Bambu A1: Day 1 student guide." />
+    <title>Intro to 3D Printing – Day 1 | GCI</title>
+    <style>
+        :root {
+            --bambu-blue: #0096d6;
+            --bambu-green: #7ed957;
+            --bambu-dark: #181c1f;
+            --bambu-light: #f7fafd;
+            --bambu-gray: #e5e8ea;
+            --bambu-accent: #ffb800;
+            --bg: var(--bambu-dark);
+            --card: #23282c;
+            --text: #f7fafd;
+            --muted: #b6c2ce;
+            --accent: var(--bambu-blue);
+            --border: #2c3237;
+            --bg-grad-1: #1e2327;
+            --bg-grad-2: #23282c;
+            --surface-subtle: rgba(0, 150, 214, 0.04);
+            --surface-alt: rgba(0, 150, 214, 0.08);
+            --surface-accent: rgba(0, 150, 214, 0.16);
+            --surface-accent-soft: rgba(0, 150, 214, 0.10);
+            --active-border: var(--bambu-accent);
+            --focus-border: #7ed957;
+            --badge-bg: #1e2327;
+            --badge-text: #ffb800;
+            --badge-border: #7ed957;
+            --success-text: #7ed957;
+            --action-bg-start: #0096d6;
+            --action-bg-end: #005b8a;
+            --action-text: #ffffff;
+            --shadow: 0 6px 24px rgba(0, 0, 0, 0.35), 0 2px 6px rgba(0, 0, 0, 0.25);
+        }
+
+        [data-theme="light"] {
+            --bg: var(--bambu-light);
+            --card: #ffffff;
+            --muted: #4a4a4a;
+            --text: #181c1f;
+            --accent: #0096d6;
+            --border: #b6c2ce;
+            --bg-grad-1: #e5e8ea;
+            --bg-grad-2: #f7fafd;
+            --surface-subtle: rgba(0, 150, 214, 0.04);
+            --surface-alt: rgba(0, 150, 214, 0.08);
+            --surface-accent: rgba(0, 150, 214, 0.12);
+            --surface-accent-soft: rgba(0, 150, 214, 0.08);
+            --active-border: #ffb800;
+            --focus-border: #0096d6;
+            --badge-bg: #e5e8ea;
+            --badge-text: #0096d6;
+            --badge-border: #ffb800;
+            --success-text: #0096d6;
+            --action-bg-start: #0096d6;
+            --action-bg-end: #005b8a;
+            --action-text: #ffffff;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        [data-theme="high-contrast"] {
+            --bg: #000000;
+            --card: #000000;
+            --muted: #f2f2f2;
+            --text: #ffffff;
+            --accent: #00ffff;
+            --border: #ffffff;
+            --bg-grad-1: #000000;
+            --bg-grad-2: #000000;
+            --surface-subtle: rgba(255, 255, 255, 0.12);
+            --surface-alt: rgba(255, 255, 255, 0.2);
+            --surface-accent: rgba(0, 255, 255, 0.2);
+            --surface-accent-soft: rgba(0, 255, 255, 0.14);
+            --active-border: #00ffff;
+            --focus-border: #00ffff;
+            --badge-bg: #000000;
+            --badge-text: #ffffff;
+            --badge-border: #ffffff;
+            --success-text: #00ff00;
+            --action-bg-start: #ffffff;
+            --action-bg-end: #ffffff;
+            --action-text: #000000;
+            --shadow: 0 2px 4px rgba(255, 255, 255, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', 'Segoe UI', 'Roboto', Arial, sans-serif;
+            background: linear-gradient(120deg, var(--bg-grad-1) 0%, var(--bg-grad-2) 100%) var(--bg);
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+        }
+
+        .hero {
+            background: linear-gradient(90deg, var(--bambu-blue) 0%, var(--bambu-accent) 100%);
+            color: #fff;
+            padding: 2.5rem 1.5rem 2rem 1.5rem;
+            border-radius: 0 0 2rem 2rem;
+            box-shadow: var(--shadow);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin: 0 0 0.5rem 0;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            margin: 0;
+            color: #f7fafd;
+        }
+
+        .wrap {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 0 16px 44px;
+        }
+
+        .sticky-mini-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card);
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
+            padding: 0.5rem 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .theme-select {
+            font-size: 1rem;
+            padding: 0.4rem 1.2rem;
+            border-radius: 0.5rem;
+            border: 2px solid var(--border);
+            background: var(--surface-alt);
+            color: var(--text);
+            margin-right: 1rem;
+            transition: border 0.2s;
+        }
+
+        .theme-select:focus {
+            border: 2px solid var(--focus-border);
+            outline: none;
+        }
+
+        .day-nav {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .day-nav-btn {
+            background: var(--surface-accent);
+            color: var(--accent);
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1.2rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+        }
+
+        .day-nav-btn.is-active,
+        .day-nav-btn:hover,
+        .day-nav-btn:focus {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(0, 150, 214, 0.15);
+        }
+
+        .day-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .day-card {
+            background: var(--card);
+            border-radius: 1.5rem;
+            box-shadow: var(--shadow);
+            padding: 2rem 1.5rem 1.5rem 1.5rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .day-card:hover {
+            transform: translateY(-4px) scale(1.01);
+            box-shadow: 0 8px 32px rgba(0, 150, 214, 0.18);
+        }
+
+        .day-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .day-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .pill {
+            background: var(--badge-bg);
+            color: var(--badge-text);
+            border: 1.5px solid var(--badge-border);
+            border-radius: 999px;
+            padding: 0.25em 1em;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .goal,
+        .guidance,
+        .deliverable {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .guidance {
+            color: var(--bambu-green);
+            font-style: italic;
+        }
+
+        h3 {
+            color: var(--accent);
+            margin-top: 1.5rem;
+        }
+
+        ul,
+        ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .flow-note {
+            background: var(--surface-subtle);
+            border-left: 4px solid var(--accent);
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .media-embed {
+            margin: 1rem 0;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0, 150, 214, 0.10);
+        }
+
+        .video-wrap {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+        }
+
+        .video-wrap iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: underline;
+            transition: color 0.2s;
+        }
+
+        a:hover,
+        a:focus {
+            color: var(--bambu-accent);
+        }
+
+        @media (max-width: 700px) {
+            .wrap {
+                padding: 0 4vw 44px;
+            }
+
+            .hero {
+                padding: 2rem 0.5rem 1.5rem 0.5rem;
+            }
+
+            .sticky-mini-nav {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+
+            .day-card {
+                padding: 1.2rem 0.7rem 1rem 0.7rem;
+            }
+        }
+
+        /* Preview Box (1) */
+        .preview-box {
+            background: var(--card);
+            border-left: 6px solid var(--accent);
+            margin: 1.5rem auto 1rem auto;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            max-width: 700px;
+        }
+
+        .preview-box h2 {
+            margin-top: 0;
+        }
+
+        .icon {
+            font-size: 1.3em;
+            vertical-align: middle;
+            margin-right: 0.3em;
+        }
+
+        /* Badges (5) */
+        .required-badge {
+            background: #e57373;
+            color: #fff;
+            border-radius: 1em;
+            padding: 0.2em 0.7em;
+            margin-left: 0.5em;
+            font-size: 0.85em;
+            vertical-align: middle;
+        }
+
+        .optional-badge {
+            background: #ffd54f;
+            color: #333;
+            border-radius: 1em;
+            padding: 0.2em 0.7em;
+            margin-left: 0.5em;
+            font-size: 0.85em;
+            vertical-align: middle;
+        }
+
+        /* Sentence Starters (3) */
+        .sentence-starters {
+            background: #f5f5f5;
+            color: #222;
+            border-left: 4px solid var(--accent);
+            margin: 0.7em 0 0.7em 0;
+            padding: 0.5em 1em;
+            border-radius: 0.3em;
+            font-size: 0.97em;
+        }
+
+        /* Flexible Input (9) */
+        .input-flex {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1em;
+            margin: 0.5em 0 1em 0;
+            align-items: center;
+        }
+
+        .input-flex label {
+            font-size: 0.95em;
+        }
+
+        /* Help Section (7) */
+        .help-section {
+            background: #e3f2fd;
+            border-left: 6px solid #1976d2;
+            margin: 2rem auto 1rem auto;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            max-width: 700px;
+        }
+
+        .help-section h2 {
+            margin-top: 0;
+        }
+
+        /* Quiet Mode (6) */
+        .quiet-toggle {
+            position: fixed;
+            top: 1.2em;
+            right: 1.2em;
+            z-index: 100;
+            background: #fff;
+            color: #333;
+            border: 2px solid var(--accent);
+            border-radius: 2em;
+            padding: 0.5em 1.2em;
+            font-size: 1em;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        }
+
+        body.quiet-mode .hero,
+        body.quiet-mode nav,
+        body.quiet-mode .progress-tracker,
+        body.quiet-mode .icon,
+        body.quiet-mode .help-section,
+        body.quiet-mode .optional-badge {
+            display: none !important;
+        }
+
+        body.quiet-mode .day-card,
+        body.quiet-mode .preview-box {
+            background: #f9f9f9 !important;
+            color: #222 !important;
+        }
+
+        body.quiet-mode {
+            background: #f4f4f4 !important;
+        }
+
+        /* Accessibility Improvements (10) */
+        .day-card:focus-within,
+        .day-card:focus {
+            outline: 3px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        .day-card {
+            transition: box-shadow 0.2s;
+        }
+
+        .day-card:focus-within {
+            box-shadow: 0 0 0 3px var(--accent);
+        }
+
+        a:focus,
+        button:focus,
+        input:focus,
+        textarea:focus {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        /* High contrast for badges and icons */
+        .required-badge,
+        .optional-badge {
+            filter: contrast(1.5);
+        }
+
+        .icon {
+            filter: contrast(1.3);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="hero">
+        <h1>Intro to 3D Printing with Bambu Printers</h1>
+        <p>Day 1: Discover how 3D printing works, explore Bambu A1, and start your maker journey!</p>
+    </div>
+    <main class="wrap" id="mainContent" tabindex="-1">
+        <div class="sticky-mini-nav" aria-label="Sticky day navigation">
+            <div class="sticky-controls" aria-label="Accessibility controls">
+                <label for="theme-selector" class="sr-only">Choose theme</label>
+                <select id="theme-selector" class="theme-select" aria-label="Choose theme">
+                    <option value="dark">Dark</option>
+                    <option value="light">Light</option>
+                    <option value="high-contrast">High Contrast</option>
+                </select>
+            </div>
+            <nav class="day-nav" aria-label="Select lab day">
+                <a class="day-nav-btn is-active" href="Intro_to_3D_Printing_Day1.html">Day 1</a>
+                <a class="day-nav-btn" href="Intro_to_3D_Printing_Day2.html">Day 2</a>
+                <a class="day-nav-btn" href="Intro_to_3D_Printing_Day3.html">Day 3</a>
+                <a class="day-nav-btn" href="Intro_to_3D_Printing_Day4.html">Day 4</a>
+                <a class="day-nav-btn" href="Intro_to_3D_Printing_Day5.html">Day 5</a>
+            </nav>
+        </div>
+        <!-- Progress Tracker & Checklist -->
+        <nav aria-label="Progress tracker" class="progress-tracker" style="margin-bottom:1.5rem;">
+            <ol id="progress-steps"
+                style="display:flex;gap:1rem;list-style:none;padding:0;justify-content:center;align-items:center;">
+                <li><button class="progress-step" aria-label="Part 1: Video & Check" data-step="1">1</button></li>
+                <li><button class="progress-step" aria-label="Part 2: Component Hunt" data-step="2">2</button></li>
+                <li><button class="progress-step" aria-label="Part 3: Observation" data-step="3">3</button></li>
+                <li><button class="progress-step" aria-label="Part 4: Academy Video" data-step="4">4</button></li>
+                <li><button class="progress-step" aria-label="Part 5: Reflection" data-step="5">5</button></li>
+            </ol>
+            <div id="progress-bar" aria-hidden="true"
+                style="height:8px;background:var(--surface-accent);border-radius:4px;margin:0.5rem auto 0;width:80%;max-width:400px;overflow:hidden;">
+                <div id="progress-bar-inner"
+                    style="height:100%;background:var(--accent);width:0%;transition:width 0.4s;"></div>
+            </div>
+        </nav>
+        <section class="day-list" aria-label="5-day 3D printing lab guide">
+            <!-- Part 1: Intro Video & Check for Understanding -->
+            <article class="day-card" data-part="1" tabindex="0" aria-labelledby="part1-title">
+                <div class="day-header">
+                    <span class="icon" aria-hidden="true">🎬</span>
+                    <h2 class="day-title">Part 1 – Introduction to 3D Printing</h2>
+                    <span class="pill required-badge" aria-label="Required activity">Required</span>
+                </div>
+                <div class="sentence-starters" aria-label="Sentence starters">
+                    <strong>Sentence starters:</strong>
+                    <ul>
+                        <li>I learned that...</li>
+                        <li>One thing that surprised me was...</li>
+                        <li>Now I wonder...</li>
+                    </ul>
+                </div>
+                <p class="goal"><strong>Goal:</strong> Watch the introduction video and check your understanding with
+                    interactive questions.</p>
+                <div class="media-embed" aria-label="Intro video">
+                    <div class="video-wrap">
+                        <iframe src="https://www.youtube.com/embed/HlvK6DLwCz4?rel=0"
+                            title="How 3D Printers Work - Lesson Kickoff" loading="lazy"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    </div>
+                </div>
+                <form class="interactive-quiz" id="quiz-part1" aria-label="Check for Understanding Quiz">
+                    <fieldset>
+                        <legend>Check for Understanding</legend>
+                        <div class="quiz-question" id="q1">
+                            <label for="q1a">1. What is the main difference between additive and subtractive
+                                manufacturing?</label><br>
+                            <select id="q1a" aria-describedby="q1-feedback">
+                                <option value="">Select an answer</option>
+                                <option value="a">Additive builds up material, subtractive removes material</option>
+                                <option value="b">Additive removes material, subtractive builds up material</option>
+                                <option value="c">Both are the same</option>
+                            </select>
+                            <span id="q1-feedback" class="quiz-feedback" aria-live="polite"></span>
+                        </div>
+                        <div class="quiz-question" id="q2" style="margin-top:1rem;">
+                            <label>2. Which of these is a key component of the Bambu A1 printer? (Select all that
+                                apply)</label><br>
+                            <input type="checkbox" id="q2a" value="nozzle"> <label for="q2a">Nozzle</label>
+                            <input type="checkbox" id="q2b" value="bed"> <label for="q2b">Print Bed</label>
+                            <input type="checkbox" id="q2c" value="steeringwheel"> <label for="q2c">Steering
+                                Wheel</label>
+                            <input type="checkbox" id="q2d" value="ams"> <label for="q2d">AMS</label>
+                            <span id="q2-feedback" class="quiz-feedback" aria-live="polite"></span>
+                        </div>
+                        <button type="button" id="quiz1-submit" style="margin-top:1rem;">Check Answers</button>
+                        <span id="quiz1-overall-feedback" class="quiz-feedback" aria-live="polite"
+                            style="display:block;margin-top:0.5rem;"></span>
+                    </fieldset>
+                </form>
+            </article>
+
+            <!-- Part 2: Printer Introduction & Comparison -->
+            <article class="day-card" data-part="2" tabindex="0" aria-labelledby="part2-title">
+                <div class="day-header">
+                    <span class="icon" aria-hidden="true">🖼️</span>
+                    <h2 class="day-title">Part 2 – Meet the Bambu A1 Printer</h2>
+                    <span class="pill required-badge" aria-label="Required activity">Required</span>
+                </div>
+                <div class="sentence-starters" aria-label="Sentence starters">
+                    <strong>Sentence starters:</strong>
+                    <ul>
+                        <li>I think this part is called...</li>
+                        <li>I noticed that...</li>
+                    </ul>
+                </div>
+                <p class="goal"><strong>Goal:</strong> Identify the major Bambu A1 printer components and describe each
+                    part’s function.</p>
+                <div class="printer-hunt" style="text-align:center;margin-bottom:1rem;">
+                    <img src="assets/a1_printer.jpg" alt="Bambu Lab A1 printer with clickable parts" id="a1-hunt-img"
+                        style="width:100%;max-width:400px;border-radius:1rem;box-shadow:0 2px 8px #0002;position:relative;"
+                        usemap="#a1map" aria-describedby="hunt-desc">
+                    <map name="a1map">
+                        <area shape="circle" coords="120,80,30" href="#" alt="Nozzle" data-part="Nozzle" tabindex="0">
+                        <area shape="rect" coords="60,200,200,240" href="#" alt="Print Bed" data-part="Print Bed"
+                            tabindex="0">
+                        <area shape="rect" coords="250,50,350,120" href="#" alt="AMS" data-part="AMS" tabindex="0">
+                        <area shape="rect" coords="10,10,80,60" href="#" alt="Touchscreen" data-part="Touchscreen"
+                            tabindex="0">
+                        <area shape="rect" coords="180,10,390,40" href="#" alt="Frame/Gantry" data-part="Frame/Gantry"
+                            tabindex="0">
+                    </map>
+                    <div id="hunt-desc" class="sr-only">Click or tab to a part of the printer image to learn about it.
+                    </div>
+                    <div id="hunt-info" aria-live="polite" style="margin-top:1rem;font-weight:bold;"></div>
+                </div>
+                <div class="printer-similarity-activity" style="margin-top: 1.5rem;">
+                    <strong>Activity:</strong> List 5 components you can identify and describe their function.<br>
+                    <textarea rows="4" id="component-list"
+                        style="width: 100%; margin-top: 0.5rem; border-radius: 0.5rem; border: 1.5px solid var(--border); padding: 0.5rem;"></textarea>
+                    <div style="margin-top:0.5rem;">
+                        <a href="https://bambulab.com/en-us/support/academy/4/course/987021628962332672/chapter/60"
+                            target="_blank" rel="noopener noreferrer">Bambu Academy Components Reference</a> |
+                        <a href="https://bambulab.com/en-us/support/academy/4/course/987021628962332672/chapter/64"
+                            target="_blank" rel="noopener noreferrer">AMS Guide</a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Part 3: Observation & Reflection -->
+            <article class="day-card" data-part="3" tabindex="0" aria-labelledby="part3-title">
+                <div class="day-header">
+                    <span class="icon" aria-hidden="true">👀</span>
+                    <h2 class="day-title">Part 3 – Observe a Demo Print</h2>
+                    <span class="pill optional-badge" aria-label="Optional activity">Optional</span>
+                </div>
+                <div class="sentence-starters" aria-label="Sentence starters">
+                    <strong>Sentence starters:</strong>
+                    <ul>
+                        <li>I noticed that...</li>
+                        <li>I wonder if...</li>
+                        <li>It was interesting when...</li>
+                    </ul>
+                </div>
+                <p class="goal"><strong>Goal:</strong> Observe a demonstration print and document your observations and
+                    questions.</p>
+                <div class="observation-fields" style="display: flex; flex-wrap: wrap; gap: 2rem;">
+                    <div style="flex: 1 1 300px;">
+                        <strong>3 Things I Noticed:</strong>
+                        <ol>
+                            <li><input type="text" style="width: 90%; margin-bottom: 0.5rem;" /></li>
+                            <li><input type="text" style="width: 90%; margin-bottom: 0.5rem;" /></li>
+                            <li><input type="text" style="width: 90%; margin-bottom: 0.5rem;" /></li>
+                        </ol>
+                    </div>
+                    <div style="flex: 1 1 300px;">
+                        <strong>3 Things I Wonder:</strong>
+                        <ol>
+                            <li><input type="text" style="width: 90%; margin-bottom: 0.5rem;" /></li>
+                            <li><input type="text" style="width: 90%; margin-bottom: 0.5rem;" /></li>
+                            <li><input type="text" style="width: 90%; margin-bottom: 0.5rem;" /></li>
+                        </ol>
+                    </div>
+                </div>
+                <div style="margin-top:1rem;">
+                    <a href="https://bambulab.com/en-us/support/academy/4/course/987021628962332672/chapter/63"
+                        target="_blank" rel="noopener noreferrer">Load a Spool Guide</a>
+                </div>
+                <button type="button" id="copy-notebook-btn" aria-label="Copy your answers to notebook"
+                    style="margin-top:1.5rem;">Copy to Notebook</button>
+            </article>
+
+            <!-- Part 4: Bambu Academy Video & Check -->
+            <article class="day-card" data-part="4">
+                <div class="day-header">
+                    <span class="icon" aria-hidden="true">🎓</span>
+                    <h2 class="day-title">Part 4 – Bambu Academy: Beginner Course</h2>
+                    <span class="pill optional-badge" aria-label="Optional activity">Optional</span>
+                </div>
+                <p class="goal"><strong>Goal:</strong> Watch the Bambu Academy beginner course video and answer the
+                    check for understanding questions.</p>
+                <div class="media-embed" aria-label="Bambu Academy video">
+                    <div class="video-wrap">
+                        <!-- Placeholder: Replace with actual Bambu Academy video if available -->
+                        <iframe src="https://www.youtube.com/embed/q3uGDrHxnC4?si=3W_sVpzxaBJ0GpQD"
+                            title="Bambu Lab Printer Series Overview" loading="lazy"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div class="interactive-quiz" id="quiz-part4">
+                    <!-- Placeholder: 5 interactive questions, 1 at a time (MCQ, multi-select, drag-drop) -->
+                    <p><em>Check for Understanding: Answer the questions below. (Interactive quiz placeholder)</em></p>
+                </div>
+                <div style="margin-top:1rem;">
+                    <a href="https://bambulab.com/en-us/support/academy/4" target="_blank"
+                        rel="noopener noreferrer">Beginner Bambu Lab course module</a>
+                </div>
+            </article>
+
+            <!-- Part 5: Optional Demo & Reflection -->
+            <article class="day-card" data-part="5">
+                <div class="day-header">
+                    <span class="icon" aria-hidden="true">💬</span>
+                    <h2 class="day-title">Part 5 – Optional Demo & Reflection</h2>
+                    <span class="pill optional-badge" aria-label="Optional activity">Optional</span>
+                </div>
+                <div class="sentence-starters" aria-label="Sentence starters">
+                    <strong>Sentence starters:</strong>
+                    <ul>
+                        <li>I still wonder...</li>
+                        <li>I'm curious about...</li>
+                        <li>Can you explain more about...</li>
+                    </ul>
+                </div>
+                <p class="goal"><strong>Goal:</strong> Explore an optional demo print and reflect on your learning.</p>
+                <div class="media-embed" aria-label="Optional demo video">
+                    <div class="video-wrap">
+                        <!-- Placeholder: Optional demo video or model link -->
+                        <a href="https://makerworld.com/en/models/807526-original-rubber-ducky?from=search#profileId-748243"
+                            target="_blank" rel="noopener noreferrer">Rubber Duck Model (optional demo file)</a>
+                    </div>
+                </div>
+                <div class="interactive-quiz" id="quiz-part5">
+                    <!-- Placeholder: Reflection prompt -->
+                    <p><em>Reflection: What was the most surprising thing you learned today? (Reflection prompt
+                            placeholder)</em></p>
+                </div>
+            </article>
+        </section>
+        <!-- Preview Box (1) -->
+        <section class="preview-box" aria-label="Preview of today's activities">
+            <h2><span class="icon" aria-hidden="true">🔎</span> Today's Preview</h2>
+            <ul>
+                <li>Learn about 3D printers and their parts</li>
+                <li>Explore the classroom printer with a hands-on component hunt</li>
+                <li>Test your knowledge with a quick quiz</li>
+                <li>Track your progress and reflect on your learning</li>
+            </ul>
+        </section>
+        <!-- Help Section (7) -->
+        <section class="day-card help-section" aria-label="Help and Support">
+            <div class="day-header">
+                <span class="icon" aria-hidden="true">🆘</span>
+                <h2 class="day-title">Need Help?</h2>
+            </div>
+            <ul>
+                <li><strong>FAQ:</strong> <a href="#" aria-label="Frequently Asked Questions">Frequently Asked
+                        Questions</a></li>
+                <li><strong>Ask a Teacher:</strong> <a href="mailto:teacher@example.com"
+                        aria-label="Email your teacher">Email your teacher</a></li>
+                <li><strong>Support Links:</strong> <a href="https://www.autismspeaks.org/tool-kit-examples"
+                        target="_blank" rel="noopener" aria-label="Autism support resources">Autism Support
+                        Resources</a></li>
+            </ul>
+        </section>
+        <!-- Quiet Mode Toggle (6) -->
+        <button id="quiet-mode-toggle" class="quiet-toggle" aria-pressed="false" aria-label="Toggle quiet mode">Quiet
+            Mode</button>
+    </main>
+    <script>
+        (function () {
+            // Theme logic
+            const themeSelector = document.getElementById('theme-selector');
+            const themeStorageKey = 'gci-3d-printing-theme-v1';
+            function applyTheme(theme) {
+                const normalizedTheme = ['dark', 'light', 'high-contrast'].includes(theme) ? theme : 'dark';
+                if (normalizedTheme === 'dark') {
+                    document.documentElement.removeAttribute('data-theme');
+                } else {
+                    document.documentElement.setAttribute('data-theme', normalizedTheme);
+                }
+                if (themeSelector) {
+                    themeSelector.value = normalizedTheme;
+                }
+                localStorage.setItem(themeStorageKey, normalizedTheme);
+            }
+            function restoreTheme() {
+                const savedTheme = localStorage.getItem(themeStorageKey) || 'dark';
+                applyTheme(savedTheme);
+            }
+            if (themeSelector) {
+                themeSelector.addEventListener('change', function () {
+                    applyTheme(this.value);
+                });
+            }
+            restoreTheme();
+
+            // Progress tracker logic
+            const steps = document.querySelectorAll('.day-card');
+            const progressBtns = document.querySelectorAll('.progress-step');
+            const progressBarInner = document.getElementById('progress-bar-inner');
+            let completedSteps = Array(steps.length).fill(false);
+            function updateProgressBar() {
+                const completed = completedSteps.filter(Boolean).length;
+                const percent = (completed / steps.length) * 100;
+                progressBarInner.style.width = percent + '%';
+                progressBtns.forEach((btn, i) => {
+                    btn.setAttribute('aria-pressed', completedSteps[i]);
+                    btn.style.background = completedSteps[i] ? 'var(--accent)' : 'var(--surface-accent)';
+                    btn.style.color = completedSteps[i] ? '#fff' : 'var(--accent)';
+                });
+            }
+            progressBtns.forEach((btn, i) => {
+                btn.addEventListener('click', () => {
+                    steps[i].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                });
+            });
+            // Mark step complete on quiz, hunt, or copy
+            function markStepComplete(idx) {
+                completedSteps[idx] = true;
+                updateProgressBar();
+            }
+            updateProgressBar();
+
+            // Quiz logic (Part 1)
+            const quiz1Submit = document.getElementById('quiz1-submit');
+            if (quiz1Submit) {
+                quiz1Submit.addEventListener('click', function () {
+                    let correct = 0;
+                    // Q1
+                    const q1 = document.getElementById('q1a');
+                    const q1f = document.getElementById('q1-feedback');
+                    if (q1.value === 'a') { q1f.textContent = 'Correct!'; correct++; } else if (q1.value) { q1f.textContent = 'Incorrect.'; } else { q1f.textContent = ''; }
+                    // Q2
+                    const q2f = document.getElementById('q2-feedback');
+                    const cb = ['q2a', 'q2b', 'q2c', 'q2d'].map(id => document.getElementById(id));
+                    const checked = cb.map(c => c.checked);
+                    if (checked[0] && checked[1] && !checked[2] && checked[3]) { q2f.textContent = 'Correct!'; correct++; } else { q2f.textContent = 'Incorrect.'; }
+                    // Overall
+                    const overall = document.getElementById('quiz1-overall-feedback');
+                    if (q1.value && (cb[0].checked || cb[1].checked || cb[2].checked || cb[3].checked)) {
+                        if (correct === 2) { overall.textContent = 'All correct!'; markStepComplete(0); } else { overall.textContent = 'Try again!'; }
+                    } else {
+                        overall.textContent = 'Please answer all questions.';
+                    }
+                });
+            }
+
+            // Interactive Component Hunt (Part 2)
+            const huntImg = document.getElementById('a1-hunt-img');
+            const huntInfo = document.getElementById('hunt-info');
+            if (huntImg && huntImg.useMap) {
+                const partInfo = {
+                    'Nozzle': 'The nozzle melts and deposits filament to build up each layer.',
+                    'Print Bed': 'The print bed is the surface where prints are built.',
+                    'AMS': 'The AMS (Automatic Material System) holds and feeds filament.',
+                    'Touchscreen': 'The touchscreen is used to control the printer.',
+                    'Frame/Gantry': 'The frame/gantry provides structure and moves the print head.'
+                };
+                huntImg.addEventListener('click', e => e.preventDefault());
+                document.querySelectorAll('area[data-part]').forEach(area => {
+                    area.addEventListener('click', e => {
+                        e.preventDefault();
+                        const part = area.getAttribute('data-part');
+                        huntInfo.textContent = part + ': ' + partInfo[part];
+                        markStepComplete(1);
+                    });
+                    area.addEventListener('keydown', e => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            area.click();
+                        }
+                    });
+                });
+            }
+
+            // Copy to Notebook (Part 3)
+            const copyBtn = document.getElementById('copy-notebook-btn');
+            if (copyBtn) {
+                copyBtn.addEventListener('click', function () {
+                    const noticed = Array.from(document.querySelectorAll('[data-part="3"] .observation-fields ol:first-child input')).map(i => i.value).filter(Boolean);
+                    const wonder = Array.from(document.querySelectorAll('[data-part="3"] .observation-fields ol:last-child input')).map(i => i.value).filter(Boolean);
+                    const compList = document.getElementById('component-list')?.value || '';
+                    let text = 'Day 1 Reflection\n';
+                    text += '3 Things I Noticed:\n' + noticed.join('\n') + '\n';
+                    text += '3 Things I Wonder:\n' + wonder.join('\n') + '\n';
+                    text += 'Component List:\n' + compList + '\n';
+                    navigator.clipboard.writeText(text).then(() => {
+                        copyBtn.textContent = 'Copied!';
+                        setTimeout(() => copyBtn.textContent = 'Copy to Notebook', 1200);
+                        markStepComplete(2);
+                    });
+                });
+            }
+        })();
+    </script>
+</body>
+
+</html>

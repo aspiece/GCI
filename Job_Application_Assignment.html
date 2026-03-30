@@ -1,0 +1,1589 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Job Application Assignment — Student Assignment</title>
+    <link rel="icon" href="assets/job-application-favicon.svg" type="image/svg+xml" />
+    <link rel="shortcut icon" href="assets/job-application-favicon.svg" type="image/svg+xml" />
+    <style>
+        :root {
+            --bg: #0b0c0f;
+            --card: #12141a;
+            --muted: #c4ccda;
+            --text: #e8ecf2;
+            --primary: #4f8cff;
+            --primary-weak: #2a5bd7;
+            --accent: #22b07d;
+            --danger: #ff6b6b;
+            --border: #1e2230;
+            --shadow: 0 6px 24px rgba(0, 0, 0, 0.35), 0 2px 6px rgba(0, 0, 0, 0.25);
+        }
+
+        [data-theme="light"] {
+            --bg: #f5f5f5;
+            --card: #ffffff;
+            --muted: #4a4a4a;
+            --text: #1a1a1a;
+            --primary: #0052cc;
+            --primary-weak: #003fa3;
+            --accent: #28a745;
+            --danger: #dc3545;
+            --border: #d0d0d0;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        [data-theme="high-contrast"] {
+            --bg: #000000;
+            --card: #000000;
+            --muted: #f2f2f2;
+            --text: #ffffff;
+            --primary: #00ffff;
+            --primary-weak: #00ccff;
+            --accent: #00cc00;
+            --danger: #ff0000;
+            --border: #ffffff;
+            --shadow: 0 2px 4px rgba(255, 255, 255, 0.3);
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+            background: radial-gradient(1200px 800px at 90% -10%, #1a2235 0%, var(--bg) 35%), radial-gradient(1000px 600px at -10% 110%, #16202e 0%, transparent 40%) var(--bg);
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        [data-theme="light"] body {
+            background: #f5f5f5;
+        }
+
+        [data-theme="high-contrast"] body {
+            background: #000000;
+        }
+
+        .wrap {
+            max-width: 960px;
+            margin: 32px auto;
+            padding: 0 16px;
+        }
+
+        .skip-link {
+            position: absolute;
+            left: 12px;
+            top: -48px;
+            background: var(--card);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 10px;
+            z-index: 2000;
+            text-decoration: none;
+        }
+
+        .skip-link:focus {
+            top: 12px;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .title {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .title h1 {
+            font-size: 22px;
+            margin: 0;
+            letter-spacing: 0.2px;
+        }
+
+        .title p {
+            margin: 0;
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: flex-start;
+            justify-content: flex-end;
+            flex: 1;
+        }
+
+        select,
+        button {
+            background: var(--card);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 14px;
+            min-height: 44px;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        button:focus-visible,
+        select:focus-visible,
+        a:focus-visible,
+        input:focus-visible {
+            outline: 3px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        button.primary {
+            background: linear-gradient(180deg, var(--primary) 0%, var(--primary-weak) 100%);
+            border: none;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .card {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.0));
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 14px;
+        }
+
+        .section-title {
+            margin: 8px 0 6px;
+            font-size: 18px;
+        }
+
+        p,
+        li {
+            line-height: 1.55;
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
+        .badge {
+            padding: 3px 8px;
+            border-radius: 999px;
+            background: #1a2332;
+            border: 1px solid #213147;
+            color: #a8c1ff;
+            display: inline-block;
+            font-size: 12px;
+        }
+
+        [data-theme="high-contrast"] .badge {
+            background: #000000;
+            border-color: #ffffff;
+            color: #ffffff;
+        }
+
+        .progress {
+            height: 8px;
+            background: #0f1117;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            margin: 16px 0 10px;
+        }
+
+        .progress>div {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #5fa8ff, #22b07d);
+        }
+
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .top-nav .left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .edge-nav-btn {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1000;
+            min-width: 96px;
+            min-height: 44px;
+            box-shadow: var(--shadow);
+        }
+
+        input[type="checkbox"],
+        input[type="radio"] {
+            width: 18px;
+            height: 18px;
+        }
+
+        #projectPrevBtn {
+            left: 12px;
+        }
+
+        #projectNextBtn {
+            right: 12px;
+        }
+
+        .project-page {
+            display: none;
+        }
+
+        .project-page.active {
+            display: block;
+        }
+
+        .project-page[hidden] {
+            display: none;
+        }
+
+        iframe {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-top: 8px;
+            background: #000;
+        }
+
+        .video-embed {
+            margin-top: 8px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .video-poster {
+            position: relative;
+            width: 100%;
+            padding: 0;
+            border: 0;
+            border-radius: 0;
+            background: #000;
+            cursor: pointer;
+            display: block;
+        }
+
+        .video-poster img {
+            display: block;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+        }
+
+        .video-play {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 70px;
+            height: 50px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.72);
+            color: #fff;
+            display: grid;
+            place-items: center;
+            font-size: 26px;
+            line-height: 1;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .video-watch {
+            position: absolute;
+            left: 50%;
+            bottom: 12px;
+            transform: translateX(-50%);
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.24);
+            background: rgba(0, 0, 0, 0.68);
+            color: #fff;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            pointer-events: none;
+        }
+
+        .video-poster:hover .video-watch,
+        .video-poster:focus-visible .video-watch {
+            opacity: 1;
+        }
+
+        .video-poster:hover .video-play,
+        .video-poster:focus-visible .video-play {
+            transform: translate(-50%, -50%) scale(1.05);
+            background: rgba(0, 0, 0, 0.84);
+        }
+
+        @media (hover: none),
+        (pointer: coarse) {
+            .video-watch {
+                opacity: 1;
+                font-size: 13px;
+                padding: 8px 12px;
+                font-weight: 700;
+            }
+        }
+
+        .quiz-q {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .quiz-q legend {
+            font-weight: 600;
+            padding: 0 4px;
+        }
+
+        .video-check {
+            margin-top: 10px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .video-check h3 {
+            margin: 0 0 8px;
+            font-size: 15px;
+        }
+
+        .video-check .quick-feedback {
+            margin-top: 8px;
+            padding: 8px 10px;
+            border-left: 4px solid var(--primary);
+            border-radius: 6px;
+            background: rgba(79, 140, 255, 0.12);
+            display: none;
+        }
+
+        .video-check .quick-feedback.pass {
+            border-left-color: var(--accent);
+            background: rgba(34, 176, 125, 0.12);
+        }
+
+        .video-check .quick-feedback.fail {
+            border-left-color: var(--danger);
+            background: rgba(255, 107, 107, 0.12);
+        }
+
+        .checklist {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0 0;
+        }
+
+        .checklist li {
+            margin: 8px 0;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.02);
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            transition: background-color 0.15s ease, border-color 0.15s ease;
+        }
+
+        .checklist li:hover,
+        .checklist li:focus-within {
+            background: rgba(79, 140, 255, 0.10);
+            border-color: var(--primary);
+        }
+
+        .checklist input[type="checkbox"] {
+            margin-top: 1px;
+            transform: none;
+        }
+
+        .checklist label {
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .example-block {
+            margin-top: 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .pill {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            padding: 2px 7px;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.03);
+            font-size: 12px;
+        }
+
+        .rubric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 10px;
+        }
+
+        .rubric-item {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .page-image-wrap {
+            margin-top: 10px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .page-image {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .page-image-caption {
+            margin-top: 6px;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        @media (max-width: 640px) {
+            .page-image {
+                max-height: 220px;
+                object-fit: cover;
+                object-position: center;
+            }
+
+            .edge-nav-btn {
+                min-width: 78px;
+                padding: 8px 10px;
+            }
+
+            #projectPrevBtn {
+                left: 8px;
+            }
+
+            #projectNextBtn {
+                right: 8px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        [data-theme="high-contrast"] a {
+            text-decoration: underline;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <a class="skip-link" href="#mainContent">Skip to main content</a>
+    <div class="wrap">
+        <header>
+            <div class="title">
+                <h1>Job Application Assignment</h1>
+            </div>
+            <div class="controls">
+                <label for="themeSelector" class="sr-only">Choose theme</label>
+                <select id="themeSelector" title="Theme">
+                    <option value="dark">Dark</option>
+                    <option value="light">Light</option>
+                    <option value="high-contrast">High Contrast</option>
+                </select>
+                <button id="resetProgress">Reset Progress</button>
+            </div>
+        </header>
+
+        <main id="mainContent" tabindex="-1">
+            <div class="card">
+                <div class="top-nav">
+                    <div class="left">
+                        <span class="badge" id="projectStepCounter" aria-live="polite">Part 1 of 5</span>
+                        <span class="muted">Use the side Back/Next buttons or keyboard arrows (← →).</span>
+                    </div>
+                </div>
+                <div class="progress">
+                    <div id="projectProgressBar" role="progressbar" aria-label="Project completion progress"
+                        aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+                </div>
+                <p id="projectProgressText" class="muted" aria-live="polite">Progress: 0/5 pages completed</p>
+            </div>
+
+            <button id="projectPrevBtn" class="edge-nav-btn" aria-label="Previous page" aria-controls="mainContent">◀
+                Back</button>
+            <button id="projectNextBtn" class="edge-nav-btn primary" aria-label="Next page"
+                aria-controls="mainContent">Next ▶</button>
+
+            <section class="project-page active" data-project-page="1" aria-label="Starter Page">
+                <div class="card">
+                    <div class="badge">Part 1: Starter</div>
+                    <h2 class="section-title">Project Scenario and Expectations</h2>
+                    <p>You are preparing a real-world job application packet for a position you are genuinely interested
+                        in.
+                    </p>
+                    <h3>Step 1: Choose and Save a Job Posting</h3>
+                    <ul>
+                        <li>Find one entry-level first job posting you want to target.</li>
+                        <li>Copy/save the posting link and identify key skills, qualifications, and keywords.</li>
+                        <li>Record at least 5 exact keywords from the posting to reuse in your resume and cover letter
+                            when accurate.</li>
+                        <li>Use that posting to tailor your resume and cover letter in the next sections.</li>
+                    </ul>
+                    <p class="muted"><strong>Time guide:</strong> Watch all 3 videos + complete quick checks (25–35
+                        min), job posting selection + keyword extraction (10–15 min), resume draft (20–25 min), ATS
+                        revision (10–15 min), cover letter draft (15–20 min), final
+                        proofreading/export/submission checks (8–12 min).</p>
+                    <div class="example-block">
+                        <h3 style="margin-top:0;">Before You Click Next</h3>
+                        <ul>
+                            <li>Record the exact <strong>job title</strong>.</li>
+                            <li>Record the <strong>company name</strong>.</li>
+                            <li>Save the <strong>job posting link</strong> so you can reference it while writing.</li>
+                        </ul>
+                        <p class="muted" style="margin-bottom:0;"><strong>Keyword example:</strong> If the posting says
+                            “customer communication,” include that exact phrase where it truthfully matches your
+                            experience.
+                        </p>
+                    </div>
+                    <h3>Project Expectations</h3>
+                    <ul>
+                        <li>Create one polished 2-page packet: resume (page 1) and cover letter (page 2).</li>
+                        <li>Tailor both documents to your selected posting.</li>
+                        <li>Submit both `.docx` and `.pdf` versions of your final packet.</li>
+                    </ul>
+                    <h3 style="margin-top:12px;">What to Submit</h3>
+                    <ul>
+                        <li>One final Word file: <span
+                                class="pill">Lastname_Firstname_JobApplicationAssignment.docx</span>
+                        </li>
+                        <li>One final PDF file: <span
+                                class="pill">Lastname_Firstname_JobApplicationAssignment.pdf</span>
+                        </li>
+                        <li>Both files must contain your full 2-page packet (resume + cover letter).</li>
+                    </ul>
+                    <p class="muted">Estimated time: 90–120 minutes total.</p>
+                    <h3>Suggested Websites to Find a First Job Posting</h3>
+                    <ul>
+                        <li><a href="https://www.indeed.com" target="_blank" rel="noopener">Indeed</a></li>
+                        <li><a href="https://www.linkedin.com/jobs" target="_blank" rel="noopener">LinkedIn Jobs</a>
+                        </li>
+                        <li><a href="https://www.glassdoor.com/Job" target="_blank" rel="noopener">Glassdoor</a></li>
+                        <li><a href="https://www.ziprecruiter.com/jobs-search" target="_blank"
+                                rel="noopener">ZipRecruiter</a></li>
+                        <li><a href="https://www.google.com/search?q=entry-level+first+jobs+near+me" target="_blank"
+                                rel="noopener">Google Job Search</a></li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>Starter Checklist</h3>
+                    <ul class="checklist student-checklist">
+                        <li><input type="checkbox" data-key="job_post_selected" /> <label>I selected a real job posting
+                                to
+                                target.</label></li>
+                        <li><input type="checkbox" data-key="job_post_keywords" /> <label>I identified key
+                                skills/keywords
+                                from that posting.</label></li>
+                        <li><input type="checkbox" class="page-complete-checkbox" data-key="page_complete_1" /> <label>I
+                                completed this page.</label></li>
+                    </ul>
+                    <div class="page-image-wrap">
+                        <img class="page-image" src="assets/career-starter-hero.svg"
+                            alt="Professional career planning workspace illustration for the project starter page." />
+                    </div>
+                    <p class="page-image-caption">Project kickoff: use one real posting as your reference for every
+                        section.
+                    </p>
+                </div>
+            </section>
+
+            <section class="project-page" data-project-page="2" aria-label="Resume Page">
+                <div class="card">
+                    <div class="badge">Part 2: Resume</div>
+                    <h2 class="section-title">Resume Learning + Application</h2>
+                    <p class="muted">Build a clear, one-page resume tailored to your selected job posting.</p>
+                </div>
+
+                <div class="card">
+                    <h3>Resume Video</h3>
+                    <div class="video-embed" data-video-id="NRTs4HsICI8" data-video-title="Resume Tips Video">
+                        <button type="button" class="video-poster" aria-label="Play Resume Tips Video">
+                            <img src="https://img.youtube.com/vi/NRTs4HsICI8/maxresdefault.jpg"
+                                alt="Resume Tips Video preview" loading="lazy" />
+                            <span class="video-play" aria-hidden="true">▶</span>
+                            <span class="video-watch" aria-hidden="true">Watch video</span>
+                        </button>
+                    </div>
+                    <p><a href="https://youtu.be/NRTs4HsICI8?si=euoYnZ9CRxK3GwKi" target="_blank" rel="noopener">Open
+                            video
+                            in YouTube</a></p>
+
+                    <div class="video-check" aria-label="Resume video quick check">
+                        <h3>Quick Check: Resume Tips</h3>
+                        <form id="resumeQuickCheck">
+                            <fieldset class="quiz-q resume-step">
+                                <legend>1) About how long did the video say many recruiters spend on an initial resume
+                                    scan?
+                                </legend>
+                                <label><input type="radio" name="rq1" value="a" /> Around 10 seconds.</label><br />
+                                <label><input type="radio" name="rq1" value="b" /> Around 2 minutes.</label>
+                            </fieldset>
+                            <fieldset class="quiz-q resume-step">
+                                <legend>2) Which formatting choice matches the video guidance?</legend>
+                                <label><input type="radio" name="rq2" value="a" /> Add photos and colorful graphics to
+                                    stand
+                                    out.</label><br />
+                                <label><input type="radio" name="rq2" value="b" /> Keep it clean: standard fonts,
+                                    consistent
+                                    headings, no graphics/photos.</label>
+                            </fieldset>
+                            <fieldset class="quiz-q resume-step">
+                                <legend>3) If you have little or no paid experience, what should you include?</legend>
+                                <label><input type="radio" name="rq3" value="a" /> Only paid jobs.</label><br />
+                                <label><input type="radio" name="rq3" value="b" /> Volunteer work, projects,
+                                    extracurriculars, and part-time/freelance work.</label>
+                            </fieldset>
+                            <fieldset class="quiz-q resume-step">
+                                <legend>4) How should you tailor skills from a job description?</legend>
+                                <label><input type="radio" name="rq4" value="a" /> Use the same language from the
+                                    posting
+                                    when it accurately matches your skills.</label><br />
+                                <label><input type="radio" name="rq4" value="b" /> Keep one generic resume with no
+                                    wording
+                                    changes.</label>
+                            </fieldset>
+                            <div class="controls" style="margin-top:8px;justify-content:flex-start;">
+                                <button type="button" id="resumePrev">Previous</button>
+                                <button type="button" id="resumeNext">Next</button>
+                                <button type="button" id="gradeResumeQuick" class="primary">Check Answers</button>
+                                <span class="muted" id="resumeCounter"></span>
+                            </div>
+                        </form>
+                        <div id="resumeQuickFeedback" class="quick-feedback"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Resume Application Requirements</h3>
+                    <ul>
+                        <li>Name and contact information (email, phone, city/state).</li>
+                        <li>Education section with school, program/grade level, and relevant coursework.</li>
+                        <li>Skills section tailored to the target posting.</li>
+                        <li>Experience section (paid work, volunteer work, projects, activities, or leadership).</li>
+                        <li>If this is your first job, emphasize school/community experience and transferable skills.
+                        </li>
+                    </ul>
+                    <h3>AI + Resume Building (Background)</h3>
+                    <p class="muted">AI tools can help brainstorm stronger wording, improve action verbs, and match
+                        keywords from a job posting. AI should support your writing process, not replace your personal
+                        experience.</p>
+                    <ul>
+                        <li>Use AI to revise and organize what you already did.</li>
+                        <li>Do not let AI invent jobs, dates, skills, or accomplishments.</li>
+                        <li>Keep your final resume honest, specific, and in your own voice.</li>
+                    </ul>
+                    <h3>Optional Extension Resources</h3>
+                    <p class="muted">Explore one or more of these resources for extra help with AI-assisted resume
+                        writing:</p>
+                    <ul>
+                        <li><a href="https://capd.mit.edu/resources/ai-uses-for-resume-writing/" target="_blank"
+                                rel="noopener">MIT CAPD: AI Uses for Resume Writing</a></li>
+                        <li><a href="https://www.linkedin.com/pulse/should-ai-write-your-resume-lynda-spiegel-pj2je/"
+                                target="_blank" rel="noopener">LinkedIn: Should AI Write Your Resume?</a></li>
+                        <li><a href="https://www.aboutamazon.com/news/workplace/artificial-intelligence-resume-builder-amazon-job-interviews"
+                                target="_blank" rel="noopener">Amazon: AI Resume Builder and Job Interviews</a></li>
+                        <li><a href="https://mitsloan.mit.edu/ideas-made-to-matter/job-seekers-ai-boosted-resumes-more-likely-to-be-hired"
+                                target="_blank" rel="noopener">MIT Sloan: AI-Boosted Resumes and Hiring Outcomes</a>
+                        </li>
+                    </ul>
+                    <h3>Resume Example (Fictional)</h3>
+                    <p><a href="wordprojectfiles/Lastname_Firstname_Resume_Template.docx" download>Download Resume
+                            Template with Example Content (.docx)</a></p>
+                    <p class="muted">Using Google Docs? <a
+                            href="https://support.google.com/drive/answer/2424368?hl=en&co=GENIE.Platform%3DDesktop&sjid=17720879093965659103-NC&oco=0"
+                            target="_blank" rel="noopener">Upload a Word document to Google Docs</a></p>
+                    <p class="muted">Replace all sample text with your own information before submitting.</p>
+                    <div class="example-block">
+                        <p><strong>Maya Johnson</strong> | maya.johnson@email.com | (555) 018-2034 | Charlotte, NC</p>
+                        <p><strong>Target Role:</strong> Customer Service Associate (Part-Time)</p>
+                        <p><strong>Professional Summary:</strong> Service-focused high school senior seeking a Customer
+                            Service Associate first job opportunity. Strong in customer communication, problem solving,
+                            and teamwork with experience supporting students and families through school and community
+                            volunteer roles.
+                        </p>
+                        <p><strong>Core Skills:</strong> Customer Service, Communication, Team Collaboration, Cash
+                            Handling Basics, Point-of-Sale Familiarity, Time Management, Organization, Problem Solving
+                        </p>
+                        <p><strong>Education:</strong> Westbrook High School, Charlotte, NC — Expected Graduation 2027
+                        </p>
+                        <p><strong>Relevant Coursework:</strong> Business Technology, Computer Applications,
+                            Professional
+                            Communication</p>
+                        <p><strong>Experience:</strong></p>
+                        <ul>
+                            <li><strong>Student Front Office Volunteer</strong> | Westbrook High School | 2025–Present
+                                <ul>
+                                    <li>Greeted students, families, and visitors and helped direct questions to the
+                                        correct office staff during busy periods.</li>
+                                    <li>Answered phones, recorded messages, and supported check-in tasks while keeping
+                                        records accurate and organized.</li>
+                                    <li>Provided friendly, clear communication and stayed calm while helping multiple
+                                        people in a fast-paced environment.</li>
+                                </ul>
+                            </li>
+                            <li><strong>School Event Team Member</strong> | Westbrook HS Activities Office | 2024–2025
+                                <ul>
+                                    <li>Coordinated check-in for a 120-student event and reduced wait times by
+                                        organizing
+                                        alphabetical lines and digital attendance verification.</li>
+                                    <li>Collaborated with 6 team members to manage setup, attendee support, and
+                                        post-event
+                                        follow-up communications.</li>
+                                </ul>
+                            </li>
+                            <li><strong>Community Volunteer Tutor</strong> | Charlotte Youth Center | 2024–Present
+                                <ul>
+                                    <li>Supported middle-school students with weekly homework and basic computer-skills
+                                        practice in one-on-one and small-group sessions.</li>
+                                    <li>Tracked attendance and progress notes to provide clear updates to program staff.
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <p><strong>Certifications:</strong></p>
+                        <ul>
+                            <li>Google IT Support Professional Certificate (in progress) — 2026</li>
+                            <li>Microsoft Office Specialist: Word Associate (Office 2019) — 2025</li>
+                            <li>CPR/First Aid Certification (American Red Cross) — 2025</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Resume Checklist</h3>
+                    <ul class="checklist student-checklist">
+                        <li><input type="checkbox" data-key="watch_resume" /> <label>I watched the Resume Tips
+                                video.</label></li>
+                        <li><input type="checkbox" data-key="apply_resume" /> <label>I applied at least 2 resume tips in
+                                my
+                                resume page.</label></li>
+                        <li><input type="checkbox" data-key="ai_extension_resource" /> <label>I reviewed at least one
+                                optional AI resume resource.</label></li>
+                        <li><input type="checkbox" class="page-complete-checkbox" data-key="page_complete_2" /> <label>I
+                                completed this page.</label></li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="project-page" data-project-page="3" aria-label="ATS Page">
+                <div class="card">
+                    <div class="badge">Part 3: ATS</div>
+                    <h2 class="section-title">ATS Learning + Application</h2>
+                    <p class="muted">Use ATS-friendly structure and language to improve readability and match quality.
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>ATS Video</h3>
+                    <div class="video-embed" data-video-id="DksA_vF84JA" data-video-title="ATS Tips Video">
+                        <button type="button" class="video-poster" aria-label="Play ATS Tips Video">
+                            <img src="https://img.youtube.com/vi/DksA_vF84JA/maxresdefault.jpg"
+                                alt="ATS Tips Video preview" loading="lazy" />
+                            <span class="video-play" aria-hidden="true">▶</span>
+                            <span class="video-watch" aria-hidden="true">Watch video</span>
+                        </button>
+                    </div>
+                    <p><a href="https://youtu.be/DksA_vF84JA?si=sclhCHE9EIZbfsQH" target="_blank" rel="noopener">Open
+                            video
+                            in YouTube</a></p>
+
+                    <div class="video-check" aria-label="ATS video quick check">
+                        <h3>Quick Check: ATS Basics</h3>
+                        <form id="atsQuickCheck">
+                            <fieldset class="quiz-q ats-step">
+                                <legend>1) In the hiring flow, where does ATS primarily operate?</legend>
+                                <label><input type="radio" name="aq1" value="a" /> Between applying and recruiter
+                                    screening,
+                                    by scanning and ranking resumes.</label><br />
+                                <label><input type="radio" name="aq1" value="b" /> Only after interviews are
+                                    completed.</label>
+                            </fieldset>
+                            <fieldset class="quiz-q ats-step">
+                                <legend>2) Which formatting choice is most ATS-friendly?</legend>
+                                <label><input type="radio" name="aq2" value="a" /> Heavy formatting with tables,
+                                    columns,
+                                    icons, and images.</label><br />
+                                <label><input type="radio" name="aq2" value="b" /> Simple text-forward layout with
+                                    clearly
+                                    labeled sections (Experience, Skills, Education).</label>
+                            </fieldset>
+                            <fieldset class="quiz-q ats-step">
+                                <legend>3) According to the video, which file types are generally safe for ATS
+                                    submission?
+                                </legend>
+                                <label><input type="radio" name="aq3" value="a" /> Word document or PDF.</label><br />
+                                <label><input type="radio" name="aq3" value="b" /> InDesign or Photoshop native
+                                    files.</label>
+                            </fieldset>
+                            <fieldset class="quiz-q ats-step">
+                                <legend>4) How should you use job-description keywords?</legend>
+                                <label><input type="radio" name="aq4" value="a" /> Add matching keywords only when true,
+                                    and
+                                    show them in skills plus experience context.</label><br />
+                                <label><input type="radio" name="aq4" value="b" /> Add every keyword even if you do not
+                                    have
+                                    the skill.</label>
+                            </fieldset>
+                            <div class="controls" style="margin-top:8px;justify-content:flex-start;">
+                                <button type="button" id="atsPrev">Previous</button>
+                                <button type="button" id="atsNext">Next</button>
+                                <button type="button" id="gradeAtsQuick" class="primary">Check Answers</button>
+                                <span class="muted" id="atsCounter"></span>
+                            </div>
+                        </form>
+                        <div id="atsQuickFeedback" class="quick-feedback"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>ATS Application Requirements</h3>
+                    <ul>
+                        <li>Use clear section headings and a simple, text-forward layout.</li>
+                        <li>Avoid graphics, icons, columns, and image-based text.</li>
+                        <li>Apply truthful job-description keywords in both skills and experience sections.</li>
+                        <li>Save in a standard format for submission (.docx and .pdf).</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>ATS Checklist</h3>
+                    <ul class="checklist student-checklist">
+                        <li><input type="checkbox" data-key="watch_ats" /> <label>I watched the ATS video.</label></li>
+                        <li><input type="checkbox" data-key="apply_ats" /> <label>I applied at least 2 ATS-friendly
+                                choices
+                                in my resume page.</label></li>
+                        <li><input type="checkbox" class="page-complete-checkbox" data-key="page_complete_3" /> <label>I
+                                completed this page.</label></li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="project-page" data-project-page="4" aria-label="Cover Letter Page">
+                <div class="card">
+                    <div class="badge">Part 4: Cover Letter</div>
+                    <h2 class="section-title">Cover Letter Learning + Application</h2>
+                    <p class="muted">Write a focused cover letter that connects your background to this specific role.
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>Cover Letter Video</h3>
+                    <div class="video-embed" data-video-id="EcFOr9Jo0OA" data-video-title="Cover Letter Tips Video">
+                        <button type="button" class="video-poster" aria-label="Play Cover Letter Tips Video">
+                            <img src="https://img.youtube.com/vi/EcFOr9Jo0OA/maxresdefault.jpg"
+                                alt="Cover Letter Tips Video preview" loading="lazy" />
+                            <span class="video-play" aria-hidden="true">▶</span>
+                            <span class="video-watch" aria-hidden="true">Watch video</span>
+                        </button>
+                    </div>
+                    <p><a href="https://youtu.be/EcFOr9Jo0OA?si=L5FiRAjiwQylcmFe" target="_blank" rel="noopener">Open
+                            video
+                            in YouTube</a></p>
+
+                    <div class="video-check" aria-label="Cover letter video quick check">
+                        <h3>Quick Check: Cover Letter Strategy</h3>
+                        <form id="coverQuickCheck">
+                            <fieldset class="quiz-q cover-step">
+                                <legend>1) According to the video, what is a strong cover letter mainly supposed to do?
+                                </legend>
+                                <label><input type="radio" name="cq1" value="a" /> Repeat your resume line by
+                                    line.</label><br />
+                                <label><input type="radio" name="cq1" value="b" /> Connect your experience to the role
+                                    and
+                                    make a focused case for why you are a strong fit.</label>
+                            </fieldset>
+                            <fieldset class="quiz-q cover-step">
+                                <legend>2) If a job says “cover letter optional,” what did the video suggest?</legend>
+                                <label><input type="radio" name="cq2" value="a" /> Always submit one, even if generic
+                                    and
+                                    rushed.</label><br />
+                                <label><input type="radio" name="cq2" value="b" /> Submit one only if it is tailored and
+                                    polished; a weak generic letter can hurt more than help.</label>
+                            </fieldset>
+                            <fieldset class="quiz-q cover-step">
+                                <legend>3) Which greeting approach is most aligned with the video guidance?</legend>
+                                <label><input type="radio" name="cq3" value="a" /> Use "To Whom It May Concern" for
+                                    every
+                                    application.</label><br />
+                                <label><input type="radio" name="cq3" value="b" /> Use a specific name when possible,
+                                    otherwise use "Dear Hiring Manager."</label>
+                            </fieldset>
+                            <fieldset class="quiz-q cover-step">
+                                <legend>4) Which strategy best shows true tailoring for a specific role?</legend>
+                                <label><input type="radio" name="cq4" value="a" /> Use one universal letter and just
+                                    change
+                                    the company name.</label><br />
+                                <label><input type="radio" name="cq4" value="b" /> Reference exact phrases from the job
+                                    description and connect them to your evidence.</label>
+                            </fieldset>
+                            <div class="controls" style="margin-top:8px;justify-content:flex-start;">
+                                <button type="button" id="coverPrev">Previous</button>
+                                <button type="button" id="coverNext">Next</button>
+                                <button type="button" id="gradeCoverQuick" class="primary">Check Answers</button>
+                                <span class="muted" id="coverCounter"></span>
+                            </div>
+                        </form>
+                        <div id="coverQuickFeedback" class="quick-feedback"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Cover Letter Application Requirements</h3>
+                    <ul>
+                        <li>Professional greeting and opening paragraph naming the role.</li>
+                        <li>One body paragraph connecting your skills and experience to job needs.</li>
+                        <li>Closing paragraph with appreciation and a professional sign-off.</li>
+                        <li>Keep it concise: aim for 3–4 short paragraphs total.</li>
+                        <li>Clear, concise writing with correct spelling and grammar.</li>
+                    </ul>
+                    <h3>Cover Letter Example (Fictional)</h3>
+                    <p><a href="wordprojectfiles/Lastname_Firstname_CoverLetter_Template.docx" download>Download Cover
+                            Letter Template with Example Content (.docx)</a></p>
+                    <p class="muted">Using Google Docs? <a
+                            href="https://support.google.com/drive/answer/2424368?hl=en&co=GENIE.Platform%3DDesktop&sjid=17720879093965659103-NC&oco=0"
+                            target="_blank" rel="noopener">Upload a Word document to Google Docs</a></p>
+                    <p class="muted">Replace all sample text with your own information before submitting.</p>
+                    <div class="example-block">
+                        <p>Dear Hiring Manager,</p>
+                        <p>I am excited to apply for the part-time Customer Service Associate position at BrightPath
+                            Market. As a high school senior applying for my first job, I have built strong customer
+                            service and communication skills through school front-office volunteering and community
+                            tutoring. I am especially interested in this role because your posting emphasizes
+                            friendliness, reliability, and teamwork.</p>
+                        <p>Your posting highlights working in a fast-paced environment and assisting customers clearly.
+                            In my front-office volunteer role, I regularly greet visitors, answer phones, and support
+                            check-in tasks during busy periods. I stay organized, communicate respectfully, and make
+                            sure people get the help they need quickly.</p>
+                        <p>I also bring a strong work ethic and a willingness to learn. As a school event team member,
+                            I helped coordinate check-in for a 120-student event by organizing lines, verifying
+                            attendance, and supporting guests throughout the event. That experience strengthened my time
+                            management and teamwork skills, which I am ready to apply in my first paid position.</p>
+                        <p>I would appreciate the opportunity to contribute to your team and continue growing my
+                            customer
+                            service skills. Thank you for your time and consideration. I look forward to discussing next
+                            steps.
+                        </p>
+                        <p>Sincerely,<br />Maya Johnson</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Cover Letter Checklist</h3>
+                    <ul class="checklist student-checklist">
+                        <li><input type="checkbox" data-key="watch_coverletter" /> <label>I watched the Cover Letter
+                                video.</label></li>
+                        <li><input type="checkbox" data-key="apply_coverletter" /> <label>I tailored my cover letter to
+                                this
+                                role and used role-specific evidence.</label></li>
+                        <li><input type="checkbox" data-key="proofread_coverletter" /> <label>I proofread my cover
+                                letter
+                                for tone, grammar, and clarity.</label></li>
+                        <li><input type="checkbox" class="page-complete-checkbox" data-key="page_complete_4" /> <label>I
+                                completed this page.</label></li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="project-page" data-project-page="5" aria-label="Finished Page">
+                <div class="card">
+                    <div class="badge">Part 5: Final Review</div>
+                    <h2 class="section-title">Final Review and Submission</h2>
+                    <p>Use this section to check quality, confirm file naming, and complete final submission tasks.</p>
+                    <p class="muted">After reviewing everything, mark the final checklist at the bottom of this page.
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>Submission Ready Check</h3>
+                    <ul>
+                        <li>Your packet is exactly 2 pages (resume page + cover letter page in one document).</li>
+                        <li>Your final content matches the selected posting and uses truthful role keywords.</li>
+                        <li>Your layout is ATS-friendly (no heavy graphics/tables/columns in the resume).</li>
+                        <li>You completed proofreading for grammar, clarity, and professional tone.</li>
+                    </ul>
+                    <h3 style="margin-top:12px;">Common Reasons Points Are Lost</h3>
+                    <ul>
+                        <li>Generic wording that is not clearly tailored to the selected role.</li>
+                        <li>Formatting inconsistency (spacing, headers, alignment, or visual clutter).</li>
+                        <li>Missing required file type, incorrect filename, or incomplete final export.</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>Rubric Summary (50 points)</h3>
+                    <p class="muted">Each category is scored on three levels. For 15-point categories:
+                        <strong>Exceeds (13–15)</strong>, <strong>Meets (10–12)</strong>,
+                        <strong>Needs Revision (0–9)</strong>. For 10-point categories:
+                        <strong>Exceeds (9–10)</strong>, <strong>Meets (7–8)</strong>,
+                        <strong>Needs Revision (0–6)</strong>.
+                    </p>
+                    <div class="rubric-grid">
+                        <div class="rubric-item"><strong>Structure & Completeness (15 pts)</strong>
+                            <ul>
+                                <li><strong>Exceeds (13–15):</strong> All required sections are complete, targeted, and
+                                    easy to follow.</li>
+                                <li><strong>Meets (10–12):</strong> Required sections are mostly complete with minor
+                                    missing detail.</li>
+                                <li><strong>Needs Revision (0–9):</strong> Important sections are missing, unclear, or
+                                    not aligned to the posting.</li>
+                            </ul>
+                        </div>
+                        <div class="rubric-item"><strong>Word Skills & Formatting (15 pts)</strong>
+                            <ul>
+                                <li><strong>Exceeds (13–15):</strong> Formatting is clean, consistent, and
+                                    ATS-friendly.
+                                </li>
+                                <li><strong>Meets (10–12):</strong> Formatting is readable with small consistency
+                                    issues.
+                                </li>
+                                <li><strong>Needs Revision (0–9):</strong> Formatting reduces readability or uses
+                                    ATS-unfriendly choices.</li>
+                            </ul>
+                        </div>
+                        <div class="rubric-item"><strong>Professional Writing (10 pts)</strong>
+                            <ul>
+                                <li><strong>Exceeds (9–10):</strong> Writing is clear, role-focused, and professional
+                                    with minimal errors.</li>
+                                <li><strong>Meets (7–8):</strong> Writing is mostly clear and professional with minor
+                                    errors.</li>
+                                <li><strong>Needs Revision (0–6):</strong> Writing is generic, unclear, or has errors
+                                    that hurt quality.</li>
+                            </ul>
+                        </div>
+                        <div class="rubric-item"><strong>Submission Quality (10 pts)</strong>
+                            <ul>
+                                <li><strong>Exceeds (9–10):</strong> Both required files are complete, correctly named,
+                                    and ready to submit.</li>
+                                <li><strong>Meets (7–8):</strong> Files are submitted with minor naming or completeness
+                                    issues.</li>
+                                <li><strong>Needs Revision (0–6):</strong> Files are missing, incomplete, or not aligned
+                                    to requirements.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <h3 style="margin-top:14px;">Submission</h3>
+                    <p class="muted">Use these filenames exactly as shown:</p>
+                    <ol>
+                        <li><span class="pill">Lastname_Firstname_JobApplicationAssignment.docx</span></li>
+                        <li><span class="pill">Lastname_Firstname_JobApplicationAssignment.pdf</span></li>
+                    </ol>
+                    <p class="muted">Need help exporting? <a
+                            href="https://support.microsoft.com/office/save-or-convert-to-pdf-or-xps-in-office-desktop-apps-d85416c5-7d77-4fd6-a216-6f4bf7c7c110"
+                            target="_blank" rel="noopener">How to save a Word document as PDF</a> | <a
+                            href="https://support.google.com/drive/answer/2423534?hl=en&co=GENIE.Platform%3DDesktop&sjid=17720879093965659103-NC&oco=2"
+                            target="_blank" rel="noopener">Download
+                            a PDF from Google Docs</a></p>
+                </div>
+
+                <div class="card">
+                    <h3>Final Checklist</h3>
+                    <ul class="checklist student-checklist">
+                        <li><input type="checkbox" data-key="doc_two_pages" /> <label>My packet is 2 pages in one
+                                document.</label></li>
+                        <li><input type="checkbox" data-key="export_pdf" /> <label>I exported my final packet to
+                                PDF.</label></li>
+                        <li><input type="checkbox" class="page-complete-checkbox" data-key="page_complete_5" /> <label>I
+                                reviewed my submission package and completed this page.</label></li>
+                    </ul>
+                    <div class="page-image-wrap">
+                        <img class="page-image" src="assets/career-complete-badge.svg"
+                            alt="Completion badge graphic celebrating successful project completion." />
+                    </div>
+                    <p class="page-image-caption"><strong>Congratulations — You Finished!</strong> Project complete:
+                        you are ready to submit your files.</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const STORAGE_PREFIX = 'career-packet-web-';
+        const THEME_KEY = STORAGE_PREFIX + 'theme';
+        const PROJECT_PAGE_KEY = STORAGE_PREFIX + 'project-page';
+
+        const themeSelector = document.getElementById('themeSelector');
+        const resetButton = document.getElementById('resetProgress');
+        const checklistInputs = Array.from(document.querySelectorAll('.student-checklist input[type="checkbox"]'));
+        const pageCompleteInputs = Array.from(document.querySelectorAll('.page-complete-checkbox'));
+        const projectPages = Array.from(document.querySelectorAll('.project-page'));
+        const projectStepCounter = document.getElementById('projectStepCounter');
+        const projectPrevBtn = document.getElementById('projectPrevBtn');
+        const projectNextBtn = document.getElementById('projectNextBtn');
+        const projectProgressBar = document.getElementById('projectProgressBar');
+        const projectProgressText = document.getElementById('projectProgressText');
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        const gradeResumeQuickButton = document.getElementById('gradeResumeQuick');
+        const gradeAtsQuickButton = document.getElementById('gradeAtsQuick');
+        const gradeCoverQuickButton = document.getElementById('gradeCoverQuick');
+        const resumeQuickFeedback = document.getElementById('resumeQuickFeedback');
+        const atsQuickFeedback = document.getElementById('atsQuickFeedback');
+        const coverQuickFeedback = document.getElementById('coverQuickFeedback');
+
+        const quickChecks = {
+            resume: {
+                formId: 'resumeQuickCheck',
+                feedbackId: 'resumeQuickFeedback',
+                answers: { rq1: 'a', rq2: 'b', rq3: 'b', rq4: 'a' },
+                notes: {
+                    rq1: 'The video emphasizes that many recruiters scan resumes in about 10 seconds.',
+                    rq2: 'The guidance is to use clean, consistent formatting and avoid graphics/photos.',
+                    rq3: 'The presenter explicitly says volunteer, projects, extracurriculars, and related work count.',
+                    rq4: 'Tailoring includes using exact job-description language when it truthfully matches your qualifications.'
+                }
+            },
+            ats: {
+                formId: 'atsQuickCheck',
+                feedbackId: 'atsQuickFeedback',
+                answers: { aq1: 'a', aq2: 'b', aq3: 'a', aq4: 'a' },
+                notes: {
+                    aq1: 'The video places ATS between application and recruiter screening, where it scans, categorizes, and ranks resumes.',
+                    aq2: 'The presenter warns that heavy formatting (icons/tables/columns/images) can reduce ATS readability.',
+                    aq3: 'The guidance is to submit a Word doc or PDF; design-tool native files should be converted.',
+                    aq4: 'Use keywords honestly: include only real qualifications and demonstrate them in your experience, not just a list.'
+                }
+            },
+            cover: {
+                formId: 'coverQuickCheck',
+                feedbackId: 'coverQuickFeedback',
+                answers: { cq1: 'b', cq2: 'b', cq3: 'b', cq4: 'b' },
+                notes: {
+                    cq1: 'A strong cover letter connects your background to the role and sells your fit.',
+                    cq2: 'Optional does not mean submit low quality; generic/rushed letters can hurt your application.',
+                    cq3: 'Use a specific name when possible, otherwise use "Dear Hiring Manager."',
+                    cq4: 'Strong tailoring includes exact job-description language plus evidence from your experience.'
+                }
+            }
+        };
+
+        let currentProjectPage = 1;
+        const stepperResets = [];
+
+        function slugify(value) {
+            return (value || '')
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '')
+                .replace(/-{2,}/g, '-');
+        }
+
+        function initCardBookmarks() {
+            const cards = Array.from(document.querySelectorAll('main .card'));
+            const usedIds = new Set();
+
+            cards.forEach((card, index) => {
+                if (card.id) {
+                    usedIds.add(card.id);
+                    return;
+                }
+
+                const parentPage = card.closest('.project-page');
+                const pagePrefix = parentPage ? `p${parentPage.dataset.projectPage}` : 'overview';
+                const heading = card.querySelector('h2, h3');
+                const headingSlug = slugify(heading ? heading.textContent : '') || `card-${index + 1}`;
+                const baseId = `${pagePrefix}-${headingSlug}`;
+
+                let nextId = baseId;
+                let suffix = 2;
+                while (usedIds.has(nextId)) {
+                    nextId = `${baseId}-${suffix}`;
+                    suffix++;
+                }
+
+                card.id = nextId;
+                usedIds.add(nextId);
+            });
+        }
+
+        function openCardFromHash() {
+            const rawHash = window.location.hash.replace(/^#/, '');
+            if (!rawHash) return false;
+
+            const targetId = decodeURIComponent(rawHash);
+            const target = document.getElementById(targetId);
+            if (!target || !target.classList.contains('card')) return false;
+
+            const targetPage = target.closest('.project-page');
+            if (targetPage) {
+                showProjectPage(Number(targetPage.dataset.projectPage), {
+                    updateHash: false,
+                    scrollToTop: false
+                });
+            }
+
+            target.scrollIntoView({
+                behavior: prefersReducedMotion ? 'auto' : 'smooth',
+                block: 'start'
+            });
+
+            return true;
+        }
+
+        function initOneQuestionFlow({ formId, stepSelector, prevId, nextId, counterId, submitId }) {
+            const form = document.getElementById(formId);
+            if (!form) return;
+
+            const steps = Array.from(form.querySelectorAll(stepSelector));
+            const prevBtn = document.getElementById(prevId);
+            const nextBtn = document.getElementById(nextId);
+            const counter = document.getElementById(counterId);
+            const submitBtn = document.getElementById(submitId);
+            let index = 0;
+
+            function render() {
+                steps.forEach((step, stepIndex) => {
+                    step.style.display = stepIndex === index ? 'block' : 'none';
+                });
+
+                prevBtn.disabled = index === 0;
+                nextBtn.style.display = index === steps.length - 1 ? 'none' : 'inline-block';
+                submitBtn.style.display = index === steps.length - 1 ? 'inline-block' : 'none';
+                counter.textContent = `Question ${index + 1} of ${steps.length}`;
+            }
+
+            prevBtn.addEventListener('click', () => {
+                if (index > 0) {
+                    index--;
+                    render();
+                }
+            });
+
+            nextBtn.addEventListener('click', () => {
+                if (index < steps.length - 1) {
+                    index++;
+                    render();
+                }
+            });
+
+            render();
+            stepperResets.push(() => {
+                index = 0;
+                render();
+            });
+        }
+
+        function loadTheme() {
+            const saved = localStorage.getItem(THEME_KEY) || 'dark';
+            document.documentElement.setAttribute('data-theme', saved);
+            themeSelector.value = saved;
+        }
+
+        function saveTheme(value) {
+            document.documentElement.setAttribute('data-theme', value);
+            localStorage.setItem(THEME_KEY, value);
+        }
+
+        function initChecklistLabelAssociations() {
+            checklistInputs.forEach((input, index) => {
+                if (!input.id) {
+                    const key = input.dataset.key || `check_${index + 1}`;
+                    const normalized = `${STORAGE_PREFIX}${key}`.replace(/[^a-zA-Z0-9_-]/g, '_');
+                    input.id = normalized;
+                }
+
+                const listItem = input.closest('li');
+                if (!listItem) return;
+
+                const label = listItem.querySelector('label');
+                if (label && !label.getAttribute('for')) {
+                    label.setAttribute('for', input.id);
+                }
+            });
+        }
+
+        function initVideoEmbeds() {
+            const embeds = Array.from(document.querySelectorAll('.video-embed'));
+
+            embeds.forEach((embed) => {
+                const videoId = embed.dataset.videoId;
+                const videoTitle = embed.dataset.videoTitle || 'YouTube video';
+                const posterImage = embed.querySelector('img');
+
+                if (posterImage) {
+                    posterImage.addEventListener('error', () => {
+                        if (!posterImage.dataset.fallbackApplied) {
+                            posterImage.dataset.fallbackApplied = 'true';
+                            posterImage.src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+                        }
+                    });
+                }
+
+                const posterButton = embed.querySelector('.video-poster');
+                if (!posterButton) return;
+
+                posterButton.addEventListener('click', () => {
+                    embed.innerHTML = `
+                        <iframe src="https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1"
+                            title="${videoTitle}"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowfullscreen></iframe>
+                    `;
+                });
+            });
+        }
+
+        function updateProgress() {
+            const total = pageCompleteInputs.length;
+            const completed = pageCompleteInputs.filter((input) => input.checked).length;
+            const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
+            projectProgressBar.style.width = `${percent}%`;
+            projectProgressBar.setAttribute('aria-valuenow', String(percent));
+            projectProgressText.textContent = `Progress: ${completed}/${total} pages completed`;
+        }
+
+        function showProjectPage(pageNumber, options = {}) {
+            const { updateHash = true, scrollToTop = true } = options;
+            const totalPages = projectPages.length;
+            const targetPage = Math.min(Math.max(pageNumber, 1), totalPages);
+            currentProjectPage = targetPage;
+
+            projectPages.forEach((page) => {
+                const isActive = Number(page.dataset.projectPage) === targetPage;
+                page.classList.toggle('active', isActive);
+                page.hidden = !isActive;
+                page.setAttribute('aria-hidden', String(!isActive));
+            });
+
+            projectStepCounter.textContent = `Part ${targetPage} of ${totalPages}`;
+            projectPrevBtn.disabled = targetPage === 1;
+            projectNextBtn.disabled = targetPage === totalPages;
+            projectNextBtn.textContent = targetPage === totalPages ? 'Completed ✓' : 'Next ▶';
+            localStorage.setItem(PROJECT_PAGE_KEY, String(targetPage));
+
+            if (updateHash) {
+                const activePage = projectPages.find((page) => Number(page.dataset.projectPage) === targetPage);
+                const firstCard = activePage ? activePage.querySelector('.card') : null;
+                if (firstCard && firstCard.id) {
+                    history.replaceState(null, '', `#${encodeURIComponent(firstCard.id)}`);
+                }
+            }
+
+            if (scrollToTop) {
+                window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+            }
+        }
+
+        function loadProjectPage() {
+            const saved = Number(localStorage.getItem(PROJECT_PAGE_KEY) || '1');
+            showProjectPage(saved);
+        }
+
+        function loadChecklist() {
+            checklistInputs.forEach((input) => {
+                const key = STORAGE_PREFIX + input.dataset.key;
+                input.checked = localStorage.getItem(key) === 'true';
+            });
+            updateProgress();
+        }
+
+        function saveChecklist(input) {
+            const key = STORAGE_PREFIX + input.dataset.key;
+            localStorage.setItem(key, String(input.checked));
+            updateProgress();
+        }
+
+        function gradeQuickCheck(config) {
+            const form = document.getElementById(config.formId);
+            const feedback = document.getElementById(config.feedbackId);
+            const data = new FormData(form);
+            const keys = Object.keys(config.answers);
+            let score = 0;
+            let answered = 0;
+            const misses = [];
+
+            keys.forEach((key) => {
+                const value = data.get(key);
+                if (value) answered++;
+                if (value === config.answers[key]) {
+                    score++;
+                } else if (config.notes && config.notes[key]) {
+                    misses.push(config.notes[key]);
+                }
+            });
+
+            if (answered < keys.length) {
+                feedback.className = 'quick-feedback fail';
+                feedback.style.display = 'block';
+                feedback.textContent = 'Please answer all quick-check questions.';
+                return;
+            }
+
+            const passed = score === keys.length;
+            feedback.className = 'quick-feedback ' + (passed ? 'pass' : 'fail');
+            feedback.style.display = 'block';
+            const details = misses.length ? '<ul>' + misses.map((note) => `<li>${note}</li>`).join('') + '</ul>' : '';
+            feedback.innerHTML = passed
+                ? `Nice work! You got ${score}/${keys.length}.`
+                : `You got ${score}/${keys.length}. Rewatch key points and try again.${details}`;
+        }
+
+        function resetAll() {
+            Object.keys(localStorage).forEach((key) => {
+                if (key.startsWith(STORAGE_PREFIX)) {
+                    localStorage.removeItem(key);
+                }
+            });
+
+            resumeQuickFeedback.style.display = 'none';
+            atsQuickFeedback.style.display = 'none';
+            coverQuickFeedback.style.display = 'none';
+
+            loadTheme();
+            loadChecklist();
+            showProjectPage(1);
+
+            document.getElementById('resumeQuickCheck').reset();
+            document.getElementById('atsQuickCheck').reset();
+            document.getElementById('coverQuickCheck').reset();
+            stepperResets.forEach((resetFn) => resetFn());
+            updateProgress();
+        }
+
+        themeSelector.addEventListener('change', (event) => saveTheme(event.target.value));
+        checklistInputs.forEach((input) => input.addEventListener('change', () => saveChecklist(input)));
+        projectPrevBtn.addEventListener('click', () => showProjectPage(currentProjectPage - 1));
+        projectNextBtn.addEventListener('click', () => showProjectPage(currentProjectPage + 1));
+
+        document.addEventListener('keydown', (event) => {
+            const tag = event.target && event.target.tagName ? event.target.tagName.toLowerCase() : '';
+            const isEditable = tag === 'input' || tag === 'textarea' || tag === 'select';
+            if (isEditable || event.ctrlKey || event.metaKey || event.altKey) return;
+
+            if (event.key === 'ArrowLeft') {
+                event.preventDefault();
+                showProjectPage(currentProjectPage - 1);
+            } else if (event.key === 'ArrowRight') {
+                event.preventDefault();
+                showProjectPage(currentProjectPage + 1);
+            }
+        });
+
+        gradeResumeQuickButton.addEventListener('click', () => gradeQuickCheck(quickChecks.resume));
+        gradeAtsQuickButton.addEventListener('click', () => gradeQuickCheck(quickChecks.ats));
+        gradeCoverQuickButton.addEventListener('click', () => gradeQuickCheck(quickChecks.cover));
+        resetButton.addEventListener('click', resetAll);
+
+        initOneQuestionFlow({
+            formId: 'resumeQuickCheck',
+            stepSelector: '.resume-step',
+            prevId: 'resumePrev',
+            nextId: 'resumeNext',
+            counterId: 'resumeCounter',
+            submitId: 'gradeResumeQuick'
+        });
+
+        initOneQuestionFlow({
+            formId: 'atsQuickCheck',
+            stepSelector: '.ats-step',
+            prevId: 'atsPrev',
+            nextId: 'atsNext',
+            counterId: 'atsCounter',
+            submitId: 'gradeAtsQuick'
+        });
+
+        initOneQuestionFlow({
+            formId: 'coverQuickCheck',
+            stepSelector: '.cover-step',
+            prevId: 'coverPrev',
+            nextId: 'coverNext',
+            counterId: 'coverCounter',
+            submitId: 'gradeCoverQuick'
+        });
+
+        loadTheme();
+        initChecklistLabelAssociations();
+        initCardBookmarks();
+        loadChecklist();
+        if (!openCardFromHash()) {
+            loadProjectPage();
+        }
+        initVideoEmbeds();
+
+        window.addEventListener('hashchange', () => {
+            openCardFromHash();
+        });
+    </script>
+</body>
+
+</html>
