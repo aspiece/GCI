@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="description" content="Introduction to 3D Printing orientation activities for GCI." />
+  <meta name="description" content="Student guide for 3D printing orientation activities at GCI." />
   <title>Intro to 3D Printing Orientation | GCI</title>
   <style>
     :root {
@@ -18,410 +18,437 @@
       --warning: #f6e05e;
       --shadow: 0 8px 28px rgba(0,0,0,.35);
     }
-    [data-theme="light"] {
-      --bg: #f5f7fb;
-      --card: #ffffff;
-      --text: #17212f;
-      --muted: #4b5a6d;
-      --accent: #1d5fd0;
-      --accent-soft: rgba(29,95,208,.10);
-      --border: #d8e0ec;
-      --success: #1f7a43;
-      --warning: #9a6700;
-      --shadow: 0 4px 16px rgba(20,33,61,.10);
-    }
     * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: Inter, Segoe UI, Roboto, Arial, sans-serif;
       background: radial-gradient(circle at top right, #16233c 0%, transparent 25%), var(--bg);
       color: var(--text);
-      line-height: 1.55;
+      line-height: 1.6;
     }
-    [data-theme="light"] body, [data-theme="light"] { background: var(--bg); }
-    .wrap { max-width: 1040px; margin: 0 auto; padding: 24px 16px 48px; }
+    .wrap { max-width: 900px; margin: 0 auto; padding: 24px 16px 48px; }
     .skip-link {
       position: absolute; left: 10px; top: -40px; background: var(--card); color: var(--text);
       border: 1px solid var(--border); padding: 8px 10px; border-radius: 8px; z-index: 1000;
     }
     .skip-link:focus { top: 10px; }
     h1 { margin: 0 0 8px; font-size: 2rem; }
-    h2 { margin: 0 0 10px; font-size: 1.25rem; }
-    h3 { margin: 18px 0 8px; font-size: 1rem; }
-    p, li { font-size: .98rem; }
-    .lead, .meta, .guidance, .small { color: var(--muted); }
-    .hero, .card {
-      background: var(--card); border: 1px solid var(--border); border-radius: 18px; box-shadow: var(--shadow);
+    h2 { margin: 0 0 8px; font-size: 1.2rem; }
+    h3 { margin: 16px 0 8px; font-size: 1rem; }
+    p, li { font-size: 1rem; }
+    .lead, .small, .guidance { color: var(--muted); }
+    .hero, .accordion, .student-tools {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
     }
     .hero { padding: 22px; margin-bottom: 18px; }
-    .meta-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(190px,1fr)); gap: 10px; margin-top: 16px;
+    .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px,1fr));
+      gap: 10px;
+      margin-top: 14px;
     }
-    .meta-chip {
-      border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; background: rgba(255,255,255,.02);
+    .hero-chip {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: rgba(255,255,255,.02);
     }
-    .toolbar {
-      display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; align-items: center;
-      margin: 0 0 18px;
+    .student-tools {
+      padding: 16px;
+      margin-bottom: 16px;
     }
-    .toolbar-group { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-    button, select, input[type="text"], textarea {
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    button, input[type="text"], textarea {
       font: inherit;
     }
-    button, select {
-      min-height: 42px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--text);
-      padding: 10px 12px;
-    }
-    button { cursor: pointer; font-weight: 700; }
-    button.primary {
+    button {
+      min-height: 42px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
       background: linear-gradient(180deg, #4f8cff 0%, #2e66de 100%);
-      color: white; border-color: #2e66de;
+      color: white;
+      padding: 10px 12px;
+      cursor: pointer;
+      font-weight: 700;
     }
-    button:hover, button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible {
-      outline: 3px solid var(--accent); outline-offset: 2px;
+    button:hover, button:focus-visible, input:focus-visible, textarea:focus-visible, summary:focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 2px;
     }
-    .parts-grid {
-      display: grid; grid-template-columns: 1fr; gap: 16px;
+    .copy-status { color: var(--muted); font-size: .92rem; font-weight: 700; }
+    .accordion-stack {
+      display: grid;
+      gap: 14px;
     }
-    .card { padding: 18px; }
+    details.accordion {
+      overflow: hidden;
+    }
+    details[open] {
+      border-color: var(--accent);
+    }
+    summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 18px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    summary::-webkit-details-marker { display: none; }
+    .summary-left { display: grid; gap: 4px; }
     .pill {
-      display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: .82rem; font-weight: 800;
-      border: 1px solid var(--border); background: var(--accent-soft); margin-bottom: 10px;
+      display: inline-block;
+      width: fit-content;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: .82rem;
+      font-weight: 800;
+      border: 1px solid var(--border);
+      background: var(--accent-soft);
     }
-    .video-box {
-      margin-top: 10px; border: 1px dashed var(--border); border-radius: 14px; padding: 14px; background: rgba(255,255,255,.02);
+    .length {
+      color: var(--warning);
+      font-weight: 800;
+      white-space: nowrap;
+      margin-left: auto;
     }
+    .accordion-body {
+      padding: 0 18px 18px;
+      border-top: 1px solid var(--border);
+    }
+    .video-box, .note, .joke-box {
+      margin-top: 12px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      background: rgba(255,255,255,.02);
+    }
+    .joke-box { background: rgba(127,178,255,.08); }
     .video-wrap {
-      position: relative; width: 100%; padding-bottom: 56.25%; overflow: hidden; border-radius: 12px; background: #000;
-      border: 1px solid var(--border); margin-top: 10px;
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%;
+      overflow: hidden;
+      border-radius: 12px;
+      background: #000;
+      border: 1px solid var(--border);
+      margin-top: 10px;
     }
     .video-wrap iframe {
-      position: absolute; inset: 0; width: 100%; height: 100%; border: 0;
-    }
-    .placeholder {
-      border: 1px dashed var(--border); border-radius: 12px; padding: 12px; background: rgba(255,255,255,.02);
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
     }
     .checklist {
-      list-style: none; padding: 0; margin: 10px 0 0;
+      list-style: none;
+      padding: 0;
+      margin: 10px 0 0;
     }
     .checklist li {
-      display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border: 1px solid var(--border);
-      border-radius: 10px; margin-bottom: 8px; background: rgba(255,255,255,.02);
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 8px;
+      background: rgba(255,255,255,.02);
     }
-    .two-col { display: grid; grid-template-columns: 1fr; gap: 16px; }
     table {
-      width: 100%; border-collapse: collapse; margin-top: 10px; font-size: .94rem;
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: .95rem;
     }
     th, td {
-      border: 1px solid var(--border); padding: 10px; text-align: left; vertical-align: top;
+      border: 1px solid var(--border);
+      padding: 10px;
+      text-align: left;
+      vertical-align: top;
     }
     th { background: rgba(255,255,255,.05); }
     input[type="text"], textarea {
-      width: 100%; min-height: 44px; border-radius: 10px; border: 1px solid var(--border); padding: 10px 12px;
-      background: rgba(0,0,0,.18); color: var(--text);
+      width: 100%;
+      min-height: 44px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      background: rgba(0,0,0,.18);
+      color: var(--text);
     }
     textarea { min-height: 110px; resize: vertical; }
     .quiz-shell {
-      margin-top: 14px; border: 1px solid var(--border); border-radius: 14px; padding: 14px; background: rgba(255,255,255,.02);
+      margin-top: 14px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      background: rgba(255,255,255,.02);
     }
     .quiz-progress { font-weight: 700; color: var(--muted); margin-bottom: 8px; }
     .quiz-feedback { min-height: 24px; font-weight: 700; margin: 8px 0 0; }
     .correct { color: var(--success); }
     .incorrect { color: #ffb4b4; }
     .button-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
-    .hidden { display: none !important; }
-    .copy-status { color: var(--muted); font-size: .92rem; font-weight: 700; }
-    .section-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 14px; }
     a { color: var(--accent); text-decoration: none; font-weight: 700; }
     a:hover, a:focus-visible { text-decoration: underline; }
-    .note {
-      padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--accent-soft); margin-top: 10px;
-    }
     .footer-link { display: inline-block; margin-top: 20px; }
-    @media (min-width: 760px) {
-      .parts-grid { grid-template-columns: 1fr 1fr; }
-      .two-col { grid-template-columns: 1fr 1fr; }
-    }
   </style>
 </head>
 <body>
   <a class="skip-link" href="#mainContent">Skip to main content</a>
   <main class="wrap" id="mainContent" tabindex="-1">
     <section class="hero">
-      <h1>Introduction to 3D Printing Orientation</h1>
-      <p class="lead">This version organizes the opening 3D printing experience into six clear parts. It is designed to help students build background knowledge before they begin printing on the Bambu Lab printers in class.</p>
-      <div class="meta-grid">
-        <div class="meta-chip"><strong>Class Length:</strong><br />Flexible opening sequence for your lab</div>
-        <div class="meta-chip"><strong>Focus:</strong><br />Video learning, checks for understanding, and guided practice</div>
-        <div class="meta-chip"><strong>Software:</strong><br />Bambu Studio introduction included</div>
-        <div class="meta-chip"><strong>Printers:</strong><br />Bambu Lab A1, A1 Mini, and P1S</div>
-      </div>
-      <div class="note">
-        <strong>Teacher note:</strong> I built this as a ready draft for your repo. Part 1 and Part 4 include one-question-at-a-time checks for understanding. Where you have a specific preferred video, you can swap the placeholder link or embed later without changing the structure.
+      <h1>3D Printing Orientation</h1>
+      <p class="lead">Welcome to the 3D printing warm-up. Open one part at a time, watch the full video, and complete the activity before moving on. Your future prints would like to avoid chaos.</p>
+      <div class="hero-grid">
+        <div class="hero-chip"><strong>Goal</strong><br />Learn the basics before you print</div>
+        <div class="hero-chip"><strong>Tip</strong><br />Only open the part you are working on</div>
+        <div class="hero-chip"><strong>Reminder</strong><br />Watch the full video, not just the first 17 seconds</div>
+        <div class="hero-chip"><strong>Mindset</strong><br />A failed print is just drama in plastic form</div>
       </div>
     </section>
 
-    <div class="toolbar" aria-label="Page controls">
-      <div class="toolbar-group">
-        <label for="themeSelector" class="small">Theme</label>
-        <select id="themeSelector" aria-label="Choose theme">
-          <option value="dark">Dark</option>
-          <option value="light">Light</option>
-        </select>
-      </div>
-      <div class="toolbar-group">
-        <button type="button" id="copyNotes" class="primary">Copy Teacher Notes</button>
-        <span class="copy-status" id="copyStatus" aria-live="polite"></span>
-      </div>
-    </div>
-
-    <div class="parts-grid">
-      <section class="card">
-        <span class="pill">Part 1</span>
-        <h2>Introduction to 3D Printing</h2>
-        <p>Students watch an introductory video and immediately complete a 5-question check for understanding. The quiz appears one question at a time to keep the task focused and manageable.</p>
-
-        <div class="video-box">
-          <p><strong>Suggested video:</strong> <a href="https://www.youtube.com/watch?v=HlvK6DLwCz4" target="_blank" rel="noopener noreferrer">How 3D Printers Work</a></p>
-          <div class="video-wrap">
-            <iframe src="https://www.youtube.com/embed/HlvK6DLwCz4?rel=0" title="How 3D Printers Work" loading="lazy" allowfullscreen></iframe>
-          </div>
-        </div>
-
-        <div class="quiz-shell" data-quiz="intro">
-          <div class="quiz-progress" id="introProgress">Question 1 of 5</div>
-          <p id="introQuestion"><strong>What makes 3D printing an additive manufacturing process?</strong></p>
-          <input id="introAnswer" type="text" aria-label="Answer the current introduction to 3D printing question" placeholder="Type your answer here" />
-          <div class="button-row">
-            <button type="button" class="primary" id="introCheck">Check Answer</button>
-            <button type="button" id="introNext">Next Question</button>
-            <button type="button" id="introRestart">Restart Quiz</button>
-          </div>
-          <p class="quiz-feedback" id="introFeedback" aria-live="polite"></p>
-          <p class="small">Sample answer key is built in now. You can later swap these with questions that match your exact chosen video.</p>
-        </div>
-
-        <h3>Notebook prompt</h3>
-        <textarea aria-label="Part 1 digital notebook response" placeholder="Write 2 to 3 sentences explaining how a 3D printer turns a digital design into a printed object."></textarea>
-      </section>
-
-      <section class="card">
-        <span class="pill">Part 2</span>
-        <h2>Meet the Printers We Use</h2>
-        <p>Students watch a short comparison video introducing the Bambu Lab A1, A1 Mini, and P1S. Then they complete a comparison activity to notice important differences and classroom use cases.</p>
-
-        <div class="placeholder">
-          <p><strong>Video placeholder:</strong> Add your preferred comparison video here for the A1, A1 Mini, and P1S.</p>
-          <p class="small">Suggested use: embed one teacher-selected video or three short clips.</p>
-        </div>
-
-        <h3>Printer comparison activity</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Printer</th>
-              <th>One thing I noticed</th>
-              <th>One strength for classroom use</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Bambu Lab A1</td>
-              <td><input type="text" aria-label="A1 observation" /></td>
-              <td><input type="text" aria-label="A1 classroom strength" /></td>
-            </tr>
-            <tr>
-              <td>Bambu Lab A1 Mini</td>
-              <td><input type="text" aria-label="A1 Mini observation" /></td>
-              <td><input type="text" aria-label="A1 Mini classroom strength" /></td>
-            </tr>
-            <tr>
-              <td>Bambu Lab P1S</td>
-              <td><input type="text" aria-label="P1S observation" /></td>
-              <td><input type="text" aria-label="P1S classroom strength" /></td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-
-      <section class="card">
-        <span class="pill">Part 3</span>
-        <h2>Identify High-Importance Printer Parts</h2>
-        <p>Students identify common parts across the printers and explain why each part matters during setup, printing, and safety checks.</p>
-
-        <table>
-          <thead>
-            <tr>
-              <th>Part</th>
-              <th>Why it matters</th>
-              <th>Safety or quality connection</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Nozzle</td>
-              <td><input type="text" aria-label="Nozzle importance" /></td>
-              <td><input type="text" aria-label="Nozzle safety or quality connection" /></td>
-            </tr>
-            <tr>
-              <td>Print bed / build plate</td>
-              <td><input type="text" aria-label="Print bed importance" /></td>
-              <td><input type="text" aria-label="Print bed safety or quality connection" /></td>
-            </tr>
-            <tr>
-              <td>Extruder / filament path</td>
-              <td><input type="text" aria-label="Extruder importance" /></td>
-              <td><input type="text" aria-label="Extruder safety or quality connection" /></td>
-            </tr>
-            <tr>
-              <td>Touchscreen / controls</td>
-              <td><input type="text" aria-label="Touchscreen importance" /></td>
-              <td><input type="text" aria-label="Touchscreen safety or quality connection" /></td>
-            </tr>
-            <tr>
-              <td>Frame / gantry</td>
-              <td><input type="text" aria-label="Frame importance" /></td>
-              <td><input type="text" aria-label="Frame safety or quality connection" /></td>
-            </tr>
-            <tr>
-              <td>Filament spool / AMS connection</td>
-              <td><input type="text" aria-label="Filament spool or AMS importance" /></td>
-              <td><input type="text" aria-label="Filament spool or AMS safety or quality connection" /></td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-
-      <section class="card">
-        <span class="pill">Part 4</span>
-        <h2>Filament Basics: PLA and PETG</h2>
-        <p>Students watch a video about printer filament with a focus on PLA and PETG, then complete an immediate one-question-at-a-time check for understanding.</p>
-
-        <div class="placeholder">
-          <p><strong>Video placeholder:</strong> Add your preferred PLA and PETG filament video here.</p>
-        </div>
-
-        <div class="quiz-shell" data-quiz="filament">
-          <div class="quiz-progress" id="filamentProgress">Question 1 of 5</div>
-          <p id="filamentQuestion"><strong>Which filament is often the easier starting choice for classroom printing, PLA or PETG?</strong></p>
-          <input id="filamentAnswer" type="text" aria-label="Answer the current filament question" placeholder="Type your answer here" />
-          <div class="button-row">
-            <button type="button" class="primary" id="filamentCheck">Check Answer</button>
-            <button type="button" id="filamentNext">Next Question</button>
-            <button type="button" id="filamentRestart">Restart Quiz</button>
-          </div>
-          <p class="quiz-feedback" id="filamentFeedback" aria-live="polite"></p>
-          <p class="small">These are starter questions that fit a PLA versus PETG introduction and can be swapped later.</p>
-        </div>
-
-        <h3>Quick compare</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Filament</th>
-              <th>What it is good for</th>
-              <th>One caution</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>PLA</td>
-              <td><input type="text" aria-label="PLA best use" /></td>
-              <td><input type="text" aria-label="PLA caution" /></td>
-            </tr>
-            <tr>
-              <td>PETG</td>
-              <td><input type="text" aria-label="PETG best use" /></td>
-              <td><input type="text" aria-label="PETG caution" /></td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-
-      <section class="card">
-        <span class="pill">Part 5</span>
-        <h2>Load a Filament Refill into a Bambu Refillable Spool</h2>
-        <p>Students watch a tutorial and then complete a procedural checklist to show they understand the loading process before they try it themselves.</p>
-
-        <div class="placeholder">
-          <p><strong>Video placeholder:</strong> Add your preferred Bambu refillable spool tutorial here.</p>
-        </div>
-
-        <ul class="checklist">
-          <li><input type="checkbox" id="spool1" /><label for="spool1">I can explain why filament direction matters when loading a refill into the spool.</label></li>
-          <li><input type="checkbox" id="spool2" /><label for="spool2">I can describe how the refill is aligned before the spool is closed.</label></li>
-          <li><input type="checkbox" id="spool3" /><label for="spool3">I know how to secure the spool before trimming or feeding filament.</label></li>
-          <li><input type="checkbox" id="spool4" /><label for="spool4">I understand why a poorly loaded refill can cause printing problems.</label></li>
-        </ul>
-
-        <h3>Procedure summary</h3>
-        <textarea aria-label="Spool loading procedure summary" placeholder="Write the loading process in your own words using 4 to 6 steps."></textarea>
-      </section>
-
-      <section class="card">
-        <span class="pill">Part 6</span>
-        <h2>Introduction to Bambu Studio</h2>
-        <p>Students get an early look at Bambu Studio so the software feels familiar before they start preparing prints.</p>
-
-        <div class="video-box">
-          <p><strong>Suggested video:</strong> <a href="https://www.youtube.com/watch?v=rZhy0J0mXBE" target="_blank" rel="noopener noreferrer">Bambu Studio slicer walkthrough</a></p>
-          <div class="video-wrap">
-            <iframe src="https://www.youtube.com/embed/rZhy0J0mXBE?rel=0" title="Bambu Studio walkthrough" loading="lazy" allowfullscreen></iframe>
-          </div>
-        </div>
-
-        <h3>Software observation activity</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Bambu Studio area or tool</th>
-              <th>What I think it does</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Import model</td>
-              <td><input type="text" aria-label="Import model function" /></td>
-            </tr>
-            <tr>
-              <td>Printer profile</td>
-              <td><input type="text" aria-label="Printer profile function" /></td>
-            </tr>
-            <tr>
-              <td>Filament settings</td>
-              <td><input type="text" aria-label="Filament settings function" /></td>
-            </tr>
-            <tr>
-              <td>Slice button</td>
-              <td><input type="text" aria-label="Slice button function" /></td>
-            </tr>
-            <tr>
-              <td>Preview view</td>
-              <td><input type="text" aria-label="Preview view function" /></td>
-            </tr>
-          </tbody>
-        </table>
-
-        <h3>Reflection</h3>
-        <textarea aria-label="Bambu Studio reflection" placeholder="What part of Bambu Studio seems most important to learn first, and why?"></textarea>
-      </section>
-    </div>
-
-    <section class="card" style="margin-top:16px;">
-      <h2>Suggested completion checklist</h2>
-      <ul class="checklist">
-        <li><input type="checkbox" id="done1" /><label for="done1">I watched the introduction to 3D printing video and completed the Part 1 check for understanding.</label></li>
-        <li><input type="checkbox" id="done2" /><label for="done2">I compared the A1, A1 Mini, and P1S after watching the printer introduction video.</label></li>
-        <li><input type="checkbox" id="done3" /><label for="done3">I identified important printer parts and explained why they matter.</label></li>
-        <li><input type="checkbox" id="done4" /><label for="done4">I completed the PLA and PETG check for understanding.</label></li>
-        <li><input type="checkbox" id="done5" /><label for="done5">I summarized the refillable spool loading process.</label></li>
-        <li><input type="checkbox" id="done6" /><label for="done6">I completed the Bambu Studio introduction activity.</label></li>
-      </ul>
-
-      <div class="section-actions">
-        <button type="button" class="primary" id="copyStudentNotes">Copy Student Notes Template</button>
+    <section class="student-tools">
+      <h2>Student Notes</h2>
+      <p class="small">Use this button if you want a quick template to paste into your digital notebook.</p>
+      <div class="actions">
+        <button type="button" id="copyStudentNotes">Copy My Notes Template</button>
         <span class="copy-status" id="studentCopyStatus" aria-live="polite"></span>
       </div>
+    </section>
+
+    <section class="accordion-stack" aria-label="3D printing orientation parts">
+      <details class="accordion" open>
+        <summary>
+          <div class="summary-left">
+            <span class="pill">Part 1</span>
+            <strong>Introduction to 3D Printing</strong>
+            <span class="small">Start here and build your foundation.</span>
+          </div>
+          <span class="length">Length: about 8 min</span>
+        </summary>
+        <div class="accordion-body">
+          <p>Watch the intro video, then complete the check for understanding one question at a time. Nice and simple. No plastic panic yet.</p>
+          <div class="video-box">
+            <p><strong>Watch:</strong> <a href="https://www.youtube.com/watch?v=HlvK6DLwCz4" target="_blank" rel="noopener noreferrer">How 3D Printers Work</a></p>
+            <div class="video-wrap">
+              <iframe src="https://www.youtube.com/embed/HlvK6DLwCz4?rel=0" title="How 3D Printers Work" loading="lazy" allowfullscreen></iframe>
+            </div>
+          </div>
+          <div class="joke-box"><strong>Mini joke:</strong> A 3D printer is basically a hot glue gun with a college degree.</div>
+          <div class="quiz-shell" data-quiz="intro">
+            <div class="quiz-progress" id="introProgress">Question 1 of 5</div>
+            <p id="introQuestion"><strong>What makes 3D printing an additive manufacturing process?</strong></p>
+            <input id="introAnswer" type="text" aria-label="Answer the current introduction to 3D printing question" placeholder="Type your answer here" />
+            <div class="button-row">
+              <button type="button" id="introCheck">Check Answer</button>
+              <button type="button" id="introNext">Next Question</button>
+              <button type="button" id="introRestart">Restart Quiz</button>
+            </div>
+            <p class="quiz-feedback" id="introFeedback" aria-live="polite"></p>
+          </div>
+          <h3>Notebook prompt</h3>
+          <textarea aria-label="Part 1 digital notebook response" placeholder="Write 2 to 3 sentences explaining how a 3D printer turns a digital design into a printed object."></textarea>
+        </div>
+      </details>
+
+      <details class="accordion">
+        <summary>
+          <div class="summary-left">
+            <span class="pill">Part 2</span>
+            <strong>Meet the Printers We Use</strong>
+            <span class="small">A1, A1 Mini, and P1S</span>
+          </div>
+          <span class="length">Length: watch full video</span>
+        </summary>
+        <div class="accordion-body">
+          <p>Watch the video about the printers we use in class. Then compare what you noticed. Think of this as meeting the cast before the movie starts.</p>
+          <div class="video-box">
+            <p><strong>Watch:</strong> <a href="https://youtu.be/bWM45yJOI7g" target="_blank" rel="noopener noreferrer">Introduction to Bambu Lab Printers (A1, A1 Mini, P1S)</a></p>
+            <div class="video-wrap">
+              <iframe src="https://www.youtube.com/embed/bWM45yJOI7g?rel=0" title="Bambu Lab Printers Overview" loading="lazy" allowfullscreen></iframe>
+            </div>
+          </div>
+          <div class="note">
+            <strong>While you watch:</strong>
+            <ul>
+              <li>What is one difference between the A1 and P1S?</li>
+              <li>Which printer seems easiest for beginners?</li>
+              <li>Which printer seems best for advanced prints?</li>
+            </ul>
+          </div>
+          <div class="joke-box"><strong>Mini joke:</strong> The A1 Mini is the small friend who still gets the job done.</div>
+          <h3>Printer comparison activity</h3>
+          <table>
+            <thead>
+              <tr><th>Printer</th><th>One thing I noticed</th><th>One strength for classroom use</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Bambu Lab A1</td><td><input type="text" aria-label="A1 observation" /></td><td><input type="text" aria-label="A1 classroom strength" /></td></tr>
+              <tr><td>Bambu Lab A1 Mini</td><td><input type="text" aria-label="A1 Mini observation" /></td><td><input type="text" aria-label="A1 Mini classroom strength" /></td></tr>
+              <tr><td>Bambu Lab P1S</td><td><input type="text" aria-label="P1S observation" /></td><td><input type="text" aria-label="P1S classroom strength" /></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+
+      <details class="accordion">
+        <summary>
+          <div class="summary-left">
+            <span class="pill">Part 3</span>
+            <strong>Identify Important Printer Parts</strong>
+            <span class="small">Know the parts before you touch the parts.</span>
+          </div>
+          <span class="length">Length: class activity</span>
+        </summary>
+        <div class="accordion-body">
+          <p>Use this section to identify common printer parts and explain why they matter. This is important because “the spinny thing” is not the official name of a part.</p>
+          <div class="joke-box"><strong>Mini joke:</strong> If you can name the nozzle, the bed, and the extruder, you are already more prepared than most spaghetti prints.</div>
+          <table>
+            <thead>
+              <tr><th>Part</th><th>Why it matters</th><th>Safety or quality connection</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Nozzle</td><td><input type="text" aria-label="Nozzle importance" /></td><td><input type="text" aria-label="Nozzle safety or quality connection" /></td></tr>
+              <tr><td>Print bed / build plate</td><td><input type="text" aria-label="Print bed importance" /></td><td><input type="text" aria-label="Print bed safety or quality connection" /></td></tr>
+              <tr><td>Extruder / filament path</td><td><input type="text" aria-label="Extruder importance" /></td><td><input type="text" aria-label="Extruder safety or quality connection" /></td></tr>
+              <tr><td>Touchscreen / controls</td><td><input type="text" aria-label="Touchscreen importance" /></td><td><input type="text" aria-label="Touchscreen safety or quality connection" /></td></tr>
+              <tr><td>Frame / gantry</td><td><input type="text" aria-label="Frame importance" /></td><td><input type="text" aria-label="Frame safety or quality connection" /></td></tr>
+              <tr><td>Filament spool / AMS connection</td><td><input type="text" aria-label="Filament spool or AMS importance" /></td><td><input type="text" aria-label="Filament spool or AMS safety or quality connection" /></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+
+      <details class="accordion">
+        <summary>
+          <div class="summary-left">
+            <span class="pill">Part 4</span>
+            <strong>Filament Basics: PLA and PETG</strong>
+            <span class="small">Meet the plastic before the plastic meets the nozzle.</span>
+          </div>
+          <span class="length">Length: watch full video</span>
+        </summary>
+        <div class="accordion-body">
+          <p>Watch the filament video, then complete the check for understanding. PLA and PETG are both useful, but they are not identical twins.</p>
+          <div class="video-box">
+            <p><strong>Watch:</strong> <a href="https://youtu.be/EX_975z-yk4" target="_blank" rel="noopener noreferrer">3D Printing Filament Explained (PLA and PETG)</a></p>
+            <div class="video-wrap">
+              <iframe src="https://www.youtube.com/embed/EX_975z-yk4?rel=0" title="3D Printing Filament Explained" loading="lazy" allowfullscreen></iframe>
+            </div>
+          </div>
+          <div class="note">
+            <strong>While you watch:</strong>
+            <ul>
+              <li>Which filament is easiest to print with?</li>
+              <li>Which filament is stronger or more durable?</li>
+              <li>What happens if filament absorbs moisture?</li>
+            </ul>
+          </div>
+          <div class="joke-box"><strong>Mini joke:</strong> Wet filament sounds like breakfast cereal and prints like disappointment.</div>
+          <div class="quiz-shell" data-quiz="filament">
+            <div class="quiz-progress" id="filamentProgress">Question 1 of 5</div>
+            <p id="filamentQuestion"><strong>Which filament is usually the best starting point for beginners?</strong></p>
+            <input id="filamentAnswer" type="text" aria-label="Answer the current filament question" placeholder="Type your answer here" />
+            <div class="button-row">
+              <button type="button" id="filamentCheck">Check Answer</button>
+              <button type="button" id="filamentNext">Next Question</button>
+              <button type="button" id="filamentRestart">Restart Quiz</button>
+            </div>
+            <p class="quiz-feedback" id="filamentFeedback" aria-live="polite"></p>
+          </div>
+          <h3>Quick compare</h3>
+          <table>
+            <thead>
+              <tr><th>Filament</th><th>What it is good for</th><th>One caution</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>PLA</td><td><input type="text" aria-label="PLA best use" /></td><td><input type="text" aria-label="PLA caution" /></td></tr>
+              <tr><td>PETG</td><td><input type="text" aria-label="PETG best use" /></td><td><input type="text" aria-label="PETG caution" /></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+
+      <details class="accordion">
+        <summary>
+          <div class="summary-left">
+            <span class="pill">Part 5</span>
+            <strong>Load a Refill into a Reusable Spool</strong>
+            <span class="small">Tiny mistake here, giant filament noodle later.</span>
+          </div>
+          <span class="length">Length: watch full video</span>
+        </summary>
+        <div class="accordion-body">
+          <p>Watch the spool loading tutorial carefully. This one matters because loose filament has a special talent for becoming a tangled mess the second you look away.</p>
+          <div class="video-box">
+            <p><strong>Watch:</strong> <a href="https://youtu.be/9AiMNgjhlw8" target="_blank" rel="noopener noreferrer">How to Load a Bambu Refillable Spool</a></p>
+            <div class="video-wrap">
+              <iframe src="https://www.youtube.com/embed/9AiMNgjhlw8?rel=0" title="Bambu Refillable Spool Tutorial" loading="lazy" allowfullscreen></iframe>
+            </div>
+          </div>
+          <div class="note">
+            <strong>While you watch:</strong>
+            <ul>
+              <li>What should you check before opening the spool?</li>
+              <li>Why is filament direction important?</li>
+              <li>What can go wrong if the spool is not secured?</li>
+            </ul>
+          </div>
+          <div class="joke-box"><strong>Mini joke:</strong> A tangled spool is just a jump scare for 3D printers.</div>
+          <ul class="checklist">
+            <li><input type="checkbox" id="spool1" /><label for="spool1">I can identify the correct filament direction before loading the refill.</label></li>
+            <li><input type="checkbox" id="spool2" /><label for="spool2">I understand how the refill aligns inside the reusable spool.</label></li>
+            <li><input type="checkbox" id="spool3" /><label for="spool3">I can explain how to secure the spool before releasing the filament.</label></li>
+            <li><input type="checkbox" id="spool4" /><label for="spool4">I know what can go wrong if filament unravels during loading.</label></li>
+            <li><input type="checkbox" id="spool5" /><label for="spool5">I am ready to safely load a spool with teacher approval.</label></li>
+          </ul>
+          <h3>Explain the process</h3>
+          <textarea aria-label="Spool loading procedure summary" placeholder="Write the steps for loading a refill into a reusable spool in your own words. Include at least 4 clear steps."></textarea>
+        </div>
+      </details>
+
+      <details class="accordion">
+        <summary>
+          <div class="summary-left">
+            <span class="pill">Part 6</span>
+            <strong>Introduction to Bambu Studio</strong>
+            <span class="small">The slicer is where your idea becomes printer instructions.</span>
+          </div>
+          <span class="length">Length: watch full video</span>
+        </summary>
+        <div class="accordion-body">
+          <p>Watch the Bambu Studio introduction and pay attention to the major parts of the software. This is the point where your design stops being a dream and starts becoming machine instructions.</p>
+          <div class="video-box">
+            <p><strong>Watch:</strong> <a href="https://www.youtube.com/watch?v=rZhy0J0mXBE" target="_blank" rel="noopener noreferrer">Bambu Studio slicer walkthrough</a></p>
+            <div class="video-wrap">
+              <iframe src="https://www.youtube.com/embed/rZhy0J0mXBE?rel=0" title="Bambu Studio walkthrough" loading="lazy" allowfullscreen></iframe>
+            </div>
+          </div>
+          <div class="joke-box"><strong>Mini joke:</strong> Slicing is when your computer politely explains to the printer how not to make modern art by accident.</div>
+          <h3>Software observation activity</h3>
+          <table>
+            <thead>
+              <tr><th>Bambu Studio area or tool</th><th>What I think it does</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Import model</td><td><input type="text" aria-label="Import model function" /></td></tr>
+              <tr><td>Printer profile</td><td><input type="text" aria-label="Printer profile function" /></td></tr>
+              <tr><td>Filament settings</td><td><input type="text" aria-label="Filament settings function" /></td></tr>
+              <tr><td>Slice button</td><td><input type="text" aria-label="Slice button function" /></td></tr>
+              <tr><td>Preview view</td><td><input type="text" aria-label="Preview view function" /></td></tr>
+            </tbody>
+          </table>
+          <h3>Reflection</h3>
+          <textarea aria-label="Bambu Studio reflection" placeholder="What part of Bambu Studio seems most important to learn first, and why?"></textarea>
+        </div>
+      </details>
     </section>
 
     <a class="footer-link" href="index.html">← Back to GCI Project Hub</a>
@@ -429,27 +456,8 @@
 
   <script>
     (function () {
-      const themeSelector = document.getElementById('themeSelector');
-      const copyNotes = document.getElementById('copyNotes');
-      const copyStatus = document.getElementById('copyStatus');
       const copyStudentNotes = document.getElementById('copyStudentNotes');
       const studentCopyStatus = document.getElementById('studentCopyStatus');
-
-      function applyTheme(theme) {
-        if (theme === 'light') {
-          document.documentElement.setAttribute('data-theme', 'light');
-        } else {
-          document.documentElement.removeAttribute('data-theme');
-        }
-        localStorage.setItem('gci-3d-orientation-theme', theme);
-        themeSelector.value = theme;
-      }
-
-      themeSelector.addEventListener('change', function () {
-        applyTheme(this.value);
-      });
-
-      applyTheme(localStorage.getItem('gci-3d-orientation-theme') || 'dark');
 
       function makeQuiz(config) {
         const questions = config.questions;
@@ -482,7 +490,6 @@
           const isCorrect = item.answers.some(function (answer) {
             return value.includes(normalize(answer)) || normalize(answer).includes(value);
           });
-
           if (!answered) {
             if (isCorrect) {
               score += 1;
@@ -544,10 +551,10 @@
         next: document.getElementById('filamentNext'),
         restart: document.getElementById('filamentRestart'),
         questions: [
-          { q: 'Which filament is usually the easier starting point for classroom printing, PLA or PETG?', answers: ['pla'], explain: 'PLA is usually the easier starting point because it is beginner friendly and prints at lower temperatures.' },
+          { q: 'Which filament is usually the best starting point for beginners?', answers: ['pla'], explain: 'PLA is beginner friendly because it prints at lower temperatures and is easier to work with.' },
           { q: 'Which filament is often chosen when more durability is needed, PLA or PETG?', answers: ['petg'], explain: 'PETG is often chosen when you want more durability and impact resistance.' },
+          { q: 'What can happen if filament absorbs moisture?', answers: ['bad print', 'poor quality', 'bubbles', 'stringing'], explain: 'Moisture in filament can cause weak prints, bubbles, and poor surface quality.' },
           { q: 'What is one thing both PLA and PETG have in common?', answers: ['both are filament', 'both are thermoplastics', 'both can be 3d printed'], explain: 'Both are common 3D printing materials used as filament.' },
-          { q: 'Why should filament be stored carefully?', answers: ['moisture', 'keep it dry', 'water'], explain: 'Filament can absorb moisture, which can hurt print quality.' },
           { q: 'Why is it important to choose the correct filament profile in the slicer?', answers: ['temperature', 'print settings', 'material settings'], explain: 'Different materials need different temperatures and print settings.' }
         ]
       });
@@ -567,40 +574,9 @@
         }
       }
 
-      copyNotes.addEventListener('click', function () {
-        copyText(
-`Teacher Notes
-Part 1: Students watch an introduction to 3D printing video and complete a one-question-at-a-time check for understanding.
-Part 2: Students watch a video introducing the Bambu Lab A1, A1 Mini, and P1S, then complete a comparison activity.
-Part 3: Students identify common, high-importance printer parts and explain why each part matters.
-Part 4: Students watch a PLA and PETG filament video and complete an immediate check for understanding.
-Part 5: Students watch a tutorial on loading a refill into a Bambu refillable spool and summarize the process.
-Part 6: Students get an introduction to Bambu Studio and complete a software observation activity.`,
-          copyStatus
-        );
-      });
-
       copyStudentNotes.addEventListener('click', function () {
         copyText(
-`3D Printing Orientation Notes
-
-Part 1
-What did I learn about how 3D printing works?
-
-Part 2
-What did I notice about the A1, A1 Mini, and P1S?
-
-Part 3
-Which printer parts are most important, and why?
-
-Part 4
-What is one important difference between PLA and PETG?
-
-Part 5
-What are the most important steps for loading a refill into a Bambu refillable spool?
-
-Part 6
-What part of Bambu Studio seems most important to learn first?`,
+`3D Printing Orientation Notes\n\nPart 1\nWhat did I learn about how 3D printing works?\n\nPart 2\nWhat did I notice about the A1, A1 Mini, and P1S?\n\nPart 3\nWhich printer parts are most important, and why?\n\nPart 4\nWhat is one important difference between PLA and PETG?\n\nPart 5\nWhat are the most important steps for loading a refill into a Bambu refillable spool?\n\nPart 6\nWhat part of Bambu Studio seems most important to learn first?`,
           studentCopyStatus
         );
       });

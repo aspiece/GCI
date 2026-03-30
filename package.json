@@ -1,9 +1,0 @@
-{
-    "name": "gci-ooo-review",
-    "version": "1.0.0",
-    "description": "PEMDAS Playground tests and utilities",
-    "scripts": {},
-    "engines": {
-        "node": ">=14"
-    }
-}
