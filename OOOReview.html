@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Python Order of operations</title>
+    <title>Python Order of Operations Review</title>
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <style>
         :root {
@@ -698,13 +698,6 @@
             }
         }
 
-        /* Operator legend polish */
-        .legend {
-            background: linear-gradient(180deg, rgba(11, 99, 179, 0.04), transparent);
-            padding: 10px;
-            border-radius: 8px;
-        }
-
         .legend-list {
             margin: 6px 0 0 0;
             padding-left: 0;
@@ -747,19 +740,6 @@
         }
 
         .legend-op {
-            background: rgba(11, 99, 179, 0.10);
-            color: var(--accent);
-            padding: 6px 10px;
-            border-radius: 6px;
-            min-width: 48px;
-            text-align: center;
-            font-weight: 800;
-            box-shadow: 0 4px 10px rgba(2, 6, 23, 0.06);
-            font-size: 13px;
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
-        }
-
-        .legend-op {
             font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
             background: rgba(11, 99, 179, 0.08);
             color: #05385f;
@@ -786,17 +766,9 @@
 </head>
 
 <body>
-    <!-- Page meta: quick reference and theme -->
-    <div
-        style="position:fixed;top:12px;right:12px;z-index:9999;padding:6px 10px;border-radius:8px;background:rgba(0,0,0,0.5);color:var(--text,#fff);font-size:13px;backdrop-filter: blur(4px);">
-        <a href="./OOOReview.html"
-            style="color:var(--accent,#0b63b3);font-weight:700;text-decoration:underline dotted">OOOReview.html</a>
-        <div style="font-size:12px;color:var(--muted,#4b5563)">Theme: PEMDAS Arcade</div>
-    </div>
-
     <div class="wrap">
         <header>
-            <h1 id="page-title">Python Order of operations</h1>
+            <h1 id="page-title">Python Order of Operations Review</h1>
             <div style="color:var(--muted);font-size:13px">Mnemonic: PEMDAS (Parentheses, Exponents, MD, AS)</div>
         </header>
 
@@ -922,7 +894,7 @@
                 </section>
 
                 <!-- Expression generator debug / stress panel (moved to bottom) -->
-                <section id="expr-debug-card" class="card" aria-labelledby="expr-debug-heading" style="display:block">
+                <section id="expr-debug-card" class="card" aria-labelledby="expr-debug-heading" style="display:none">
                     <h2 id="expr-debug-heading" style="margin:0 0 8px 0;font-size:15px">Expression Debug</h2>
                     <div style="color:var(--muted);font-size:14px">
                         <div style="margin-bottom:8px">Developer tools: generate expressions in-page and view stats.
@@ -1020,6 +992,8 @@
                             </li>
                             <li><span class="legend-op"><code>**</code></span><span class="legend-desc">exponent
                                     (power)</span></li>
+                            <li><span class="legend-op"><code>%</code></span><span class="legend-desc">modulo
+                                    (remainder)</span></li>
                         </ul>
                         <div style="margin-top:6px;font-size:13px">Tip: Problems use Python-style operators; exponents
                             use <code>**</code>. Order follows PEMDAS.</div>
@@ -1285,18 +1259,7 @@
                     // Normalize spaces
                     str = str.replace(/\s+/g, ' ');
                     // convert unary pluses to explicit (we use patterns that find binary ops)
-                    // Evaluate exponent (right-most)
-                    const exponentRegex = /(-?\d+(\.\d+)?|\)\s*)(\s*\^\s*)(-?\d+(\.\d+)?|\()/;
-                    // Simpler approach: replace ^ by ** for eval and use a regex to find one operation pair for **, then */ then +-.
                     const js = str.replace(/\^/g, '**');
-
-                    // helper to apply regex and replace first match
-                    const applyOpRegex = (regex) => {
-                        const m = regex.exec(js);
-                        if (!m) return null;
-                        // compute match range in original str by matching using the same subpattern adapted to original
-                        return null;
-                    };
 
                     // Simpler safer approach: use a small parser loop:
                     // 1) Tokenize numbers, operators, parentheses (we assume no parentheses here)
@@ -1352,67 +1315,6 @@
                 }
 
                 try {
-
-                    // Close modal on backdrop click or Escape key, restore focus
-                    (function () {
-                        const modal = document.getElementById('badge-modal');
-                        if (!modal) return;
-                        // backdrop click closes when clicking outside inner dialog
-                        modal.addEventListener('click', (ev) => {
-                            if (ev.target === modal) closeModal();
-                        });
-                        const closeBtn = document.getElementById('badge-modal-close');
-                        if (closeBtn) closeBtn.addEventListener('click', closeModal);
-                        // text-style close button in modal (added for clarity)
-                        const closeTextBtn = document.getElementById('badge-modal-close-text');
-                        if (closeTextBtn) closeTextBtn.addEventListener('click', closeModal);
-                        // modal export connects to the main export button if present
-                        const modalExport = document.getElementById('badge-modal-export');
-                        if (modalExport) modalExport.addEventListener('click', () => {
-                            // If a badge modal is open, download that badge as an image.
-                            const modal = document.getElementById('badge-modal');
-                            const openLvl = modal && modal._openLevel;
-                            if (openLvl) {
-                                downloadBadgeImage(openLvl);
-                            } else {
-                                const primary = document.getElementById('export-badges');
-                                if (primary) primary.click();
-                            }
-                        });
-                        document.addEventListener('keydown', (ev) => {
-                            // support multiple ways to detect Escape across browsers
-                            const isEsc = ev.key === 'Escape' || ev.key === 'Esc' || ev.keyCode === 27;
-                            if (isEsc) {
-                                try {
-                                    if (modal && modal.style && modal.style.display && modal.style.display !== 'none') {
-                                        closeModal();
-                                    }
-                                } catch (e) { /* ignore */ }
-                            }
-                        });
-                        // Delegated click handler: robustly handle modal action clicks even if element wiring fails
-                        document.addEventListener('click', function (ev) {
-                            try {
-                                const tgt = ev.target;
-                                // close buttons
-                                if (tgt.closest && tgt.closest('#badge-modal-close, #badge-modal-close-text')) {
-                                    closeModal();
-                                    return;
-                                }
-                                // export button
-                                if (tgt.closest && tgt.closest('#badge-modal-export')) {
-                                    const m = document.getElementById('badge-modal');
-                                    const lvl = m && m._openLevel;
-                                    if (lvl) {
-                                        downloadBadgeImage(lvl);
-                                    } else {
-                                        const primary = document.getElementById('export-badges');
-                                        if (primary) primary.click();
-                                    }
-                                }
-                            } catch (e) { /* ignore */ }
-                        });
-                    })();
                     // Handle parentheses iteratively
                     while (/\(/.test(s)) {
                         // find innermost parenthetical group
@@ -1450,6 +1352,10 @@
                 const level = difficulty.value;
                 const maxAbs = parseInt(rngSelect.value, 10);
                 const count = Math.min(20, Math.max(1, parseInt(countInput.value, 10) || 10));
+                // Warn before discarding an active quiz
+                if (problems.length && index > 0 && index < problems.length) {
+                    if (!confirm('A quiz is already in progress. Start a new one and discard the current quiz?')) return;
+                }
                 problems = [];
                 index = 0;
                 score = 0;
@@ -1554,14 +1460,14 @@
                 try {
                     const pal = BADGE_COLORS[level] || ['#ddd', '#bbb', '#111'];
                     const gId = `g-${level}`;
-                    // small pixel-art mapping (reuse the same simple art used previously)
-                    const inner = {
+                    const innerMap = {
                         'very-easy': '<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="64" height="64" fill="#111"/><rect x="8" y="8" width="48" height="48" fill="#ffd24a"/><rect x="20" y="20" width="24" height="24" fill="#ff8c00"/></svg>',
                         'easy': '<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="64" height="64" fill="#0b1630"/><rect x="10" y="12" width="44" height="40" fill="#6be3ff"/><rect x="18" y="20" width="28" height="24" fill="#00bcd4"/></svg>',
                         'medium': '<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="64" height="64" fill="#07112a"/><rect x="8" y="8" width="48" height="48" fill="#c0ffc8"/><rect x="18" y="18" width="28" height="28" fill="#4caf50"/></svg>',
                         'hard': '<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="64" height="64" fill="#2a0014"/><rect x="6" y="10" width="52" height="44" fill="#ff99cc"/><rect x="14" y="18" width="36" height="28" fill="#ff4081"/></svg>',
                         'expert': '<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="64" height="64" fill="#001a1a"/><rect x="8" y="8" width="48" height="48" fill="#ffd6a5"/><rect x="16" y="16" width="32" height="32" fill="#ff6b00"/></svg>'
-                    }[level] || inner['medium'];
+                    };
+                    const inner = innerMap[level] || innerMap['medium'];
 
                     // normalized viewBox and sizes
                     const vb = '0 0 200 200';
@@ -2336,46 +2242,13 @@
                 answerInput.value = '';
                 feedbackEl.textContent = '';
                 stepsEl.textContent = '';
-                // always hide steps when presenting a new problem; only show after correct answer
+                // always hide steps when presenting a new problem; steps reveal after the student answers
                 stepsEl.style.display = 'none';
                 // remove any hint or reveal classes from prior interactions
                 try { stepsEl.classList.remove('hint'); stepsEl.classList.remove('reveal'); } catch (e) { }
                 askedEl.textContent = i;
                 // update mastery UI for this problem's level
                 updateMasteryUI(p.level || difficulty.value);
-                // ensure keyboard activation handlers on cabinet (event delegation)
-                const cabinet = document.getElementById('badge-cabinet');
-                if (cabinet && !cabinet._wired) {
-                    cabinet._wired = true;
-                    cabinet.addEventListener('click', (ev) => {
-                        // if click originated from a lock helper, let its handler manage the event
-                        if (ev.target && ev.target.closest && ev.target.closest('.lock-trigger')) return;
-                        const tgt = safeClosest(ev.target, '.badge.trophy');
-                        if (!tgt) return;
-                        const lvl = tgt.getAttribute('data-level');
-                        const info = getBadgeInfo(lvl);
-                        const name = ARCADE_NAMES[lvl] || lvl;
-                        if (info.earned) {
-                            const d = new Date(info.earnedAt);
-                            showLiveToast(`${name} badge earned ${d.toLocaleString()}`);
-                        } else {
-                            showLiveToast(`${name} badge locked`);
-                        }
-                        // open detail modal for this badge (accessible)
-                        try { populateModal(lvl); } catch (e) { }
-                    });
-                    cabinet.addEventListener('keydown', (ev) => {
-                        // ignore key events originating from the lock button so activating the helper
-                        // doesn't also trigger opening the badge modal
-                        if (ev.target && ev.target.closest && ev.target.closest('.lock-trigger')) return;
-                        if (ev.key === 'Enter' || ev.key === ' ') {
-                            const tgt = safeClosest(ev.target, '.badge.trophy');
-                            if (!tgt) return;
-                            ev.preventDefault();
-                            tgt.click();
-                        }
-                    });
-                }
             }
 
             checkBtn.addEventListener('click', () => {
@@ -2411,13 +2284,16 @@
                 } else {
                     results[index] = false;
                     feedbackEl.textContent = 'Not quite. ✖ Correct: ' + p.answer;
-                    // if user asked for steps, show a small hint explaining why they're hidden
+                    // show steps regardless so the student can learn from the mistake
                     if (stepsToggle.checked) {
                         try {
-                            stepsEl.classList.add('hint');
-                            stepsEl.textContent = 'Steps will be shown after a correct answer.';
+                            const st = stepsFor(p.expr);
+                            stepsEl.classList.remove('hint');
+                            stepsEl.textContent = st.join('\n→ ');
                             stepsEl.style.display = 'block';
-                        } catch (e) { }
+                            stepsEl.classList.add('reveal');
+                            setTimeout(() => { try { stepsEl.classList.remove('reveal'); } catch (e) { } }, 520);
+                        } catch (e) { stepsEl.style.display = 'none'; }
                     } else {
                         try { stepsEl.style.display = 'none'; } catch (e) { }
                     }
@@ -2467,12 +2343,13 @@
 
             generateBtn.addEventListener('click', newSet);
             stepsToggle.addEventListener('change', () => {
-                // Only show steps immediately if current problem has already been answered correctly.
-                const showNow = stepsToggle.checked && problems.length && results[index] === true;
+                // Show steps if the current problem has been answered (correctly or incorrectly).
+                const showNow = stepsToggle.checked && problems.length && results[index] !== null;
                 stepsEl.style.display = showNow ? 'block' : 'none';
                 // if showing, precompute steps for current problem
                 if (showNow) {
                     try {
+                        stepsEl.classList.remove('hint');
                         stepsEl.textContent = stepsFor(problems[index].expr).join('\n→ ');
                     } catch (e) { stepsEl.textContent = 'Cannot show steps for this expression.'; }
                 }
