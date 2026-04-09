@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Contact Genesee Learning Lab — connect with us to partner, collaborate, volunteer, or learn more about our programs." />
+  <meta name="author" content="Genesee Learning Lab" />
+  <title>Contact — Genesee Learning Lab</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .contact-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-12);
+      align-items: start;
+    }
+
+    .contact-info h2 {
+      margin: 0 0 var(--space-4);
+      font-size: var(--font-size-2xl);
+      font-weight: 700;
+    }
+
+    .contact-info p {
+      margin: 0 0 var(--space-5);
+      color: var(--color-text-muted);
+      font-size: var(--font-size-lg);
+      line-height: 1.7;
+    }
+
+    .contact-ways {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .contact-way {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-3);
+      padding: var(--space-4);
+      background: var(--color-surface-alt);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+    }
+
+    .contact-way__icon {
+      font-size: 1.5rem;
+      line-height: 1;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .contact-way__text strong {
+      display: block;
+      font-size: var(--font-size-base);
+      font-weight: 700;
+      color: var(--color-text);
+      margin-bottom: var(--space-1);
+    }
+
+    .contact-way__text span {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-muted);
+    }
+
+    /* Contact form */
+    .contact-form {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      padding: var(--space-8);
+      box-shadow: var(--shadow-md);
+    }
+
+    .contact-form h2 {
+      margin: 0 0 var(--space-6);
+      font-size: var(--font-size-2xl);
+      font-weight: 700;
+    }
+
+    .form-group {
+      margin-bottom: var(--space-5);
+    }
+
+    .form-group label {
+      display: block;
+      font-size: var(--font-size-sm);
+      font-weight: 700;
+      color: var(--color-text);
+      margin-bottom: var(--space-2);
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: var(--space-3) var(--space-4);
+      border: 1.5px solid var(--color-border);
+      border-radius: var(--radius-md);
+      font-family: var(--font-family);
+      font-size: var(--font-size-base);
+      color: var(--color-text);
+      background: var(--color-surface);
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--color-primary-light);
+      box-shadow: 0 0 0 3px rgba(59,130,246,.2);
+    }
+
+    .form-group textarea {
+      min-height: 8rem;
+      resize: vertical;
+    }
+
+    .form-submit {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .placeholder-notice {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: var(--radius-md);
+      padding: var(--space-4) var(--space-5);
+      font-size: var(--font-size-sm);
+      color: #713f12;
+      margin-top: var(--space-4);
+    }
+
+    @media (max-width: 768px) {
+      .contact-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <!-- NAVIGATION -->
+  <nav class="site-nav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-brand" aria-label="Genesee Learning Lab — Home">
+        <span class="nav-brand-icon" aria-hidden="true">GL</span>
+        Genesee Learning Lab
+      </a>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="primary-nav-list" aria-label="Open navigation menu">&#9776;</button>
+      <ul id="primary-nav-list" class="nav-links" role="list">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="projects.html">Projects</a></li>
+        <li><a href="programs.html">Programs</a></li>
+        <li><a href="contact.html" aria-current="page">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- PAGE HEADER -->
+  <header class="page-header" aria-labelledby="contact-page-heading">
+    <div class="container--sm">
+      <h1 id="contact-page-heading">Get In Touch</h1>
+      <p>Whether you want to partner, volunteer, collaborate, or just learn more — we'd love to connect.</p>
+    </div>
+  </header>
+
+  <main id="main-content" tabindex="-1">
+    <div class="section">
+      <div class="container">
+        <div class="contact-layout">
+
+          <!-- Contact info panel -->
+          <div>
+            <div class="contact-info">
+              <h2>Ways to Connect</h2>
+              <p>
+                Genesee Learning Lab is built on community partnerships. We welcome schools, families, industry
+                partners, and community organizations who want to support students and expand what's possible in
+                technology education.
+              </p>
+            </div>
+
+            <div class="contact-ways" role="list">
+              <div class="contact-way" role="listitem">
+                <span class="contact-way__icon" aria-hidden="true">&#x1F3EB;</span>
+                <div class="contact-way__text">
+                  <strong>Schools &amp; Districts</strong>
+                  <span>Interested in bringing Genesee Learning Lab programming to your school? Let's talk about partnership opportunities.</span>
+                </div>
+              </div>
+              <div class="contact-way" role="listitem">
+                <span class="contact-way__icon" aria-hidden="true">&#x1F4BC;</span>
+                <div class="contact-way__text">
+                  <strong>Industry Partners</strong>
+                  <span>Offer guest presentations, mentorship, internship pipelines, or project challenges for students.</span>
+                </div>
+              </div>
+              <div class="contact-way" role="listitem">
+                <span class="contact-way__icon" aria-hidden="true">&#x1F91D;</span>
+                <div class="contact-way__text">
+                  <strong>Community Organizations</strong>
+                  <span>Collaborate on community-connected projects, events, or programming that extend learning beyond the classroom.</span>
+                </div>
+              </div>
+              <div class="contact-way" role="listitem">
+                <span class="contact-way__icon" aria-hidden="true">&#x1F468;&#x200D;&#x1F469;&#x200D;&#x1F467;</span>
+                <div class="contact-way__text">
+                  <strong>Families</strong>
+                  <span>Have questions about student work, events, or ways to support learning at home? We'd love to hear from you.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contact form panel -->
+          <div>
+            <div class="contact-form">
+              <h2>Send a Message</h2>
+
+              <!-- Placeholder notice about form functionality -->
+              <p class="placeholder-notice">
+                <strong>Note:</strong> This contact form is a placeholder. Full form submission functionality will be added soon. In the meantime, reach out directly through your school or district contact.
+              </p>
+
+              <form action="#" method="post" aria-label="Contact form" novalidate>
+                <div class="form-group">
+                  <label for="contact-name">Your Name <span aria-hidden="true">*</span></label>
+                  <input
+                    type="text"
+                    id="contact-name"
+                    name="name"
+                    autocomplete="name"
+                    required
+                    aria-required="true"
+                    placeholder="Jane Smith"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="contact-email">Email Address <span aria-hidden="true">*</span></label>
+                  <input
+                    type="email"
+                    id="contact-email"
+                    name="email"
+                    autocomplete="email"
+                    required
+                    aria-required="true"
+                    placeholder="jane@example.com"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="contact-role">Your Role</label>
+                  <select id="contact-role" name="role">
+                    <option value="">Select one (optional)</option>
+                    <option value="student">Student</option>
+                    <option value="educator">Educator / Teacher</option>
+                    <option value="administrator">School Administrator</option>
+                    <option value="family">Family Member</option>
+                    <option value="industry">Industry Professional</option>
+                    <option value="community">Community Organization</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="contact-subject">Subject</label>
+                  <input
+                    type="text"
+                    id="contact-subject"
+                    name="subject"
+                    placeholder="How can we help?"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="contact-message">Message <span aria-hidden="true">*</span></label>
+                  <textarea
+                    id="contact-message"
+                    name="message"
+                    required
+                    aria-required="true"
+                    placeholder="Tell us about yourself and how you'd like to connect..."
+                  ></textarea>
+                </div>
+
+                <button type="submit" class="btn btn--primary form-submit">
+                  Send Message
+                </button>
+              </form>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer" aria-labelledby="contact-footer-heading">
+    <div class="footer-inner">
+      <h2 id="contact-footer-heading" class="sr-only">Site Footer</h2>
+      <div class="footer-grid">
+        <div>
+          <p class="footer-brand">Genesee Learning Lab</p>
+          <p class="footer-tagline">Hands-on computer science and technology education for students, families, and communities across Genesee County.</p>
+        </div>
+        <nav aria-label="Footer navigation: Site">
+          <div class="footer-col">
+            <h4>Site</h4>
+            <ul role="list">
+              <li><a href="index.html">Home</a></li>
+              <li><a href="projects.html">Projects</a></li>
+              <li><a href="programs.html">Programs</a></li>
+              <li><a href="contact.html">Contact</a></li>
+            </ul>
+          </div>
+        </nav>
+        <nav aria-label="Footer navigation: Learning">
+          <div class="footer-col">
+            <h4>Learning</h4>
+            <ul role="list">
+              <li><a href="programs.html">Programming</a></li>
+              <li><a href="programs.html">Hardware &amp; IT</a></li>
+              <li><a href="programs.html">Cybersecurity</a></li>
+              <li><a href="programs.html">AI &amp; Data</a></li>
+              <li><a href="programs.html">Engineering</a></li>
+            </ul>
+          </div>
+        </nav>
+        <nav aria-label="Footer navigation: Connect">
+          <div class="footer-col">
+            <h4>Connect</h4>
+            <ul role="list">
+              <li><a href="contact.html">Get Involved</a></li>
+              <li><a href="contact.html">Partner With Us</a></li>
+              <li><a href="contact.html">Guest Speakers</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Genesee Learning Lab. All rights reserved.</span>
+        <span>Built for students, families, and community.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var toggle = document.querySelector('.nav-toggle');
+      var navList = document.getElementById('primary-nav-list');
+      if (!toggle || !navList) return;
+      toggle.addEventListener('click', function () {
+        var isOpen = navList.classList.toggle('is-open');
+        toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        toggle.setAttribute('aria-label', isOpen ? 'Close navigation menu' : 'Open navigation menu');
+      });
+      navList.addEventListener('click', function (e) {
+        if (e.target.tagName === 'A') {
+          navList.classList.remove('is-open');
+          toggle.setAttribute('aria-expanded', 'false');
+          toggle.setAttribute('aria-label', 'Open navigation menu');
+        }
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && navList.classList.contains('is-open')) {
+          navList.classList.remove('is-open');
+          toggle.setAttribute('aria-expanded', 'false');
+          toggle.setAttribute('aria-label', 'Open navigation menu');
+          toggle.focus();
+        }
+      });
+    }());
+  </script>
+
+</body>
+</html>
