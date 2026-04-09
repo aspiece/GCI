@@ -2,306 +2,515 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Genesee Career Institute Computer Science instructional hub with classroom activities, review tools, and curriculum-aligned student practice resources." />
-    <meta name="keywords" content="education, K-12, classroom, computer science, curriculum, Genesee Career Institute, instructional resources" />
-    <meta name="author" content="Genesee Career Institute" />
-    <title>GCI Project Hub</title>
-    <script type="application/ld+json">
-        {
-            "@context": "https://schema.org",
-            "@type": "EducationalOrganization",
-            "name": "Genesee Career Institute",
-            "department": "Computer Science",
-            "description": "Instructional hub for classroom-ready computer science activities and practice resources.",
-            "educationalRole": "teacher",
-            "audience": {
-                "@type": "EducationalAudience",
-                "educationalRole": "student"
-            }
-        }
-    </script>
-    <style>
-         :root {
-            --bg: #f5f7fb;
-            --card: #ffffff;
-            --text: #111827;
-            --muted: #4b5563;
-            --accent: #2563eb;
-            --border: #dbe3ef;
-            --shadow: 0 8px 20px rgba(17, 24, 39, 0.08);
-        }
-        
-        * {
-            box-sizing: border-box;
-        }
-        
-        body {
-            margin: 0;
-            font-family: Inter, Segoe UI, Roboto, Arial, sans-serif;
-            background: linear-gradient(180deg, #ebf2ff 0%, var(--bg) 70%);
-            color: var(--text);
-        }
-        
-        .wrap {
-            max-width: 1050px;
-            margin: 0 auto;
-            padding: 24px 16px 40px;
-        }
-        
-        h1 {
-            margin: 0 0 8px;
-            font-size: 2rem;
-        }
-        
-        .lead {
-            margin: 0 0 20px;
-            color: var(--muted);
-        }
-        
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 14px;
-        }
-        
-        .card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-            padding: 14px;
-        }
-        
-        h2 {
-            margin: 0 0 10px;
-            font-size: 1.1rem;
-        }
-        
-        ul {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-        
-        li+li {
-            margin-top: 8px;
-        }
-        
-        .group-label {
-            margin-top: 14px;
-            padding-top: 10px;
-            border-top: 1px dashed var(--border);
-            color: var(--muted);
-            font-size: 0.82rem;
-            font-weight: 700;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-        }
-        
-        a {
-            color: var(--accent);
-            text-decoration: none;
-            font-weight: 600;
-        }
-        
-        a:hover,
-        a:focus-visible {
-            text-decoration: underline;
-        }
-        
-        .small {
-            margin-top: 16px;
-            color: var(--muted);
-            font-size: 0.92rem;
-        }
-        
-        .item-desc {
-            display: block;
-            margin-top: 2px;
-            color: var(--muted);
-            font-size: 0.92rem;
-            line-height: 1.35;
-        }
-        
-        .status-pill {
-            display: inline-block;
-            margin-left: 8px;
-            padding: 2px 10px;
-            border-radius: 999px;
-            font-size: 0.78rem;
-            font-weight: 700;
-            line-height: 1.4;
-            vertical-align: middle;
-            border: 1px solid transparent;
-        }
-        
-        .status-prod {
-            background: #dcfce7;
-            color: #166534;
-            border-color: #86efac;
-        }
-        
-        .status-progress {
-            background: #fef3c7;
-            color: #92400e;
-            border-color: #fcd34d;
-        }
-        
-        .instructional-note {
-            margin-top: 14px;
-            padding: 12px;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            background: #f8fbff;
-        }
-        
-        .instructional-note p {
-            margin: 0 0 8px;
-            color: var(--muted);
-            font-size: 0.94rem;
-            line-height: 1.45;
-        }
-        
-        .instructional-note p:last-child {
-            margin-bottom: 0;
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Genesee Learning Lab — Hands-on computer science, programming, hardware, cybersecurity, AI, and emerging technologies for students in Genesee County." />
+  <meta name="author" content="Genesee Learning Lab" />
+  <title>Genesee Learning Lab — Building the Future of CS in Genesee County</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "EducationalOrganization",
+    "name": "Genesee Learning Lab",
+    "description": "Hands-on computer science and technology initiative helping students build real-world skills through authentic projects in Genesee County.",
+    "url": "https://gcilab.com"
+  }
+  </script>
+
+  <style>
+    /* ---- Homepage-specific styles ---- */
+    .about-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-12);
+      align-items: center;
+    }
+    .about-content h2 {
+      margin: 0 0 var(--space-4);
+      font-size: clamp(var(--font-size-2xl), 3vw, var(--font-size-4xl));
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .about-content p {
+      margin: 0 0 var(--space-4);
+      color: var(--color-text-muted);
+      font-size: var(--font-size-lg);
+      line-height: 1.7;
+    }
+    .about-content p:last-of-type { margin-bottom: var(--space-6); }
+    .about-highlights {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+    .about-highlight {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-3);
+      background: var(--color-surface-alt);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+    }
+    .about-highlight__icon { font-size: 1.75rem; line-height: 1; flex-shrink: 0; margin-top: 2px; }
+    .about-highlight__text strong {
+      display: block;
+      font-size: var(--font-size-base);
+      font-weight: 700;
+      color: var(--color-text);
+      margin-bottom: var(--space-1);
+    }
+    .about-highlight__text span { font-size: var(--font-size-sm); color: var(--color-text-muted); }
+
+    /* Experiences grid */
+    .experiences-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: var(--space-5);
+    }
+    .experience-card {
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      transition: background var(--transition-base), border-color var(--transition-base);
+    }
+    .experience-card:hover {
+      background: rgba(255,255,255,.08);
+      border-color: rgba(59,130,246,.4);
+    }
+    .experience-card__emoji { font-size: 2rem; margin-bottom: var(--space-3); line-height: 1; }
+    .experience-card h3 { margin: 0 0 var(--space-2); font-size: var(--font-size-lg); font-weight: 700; color: #e2e8f0; }
+    .experience-card p { margin: 0; font-size: var(--font-size-sm); color: #94a3b8; line-height: 1.65; }
+
+    /* Certifications section */
+    .cert-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-10);
+      align-items: start;
+    }
+    .cert-group h3 { margin: 0 0 var(--space-5); font-size: var(--font-size-xl); font-weight: 700; color: var(--color-text); }
+    .cert-list { display: flex; flex-direction: column; gap: var(--space-3); list-style: none; margin: 0; padding: 0; }
+    .cert-list li {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3) var(--space-4);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      color: var(--color-text);
+      box-shadow: var(--shadow-sm);
+    }
+    .cert-list li::before {
+      content: "\2713";
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.5rem;
+      height: 1.5rem;
+      background: #dcfce7;
+      color: #166534;
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-xs);
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .pathway-list { display: flex; flex-direction: column; gap: var(--space-3); list-style: none; margin: 0; padding: 0; }
+    .pathway-list li {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3) var(--space-4);
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      color: var(--color-primary-dark);
+    }
+    .pathway-list li::before { content: "\2192"; color: var(--color-primary); font-weight: 800; flex-shrink: 0; }
+
+    /* Community section */
+    .community-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: var(--space-5);
+      margin-bottom: var(--space-10);
+    }
+    .community-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+    }
+    .community-card__icon { font-size: 2.5rem; margin-bottom: var(--space-3); }
+    .community-card h3 { margin: 0 0 var(--space-2); font-size: var(--font-size-lg); font-weight: 700; color: var(--color-text); }
+    .community-card p { margin: 0; font-size: var(--font-size-sm); color: var(--color-text-muted); line-height: 1.6; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .about-layout, .cert-layout { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 
 <body>
-    <main class="wrap">
-        <h1>GCI Computer Science builds</h1>
-        <p class="lead">Home page for your interactive GCI projects and classroom activities.</p>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
 
-        <div class="grid">
-            <section class="card" aria-labelledby="activities-title">
-                <h2 id="activities-title">Interactive Activities</h2>
-                <ul>
-                    <li><a href="AgileReview.html">Agile Review</a><span class="item-desc">Practice and review key Agile
-                            concepts used in class projects.<span class="status-pill status-progress">In
-                                Progress</span></span>
-                    </li>
-                    <li><a href="AgileVocab.html">Agile Vocabulary</a><span class="item-desc">Build confidence with
-                            common Agile terms through interactive prompts.<span class="status-pill status-progress">In
-                                Progress</span></span>
-                    </li>
-                    <li class="group-label" aria-hidden="true">Base Camp Section</li>
-                    <li><a href="GCI_Communications.html">GCI Communications</a><span class="item-desc">Explore
-                            communication-focused activities for teamwork and professionalism.<span
-                                class="status-pill status-prod">In Production</span></span>
-                    </li>
-                    <li><a href="IEfollowup.html">Emotional Intelligence Followup</a><span class="item-desc">Reflect on
-                            emotional intelligence skills with a guided follow-up activity.<span
-                                class="status-pill status-prod">In Production</span></span>
-                    </li>
-                    <li><a href="High_Ropes_Teamwork_Follow_Up_Assignment.html">High Ropes Teamwork Follow-Up
-                            Assignment</a><span class="item-desc">Blended learning and makeup assignment with required
-                            video analysis, Merrill-aligned prompts, and progress-based completion checks.<span
-                                class="status-pill status-prod">In Production</span></span>
-                    </li>
-                    <li><a href="GCI3Dorder.html">GCI 3D Order</a><span class="item-desc">Use a 3D-themed activity to
-                            reinforce sequencing and order skills.<span class="status-pill status-progress">In
-                                Progress</span></span>
-                    </li>
-                    <li><a href="Intro_to_3D_Printing.html">Intro to 3D Printing with Bambu A1</a><span class="item-desc">Follow a 5-day student lab guide for printer setup, design, slicing,
-                            troubleshooting, and remix improvements.<span class="status-pill status-progress">In
-                                Progress</span></span>
-                    </li>
-                    <li class="group-label" aria-hidden="true">3D Printing Curriculum (Bambu A1)</li>
-                    <li><a href="Intro_to_3D_Printing_Day1.html">3D Printing Day 1: Intro & Setup</a><span class="item-desc">How 3D printing works, printer anatomy, and setup tasks.</span></li>
-                    <li><a href="Intro_to_3D_Printing_Day2.html">3D Printing Day 2: Design</a><span class="item-desc">Create your first model in Tinkercad and prepare for slicing.</span></li>
-                    <li><a href="Intro_to_3D_Printing_Day3.html">3D Printing Day 3: Slicing</a><span class="item-desc">Slice your model and prepare for printing in Bambu Studio.</span></li>
-                    <li><a href="Intro_to_3D_Printing_Day4.html">3D Printing Day 4: Troubleshooting</a><span class="item-desc">Analyze print results, troubleshoot issues, and reflect.</span></li>
-                    <li><a href="Intro_to_3D_Printing_Day5.html">3D Printing Day 5: Remix & Improve</a><span class="item-desc">Remix or improve your model and document your learning.</span></li>
-                    <li><a href="Invoice_Generator.html">Invoice Generator</a><span class="item-desc">Create sample
-                            invoices quickly for business and office workflow practice.<span
-                                class="status-pill status-prod">In Production</span></span>
-                    </li>
-                    <li><a href="KPOPMath.html">KPOP Math</a><span class="item-desc">Solve math tasks in a music-themed
-                            practice experience.<span class="status-pill status-prod">In Production</span></span>
-                    </li>
-                    <li><a href="mathquest.html">Math Quest</a><span class="item-desc">Complete challenge-based math
-                            problems in an interactive format.<span class="status-pill status-progress">In
-                                Progress</span></span>
-                    </li>
-                    <li><a href="No_School_Viewer.html">No School Viewer</a><span class="item-desc">Check and view
-                            no-school days from the calendar data.<span class="status-pill status-prod">In
-                                Production</span></span>
-                    </li>
-                    <li><a href="Intro_CS_and_Hardware_Pacing_Guide.html">Hardware/CS Pacing Guide</a><span class="item-desc">Open the current Intro to Computer Hardware and Intro to Computer Science
-                            pacing webpage with calendar notes and milestones.<span class="status-pill status-prod">In
-                                Production</span></span>
-                    </li>
-                    <li><a href="OOOReview.html">Python order of operations</a><span class="item-desc">Practice
-                            order-of-operations skills with immediate feedback and review.<span
-                                class="status-pill status-prod">In Production</span></span>
-                    </li>
-                    <li><a href="ProgReview.html">Programming Review</a><span class="item-desc">Review foundational
-                            programming topics with guided questions.<span class="status-pill status-progress">In
-                                Progress</span></span>
-                    </li>
-                    <li><a href="CS50P_Problem_Sets_Home.html">CS50P Problem Sets Home</a><span class="item-desc">Home page for all CS50P problem set support guides, with links to each
-                            problem set and practice runner pages.<span
-                            class="status-pill status-progress">In Progress</span></span>
-                    </li>
-                    <li><a href="CS50P_Problem_Set_2_Interactive_Guide.html">CS50P Problem Set 2 Interactive Guide</a><span class="item-desc">Detailed Week 2 support page with tabs, note examples, worked patterns,
-                            and in-browser Python execution.<span
-                            class="status-pill status-progress">In Progress</span></span>
-                    </li>
-                    <li><a href="Activities/Pseudo_Code_Troubleshooting_Challenge_Modern_Slides.pptx">Pseudo Code
-                            Troubleshooting Challenge (Slides)</a><span class="item-desc">Use this PowerPoint deck as an
-                            example activity for pseudo-code debugging and troubleshooting practice.<span
-                                class="status-pill status-progress">In
-                                Progress</span></span>
-                    </li>
-                    <li><a href="https://drive.google.com/file/d/1FbeF4RnYFpdAhlBxBYanGbqBtrUsLYni/view?usp=sharing" target="_blank" rel="noopener noreferrer">NotebookLM Video Overview</a><span class="item-desc">Watch this example overview video for NotebookLM workflow and
-                            classroom-ready usage ideas.<span class="status-pill status-progress">In
-                                Progress</span></span>
-                    </li>
-                    <li><a href="https://docs.google.com/document/d/19KPFBz5umf4wX0mfvTWF7RtrmcuuubkMG_q031EYEw4/edit?usp=sharing" target="_blank" rel="noopener noreferrer">NotebookLM Source Document</a><span class="item-desc">Review the original input document used to generate the NotebookLM
-                            video overview example.<span class="status-pill status-progress">In
-                                Progress</span></span>
-                    </li>
-                    <li><a href="https://tinyurl.com/2526TechPio" target="_blank" rel="noopener noreferrer">AI for
-                            Teachers &amp; Students: Building Capacity</a><span class="item-desc">Open the presentation
-                            slides used for the current class and showcase examples (Presented: February 26, 2026).
-                            <span class="status-pill status-prod">In Production</span></span>
-                    </li>
-                    <li class="group-label" aria-hidden="true">Career Essentials Section</li>
-                    <li><a href="wordguide1.html">Word Guide 1</a><span class="item-desc">Follow a step-by-step
-                            walkthrough for MOS Word Project 1.<span class="status-pill status-prod">In
-                                Production</span></span>
-                    </li>
-                    <li><a href="wordguide2.html">Word Guide 2</a><span class="item-desc">Follow a step-by-step
-                            walkthrough for MOS Word Project 2.<span class="status-pill status-prod">In
-                                Production</span></span>
-                    </li>
-                    <li><a href="wordguide3.html">Word Guide 3</a><span class="item-desc">Follow a step-by-step
-                            walkthrough for MOS Word Project 3.<span class="status-pill status-prod">In
-                                Production</span></span>
-                    </li>
-                    <li><a href="Job_Application_Assignment.html">Job Application Assignment</a><span class="item-desc">Launch the interactive, student-facing job application assignment with
-                            embedded videos, quiz checks, and progress tracking.<span class="status-pill status-prod">In
-                                Production</span></span>
-                    </li>
-                    <li><a href="LinkedIn_Profile_Assignment.html">LinkedIn Profile Setup Assignment</a><span class="item-desc">Student assignment for creating a professional LinkedIn profile with a
-                            guided demo video, activation prompts, and submission steps.<span
-                                class="status-pill status-progress">In Progress</span></span>
-                    </li>
-                </ul>
+  <!-- NAVIGATION -->
+  <nav class="site-nav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-brand" aria-label="Genesee Learning Lab — Home">
+        <span class="nav-brand-icon" aria-hidden="true">GL</span>
+        Genesee Learning Lab
+      </a>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="primary-nav-list" aria-label="Open navigation menu">&#9776;</button>
+      <ul id="primary-nav-list" class="nav-links" role="list">
+        <li><a href="index.html" aria-current="page">Home</a></li>
+        <li><a href="projects.html">Projects</a></li>
+        <li><a href="programs.html">Programs</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
 
-                <div class="instructional-note" aria-label="Instructional use notice">
-                    <p><strong>Instructional Use:</strong> This page is maintained for classroom instruction in Genesee Career Institute Computer Science courses.</p>
-                    <p>Resources are curriculum-aligned student practice activities and teacher-created instructional materials.
-                    </p>
-                    <p>For content review or allowlist requests, contact your district instructional technology team and reference this page as an educational resource hub.</p>
-                </div>
-            </section>
+  <main id="main-content" tabindex="-1">
 
+    <!-- 1. HERO -->
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="hero__inner">
+        <p class="hero__eyebrow" aria-hidden="true">&#x1F680; Genesee County, Michigan</p>
+        <h1 id="hero-heading" class="hero__title">
+          Building the Future of<br />
+          <span>Computer Science</span><br />
+          in Genesee County
+        </h1>
+        <p class="hero__subtitle">
+          Hands-on learning in programming, hardware, cybersecurity, AI, and emerging technologies
+          designed to prepare students for real careers.
+        </p>
+        <div class="hero__actions">
+          <a href="programs.html" class="btn btn--primary btn--lg">Explore Programs</a>
+          <a href="projects.html" class="btn btn--secondary btn--lg">View Projects</a>
+          <a href="contact.html" class="btn btn--secondary btn--lg">Get Involved</a>
         </div>
-    </main>
-</body>
+      </div>
+    </section>
 
+    <!-- 2. ABOUT -->
+    <section class="section section--alt" aria-labelledby="about-heading">
+      <div class="container">
+        <div class="about-layout">
+          <div class="about-content">
+            <p class="section-header__eyebrow">About Us</p>
+            <h2 id="about-heading">Real Skills. Real Projects. Real Futures.</h2>
+            <p>
+              Genesee Learning Lab is a hands-on computer science and technology initiative focused on helping
+              students build real-world skills through authentic, career-connected projects. We believe every
+              student deserves access to meaningful technology education — regardless of background or prior experience.
+            </p>
+            <p>
+              Our curriculum spans programming, computer hardware, cybersecurity, artificial intelligence, data science,
+              3D printing, and emerging technologies — giving students a broad and deep foundation for the careers of tomorrow.
+            </p>
+            <a href="programs.html" class="btn btn--outline">Explore Our Programs</a>
+          </div>
+          <div class="about-highlights" aria-label="Key focus areas">
+            <div class="about-highlight">
+              <span class="about-highlight__icon" aria-hidden="true">&#x1F4BB;</span>
+              <div class="about-highlight__text">
+                <strong>Authentic Project Work</strong>
+                <span>Students build, code, design, and solve real problems — not just worksheets.</span>
+              </div>
+            </div>
+            <div class="about-highlight">
+              <span class="about-highlight__icon" aria-hidden="true">&#x1F3AF;</span>
+              <div class="about-highlight__text">
+                <strong>Career-Connected Learning</strong>
+                <span>Pathways aligned to real industry certifications and in-demand careers.</span>
+              </div>
+            </div>
+            <div class="about-highlight">
+              <span class="about-highlight__icon" aria-hidden="true">&#x1F91D;</span>
+              <div class="about-highlight__text">
+                <strong>Community-Centered</strong>
+                <span>Open to schools, families, partners, and organizations across Genesee County.</span>
+              </div>
+            </div>
+            <div class="about-highlight">
+              <span class="about-highlight__icon" aria-hidden="true">&#x1F331;</span>
+              <div class="about-highlight__text">
+                <strong>Built for Everyone</strong>
+                <span>Welcoming, accessible learning for all students regardless of experience level.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. LEARNING AREAS -->
+    <section class="section" aria-labelledby="learning-areas-heading">
+      <div class="container">
+        <header class="section-header">
+          <span class="section-header__eyebrow">What We Teach</span>
+          <h2 id="learning-areas-heading">Learning Areas</h2>
+          <p>Explore five interconnected disciplines that together cover the breadth of modern technology careers.</p>
+        </header>
+        <div class="card-grid" role="list">
+          <article class="card" role="listitem">
+            <div class="card__icon" aria-hidden="true">&#x2328;&#xFE0F;</div>
+            <h3>Programming &amp; Software Development</h3>
+            <p>From Python and web development to app design and software engineering, students learn to think like developers and build real applications from scratch.</p>
+          </article>
+          <article class="card" role="listitem">
+            <div class="card__icon" aria-hidden="true">&#x1F5A5;&#xFE0F;</div>
+            <h3>Computer Hardware &amp; IT Systems</h3>
+            <p>Students build, upgrade, and troubleshoot computers. They explore networking, operating systems, and the physical infrastructure that powers the digital world.</p>
+          </article>
+          <article class="card" role="listitem">
+            <div class="card__icon" aria-hidden="true">&#x1F510;</div>
+            <h3>Cybersecurity</h3>
+            <p>Students explore how to protect systems and data, practice with real-world security scenarios, and build skills aligned to CompTIA and industry security standards.</p>
+          </article>
+          <article class="card" role="listitem">
+            <div class="card__icon" aria-hidden="true">&#x1F916;</div>
+            <h3>Artificial Intelligence &amp; Data Science</h3>
+            <p>Students work with AI tools, explore machine learning concepts, and use real data to answer meaningful questions — preparing for the most in-demand field in tech.</p>
+          </article>
+          <article class="card" role="listitem">
+            <div class="card__icon" aria-hidden="true">&#x2699;&#xFE0F;</div>
+            <h3>Engineering &amp; Emerging Technology</h3>
+            <p>From 3D printing and Raspberry Pi to autonomous drones and maker projects, students design and build physical-digital solutions to real engineering challenges.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. FEATURED EXPERIENCES -->
+    <section class="section section--dark" aria-labelledby="experiences-heading">
+      <div class="container">
+        <header class="section-header">
+          <span class="section-header__eyebrow">Student Experiences</span>
+          <h2 id="experiences-heading">What Students Are Doing</h2>
+          <p>Hands-on, energizing, and career-ready — here's a sample of the work happening in the lab.</p>
+        </header>
+        <div class="experiences-grid" role="list">
+          <article class="experience-card" role="listitem">
+            <div class="experience-card__emoji" aria-hidden="true">&#x1F5A5;&#xFE0F;</div>
+            <h3>Building &amp; Troubleshooting PCs</h3>
+            <p>Students disassemble and reassemble computers, diagnose hardware failures, and configure operating systems from scratch.</p>
+          </article>
+          <article class="experience-card" role="listitem">
+            <div class="experience-card__emoji" aria-hidden="true">&#x1F3AE;</div>
+            <h3>Programming Games &amp; Software</h3>
+            <p>From text-based Python games to interactive web applications, students write real code that does real things.</p>
+          </article>
+          <article class="experience-card" role="listitem">
+            <div class="experience-card__emoji" aria-hidden="true">&#x1F5A8;&#xFE0F;</div>
+            <h3>Designing &amp; 3D Printing Products</h3>
+            <p>Using Tinkercad and Bambu A1 printers, students design, slice, and print original products solving real design challenges.</p>
+          </article>
+          <article class="experience-card" role="listitem">
+            <div class="experience-card__emoji" aria-hidden="true">&#x1F353;</div>
+            <h3>Working with Raspberry Pi Systems</h3>
+            <p>Students program microcomputers for real applications — from media centers to environmental sensors to physical computing projects.</p>
+          </article>
+          <article class="experience-card" role="listitem">
+            <div class="experience-card__emoji" aria-hidden="true">&#x1F6E1;&#xFE0F;</div>
+            <h3>Exploring Cybersecurity Scenarios</h3>
+            <p>Students navigate ethical hacking challenges, practice defense strategies, and learn to think like security professionals.</p>
+          </article>
+          <article class="experience-card" role="listitem">
+            <div class="experience-card__emoji" aria-hidden="true">&#x1F4CA;</div>
+            <h3>Using AI &amp; Data Tools</h3>
+            <p>Students analyze real datasets, build models, and work with modern AI platforms to solve data-driven problems.</p>
+          </article>
+          <article class="experience-card" role="listitem">
+            <div class="experience-card__emoji" aria-hidden="true">&#x1F681;</div>
+            <h3>Autonomous Drone Development</h3>
+            <p>Students program and deploy autonomous drone systems, exploring the intersection of hardware, software, and real-world navigation.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. CERTIFICATIONS & PATHWAYS -->
+    <section class="section section--alt" aria-labelledby="certs-heading">
+      <div class="container">
+        <header class="section-header">
+          <span class="section-header__eyebrow">Credentials &amp; Careers</span>
+          <h2 id="certs-heading">Certifications &amp; Pathways</h2>
+          <p>Students leave Genesee Learning Lab with recognized credentials and a clear path toward real careers.</p>
+        </header>
+        <div class="cert-layout">
+          <div class="cert-group">
+            <h3>Industry Certifications</h3>
+            <ul class="cert-list" aria-label="Available industry certifications">
+              <li>CompTIA Tech+</li>
+              <li>CompTIA A+</li>
+              <li>IT Specialist Certifications</li>
+              <li>Microsoft Office Specialist (MOS)</li>
+              <li>Additional credentials in progress</li>
+            </ul>
+          </div>
+          <div class="cert-group">
+            <h3>Career Pathways</h3>
+            <ul class="pathway-list" aria-label="Available career pathways">
+              <li>Software Development</li>
+              <li>IT Support &amp; Systems Administration</li>
+              <li>Cybersecurity</li>
+              <li>Data &amp; AI Careers</li>
+              <li>Engineering &amp; Emerging Technology</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. COMMUNITY & PARTNERSHIPS -->
+    <section class="section" aria-labelledby="community-heading">
+      <div class="container">
+        <header class="section-header">
+          <span class="section-header__eyebrow">Community</span>
+          <h2 id="community-heading">Built With Our Community</h2>
+          <p>Genesee Learning Lab thrives on partnerships. We welcome collaboration from everyone who believes in the power of quality technology education.</p>
+        </header>
+        <div class="community-grid" role="list">
+          <article class="community-card" role="listitem">
+            <div class="community-card__icon" aria-hidden="true">&#x1F3EB;</div>
+            <h3>Schools</h3>
+            <p>Partnering with schools and districts to bring hands-on CS education to more classrooms across Genesee County.</p>
+          </article>
+          <article class="community-card" role="listitem">
+            <div class="community-card__icon" aria-hidden="true">&#x1F468;&#x200D;&#x1F469;&#x200D;&#x1F467;</div>
+            <h3>Families</h3>
+            <p>Supporting students and parents through transparent communication, learning events, and shared celebrations of student work.</p>
+          </article>
+          <article class="community-card" role="listitem">
+            <div class="community-card__icon" aria-hidden="true">&#x1F3E2;</div>
+            <h3>Industry Partners</h3>
+            <p>Connecting students with professionals for guest speakers, mentorship, internships, and authentic project challenges.</p>
+          </article>
+          <article class="community-card" role="listitem">
+            <div class="community-card__icon" aria-hidden="true">&#x1F310;</div>
+            <h3>Community Organizations</h3>
+            <p>Collaborating with local nonprofits, libraries, and community groups to extend learning beyond the classroom.</p>
+          </article>
+        </div>
+        <div class="callout" aria-labelledby="collab-cta-heading">
+          <h2 id="collab-cta-heading">Interested in Collaborating?</h2>
+          <p>Whether you can offer guest presentations, advisory support, project partnerships, or authentic learning opportunities — we want to hear from you.</p>
+          <a href="contact.html" class="btn btn--secondary btn--lg">Get In Touch</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. FOOTER CTA -->
+    <section class="section section--dark" aria-labelledby="footer-cta-heading">
+      <div class="container text-center">
+        <h2 id="footer-cta-heading" style="margin:0 0 var(--space-4);font-size:clamp(var(--font-size-2xl),3vw,var(--font-size-4xl));font-weight:800;letter-spacing:-0.02em;color:#fff;">
+          Ready to Get Started?
+        </h2>
+        <p style="margin:0 auto var(--space-8);max-width:560px;font-size:var(--font-size-lg);color:#94a3b8;">
+          Explore our programs, see what students are building, or reach out to connect with the Genesee Learning Lab community.
+        </p>
+        <div class="hero__actions">
+          <a href="programs.html" class="btn btn--primary btn--lg">Explore Programs</a>
+          <a href="projects.html" class="btn btn--secondary btn--lg">View Projects</a>
+          <a href="contact.html" class="btn btn--secondary btn--lg">Connect With Us</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer" aria-labelledby="footer-heading">
+    <div class="footer-inner">
+      <h2 id="footer-heading" class="sr-only">Site Footer</h2>
+      <div class="footer-grid">
+        <div>
+          <p class="footer-brand">Genesee Learning Lab</p>
+          <p class="footer-tagline">Hands-on computer science and technology education for students, families, and communities across Genesee County.</p>
+        </div>
+        <nav aria-label="Footer navigation: Site">
+          <div class="footer-col">
+            <h4>Site</h4>
+            <ul role="list">
+              <li><a href="index.html">Home</a></li>
+              <li><a href="projects.html">Projects</a></li>
+              <li><a href="programs.html">Programs</a></li>
+              <li><a href="contact.html">Contact</a></li>
+            </ul>
+          </div>
+        </nav>
+        <nav aria-label="Footer navigation: Learning">
+          <div class="footer-col">
+            <h4>Learning</h4>
+            <ul role="list">
+              <li><a href="programs.html">Programming</a></li>
+              <li><a href="programs.html">Hardware &amp; IT</a></li>
+              <li><a href="programs.html">Cybersecurity</a></li>
+              <li><a href="programs.html">AI &amp; Data</a></li>
+              <li><a href="programs.html">Engineering</a></li>
+            </ul>
+          </div>
+        </nav>
+        <nav aria-label="Footer navigation: Connect">
+          <div class="footer-col">
+            <h4>Connect</h4>
+            <ul role="list">
+              <li><a href="contact.html">Get Involved</a></li>
+              <li><a href="contact.html">Partner With Us</a></li>
+              <li><a href="contact.html">Guest Speakers</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Genesee Learning Lab. All rights reserved.</span>
+        <span>Built for students, families, and community.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var toggle = document.querySelector('.nav-toggle');
+      var navList = document.getElementById('primary-nav-list');
+      if (!toggle || !navList) return;
+      toggle.addEventListener('click', function () {
+        var isOpen = navList.classList.toggle('is-open');
+        toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        toggle.setAttribute('aria-label', isOpen ? 'Close navigation menu' : 'Open navigation menu');
+      });
+      navList.addEventListener('click', function (e) {
+        if (e.target.tagName === 'A') {
+          navList.classList.remove('is-open');
+          toggle.setAttribute('aria-expanded', 'false');
+          toggle.setAttribute('aria-label', 'Open navigation menu');
+        }
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && navList.classList.contains('is-open')) {
+          navList.classList.remove('is-open');
+          toggle.setAttribute('aria-expanded', 'false');
+          toggle.setAttribute('aria-label', 'Open navigation menu');
+          toggle.focus();
+        }
+      });
+    }());
+  </script>
+
+</body>
 </html>

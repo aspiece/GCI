@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Explore Genesee Learning Lab programs in programming, hardware, cybersecurity, AI, data science, and engineering." />
+  <meta name="author" content="Genesee Learning Lab" />
+  <title>Programs — Genesee Learning Lab</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .programs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: var(--space-6);
+    }
+
+    .program-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .program-card__badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      background: #eff6ff;
+      color: var(--color-primary);
+      border: 1px solid #bfdbfe;
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-xs);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: var(--space-1) var(--space-3);
+      margin-bottom: var(--space-4);
+    }
+
+    .program-card h3 {
+      margin: 0 0 var(--space-3);
+      font-size: var(--font-size-xl);
+      font-weight: 700;
+      color: var(--color-text);
+    }
+
+    .program-card p {
+      margin: 0 0 var(--space-4);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-muted);
+      line-height: 1.7;
+    }
+
+    .program-topics {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .program-topics li {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-muted);
+    }
+
+    .program-topics li::before {
+      content: "●";
+      color: var(--color-primary-light);
+      font-size: 0.5em;
+      flex-shrink: 0;
+    }
+
+    .placeholder-notice {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: var(--radius-md);
+      padding: var(--space-4) var(--space-5);
+      font-size: var(--font-size-sm);
+      color: #713f12;
+      margin-bottom: var(--space-8);
+    }
+  </style>
+</head>
+
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <!-- NAVIGATION -->
+  <nav class="site-nav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-brand" aria-label="Genesee Learning Lab — Home">
+        <span class="nav-brand-icon" aria-hidden="true">GL</span>
+        Genesee Learning Lab
+      </a>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="primary-nav-list" aria-label="Open navigation menu">&#9776;</button>
+      <ul id="primary-nav-list" class="nav-links" role="list">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="projects.html">Projects</a></li>
+        <li><a href="programs.html" aria-current="page">Programs</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- PAGE HEADER -->
+  <header class="page-header" aria-labelledby="programs-page-heading">
+    <div class="container--sm">
+      <h1 id="programs-page-heading">Programs</h1>
+      <p>Explore our career-connected learning areas, industry certifications, and pathways for students ready to build real skills.</p>
+    </div>
+  </header>
+
+  <main id="main-content" tabindex="-1">
+    <div class="section">
+      <div class="container">
+
+        <p class="placeholder-notice">
+          <strong>Coming Soon:</strong> Detailed program pages are under development. The overview below highlights key areas — check back as this section grows.
+        </p>
+
+        <header class="section-header" style="margin-bottom: var(--space-8);">
+          <span class="section-header__eyebrow">What We Offer</span>
+          <h2>Learning Programs</h2>
+          <p>Our programs are built around hands-on, authentic projects aligned to industry certifications and real career pathways.</p>
+        </header>
+
+        <div class="programs-grid">
+
+          <article class="program-card">
+            <span class="program-card__badge">Programming</span>
+            <h3>Programming &amp; Software Development</h3>
+            <p>Learn to code in Python, explore web development, and build real software projects from concept to completion.</p>
+            <ul class="program-topics" aria-label="Topics covered">
+              <li>Python programming (including CS50P)</li>
+              <li>Web development basics</li>
+              <li>App design and logic</li>
+              <li>Software engineering practices</li>
+              <li>Code review and debugging</li>
+            </ul>
+          </article>
+
+          <article class="program-card">
+            <span class="program-card__badge">Hardware &amp; IT</span>
+            <h3>Computer Hardware &amp; IT Systems</h3>
+            <p>Build, repair, and configure computers. Explore networking, operating systems, and IT infrastructure hands-on.</p>
+            <ul class="program-topics" aria-label="Topics covered">
+              <li>PC assembly and disassembly</li>
+              <li>Component identification and upgrades</li>
+              <li>Operating system installation</li>
+              <li>Networking basics</li>
+              <li>CompTIA A+ alignment</li>
+            </ul>
+          </article>
+
+          <article class="program-card">
+            <span class="program-card__badge">Cybersecurity</span>
+            <h3>Cybersecurity</h3>
+            <p>Explore how to protect systems and data, work through security scenarios, and develop a security mindset.</p>
+            <ul class="program-topics" aria-label="Topics covered">
+              <li>Security fundamentals</li>
+              <li>Threat analysis and defense</li>
+              <li>Ethical hacking scenarios</li>
+              <li>CompTIA Tech+ alignment</li>
+              <li>Privacy and data protection</li>
+            </ul>
+          </article>
+
+          <article class="program-card">
+            <span class="program-card__badge">AI &amp; Data</span>
+            <h3>Artificial Intelligence &amp; Data Science</h3>
+            <p>Analyze real datasets, explore machine learning concepts, and work with modern AI tools to solve data-driven problems.</p>
+            <ul class="program-topics" aria-label="Topics covered">
+              <li>Data analysis and visualization</li>
+              <li>Intro to machine learning</li>
+              <li>AI tools and applications</li>
+              <li>Responsible AI use</li>
+              <li>Data-driven decision making</li>
+            </ul>
+          </article>
+
+          <article class="program-card">
+            <span class="program-card__badge">Engineering</span>
+            <h3>Engineering &amp; Emerging Technology</h3>
+            <p>Design, print, and build. From 3D printing to Raspberry Pi to autonomous drones — hands-on engineering challenges await.</p>
+            <ul class="program-topics" aria-label="Topics covered">
+              <li>3D printing and design (Bambu A1 / Tinkercad)</li>
+              <li>Raspberry Pi programming</li>
+              <li>Autonomous drone development</li>
+              <li>Maker and fabrication projects</li>
+              <li>Engineering design process</li>
+            </ul>
+          </article>
+
+          <article class="program-card">
+            <span class="program-card__badge">Certifications</span>
+            <h3>Industry Certifications &amp; Pathways</h3>
+            <p>Earn recognized credentials and build a portfolio that opens doors to real careers in technology.</p>
+            <ul class="program-topics" aria-label="Available certifications">
+              <li>CompTIA Tech+</li>
+              <li>CompTIA A+</li>
+              <li>IT Specialist Certifications</li>
+              <li>Microsoft Office Specialist (MOS)</li>
+              <li>Career pathway advising</li>
+            </ul>
+          </article>
+
+        </div>
+
+        <div class="callout mt-12" aria-labelledby="programs-cta-heading">
+          <h2 id="programs-cta-heading">Ready to Learn?</h2>
+          <p>Explore our student projects, connect with the team, or reach out to get involved with Genesee Learning Lab.</p>
+          <div class="hero__actions" style="justify-content: center; margin-top: var(--space-6);">
+            <a href="projects.html" class="btn btn--secondary btn--lg">View Student Projects</a>
+            <a href="contact.html" class="btn btn--secondary btn--lg">Get Involved</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer" aria-labelledby="programs-footer-heading">
+    <div class="footer-inner">
+      <h2 id="programs-footer-heading" class="sr-only">Site Footer</h2>
+      <div class="footer-grid">
+        <div>
+          <p class="footer-brand">Genesee Learning Lab</p>
+          <p class="footer-tagline">Hands-on computer science and technology education for students, families, and communities across Genesee County.</p>
+        </div>
+        <nav aria-label="Footer navigation: Site">
+          <div class="footer-col">
+            <h4>Site</h4>
+            <ul role="list">
+              <li><a href="index.html">Home</a></li>
+              <li><a href="projects.html">Projects</a></li>
+              <li><a href="programs.html">Programs</a></li>
+              <li><a href="contact.html">Contact</a></li>
+            </ul>
+          </div>
+        </nav>
+        <nav aria-label="Footer navigation: Learning">
+          <div class="footer-col">
+            <h4>Learning</h4>
+            <ul role="list">
+              <li><a href="programs.html">Programming</a></li>
+              <li><a href="programs.html">Hardware &amp; IT</a></li>
+              <li><a href="programs.html">Cybersecurity</a></li>
+              <li><a href="programs.html">AI &amp; Data</a></li>
+              <li><a href="programs.html">Engineering</a></li>
+            </ul>
+          </div>
+        </nav>
+        <nav aria-label="Footer navigation: Connect">
+          <div class="footer-col">
+            <h4>Connect</h4>
+            <ul role="list">
+              <li><a href="contact.html">Get Involved</a></li>
+              <li><a href="contact.html">Partner With Us</a></li>
+              <li><a href="contact.html">Guest Speakers</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Genesee Learning Lab. All rights reserved.</span>
+        <span>Built for students, families, and community.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var toggle = document.querySelector('.nav-toggle');
+      var navList = document.getElementById('primary-nav-list');
+      if (!toggle || !navList) return;
+      toggle.addEventListener('click', function () {
+        var isOpen = navList.classList.toggle('is-open');
+        toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        toggle.setAttribute('aria-label', isOpen ? 'Close navigation menu' : 'Open navigation menu');
+      });
+      navList.addEventListener('click', function (e) {
+        if (e.target.tagName === 'A') {
+          navList.classList.remove('is-open');
+          toggle.setAttribute('aria-expanded', 'false');
+          toggle.setAttribute('aria-label', 'Open navigation menu');
+        }
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && navList.classList.contains('is-open')) {
+          navList.classList.remove('is-open');
+          toggle.setAttribute('aria-expanded', 'false');
+          toggle.setAttribute('aria-label', 'Open navigation menu');
+          toggle.focus();
+        }
+      });
+    }());
+  </script>
+
+</body>
+</html>
