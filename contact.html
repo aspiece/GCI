@@ -263,8 +263,8 @@
 
               <form id="contact-form" aria-label="Contact form" autocomplete="on">
                 <div class="honeypot-field" aria-hidden="true">
-                  <label for="contact-company">Leave this field blank</label>
-                  <input type="text" id="contact-company" name="contact_website" tabindex="-1" autocomplete="new-password" />
+                  <label for="contact-website">Leave this field blank</label>
+                  <input type="text" id="contact-website" name="contact_website" tabindex="-1" autocomplete="new-password" />
                 </div>
                 <div class="form-group">
                   <label for="contact-name">Your Name <span aria-hidden="true">*</span></label>
@@ -440,7 +440,7 @@
 
       form.addEventListener('submit', function (e) {
         e.preventDefault();
-        var honeypot = (document.getElementById('contact-company') || {}).value || '';
+        var honeypot = (document.getElementById('contact-website') || {}).value || '';
         if (honeypot.trim() !== '') return;
 
         var allowedRoles = ['student', 'educator', 'administrator', 'family', 'industry', 'community', 'other'];
