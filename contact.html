@@ -4,11 +4,35 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Contact Genesee Learning Lab — connect with us to partner, collaborate, volunteer, or learn more about our programs." />
+  <meta name="description" content="Contact Genesee Learning Lab to partner, collaborate, or request information about production-ready computer science and technology programs." />
+  <meta name="keywords" content="contact Genesee Learning Lab, Genesee Career Institute contact, CS education partnerships, Michigan technology education" />
   <meta name="author" content="Genesee Learning Lab" />
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+  <link rel="canonical" href="https://gcilab.com/contact.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Contact — Genesee Learning Lab" />
+  <meta property="og:description" content="Send a message to Genesee Learning Lab for partnerships, classroom collaboration, and program information." />
+  <meta property="og:url" content="https://gcilab.com/contact.html" />
+  <meta property="og:site_name" content="Genesee Learning Lab" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Contact — Genesee Learning Lab" />
+  <meta name="twitter:description" content="Connect with Genesee Learning Lab for collaboration and program support." />
   <title>Contact — Genesee Learning Lab</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="styles.css" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    "name": "Contact Genesee Learning Lab",
+    "url": "https://gcilab.com/contact.html",
+    "mainEntity": {
+      "@type": "EducationalOrganization",
+      "name": "Genesee Learning Lab",
+      "email": "aspiece@geneseeisd.org"
+    }
+  }
+  </script>
   <style>
     .contact-layout {
       display: grid;
@@ -226,10 +250,10 @@
 
               <!-- Placeholder notice about form functionality -->
               <p class="placeholder-notice">
-                <strong>Note:</strong> This contact form is a placeholder. Full form submission functionality will be added soon. In the meantime, reach out directly through your school or district contact.
+                <strong>Note:</strong> Submitting this form opens your email app with a pre-filled draft addressed to <a href="mailto:aspiece@geneseeisd.org">aspiece@geneseeisd.org</a>. Please review and send from your email app.
               </p>
 
-              <form action="#" method="post" aria-label="Contact form" novalidate>
+              <form id="contact-form" action="mailto:aspiece@geneseeisd.org" aria-label="Contact form" novalidate>
                 <div class="form-group">
                   <label for="contact-name">Your Name <span aria-hidden="true">*</span></label>
                   <input
@@ -377,6 +401,32 @@
           toggle.setAttribute('aria-label', 'Open navigation menu');
           toggle.focus();
         }
+      });
+    }());
+  </script>
+  <script>
+    (function () {
+      var form = document.getElementById('contact-form');
+      if (!form) return;
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var email = 'aspiece@geneseeisd.org';
+        var name = (document.getElementById('contact-name') || {}).value || '';
+        var senderEmail = (document.getElementById('contact-email') || {}).value || '';
+        var role = (document.getElementById('contact-role') || {}).value || '';
+        var subjectInput = (document.getElementById('contact-subject') || {}).value || '';
+        var message = (document.getElementById('contact-message') || {}).value || '';
+        var subject = subjectInput || 'Message from Genesee Learning Lab contact form';
+        var body = [
+          'Name: ' + name,
+          'Email: ' + senderEmail,
+          'Role: ' + role,
+          '',
+          'Message:',
+          message
+        ].join('\n');
+        var mailtoUrl = 'mailto:' + email + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+        window.location.href = mailtoUrl;
       });
     }());
   </script>
