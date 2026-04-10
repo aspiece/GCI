@@ -427,6 +427,16 @@
     (function () {
       var form = document.getElementById('contact-form');
       if (!form) return;
+      var bindValidityReset = function (fieldId, eventName) {
+        var field = document.getElementById(fieldId);
+        if (!field) return;
+        field.addEventListener(eventName, function () {
+          field.setCustomValidity('');
+        });
+      };
+      bindValidityReset('contact-role', 'change');
+      bindValidityReset('contact-message', 'input');
+
       form.addEventListener('submit', function (e) {
         e.preventDefault();
         var honeypot = (document.getElementById('contact-company') || {}).value || '';
@@ -466,7 +476,6 @@
             roleField.focus();
             roleField.setCustomValidity('Please choose a valid role from the list.');
             roleField.reportValidity();
-            roleField.setCustomValidity('');
           }
           return;
         }
@@ -477,7 +486,6 @@
             messageField.focus();
             messageField.setCustomValidity('Please enter at least 10 characters in your message.');
             messageField.reportValidity();
-            messageField.setCustomValidity('');
           }
           return;
         }
