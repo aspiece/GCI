@@ -159,6 +159,15 @@
       margin-top: var(--space-4);
     }
 
+    .honeypot-field {
+      position: absolute;
+      left: -10000px;
+      top: auto;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+
     @media (max-width: 768px) {
       .contact-layout {
         grid-template-columns: 1fr;
@@ -253,7 +262,11 @@
                 <strong>Note:</strong> Submitting this form opens your email app with a pre-filled draft addressed to <a href="mailto:aspiece@geneseeisd.org">aspiece@geneseeisd.org</a>. Please review and send from your email app.
               </p>
 
-              <form id="contact-form" action="mailto:aspiece@geneseeisd.org" aria-label="Contact form" novalidate>
+              <form id="contact-form" action="mailto:aspiece@geneseeisd.org" aria-label="Contact form">
+                <div class="honeypot-field" aria-hidden="true">
+                  <label for="contact-company">Company</label>
+                  <input type="text" id="contact-company" name="company" tabindex="-1" autocomplete="off" />
+                </div>
                 <div class="form-group">
                   <label for="contact-name">Your Name <span aria-hidden="true">*</span></label>
                   <input
@@ -263,6 +276,8 @@
                     autocomplete="name"
                     required
                     aria-required="true"
+                    minlength="2"
+                    maxlength="100"
                     placeholder="Jane Smith"
                   />
                 </div>
@@ -276,6 +291,7 @@
                     autocomplete="email"
                     required
                     aria-required="true"
+                    maxlength="254"
                     placeholder="jane@example.com"
                   />
                 </div>
@@ -300,6 +316,7 @@
                     type="text"
                     id="contact-subject"
                     name="subject"
+                    maxlength="120"
                     placeholder="How can we help?"
                   />
                 </div>
@@ -311,6 +328,8 @@
                     name="message"
                     required
                     aria-required="true"
+                    minlength="10"
+                    maxlength="2000"
                     placeholder="Tell us about yourself and how you'd like to connect..."
                   ></textarea>
                 </div>
@@ -408,19 +427,74 @@
     (function () {
       var form = document.getElementById('contact-form');
       if (!form) return;
+      var bindValidityReset = function (fieldId, eventName) {
+        var field = document.getElementById(fieldId);
+        if (!field) return;
+        field.addEventListener(eventName, function () {
+          field.setCustomValidity('');
+        });
+      };
+      bindValidityReset('contact-role', 'change');
+      bindValidityReset('contact-message', 'input');
+
       form.addEventListener('submit', function (e) {
         e.preventDefault();
+        var honeypot = (document.getElementById('contact-company') || {}).value || '';
+        if (honeypot.trim() !== '') return;
+
+        var allowedRoles = ['student', 'educator', 'administrator', 'family', 'industry', 'community', 'other'];
+        var cleanSingleLine = function (value, maxLength) {
+          return String(value || '')
+            .replace(/[\u0000-\u001F\u007F]+/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim()
+            .slice(0, maxLength);
+        };
+        var cleanMessage = function (value, maxLength) {
+          return String(value || '')
+            .replace(/\u0000/g, '')
+            .replace(/\r\n/g, '\n')
+            .trim()
+            .slice(0, maxLength);
+        };
+
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          return;
+        }
+
         var email = 'aspiece@geneseeisd.org';
-        var name = (document.getElementById('contact-name') || {}).value || '';
-        var senderEmail = (document.getElementById('contact-email') || {}).value || '';
-        var role = (document.getElementById('contact-role') || {}).value || '';
-        var subjectInput = (document.getElementById('contact-subject') || {}).value || '';
-        var message = (document.getElementById('contact-message') || {}).value || '';
+        var name = cleanSingleLine((document.getElementById('contact-name') || {}).value || '', 100);
+        var senderEmail = cleanSingleLine((document.getElementById('contact-email') || {}).value || '', 254).toLowerCase();
+        var role = cleanSingleLine((document.getElementById('contact-role') || {}).value || '', 20);
+        var subjectInput = cleanSingleLine((document.getElementById('contact-subject') || {}).value || '', 120);
+        var message = cleanMessage((document.getElementById('contact-message') || {}).value || '', 2000);
+
+        if (!allowedRoles.includes(role) && role !== '') {
+          var roleField = document.getElementById('contact-role');
+          if (roleField) {
+            roleField.focus();
+            roleField.setCustomValidity('Please choose a valid role from the list.');
+            roleField.reportValidity();
+          }
+          return;
+        }
+
+        if (message.length < 10) {
+          var messageField = document.getElementById('contact-message');
+          if (messageField) {
+            messageField.focus();
+            messageField.setCustomValidity('Please enter at least 10 characters in your message.');
+            messageField.reportValidity();
+          }
+          return;
+        }
+
         var subject = subjectInput || 'Message from Genesee Learning Lab contact form';
         var body = [
           'Name: ' + name,
           'Email: ' + senderEmail,
-          'Role: ' + role,
+          'Role: ' + (role || 'Not provided'),
           '',
           'Message:',
           message
