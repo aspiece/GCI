@@ -5,5 +5,8 @@
     "scripts": {},
     "engines": {
         "node": ">=14"
+    },
+    "dependencies": {
+        "puppeteer": "^24.40.0"
     }
 }
