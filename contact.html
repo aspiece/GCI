@@ -250,10 +250,10 @@
 
               <!-- Placeholder notice about form functionality -->
               <p class="placeholder-notice">
-                <strong>Note:</strong> Submitting this form opens your email app and sends your message to <a href="mailto:aspiece@geneseeisd.org">aspiece@geneseeisd.org</a>.
+                <strong>Note:</strong> Submitting this form opens your email app with a pre-filled draft addressed to <a href="mailto:aspiece@geneseeisd.org">aspiece@geneseeisd.org</a>. Please review and send from your email app.
               </p>
 
-              <form action="mailto:aspiece@geneseeisd.org" method="get" enctype="text/plain" aria-label="Contact form" novalidate>
+              <form id="contact-form" action="mailto:aspiece@geneseeisd.org" aria-label="Contact form" novalidate>
                 <div class="form-group">
                   <label for="contact-name">Your Name <span aria-hidden="true">*</span></label>
                   <input
@@ -401,6 +401,32 @@
           toggle.setAttribute('aria-label', 'Open navigation menu');
           toggle.focus();
         }
+      });
+    }());
+  </script>
+  <script>
+    (function () {
+      var form = document.getElementById('contact-form');
+      if (!form) return;
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var email = 'aspiece@geneseeisd.org';
+        var name = (document.getElementById('contact-name') || {}).value || '';
+        var senderEmail = (document.getElementById('contact-email') || {}).value || '';
+        var role = (document.getElementById('contact-role') || {}).value || '';
+        var subjectInput = (document.getElementById('contact-subject') || {}).value || '';
+        var message = (document.getElementById('contact-message') || {}).value || '';
+        var subject = subjectInput || 'Message from Genesee Learning Lab contact form';
+        var body = [
+          'Name: ' + name,
+          'Email: ' + senderEmail,
+          'Role: ' + role,
+          '',
+          'Message:',
+          message
+        ].join('\n');
+        var mailtoUrl = 'mailto:' + email + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+        window.location.href = mailtoUrl;
       });
     }());
   </script>
