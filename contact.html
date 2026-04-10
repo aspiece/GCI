@@ -28,8 +28,7 @@
     "url": "https://gcilab.com/contact.html",
     "mainEntity": {
       "@type": "EducationalOrganization",
-      "name": "Genesee Learning Lab",
-      "email": "aspiece@geneseeisd.org"
+      "name": "Genesee Learning Lab"
     }
   }
   </script>
@@ -259,13 +258,13 @@
 
               <!-- Placeholder notice about form functionality -->
               <p class="placeholder-notice">
-                <strong>Note:</strong> Submitting this form opens your email app with a pre-filled draft addressed to <a href="mailto:aspiece@geneseeisd.org">aspiece@geneseeisd.org</a>. Please review and send from your email app.
+                <strong>Note:</strong> Submitting this form opens your email app with a pre-filled draft. Please review and send from your email app.
               </p>
 
-              <form id="contact-form" action="mailto:aspiece@geneseeisd.org" aria-label="Contact form">
+              <form id="contact-form" action="#" aria-label="Contact form" autocomplete="on">
                 <div class="honeypot-field" aria-hidden="true">
-                  <label for="contact-company">Company</label>
-                  <input type="text" id="contact-company" name="company" tabindex="-1" autocomplete="off" />
+                  <label for="contact-website">Website</label>
+                  <input type="text" id="contact-website" name="website" tabindex="-1" autocomplete="off" />
                 </div>
                 <div class="form-group">
                   <label for="contact-name">Your Name <span aria-hidden="true">*</span></label>
@@ -439,7 +438,7 @@
 
       form.addEventListener('submit', function (e) {
         e.preventDefault();
-        var honeypot = (document.getElementById('contact-company') || {}).value || '';
+        var honeypot = (document.getElementById('contact-website') || {}).value || '';
         if (honeypot.trim() !== '') return;
 
         var allowedRoles = ['student', 'educator', 'administrator', 'family', 'industry', 'community', 'other'];
@@ -463,7 +462,7 @@
           return;
         }
 
-        var email = 'aspiece@geneseeisd.org';
+        var email = ['aspiece', 'geneseeisd.org'].join('@');
         var name = cleanSingleLine((document.getElementById('contact-name') || {}).value || '', 100);
         var senderEmail = cleanSingleLine((document.getElementById('contact-email') || {}).value || '', 254).toLowerCase();
         var role = cleanSingleLine((document.getElementById('contact-role') || {}).value || '', 20);
