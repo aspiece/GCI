@@ -4,143 +4,98 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Contact Genesee Learning Lab to partner, collaborate, or request information about production-ready computer science and technology programs." />
-  <meta name="keywords" content="contact Genesee Learning Lab, Genesee Career Institute contact, CS education partnerships, Michigan technology education" />
-  <meta name="author" content="Genesee Learning Lab" />
-  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
-  <link rel="canonical" href="https://gcilab.com/contact.html" />
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="Contact — Genesee Learning Lab" />
-  <meta property="og:description" content="Send a message to Genesee Learning Lab for partnerships, classroom collaboration, and program information." />
-  <meta property="og:url" content="https://gcilab.com/contact.html" />
-  <meta property="og:site_name" content="Genesee Learning Lab" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Contact — Genesee Learning Lab" />
-  <meta name="twitter:description" content="Connect with Genesee Learning Lab for collaboration and program support." />
-  <title>Contact — Genesee Learning Lab</title>
+  <meta name="description" content="Contact Genesee Learning Lab through a GitHub issue submission flow." />
+  <title>Contact</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="styles.css" />
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "ContactPage",
-    "name": "Contact Genesee Learning Lab",
-    "url": "https://gcilab.com/contact.html",
-    "mainEntity": {
-      "@type": "EducationalOrganization",
-      "name": "Genesee Learning Lab"
-    }
-  }
-  </script>
+
+  <!--
+    Setup checklist (SITE_REPO):
+    1) Create a separate GitHub repository for contact submissions
+    2) Enable Issues in that repo
+    3) Add the contact.yml issue form template
+    4) Replace GITHUB_USERNAME and CONTACT_REPO placeholders
+    5) Test the contact flow from the live website
+
+    Developer notes:
+    - This page belongs in SITE_REPO and should route submissions to a separate issues-only repo.
+    - Replace GITHUB_USERNAME and CONTACT_REPO in the JavaScript redirect URL below.
+    - Use a separate public issues-only repository for best results with public website visitors.
+    - Private repositories will not work for public submissions because visitors cannot open issues there.
+  -->
+
   <style>
-    .contact-layout {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--space-12);
-      align-items: start;
+    .contact-shell {
+      max-width: 760px;
+      margin: 0 auto;
     }
 
-    .contact-info h2 {
-      margin: 0 0 var(--space-4);
-      font-size: var(--font-size-2xl);
-      font-weight: 700;
-    }
-
-    .contact-info p {
-      margin: 0 0 var(--space-5);
-      color: var(--color-text-muted);
-      font-size: var(--font-size-lg);
-      line-height: 1.7;
-    }
-
-    .contact-ways {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-4);
-    }
-
-    .contact-way {
-      display: flex;
-      align-items: flex-start;
-      gap: var(--space-3);
-      padding: var(--space-4);
-      background: var(--color-surface-alt);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-lg);
-    }
-
-    .contact-way__icon {
-      font-size: 1.5rem;
-      line-height: 1;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-
-    .contact-way__text strong {
-      display: block;
-      font-size: var(--font-size-base);
-      font-weight: 700;
-      color: var(--color-text);
-      margin-bottom: var(--space-1);
-    }
-
-    .contact-way__text span {
-      font-size: var(--font-size-sm);
-      color: var(--color-text-muted);
-    }
-
-    /* Contact form */
-    .contact-form {
+    .contact-card {
       background: var(--color-surface);
       border: 1px solid var(--color-border);
       border-radius: var(--radius-xl);
-      padding: var(--space-8);
       box-shadow: var(--shadow-md);
+      padding: var(--space-8);
     }
 
-    .contact-form h2 {
-      margin: 0 0 var(--space-6);
-      font-size: var(--font-size-2xl);
-      font-weight: 700;
+    .contact-intro,
+    .contact-note {
+      margin: 0 0 var(--space-4);
+      color: var(--color-text-muted);
     }
 
-    .form-group {
+    .contact-note {
+      border-left: 4px solid var(--color-primary);
+      padding-left: var(--space-4);
+      font-size: var(--font-size-sm);
+    }
+
+    .field {
       margin-bottom: var(--space-5);
     }
 
-    .form-group label {
+    .field label {
       display: block;
-      font-size: var(--font-size-sm);
       font-weight: 700;
-      color: var(--color-text);
       margin-bottom: var(--space-2);
+      color: var(--color-text);
     }
 
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
+    .field input,
+    .field textarea {
       width: 100%;
-      padding: var(--space-3) var(--space-4);
-      border: 1.5px solid var(--color-border);
-      border-radius: var(--radius-md);
-      font-family: var(--font-family);
-      font-size: var(--font-size-base);
+      font: inherit;
       color: var(--color-text);
       background: var(--color-surface);
-      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+      border: 1.5px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-3) var(--space-4);
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
     }
 
-    .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus {
+    .field textarea {
+      min-height: 10rem;
+      resize: vertical;
+    }
+
+    .field input:focus,
+    .field textarea:focus {
       outline: none;
       border-color: var(--color-primary-light);
-      box-shadow: 0 0 0 3px rgba(59,130,246,.2);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, .25);
     }
 
-    .form-group textarea {
-      min-height: 8rem;
-      resize: vertical;
+    .field-hint {
+      margin: var(--space-2) 0 0;
+      font-size: var(--font-size-sm);
+      color: var(--color-text-muted);
+    }
+
+    .form-status {
+      margin-top: var(--space-4);
+      font-size: var(--font-size-sm);
+      color: var(--color-primary-dark);
+      font-weight: 600;
     }
 
     .form-submit {
@@ -148,28 +103,59 @@
       justify-content: center;
     }
 
-    .placeholder-notice {
-      background: #fefce8;
-      border: 1px solid #fde047;
-      border-radius: var(--radius-md);
-      padding: var(--space-4) var(--space-5);
-      font-size: var(--font-size-sm);
-      color: #713f12;
-      margin-top: var(--space-4);
+    .form-submit:hover {
+      text-decoration: none;
     }
 
-    .honeypot-field {
-      position: absolute;
-      left: -10000px;
-      top: auto;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
+    @media (max-width: 640px) {
+      .contact-card {
+        padding: var(--space-6);
+      }
     }
 
-    @media (max-width: 768px) {
-      .contact-layout {
-        grid-template-columns: 1fr;
+    @media (prefers-color-scheme: dark) {
+      .contact-card {
+        background: #0f172a;
+        border-color: #334155;
+      }
+
+      .contact-intro,
+      .contact-note,
+      .field-hint {
+        color: #cbd5e1;
+      }
+
+      .field label {
+        color: #f8fafc;
+      }
+
+      .field input,
+      .field textarea {
+        background: #020617;
+        border-color: #475569;
+        color: #f8fafc;
+      }
+
+      .field input:focus,
+      .field textarea:focus {
+        border-color: #60a5fa;
+        box-shadow: 0 0 0 3px rgba(96, 165, 250, .35);
+      }
+
+      .contact-note {
+        border-left-color: #60a5fa;
+      }
+
+      .form-status {
+        color: #93c5fd;
+      }
+
+      .contact-card a {
+        color: #93c5fd;
+      }
+
+      .contact-card a:hover {
+        color: #bfdbfe;
       }
     }
   </style>
@@ -178,7 +164,6 @@
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
 
-  <!-- NAVIGATION -->
   <nav class="site-nav" aria-label="Main navigation">
     <div class="nav-inner">
       <a href="index.html" class="nav-brand" aria-label="Genesee Learning Lab — Home">
@@ -195,157 +180,54 @@
     </div>
   </nav>
 
-  <!-- PAGE HEADER -->
-  <header class="page-header" aria-labelledby="contact-page-heading">
+  <header class="page-header" aria-labelledby="contact-heading">
     <div class="container--sm">
-      <h1 id="contact-page-heading">Get In Touch</h1>
-      <p>Whether you want to partner, volunteer, collaborate, or just learn more — we'd love to connect.</p>
+      <h1 id="contact-heading">Contact</h1>
+      <p>Thanks for reaching out. Share your message below and we’ll continue through GitHub.</p>
     </div>
   </header>
 
   <main id="main-content" tabindex="-1">
-    <div class="section">
-      <div class="container">
-        <div class="contact-layout">
+    <section class="section" aria-labelledby="contact-form-heading">
+      <div class="container contact-shell">
+        <article class="contact-card">
+          <h2 id="contact-form-heading">Send a message</h2>
+          <p class="contact-intro">We’re glad to hear from you. This form prepares your message and then sends you to GitHub to submit it.</p>
+          <p class="contact-note" id="github-note">When you submit, you’ll be taken to GitHub to create your message in our contact repository.</p>
 
-          <!-- Contact info panel -->
-          <div>
-            <div class="contact-info">
-              <h2>Ways to Connect</h2>
-              <p>
-                Genesee Learning Lab is built on community partnerships. We welcome schools, families, industry
-                partners, and community organizations who want to support students and expand what's possible in
-                technology education.
-              </p>
+          <form id="contact-form" novalidate>
+            <div class="field">
+              <label for="name">Name</label>
+              <input id="name" name="name" type="text" required autocomplete="name" aria-describedby="name-hint" />
+              <p class="field-hint" id="name-hint">Please enter your full name.</p>
             </div>
 
-            <div class="contact-ways" role="list">
-              <div class="contact-way" role="listitem">
-                <span class="contact-way__icon" aria-hidden="true">&#x1F3EB;</span>
-                <div class="contact-way__text">
-                  <strong>Schools &amp; Districts</strong>
-                  <span>Interested in bringing Genesee Learning Lab programming to your school? Let's talk about partnership opportunities, including hosting students for Work-Based Learning experiences such as field trips, job shadowing, internships, and apprenticeships.</span>
-                </div>
-              </div>
-              <div class="contact-way" role="listitem">
-                <span class="contact-way__icon" aria-hidden="true">&#x1F4BC;</span>
-                <div class="contact-way__text">
-                  <strong>Industry Partners</strong>
-                  <span>Offer guest presentations, mentorship, internship pipelines, or project challenges for students.</span>
-                </div>
-              </div>
-              <div class="contact-way" role="listitem">
-                <span class="contact-way__icon" aria-hidden="true">&#x1F91D;</span>
-                <div class="contact-way__text">
-                  <strong>Community Organizations</strong>
-                  <span>Collaborate on community-connected projects, events, or programming that extend learning beyond the classroom.</span>
-                </div>
-              </div>
-              <div class="contact-way" role="listitem">
-                <span class="contact-way__icon" aria-hidden="true">&#x1F468;&#x200D;&#x1F469;&#x200D;&#x1F467;</span>
-                <div class="contact-way__text">
-                  <strong>Families</strong>
-                  <span>Have questions about student work, events, or ways to support learning at home? We'd love to hear from you.</span>
-                </div>
-              </div>
+            <div class="field">
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" required autocomplete="email" aria-describedby="email-hint" />
+              <p class="field-hint" id="email-hint">We’ll use this to follow up with you.</p>
             </div>
-          </div>
 
-          <!-- Contact form panel -->
-          <div>
-            <div class="contact-form">
-              <h2>Send a Message</h2>
-
-              <!-- Placeholder notice about form functionality -->
-              <p class="placeholder-notice">
-                <strong>Note:</strong> Submitting this form opens your email app with a pre-filled draft. Please review and send from your email app.
-              </p>
-
-              <form id="contact-form" action="#" aria-label="Contact form" autocomplete="on">
-                <div class="honeypot-field" aria-hidden="true">
-                  <label for="contact-website">Website</label>
-                  <input type="text" id="contact-website" name="website" tabindex="-1" autocomplete="off" />
-                </div>
-                <div class="form-group">
-                  <label for="contact-name">Your Name <span aria-hidden="true">*</span></label>
-                  <input
-                    type="text"
-                    id="contact-name"
-                    name="name"
-                    autocomplete="name"
-                    required
-                    aria-required="true"
-                    minlength="2"
-                    maxlength="100"
-                    placeholder="Jane Smith"
-                  />
-                </div>
-
-                <div class="form-group">
-                  <label for="contact-email">Email Address <span aria-hidden="true">*</span></label>
-                  <input
-                    type="email"
-                    id="contact-email"
-                    name="email"
-                    autocomplete="email"
-                    required
-                    aria-required="true"
-                    maxlength="254"
-                    placeholder="jane@example.com"
-                  />
-                </div>
-
-                <div class="form-group">
-                  <label for="contact-role">Your Role</label>
-                  <select id="contact-role" name="role">
-                    <option value="">Select one (optional)</option>
-                    <option value="student">Student</option>
-                    <option value="educator">Educator / Teacher</option>
-                    <option value="administrator">School Administrator</option>
-                    <option value="family">Family Member</option>
-                    <option value="industry">Industry Professional</option>
-                    <option value="community">Community Organization</option>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
-
-                <div class="form-group">
-                  <label for="contact-subject">Subject</label>
-                  <input
-                    type="text"
-                    id="contact-subject"
-                    name="subject"
-                    maxlength="120"
-                    placeholder="How can we help?"
-                  />
-                </div>
-
-                <div class="form-group">
-                  <label for="contact-message">Message <span aria-hidden="true">*</span></label>
-                  <textarea
-                    id="contact-message"
-                    name="message"
-                    required
-                    aria-required="true"
-                    minlength="10"
-                    maxlength="2000"
-                    placeholder="Tell us about yourself and how you'd like to connect..."
-                  ></textarea>
-                </div>
-
-                <button type="submit" class="btn btn--primary form-submit">
-                  Send Message
-                </button>
-              </form>
+            <div class="field">
+              <label for="subject">Subject</label>
+              <input id="subject" name="subject" type="text" required maxlength="120" aria-describedby="subject-hint" />
+              <p class="field-hint" id="subject-hint">Keep it short and specific.</p>
             </div>
-          </div>
 
-        </div>
+            <div class="field">
+              <label for="message">Message</label>
+              <textarea id="message" name="message" required minlength="10" maxlength="4000" aria-describedby="message-hint"></textarea>
+              <p class="field-hint" id="message-hint">Add details so we can help quickly.</p>
+            </div>
+
+            <button type="submit" class="btn btn--primary form-submit">Continue to GitHub</button>
+            <p id="form-status" class="form-status" aria-live="polite" hidden></p>
+          </form>
+        </article>
       </div>
-    </div>
+    </section>
   </main>
 
-  <!-- FOOTER -->
   <footer class="site-footer" aria-labelledby="contact-footer-heading">
     <div class="footer-inner">
       <h2 id="contact-footer-heading" class="sr-only">Site Footer</h2>
@@ -362,28 +244,6 @@
               <li><a href="projects.html">Projects</a></li>
               <li><a href="programs.html">Programs</a></li>
               <li><a href="contact.html">Contact</a></li>
-            </ul>
-          </div>
-        </nav>
-        <nav aria-label="Footer navigation: Learning">
-          <div class="footer-col">
-            <h4>Learning</h4>
-            <ul role="list">
-              <li><a href="programs.html">Programming</a></li>
-              <li><a href="programs.html">Hardware &amp; IT</a></li>
-              <li><a href="programs.html">Cybersecurity</a></li>
-              <li><a href="programs.html">AI &amp; Data</a></li>
-              <li><a href="programs.html">Engineering</a></li>
-            </ul>
-          </div>
-        </nav>
-        <nav aria-label="Footer navigation: Connect">
-          <div class="footer-col">
-            <h4>Connect</h4>
-            <ul role="list">
-              <li><a href="contact.html">Get Involved</a></li>
-              <li><a href="contact.html">Partner With Us</a></li>
-              <li><a href="contact.html">Guest Speakers</a></li>
             </ul>
           </div>
         </nav>
@@ -422,87 +282,82 @@
       });
     }());
   </script>
+
   <script>
     (function () {
       var form = document.getElementById('contact-form');
-      if (!form) return;
-      var bindValidityReset = function (fieldId, eventName) {
-        var field = document.getElementById(fieldId);
-        if (!field) return;
-        field.addEventListener(eventName, function () {
-          field.setCustomValidity('');
-        });
+      var status = document.getElementById('form-status');
+      if (!form || !status) return;
+
+      var sanitizeSingleLine = function (value, maxLength) {
+        return String(value || '')
+          .replace(/\s+/g, ' ')
+          .trim()
+          .slice(0, maxLength);
       };
-      bindValidityReset('contact-role', 'change');
-      bindValidityReset('contact-message', 'input');
 
-      form.addEventListener('submit', function (e) {
-        e.preventDefault();
-        var honeypot = (document.getElementById('contact-website') || {}).value || '';
-        if (honeypot.trim() !== '') return;
+      var sanitizeMessage = function (value, maxLength) {
+        return String(value || '')
+          .replace(/\r\n/g, '\n')
+          .trim()
+          .slice(0, maxLength);
+      };
 
-        var allowedRoles = ['student', 'educator', 'administrator', 'family', 'industry', 'community', 'other'];
-        var cleanSingleLine = function (value, maxLength) {
-          return String(value || '')
-            .replace(/[\u0000-\u001F\u007F]+/g, ' ')
-            .replace(/\s+/g, ' ')
-            .trim()
-            .slice(0, maxLength);
-        };
-        var cleanMessage = function (value, maxLength) {
-          return String(value || '')
-            .replace(/\u0000/g, '')
-            .replace(/\r\n/g, '\n')
-            .trim()
-            .slice(0, maxLength);
-        };
+      form.addEventListener('submit', function (event) {
+        event.preventDefault();
 
         if (!form.checkValidity()) {
           form.reportValidity();
           return;
         }
 
-        var email = ['aspiece', 'geneseeisd.org'].join('@');
-        var name = cleanSingleLine((document.getElementById('contact-name') || {}).value || '', 100);
-        var senderEmail = cleanSingleLine((document.getElementById('contact-email') || {}).value || '', 254).toLowerCase();
-        var role = cleanSingleLine((document.getElementById('contact-role') || {}).value || '', 20);
-        var subjectInput = cleanSingleLine((document.getElementById('contact-subject') || {}).value || '', 120);
-        var message = cleanMessage((document.getElementById('contact-message') || {}).value || '', 2000);
+        var name = sanitizeSingleLine((document.getElementById('name') || {}).value, 100);
+        var email = sanitizeSingleLine((document.getElementById('email') || {}).value, 254);
+        var subject = sanitizeSingleLine((document.getElementById('subject') || {}).value, 120);
+        var message = sanitizeMessage((document.getElementById('message') || {}).value, 4000);
 
-        if (!allowedRoles.includes(role) && role !== '') {
-          var roleField = document.getElementById('contact-role');
-          if (roleField) {
-            roleField.focus();
-            roleField.setCustomValidity('Please choose a valid role from the list.');
-            roleField.reportValidity();
-          }
+        if (!name || !email || !subject || !message) {
+          status.hidden = false;
+          status.textContent = 'Please complete all required fields before continuing.';
           return;
         }
 
         if (message.length < 10) {
-          var messageField = document.getElementById('contact-message');
-          if (messageField) {
-            messageField.focus();
-            messageField.setCustomValidity('Please enter at least 10 characters in your message.');
-            messageField.reportValidity();
-          }
+          status.hidden = false;
+          status.textContent = 'Please provide a longer message (at least 10 characters).';
           return;
         }
 
-        var subject = subjectInput || 'Message from Genesee Learning Lab contact form';
-        var body = [
+        var issueTitle = 'Contact Form Submission: ' + subject;
+        var issueBody = [
           'Name: ' + name,
-          'Email: ' + senderEmail,
-          'Role: ' + (role || 'Not provided'),
+          'Email: ' + email,
           '',
           'Message:',
-          message
+          message,
+          '',
+          'Submitted from:',
+          window.location.href
         ].join('\n');
-        var mailtoUrl = 'mailto:' + email + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-        window.location.href = mailtoUrl;
+
+        // Replace GITHUB_USERNAME and CONTACT_REPO with your actual public issues-only repository path.
+        // Recommended setup: keep this page in SITE_REPO and route submissions to a separate public CONTACT_REPO.
+        // Important: private repositories will not accept issue submissions from public visitors.
+        var issueBaseUrl = 'https://github.com/GITHUB_USERNAME/CONTACT_REPO/issues/new';
+        var issueParams = new URLSearchParams({
+          title: issueTitle,
+          body: issueBody
+        });
+
+        status.hidden = false;
+        status.textContent = 'Opening GitHub to finish your submission...';
+
+        window.setTimeout(function () {
+          window.location.assign(issueBaseUrl + '?' + issueParams.toString());
+        }, 250);
       });
     }());
   </script>
-
 </body>
+
 </html>
