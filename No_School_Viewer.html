@@ -220,7 +220,9 @@
       color: var(--muted);
       font-size: 11px;
       text-transform: uppercase;
-      margin: 6px 0
+      margin: 6px 0;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 6px
     }
 
     .month-grid {
@@ -236,7 +238,7 @@
     }
 
     .month-cell {
-      min-height: 90px;
+      min-height: 64px;
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 8px;
@@ -245,7 +247,12 @@
     }
 
     .month-cell.current {
-      outline: 2px solid var(--blue-300)
+      background: var(--blue-50);
+      border-color: var(--blue-200)
+    }
+
+    .month-cell.month-today {
+      outline: 2px solid var(--blue)
     }
 
     .cell-top {
@@ -292,6 +299,128 @@
     .month-cell {
       max-width: 100%
     }
+
+    /* Page title row */
+    .page-title-row {
+      margin-bottom: 10px
+    }
+
+    .page-title-row h1 {
+      margin-bottom: 4px
+    }
+
+    .page-toolbar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 10px
+    }
+
+    /* Filter panel header */
+    .filter-panel-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px
+    }
+
+    .filter-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: .05em;
+      color: var(--muted)
+    }
+
+    .filter-subtitle {
+      font-size: 12px;
+      color: var(--muted);
+      display: block;
+      margin-top: 2px
+    }
+
+    .filter-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0
+    }
+
+    #clear-filters {
+      font-size: 12px;
+      padding: 4px 10px;
+      display: none
+    }
+
+    /* Empty day */
+    .day-empty {
+      border-style: dashed
+    }
+
+    .day-empty-text {
+      font-size: 11px;
+      color: var(--muted);
+      font-style: italic;
+      margin-top: 4px
+    }
+
+    /* Legend section */
+    .legend-section {
+      margin-top: 12px
+    }
+
+    .legend-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px
+    }
+
+    #school-legend-toggle {
+      font-size: 12px;
+      padding: 4px 10px
+    }
+
+    #school-legend {
+      margin-top: 8px
+    }
+
+    /* Sticky week nav (mobile only) */
+    .sticky-nav {
+      display: none;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      padding: 8px;
+      justify-content: center;
+      gap: 8px;
+      margin: 0 -8px 10px
+    }
+
+    @media(max-width:699px) {
+      .sticky-nav {
+        display: flex
+      }
+    }
+
+    /* Month grid: stack vertically on very small screens */
+    @media(max-width:479px) {
+      .week-row {
+        grid-template-columns: 1fr
+      }
+
+      .weekday-head {
+        display: none
+      }
+
+      .month-cell {
+        min-height: 0
+      }
+    }
   </style>
   <!-- Libraries (small, reliable CDNs) -->
   <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
@@ -323,23 +452,51 @@
   </nav>
 
   <div class="container" id="main-content" tabindex="-1">
-    <div class="header">
-      <div>
-        <h1>Home School No School Viewer</h1>
-        <div class="muted">Shows last, current, and next week (Mon–Fri). Auto‑updates from your master sheet.</div>
-      </div>
-      <div class="row">
-        <button id="btn-today" class="btn" title="Jump to current week">Today</button>
-        <button id="btn-refresh" class="btn" title="Refresh now">Refresh</button>
-      </div>
+    <div class="page-title-row">
+      <h1>Home School No School Viewer</h1>
+    </div>
+    <div class="page-toolbar">
+      <button id="btn-today" class="btn" title="Jump to current week">Today</button>
+      <button id="btn-refresh" class="btn" title="Refresh now">Refresh</button>
     </div>
 
     <div class="panel p-4">
-      <div class="filters">
-        <input id="search" type="search" placeholder="Search school, event, notes…" style="flex:1;min-width:220px" />
-        <select id="schoolSel" style="min-width:220px"></select>
-        <select id="eventSel" style="min-width:180px"></select>
+      <div class="filter-panel-header">
+        <div>
+          <span class="filter-label">Filters</span>
+          <span class="filter-subtitle">Shows last, current, and next week (Mon–Fri). Auto‑updates from your master sheet.</span>
+        </div>
+        <div class="filter-status">
+          <span id="last-refreshed" class="muted" style="font-size:11px"></span>
+          <button id="clear-filters" class="btn" title="Reset all filters">✕ Clear</button>
+        </div>
       </div>
+      <div class="filters">
+        <label for="search" class="sr-only">Search school, event, or notes</label>
+        <input id="search" type="search" placeholder="Search school, event, notes…" style="flex:1;min-width:220px" />
+        <select id="schoolSel" aria-label="Filter by school" style="min-width:220px"></select>
+        <select id="eventSel" aria-label="Filter by event type" style="min-width:180px"></select>
+      </div>
+    </div>
+
+    <div id="legend-section" class="legend-section panel p-4">
+      <div class="legend-section-header">
+        <span class="filter-label">Legend</span>
+        <button id="school-legend-toggle" class="btn" aria-expanded="false" aria-controls="school-legend">School colors ▾</button>
+      </div>
+      <div class="legend">
+        <span class="badge red">No School</span>
+        <span class="badge yellow">Half Day</span>
+        <span class="badge green">Holiday</span>
+        <span class="badge indigo">Teacher PD</span>
+      </div>
+      <div id="school-legend" class="legend" style="display:none" aria-live="polite"></div>
+    </div>
+
+    <div id="sticky-nav" class="sticky-nav" role="navigation" aria-label="Week navigation">
+      <button id="sn-prev" class="btn" title="Previous week">◀</button>
+      <button id="sn-today" class="btn" title="Jump to current week">Today</button>
+      <button id="sn-next" class="btn" title="Next week">▶</button>
     </div>
 
     <div id="weeks" class="grid-3" style="margin-top:12px"></div>
@@ -356,8 +513,8 @@
           <span id="monthLabel" class="week-title"></span>
         </div>
         <div class="row">
-          <button id="prevWeek" class="btn" title="Previous week">◀ Previous</button>
-          <button id="nextWeek" class="btn" title="Next week">Next ▶</button>
+          <button id="prevWeek" class="btn" title="Shift view to previous week">◀ Prev view</button>
+          <button id="nextWeek" class="btn" title="Shift view to next week">Next view ▶</button>
         </div>
       </div>
       <div class="weekday-head">
@@ -626,6 +783,7 @@
         const card = document.createElement('div');
         card.className = 'panel p-4';
         if (b.highlight) card.style.outline = '2px solid var(--blue-300)';
+        if (b.muted) { card.style.background = '#fafbfc'; card.style.borderColor = '#dde3ea'; card.style.opacity = '0.85'; }
 
         const weekEnd = b.start.add(4, 'day');
         const header = document.createElement('div');
@@ -648,14 +806,22 @@
           const top = document.createElement('div');
           top.className = 'row';
           top.style.justifyContent = 'space-between';
-          top.innerHTML = `<div style="font-size:12px;font-weight:600;color:#334155">${d.format('ddd, MMM D')}</div><div class="muted" style="font-size:11px">${list.length} event${list.length === 1 ? '' : 's'}</div>`;
+          top.innerHTML = `<div style="font-size:13px;font-weight:700;color:#334155">${d.format('ddd, MMM D')}</div><div class="muted" style="font-size:11px">${list.length} event${list.length === 1 ? '' : 's'}</div>`;
           dayDiv.appendChild(top);
 
           const chips = document.createElement('div');
           chips.style.display = 'flex'; chips.style.flexWrap = 'wrap'; chips.style.gap = '6px';
-          list.slice(0, 6).forEach(it => chips.appendChild(makeChip(it)));
-          if (list.length > 6) {
-            attachExpand(chips, list, 6, makeChip);
+          if (list.length === 0) {
+            dayDiv.classList.add('day-empty');
+            const noEvents = document.createElement('div');
+            noEvents.className = 'day-empty-text';
+            noEvents.textContent = 'No events';
+            chips.appendChild(noEvents);
+          } else {
+            list.slice(0, 6).forEach(it => chips.appendChild(makeChip(it)));
+            if (list.length > 6) {
+              attachExpand(chips, list, 6, makeChip);
+            }
           }
           dayDiv.appendChild(chips);
           daysWrap.appendChild(dayDiv);
@@ -701,6 +867,7 @@
           const cell = document.createElement('div');
           cell.className = 'month-cell';
           if (d.isBetween(currStart, currEnd, 'day', '[]')) cell.classList.add('current');
+          if (d.isSame(dayjs(), 'day')) cell.classList.add('month-today');
           if (d.month() !== monthCursor.month()) { cell.style.opacity = '.65'; cell.style.background = '#f8fafc'; }
           const top = document.createElement('div');
           top.className = 'cell-top';
@@ -724,6 +891,11 @@
     }
 
     // ===================== DATA LOAD =====================
+    function setLastRefreshed() {
+      const el = document.getElementById('last-refreshed');
+      if (el) el.textContent = 'Updated ' + dayjs().format('h:mm A');
+    }
+
     async function load() {
       // Removed dataUrlEcho display
       document.getElementById('refreshEcho').textContent = Math.round(CONFIG.REFRESH_MS / 60000);
@@ -738,11 +910,13 @@
         RAW_ROWS = parseCsvToRows(csvText);
         populateFilters(RAW_ROWS);
         render();
+        setLastRefreshed();
       } catch (err) {
         console.warn('CSV fetch failed, using sample:', err);
         RAW_ROWS = parseCsvToRows(SAMPLE_CSV);
         populateFilters(RAW_ROWS);
         render();
+        setLastRefreshed();
       }
     }
 
@@ -754,6 +928,29 @@
 
       schoolSel.innerHTML = '<option value="all">All schools</option>' + schools.map(s => `<option>${s}</option>`).join('');
       eventSel.innerHTML = '<option value="all">All types</option>' + events.map(e => `<option>${e}</option>`).join('');
+
+      renderSchoolLegend(schools);
+    }
+
+    function renderSchoolLegend(schools) {
+      const el = document.getElementById('school-legend');
+      if (!el) return;
+      el.innerHTML = '';
+      for (const s of schools) {
+        const chip = document.createElement('span');
+        chip.className = 'badge';
+        applySchoolColor(chip, s);
+        chip.textContent = s;
+        el.appendChild(chip);
+      }
+    }
+
+    function updateClearFiltersVisibility() {
+      const q = document.getElementById('search').value;
+      const school = document.getElementById('schoolSel').value;
+      const eventT = document.getElementById('eventSel').value;
+      const active = q !== '' || school !== 'all' || eventT !== 'all';
+      document.getElementById('clear-filters').style.display = active ? 'inline-flex' : 'none';
     }
 
     // ===================== INTERACTIONS =====================
@@ -761,9 +958,32 @@
     document.getElementById('btn-today').addEventListener('click', () => { ANCHOR_DAY = dayjs(); if ([0, 6].includes(ANCHOR_DAY.day())) ANCHOR_DAY = nextMonday(ANCHOR_DAY); render(); });
     document.getElementById('prevWeek').addEventListener('click', () => { ANCHOR_DAY = startOfWeek(ANCHOR_DAY).subtract(7, 'day'); render(); });
     document.getElementById('nextWeek').addEventListener('click', () => { ANCHOR_DAY = startOfWeek(ANCHOR_DAY).add(7, 'day'); render(); });
-    document.getElementById('search').addEventListener('input', render);
-    document.getElementById('schoolSel').addEventListener('change', render);
-    document.getElementById('eventSel').addEventListener('change', render);
+    document.getElementById('search').addEventListener('input', () => { render(); updateClearFiltersVisibility(); });
+    document.getElementById('schoolSel').addEventListener('change', () => { render(); updateClearFiltersVisibility(); });
+    document.getElementById('eventSel').addEventListener('change', () => { render(); updateClearFiltersVisibility(); });
+
+    document.getElementById('clear-filters').addEventListener('click', () => {
+      document.getElementById('search').value = '';
+      document.getElementById('schoolSel').value = 'all';
+      document.getElementById('eventSel').value = 'all';
+      render();
+      updateClearFiltersVisibility();
+    });
+
+    // Sticky nav (mirrors main week nav buttons)
+    document.getElementById('sn-prev').addEventListener('click', () => { ANCHOR_DAY = startOfWeek(ANCHOR_DAY).subtract(7, 'day'); render(); });
+    document.getElementById('sn-today').addEventListener('click', () => { ANCHOR_DAY = dayjs(); if ([0, 6].includes(ANCHOR_DAY.day())) ANCHOR_DAY = nextMonday(ANCHOR_DAY); render(); });
+    document.getElementById('sn-next').addEventListener('click', () => { ANCHOR_DAY = startOfWeek(ANCHOR_DAY).add(7, 'day'); render(); });
+
+    // School legend toggle
+    document.getElementById('school-legend-toggle').addEventListener('click', () => {
+      const legend = document.getElementById('school-legend');
+      const btn = document.getElementById('school-legend-toggle');
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      legend.style.display = expanded ? 'none' : 'flex';
+      btn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+      btn.textContent = expanded ? 'School colors ▾' : 'School colors ▴';
+    });
 
     // Auto-refresh
     setInterval(load, CONFIG.REFRESH_MS);
