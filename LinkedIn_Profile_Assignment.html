@@ -4,8 +4,10 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>LinkedIn Profile Setup Assignment</title>
-    <style>
+    <title>LinkedIn Profile Setup Assignment — Genesee Learning Lab</title>
+      <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+<style>
         :root {
             --bg: #f4f6fb;
             --ink: #18212b;
@@ -79,27 +81,7 @@
             margin: 24px auto 40px;
             padding: 0 14px;
         }
-
-        .skip-link {
-            position: absolute;
-            left: -9999px;
-            top: 8px;
-            background: var(--card);
-            color: var(--ink);
-            border: 2px solid var(--focus);
-            border-radius: 8px;
-            padding: 8px 10px;
-            text-decoration: none;
-            z-index: 1000;
-        }
-
-        .skip-link:focus,
-        .skip-link:focus-visible {
-            left: 10px;
-            outline: none;
-        }
-
-        .card {
+.card {
             background: var(--card);
             border: 1px solid var(--line);
             border-radius: 14px;
@@ -392,6 +374,29 @@
 
 <body>
     <a class="skip-link" href="#assignment">Skip to assignment content</a>
+  <!-- NAVIGATION -->
+  <nav class="site-nav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-brand" aria-label="Genesee Learning Lab — Home">
+        <span class="nav-brand-icon" aria-hidden="true">GL</span>
+        Genesee Learning Lab
+      </a>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="primary-nav-list" aria-label="Open navigation menu">&#9776;</button>
+      <ul id="primary-nav-list" class="nav-links" role="list">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="projects.html">Projects</a></li>
+        <li><a href="programs.html">Programs</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="page-breadcrumb" aria-label="Breadcrumb">
+    <div class="page-breadcrumb__inner">
+      <a href="projects.html">&#8592; Student Tools</a>
+    </div>
+  </div>
+
     <main class="wrap" id="assignment" tabindex="-1">
         <section class="card hero" aria-labelledby="pageTitle">
             <div>
@@ -867,6 +872,69 @@
         setupCfuQuestionFlow();
         setupInteractions();
     </script>
+
+  <div class="container" style="padding-top: var(--space-6); padding-bottom: var(--space-6);">
+    <div class="instructional-note" aria-label="Instructional use notice">
+      <p><strong>Instructional Use:</strong> This is a curriculum-aligned activity from Genesee Learning Lab. <a href="projects.html">&#8592; Back to all student tools</a>.</p>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer" aria-labelledby="linkedin-footer-heading">
+    <div class="footer-inner">
+      <h2 id="linkedin-footer-heading" class="sr-only">Site Footer</h2>
+      <div class="footer-grid">
+        <div>
+          <p class="footer-brand">Genesee Learning Lab</p>
+          <p class="footer-tagline">Hands-on computer science and technology education for students, families, and communities across Genesee County.</p>
+        </div>
+        <nav aria-label="Footer navigation: Site">
+          <div class="footer-col">
+            <h4>Site</h4>
+            <ul role="list">
+              <li><a href="index.html">Home</a></li>
+              <li><a href="projects.html">Projects</a></li>
+              <li><a href="programs.html">Programs</a></li>
+              <li><a href="contact.html">Contact</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Genesee Learning Lab. All rights reserved.</span>
+        <span>Built for students, families, and community.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var toggle = document.querySelector('.nav-toggle');
+      var navList = document.getElementById('primary-nav-list');
+      if (!toggle || !navList) return;
+      toggle.addEventListener('click', function () {
+        var isOpen = navList.classList.toggle('is-open');
+        toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        toggle.setAttribute('aria-label', isOpen ? 'Close navigation menu' : 'Open navigation menu');
+      });
+      navList.addEventListener('click', function (e) {
+        if (e.target.tagName === 'A') {
+          navList.classList.remove('is-open');
+          toggle.setAttribute('aria-expanded', 'false');
+          toggle.setAttribute('aria-label', 'Open navigation menu');
+        }
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && navList.classList.contains('is-open')) {
+          navList.classList.remove('is-open');
+          toggle.setAttribute('aria-expanded', 'false');
+          toggle.setAttribute('aria-label', 'Open navigation menu');
+          toggle.focus();
+        }
+      });
+    }());
+  </script>
+
 </body>
 
 </html>

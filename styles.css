@@ -331,6 +331,32 @@ a:hover {
 }
 
 /* ---------------------------------------------------------
+   Breadcrumb bar (activity pages → Student Tools)
+   --------------------------------------------------------- */
+.page-breadcrumb {
+  background: #1e293b;
+  border-bottom: 1px solid #334155;
+  padding: var(--space-2) 0;
+}
+
+.page-breadcrumb__inner {
+  max-width: var(--max-width-site);
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+  font-size: var(--font-size-sm);
+}
+
+.page-breadcrumb a {
+  color: #93c5fd;
+  text-decoration: none;
+}
+
+.page-breadcrumb a:hover {
+  color: #bfdbfe;
+  text-decoration: underline;
+}
+
+/* ---------------------------------------------------------
    Page Header (for inner pages)
    --------------------------------------------------------- */
 .page-header {

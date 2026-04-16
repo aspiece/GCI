@@ -3,8 +3,10 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>K-Pop Demon Hunter: The Movie</title>
+    <title>K-Pop Demon Hunter Math — Genesee Learning Lab</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
     <style>
         :root {
             color-scheme: light;
@@ -39,8 +41,8 @@
             color: var(--text);
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
             padding: 24px;
         }
 
@@ -435,10 +437,44 @@
                 grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
             }
         }
+
+        /* Nav override: stretch across full body despite body padding */
+        .site-nav {
+            width: calc(100% + 48px);
+            margin-left: -24px;
+            margin-right: -24px;
+            margin-top: -24px;
+        }
     </style>
 </head>
 
 <body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <!-- NAVIGATION -->
+  <nav class="site-nav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-brand" aria-label="Genesee Learning Lab — Home">
+        <span class="nav-brand-icon" aria-hidden="true">GL</span>
+        Genesee Learning Lab
+      </a>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="primary-nav-list" aria-label="Open navigation menu">&#9776;</button>
+      <ul id="primary-nav-list" class="nav-links" role="list">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="projects.html">Projects</a></li>
+        <li><a href="programs.html">Programs</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="page-breadcrumb" style="width: calc(100% + 48px); margin-left: -24px; margin-right: -24px;" aria-label="Breadcrumb">
+    <div class="page-breadcrumb__inner">
+      <a href="projects.html">&#8592; Student Tools</a>
+    </div>
+  </div>
+
+  <div id="main-content" tabindex="-1" style="width: 100%;">
     <div class="game-shell" role="main">
         <div class="net-overlay" aria-hidden="true"></div>
         <div class="film-grain" aria-hidden="true"></div>
@@ -1257,6 +1293,44 @@
 
         initGame();
     </script>
+
+  </div><!-- /#main-content -->
+
+  <div style="width: calc(100% + 48px); margin-left: -24px; padding: var(--space-6) var(--space-6) var(--space-6);">
+    <div style="max-width: var(--max-width-site); margin: 0 auto;">
+      <div class="instructional-note" aria-label="Instructional use notice">
+        <p><strong>Instructional Use:</strong> This is a curriculum-aligned activity from Genesee Learning Lab. <a href="projects.html">&#8592; Back to all student tools</a>.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var toggle = document.querySelector('.nav-toggle');
+      var navList = document.getElementById('primary-nav-list');
+      if (!toggle || !navList) return;
+      toggle.addEventListener('click', function () {
+        var isOpen = navList.classList.toggle('is-open');
+        toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        toggle.setAttribute('aria-label', isOpen ? 'Close navigation menu' : 'Open navigation menu');
+      });
+      navList.addEventListener('click', function (e) {
+        if (e.target.tagName === 'A') {
+          navList.classList.remove('is-open');
+          toggle.setAttribute('aria-expanded', 'false');
+          toggle.setAttribute('aria-label', 'Open navigation menu');
+        }
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && navList.classList.contains('is-open')) {
+          navList.classList.remove('is-open');
+          toggle.setAttribute('aria-expanded', 'false');
+          toggle.setAttribute('aria-label', 'Open navigation menu');
+          toggle.focus();
+        }
+      });
+    }());
+  </script>
 </body>
 
 </html>
