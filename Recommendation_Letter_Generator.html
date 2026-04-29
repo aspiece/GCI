@@ -1067,13 +1067,13 @@
       const includeDigSig = document.getElementById('includeDigSig').checked;
 
       // For "other" purpose, use custom description in opening context if provided
-      if (purposeKey === 'other' && purposeOtherText) {
-        pd.openingContext = [
-          `in strong support of ${name} for ${purposeOtherText}`,
-          `to recommend ${name} for ${purposeOtherText}`,
-          `on behalf of ${name} as they pursue ${purposeOtherText}`,
-        ];
-      }
+      const effectiveOpeningContext = (purposeKey === 'other' && purposeOtherText)
+        ? [
+            `in strong support of ${name} for ${purposeOtherText}`,
+            `to recommend ${name} for ${purposeOtherText}`,
+            `on behalf of ${name} as they pursue ${purposeOtherText}`,
+          ]
+        : pd.openingContext;
 
       // Build signature block
       const sigLines = [
@@ -1140,8 +1140,7 @@
       } else {
         // Standard letter with specific purpose
 
-        const purposeCtxFn = pd.openingContext;
-        const purposeCtxStr = pick(purposeCtxFn).replace('{name}', name);
+        const purposeCtxStr = pick(effectiveOpeningContext).replace('{name}', name);
 
         // Paragraph 1: Opening
         const p1 = pick(OPENINGS)(name, cd.name, purposeCtxStr);
@@ -1335,7 +1334,7 @@
               type: 'png',
             });
           }
-        } catch (_) { /* skip logo if unavailable */ }
+        } catch (logoErr) { console.warn('Letterhead logo could not be loaded:', logoErr); }
 
         const lines = letterText.split('\n');
         const children = [];
