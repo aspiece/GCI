@@ -5,6 +5,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Recommendation Letter Generator — Genesee Learning Lab</title>
+  <script src="https://unpkg.com/docx@8.5.0/build/index.js" defer></script>
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="styles.css" />
   <style>
@@ -370,13 +371,18 @@
             <label for="purposeSelect">Purpose <span aria-hidden="true">*</span></label>
             <select id="purposeSelect">
               <option value="">— Select a purpose —</option>
-              <option value="scholarship">Scholarship Application</option>
-              <option value="college">College / University Admission</option>
-              <option value="employment">Employment or Internship</option>
-              <option value="honor-society">Honor Society</option>
-              <option value="program">Competitive Program Admission</option>
-              <option value="award">Award or Recognition Nomination</option>
+              <option value="general">General Recommendation</option>
+              <option value="college">College Application</option>
+              <option value="scholarship">Scholarship</option>
+              <option value="internship">Internship</option>
+              <option value="employment">Employment</option>
+              <option value="leadership">Leadership Program</option>
+              <option value="other">Other</option>
             </select>
+            <div id="purposeOtherGroup" style="display:none;margin-top:8px;">
+              <label for="purposeOther" class="sr-only">Specify purpose</label>
+              <input type="text" id="purposeOther" placeholder="Describe the opportunity or purpose…" autocomplete="off" />
+            </div>
           </div>
         </div>
 
@@ -399,6 +405,13 @@
           <button id="clearBtn">Clear Form</button>
         </div>
 
+        <div class="form-group" style="margin-top:14px;">
+          <label class="trait-item" style="width:auto;display:inline-flex;">
+            <input type="checkbox" id="includeDigSig" style="width:16px;height:16px;accent-color:var(--primary);cursor:pointer;flex-shrink:0;" />
+            <span class="trait-label" style="margin-left:8px;">Include digital signature line</span>
+          </label>
+        </div>
+
         <p id="formError" role="alert" style="color:var(--danger);font-size:13px;margin-top:8px;display:none;"></p>
       </section>
 
@@ -414,6 +427,7 @@
               <button id="regenerateBtn">🔄 Regenerate</button>
               <button id="copyBtn">📋 Copy</button>
               <button id="printBtn">🖨️ Print</button>
+              <button id="wordExportBtn">📄 Export Word</button>
             </div>
           </div>
         </div>
@@ -676,7 +690,7 @@
           'demonstrated a user-centered approach to software design that sets strong engineers apart',
           'shown a collaborative spirit and a commitment to code quality that makes every team better',
           'brought both creative vision and methodical discipline to every stage of the development process',
-          'developed a testing mindset early, understanding that great software is built — and verified — with care',
+          'developed a testing mindset early, understanding that great software is both built and verified with care',
         ],
       },
     };
@@ -715,7 +729,7 @@
       'dependable':      [
         'a level of dependability that both peers and teachers can count on without question',
         'consistent follow-through that makes them the kind of person you want on any team',
-        'reliability that is simply part of how they operate — not something they have to try at',
+        'reliability that is simply part of how they operate, not something they have to try at',
         'a track record of doing what they say they will, without needing reminders',
       ],
       'curious':         [
@@ -750,7 +764,7 @@
       ],
       'growth-mindset':  [
         'a growth mindset that treats every mistake as an opportunity to improve',
-        'the self-awareness to recognize where they can grow and the drive to act on it',
+        'the awareness to recognize where they can grow and the drive to act on it',
         'an openness to feedback that makes them one of the most coachable students I\'ve taught',
         'a belief in their own ability to improve that translates into real, visible progress',
       ],
@@ -761,7 +775,7 @@
         'clarity in both written and verbal communication that most students are still working toward',
       ],
       'self-starter':    [
-        'a self-directed initiative that means they are often working before the instructions are finished',
+        'a natural initiative that means they are often working before the instructions are finished',
         'the ability to identify what needs to be done and begin without waiting to be told',
         'an intrinsic motivation that sets them apart from peers who need frequent prompting',
         'a proactive energy that consistently raises the bar for everyone working alongside them',
@@ -793,23 +807,23 @@
     };
 
     const PURPOSE_DATA = {
-      'scholarship': {
-        label: 'Scholarship Application',
-        salutation: 'Dear Scholarship Selection Committee',
+      'general': {
+        label: 'General Recommendation',
+        salutation: 'To Whom It May Concern',
         openingContext: [
-          'in support of {name}\'s application for this scholarship',
-          'to recommend {name} for this scholarship opportunity',
-          'on behalf of {name} as they apply for this scholarship',
+          'to offer my enthusiastic recommendation for {name}',
+          'to recommend {name} as a student of exceptional character and ability',
+          'in strong support of {name}, who has made a genuine impression on me as their teacher',
         ],
         closingStatement: [
-          'I am confident that {name} will make excellent use of this opportunity and reflect the values this scholarship was created to honor.',
-          '{name} represents exactly the kind of student this scholarship was designed to support — one whose potential is matched only by their commitment to their own growth.',
-          'This scholarship would be in excellent hands with {name}, and I cannot recommend them highly enough for this recognition.',
-          'Investing in {name} through this scholarship is investing in someone who will return that investment many times over.',
+          'I recommend {name} with confidence for future academic, professional, and leadership opportunities.',
+          'Whoever has the opportunity to work with {name} next will be fortunate. I recommend them fully and without reservation.',
+          'I recommend {name} with confidence for future academic, professional, and leadership opportunities, and I do so proudly.',
+          '{name} is exactly the kind of person any school, employer, or program would be glad to welcome. I offer this recommendation wholeheartedly.',
         ],
       },
       'college': {
-        label: 'College / University Admission',
+        label: 'College Application',
         salutation: 'Dear Admissions Committee',
         openingContext: [
           'in enthusiastic support of {name}\'s application for admission',
@@ -818,13 +832,43 @@
         ],
         closingStatement: [
           '{name} will contribute meaningfully to your campus community, both inside the classroom and beyond it.',
-          'Your institution will be fortunate to have {name} — they bring exactly the kind of curiosity and drive that make campus communities stronger.',
+          'Your institution will be fortunate to have {name}. They bring exactly the kind of curiosity and drive that make campus communities stronger.',
           'I have no reservations whatsoever in recommending {name} for admission, and I look forward to following their continued success.',
           '{name} is the kind of student who will make the most of every opportunity your institution offers, and then some.',
         ],
       },
+      'scholarship': {
+        label: 'Scholarship',
+        salutation: 'Dear Scholarship Selection Committee',
+        openingContext: [
+          'in support of {name}\'s application for this scholarship',
+          'to recommend {name} for this scholarship opportunity',
+          'on behalf of {name} as they apply for this scholarship',
+        ],
+        closingStatement: [
+          'I am confident that {name} will make excellent use of this opportunity and reflect the values this scholarship was created to honor.',
+          '{name} represents exactly the kind of student this scholarship was designed to support, someone whose potential is matched only by their commitment to their own growth.',
+          'This scholarship would be in excellent hands with {name}, and I cannot recommend them highly enough for this recognition.',
+          'Investing in {name} through this scholarship is investing in someone who will return that investment many times over.',
+        ],
+      },
+      'internship': {
+        label: 'Internship',
+        salutation: 'Dear Hiring Team',
+        openingContext: [
+          'to recommend {name} for this internship opportunity',
+          'in support of {name}\'s application for this internship position',
+          'on behalf of {name} as they pursue this internship',
+        ],
+        closingStatement: [
+          '{name} is ready for a real professional environment. They are technically capable, grounded, and genuinely eager to learn on the job.',
+          'Any team that works with {name} will quickly see what I already know: this is a student worth investing in.',
+          'I recommend {name} without reservation for this internship and am confident they will exceed your expectations.',
+          '{name} brings both the technical foundation and the professional maturity to make a real contribution from day one.',
+        ],
+      },
       'employment': {
-        label: 'Employment or Internship',
+        label: 'Employment',
         salutation: 'Dear Hiring Team',
         openingContext: [
           'to recommend {name} for employment consideration',
@@ -832,55 +876,40 @@
           'on behalf of {name} as they pursue this professional opportunity',
         ],
         closingStatement: [
-          '{name} is work-ready in the truest sense — technically capable, professionally grounded, and eager to contribute from day one.',
+          '{name} is work-ready in the truest sense, technically capable, professionally grounded, and eager to contribute from day one.',
           'Any organization that brings {name} on board will quickly discover what I already know: this is someone worth investing in.',
           'I recommend {name} without reservation for this role and am confident they will meet and exceed your expectations.',
-          '{name} combines the technical skills and professional maturity to hit the ground running in almost any workplace setting.',
+          '{name} combines technical skill and professional maturity that will help them hit the ground running in almost any workplace.',
         ],
       },
-      'honor-society': {
-        label: 'Honor Society',
-        salutation: 'Dear Honors Selection Committee',
+      'leadership': {
+        label: 'Leadership Program',
+        salutation: 'Dear Selection Committee',
         openingContext: [
-          'to support {name}\'s induction into your honor society',
-          'in nomination of {name} for honor society membership',
-          'on behalf of {name} for this distinguished recognition',
+          'to support {name}\'s application to your leadership program',
+          'in recommendation of {name} for this leadership opportunity',
+          'on behalf of {name} as they apply to this leadership program',
         ],
         closingStatement: [
-          '{name} embodies the academic excellence and personal character that honor society membership is meant to celebrate.',
-          'Few students I have taught are as deserving of this recognition as {name}, whose commitment to excellence has been consistent and genuine.',
-          'I nominate {name} with full confidence that they will uphold the values of your organization with distinction.',
-          '{name} sets the standard that others aspire to — which is precisely what honor society membership should represent.',
-        ],
-      },
-      'program': {
-        label: 'Competitive Program Admission',
-        salutation: 'Dear Program Selection Committee',
-        openingContext: [
-          'to support {name}\'s application to your program',
-          'in recommendation of {name} for selection into this program',
-          'on behalf of {name} as they apply to this competitive program',
-        ],
-        closingStatement: [
-          '{name} is prepared for the demands of this program in ways that go beyond academic readiness — they have the mindset and resilience to thrive in a competitive environment.',
+          '{name} is prepared not just to participate in a leadership program, but to grow through it in ways that will ripple outward for years.',
           'Your program would benefit greatly from what {name} brings, and {name} would benefit equally from the challenges your program offers.',
-          'I am confident that {name} will not only meet the bar this program sets — they will raise it.',
-          'Selecting {name} for this program is selecting someone who will make the program proud.',
+          'I am confident that {name} will not only meet the bar this program sets. They will raise it.',
+          'Selecting {name} for this program means choosing someone who will make the program proud.',
         ],
       },
-      'award': {
-        label: 'Award or Recognition Nomination',
-        salutation: 'Dear Awards Committee',
+      'other': {
+        label: 'Other',
+        salutation: 'Dear Selection Committee',
         openingContext: [
-          'to nominate {name} for this well-deserved recognition',
-          'in support of {name}\'s nomination for this award',
-          'on behalf of {name} as a nominee for this honor',
+          'in strong support of {name} for this opportunity',
+          'to recommend {name} for this upcoming opportunity',
+          'on behalf of {name} as they pursue this next step',
         ],
         closingStatement: [
-          'If this recognition is meant to honor outstanding students, then {name} is a clear and deserving choice.',
-          '{name} has earned this recognition through consistent action — not grand gestures, but the steady accumulation of excellent work and genuine character.',
-          'I can think of no student more deserving of this award, and I am proud to put their name forward.',
-          'This nomination reflects what I have witnessed firsthand: a student who leads by example and raises the standard for everyone around them.',
+          'I recommend {name} fully and without reservation, and I look forward to hearing about their continued growth.',
+          '{name} has more than earned this opportunity, and I am proud to put their name forward.',
+          'I hold {name} in the highest regard and offer this recommendation with genuine enthusiasm.',
+          '{name} is exactly the kind of person who makes the most of every opportunity given to them.',
         ],
       },
     };
@@ -889,13 +918,17 @@
       (name, cls, purposeCtx) =>
         `It is my genuine pleasure to write this letter ${purposeCtx}. As ${name}'s teacher in ${cls}, I have had the opportunity to watch them grow in ways that go well beyond the technical content of the course.`,
       (name, cls, purposeCtx) =>
-        `I am writing ${purposeCtx}, and I do so with genuine enthusiasm. ${name} is one of those students who reminds you why teaching matters — someone whose growth in ${cls} has been both impressive and deeply satisfying to witness.`,
+        `I am writing ${purposeCtx}, and I do so with genuine enthusiasm. ${name} is one of those students who reminds you why teaching matters, someone whose growth in ${cls} has been both impressive and deeply satisfying to witness.`,
       (name, cls, purposeCtx) =>
         `Without hesitation, I am writing to offer my strongest recommendation ${purposeCtx}. Having worked closely with ${name} in ${cls}, I have developed a clear and confident picture of who they are as both a student and a person.`,
       (name, cls, purposeCtx) =>
-        `I have had the privilege of teaching ${name} in ${cls}, and this letter ${purposeCtx} comes from a place of genuine admiration. ${name} consistently demonstrated qualities that set them apart — not just in my class, but as a person.`,
+        `I have had the privilege of teaching ${name} in ${cls}, and this letter ${purposeCtx} comes from a place of genuine admiration. ${name} consistently demonstrated qualities that set them apart, not just in my class, but as a person.`,
       (name, cls, purposeCtx) =>
         `Rarely do I encounter a student who leaves such a lasting impression in a single semester, but ${name} has done exactly that. I am writing ${purposeCtx} with full confidence that my recommendation reflects not just their performance in ${cls}, but their broader potential.`,
+      (name, cls, purposeCtx) =>
+        `Some students show up, do the work, and leave. ${name} did something different. In ${cls}, they showed me what it looks like when a student genuinely invests in their own growth, and I am glad to write this letter ${purposeCtx}.`,
+      (name, cls, purposeCtx) =>
+        `I don't write recommendation letters casually, but writing this one ${purposeCtx} is easy. ${name} has been one of the most memorable students I have taught in ${cls}, and that is not something I say often.`,
     ];
 
     const TRANSITIONS = [
@@ -905,6 +938,7 @@
       'The technical skills tell only part of the story.',
       'Academic performance, of course, only begins to describe {name}.',
       'What I find most compelling about {name}, though, is not captured in grades alone.',
+      'There is something worth noting that goes beyond what any grade reflects.',
     ];
 
     const CLOSINGS = [
@@ -918,6 +952,8 @@
         `My support for ${name} is unconditional. They have more than earned this opportunity, and I look forward to hearing of their continued success.`,
       (name) =>
         `Thank you for your consideration of ${name}. I am available to provide any additional context and would be glad to speak with you at your convenience.`,
+      (name) =>
+        `Teaching ${name} has been a genuinely rewarding experience, and I have every confidence in where they are headed. Please reach out if I can be of any further help.`,
     ];
 
     // ─── Utilities ──────────────────────────────────────────────────────────────
@@ -955,7 +991,7 @@
         body = `${firstName} brings ${phrases[0]}, and ${phrases[1]}.`;
       } else {
         const last = phrases.pop();
-        body = `${firstName} demonstrates ${phrases.join(', ')}, and — perhaps most notably — ${last}.`;
+        body = `${firstName} demonstrates ${phrases.join(', ')}, and perhaps most notably, ${last}.`;
       }
 
       return `${transition} ${body}`;
@@ -975,7 +1011,7 @@
       ];
 
       const outros = [
-        ` This experience reflects a ${pick(classKeywords)} mindset that cannot be taught — only developed through genuine engagement.`,
+        ` This experience reflects a ${pick(classKeywords)} mindset that cannot be taught, only developed through genuine engagement.`,
         ` That kind of initiative reflects the very qualities that make ${firstName} an exceptional student.`,
         ` Moments like this are the ones that remain with me as a teacher.`,
         ` This is exactly the kind of effort and ingenuity that I believe will define ${firstName}'s future.`,
@@ -991,6 +1027,7 @@
       const lastName    = document.getElementById('lastName').value.trim();
       const classKey    = document.getElementById('classSelect').value;
       const purposeKey  = document.getElementById('purposeSelect').value;
+      const purposeOtherText = document.getElementById('purposeOther').value.trim();
       const customText  = document.getElementById('customParagraph').value.trim();
       const checkedIds  = [...document.querySelectorAll('#traitGrid input:checked')].map(cb => cb.value);
 
@@ -1027,62 +1064,136 @@
       const cd         = CLASS_DATA[classKey];
       const pd         = PURPOSE_DATA[purposeKey];
       const today      = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      const includeDigSig = document.getElementById('includeDigSig').checked;
 
-      const purposeCtx = pick(pd.openingContext).replace('{name}', name);
+      // For "other" purpose, use custom description in opening context if provided
+      if (purposeKey === 'other' && purposeOtherText) {
+        pd.openingContext = [
+          `in strong support of ${name} for ${purposeOtherText}`,
+          `to recommend ${name} for ${purposeOtherText}`,
+          `on behalf of ${name} as they pursue ${purposeOtherText}`,
+        ];
+      }
 
-      // Paragraph 1: Opening
-      const p1 = pick(OPENINGS)(name, cd.name, purposeCtx);
-
-      // Paragraph 2: Class-specific academic/technical body
-      const classDescPhrase  = pick(cd.classDesc);
-      const classActionPhrase = pick(cd.classAction);
-      const strengthPhrase    = pick(cd.strengthPhrase);
-
-      const p2Templates = [
-        `In my ${cd.name} course, students engage with ${classDescPhrase}. ${name} distinguished themselves through ${classActionPhrase}. They have ${strengthPhrase} — a quality that speaks to more than academic ability; it reflects who they are as a learner.`,
-        `My ${cd.name} course challenges students to engage seriously with ${classDescPhrase}. ${capitalize(classActionPhrase)} is exactly what ${name} did, consistently, throughout the semester. In doing so, they ${strengthPhrase}.`,
-        `${name} completed my ${cd.name} course — a class that asks students to grapple with ${classDescPhrase}. What I observed was a student committed to ${classActionPhrase}, which is why I can say with confidence that ${name} has ${strengthPhrase}.`,
-        `The work in ${cd.name} centers on ${classDescPhrase}, and not every student rises to meet that challenge with purpose. ${name} did. By ${classActionPhrase}, they have ${strengthPhrase} in a way that will serve them long after this course.`,
-      ];
-      const p2 = pick(p2Templates);
-
-      // Paragraph 3: Trait-based character paragraph
-      const p3 = buildTraitParagraph(firstName, checkedIds);
-
-      // Paragraph 4 (optional): Custom content integrated professionally
-      const p4 = customText ? integrateCustomParagraph(firstName, customText, cd.keywords) : '';
-
-      // Paragraph 5: Closing endorsement
-      const closingStatement = pick(pd.closingStatement).replace(/\{name\}/g, firstName);
-      const signoff          = pick(CLOSINGS)(firstName);
-
-      // Assemble letter
-      const parts = [
-        today,
-        '',
-        pd.salutation + ':',
-        '',
-        p1,
-        '',
-        p2,
-        '',
-        p3,
-        ...(p4 ? ['', p4] : []),
-        '',
-        closingStatement,
-        '',
-        signoff,
-        '',
-        'Sincerely,',
-        '',
-        '[Your Name]',
-        '[Your Title]',
-        '[School / Organization]',
-        '[Email Address]',
-        '[Phone Number]',
+      // Build signature block
+      const sigLines = [
+        ...(includeDigSig ? ['_________________________', '', 'Andrew Spiece', ''] : []),
+        'Andrew Spiece',
+        'Computer Science / Technology Instructor',
+        'Genesee Career Institute',
+        'Genesee Intermediate School District',
+        'aspiece@geneseeisd.org',
+        '(810) XXX-XXXX',
       ];
 
-      return parts.join('\n');
+      let letter;
+
+      if (purposeKey === 'general') {
+        // General Recommendation: broad, reusable, no specific opportunity
+        const generalOpening = pick([
+          `It is my genuine pleasure to write this letter of recommendation for ${firstName} ${lastName}. Having had the privilege of teaching ${firstName} in my ${cd.name} course, I can speak with full confidence about the kind of student and person they are.`,
+          `I am pleased to offer this letter of recommendation for ${firstName} ${lastName}, a student who made a real impression on me during their time in ${cd.name}. The qualities I witnessed are ones that will carry ${firstName} far, in school, in the workplace, and in life.`,
+          `Writing a general letter of recommendation for ${firstName} ${lastName} is something I do with genuine pride. I taught ${firstName} in ${cd.name}, and what I observed was a student who brought something meaningful to the classroom every single day.`,
+          `To anyone who has the opportunity to work with ${firstName} ${lastName}: you will be glad you did. I taught ${firstName} in ${cd.name}, and I can say without hesitation that they are a person of strong character, real ability, and genuine heart.`,
+        ]);
+
+        const classDescPhrase  = pick(cd.classDesc);
+        const classActionPhrase = pick(cd.classAction);
+        const strengthPhrase    = pick(cd.strengthPhrase);
+
+        const generalP2 = pick([
+          `In ${cd.name}, students are expected to engage with ${classDescPhrase}. ${firstName} did not just meet that expectation. They approached the course with focus and purpose, ${classActionPhrase}. They have ${strengthPhrase}, and that kind of foundation does not disappear when a course ends.`,
+          `My ${cd.name} course asks students to work seriously with ${classDescPhrase}. ${firstName} showed up to that challenge with effort and integrity, ${classActionPhrase}. In doing so, they demonstrated ${strengthPhrase} that I believe will define how they approach everything ahead of them.`,
+          `The work in ${cd.name} centers on ${classDescPhrase}. ${firstName} engaged with that material thoughtfully and persistently, ${classActionPhrase}. The result is a student who has ${strengthPhrase}, a quality I see as genuinely rare at this stage.`,
+        ]);
+
+        const traitPara = buildTraitParagraph(firstName, checkedIds);
+
+        const customPara = customText ? integrateCustomParagraph(firstName, customText, cd.keywords) : '';
+
+        const generalClosingStatement = pick(pd.closingStatement).replace(/\{name\}/g, firstName);
+        const generalSignoff = pick(CLOSINGS)(firstName);
+
+        const generalParts = [
+          today,
+          '',
+          'To Whom It May Concern,',
+          '',
+          generalOpening,
+          '',
+          generalP2,
+          '',
+          traitPara,
+          ...(customPara ? ['', customPara] : []),
+          '',
+          generalClosingStatement,
+          '',
+          generalSignoff,
+          '',
+          'Sincerely,',
+          '',
+          ...sigLines,
+        ];
+
+        letter = generalParts.join('\n');
+
+      } else {
+        // Standard letter with specific purpose
+
+        const purposeCtxFn = pd.openingContext;
+        const purposeCtxStr = pick(purposeCtxFn).replace('{name}', name);
+
+        // Paragraph 1: Opening
+        const p1 = pick(OPENINGS)(name, cd.name, purposeCtxStr);
+
+        // Paragraph 2: Class-specific body
+        const classDescPhrase   = pick(cd.classDesc);
+        const classActionPhrase = pick(cd.classAction);
+        const strengthPhrase    = pick(cd.strengthPhrase);
+
+        const p2Templates = [
+          `In my ${cd.name} course, students engage with ${classDescPhrase}. ${name} distinguished themselves through ${classActionPhrase}. They have ${strengthPhrase}, a quality that speaks to more than academic ability. It reflects who they are as a learner.`,
+          `My ${cd.name} course challenges students to engage seriously with ${classDescPhrase}. ${capitalize(classActionPhrase)} is exactly what ${name} did, consistently, throughout the semester. In doing so, they ${strengthPhrase}.`,
+          `${name} completed my ${cd.name} course, a class that asks students to grapple with ${classDescPhrase}. What I observed was a student committed to ${classActionPhrase}, which is why I can say with confidence that ${name} has ${strengthPhrase}.`,
+          `The work in ${cd.name} centers on ${classDescPhrase}, and not every student rises to meet that challenge with purpose. ${name} did. By ${classActionPhrase}, they have ${strengthPhrase} in a way that will serve them long after this course.`,
+        ];
+        const p2 = pick(p2Templates);
+
+        // Paragraph 3: Trait-based character paragraph
+        const p3 = buildTraitParagraph(firstName, checkedIds);
+
+        // Paragraph 4 (optional): Custom content
+        const p4 = customText ? integrateCustomParagraph(firstName, customText, cd.keywords) : '';
+
+        // Closing
+        const closingStatement = pick(pd.closingStatement).replace(/\{name\}/g, firstName);
+        const signoff          = pick(CLOSINGS)(firstName);
+
+        const parts = [
+          today,
+          '',
+          pd.salutation + ',',
+          '',
+          p1,
+          '',
+          p2,
+          '',
+          p3,
+          ...(p4 ? ['', p4] : []),
+          '',
+          closingStatement,
+          '',
+          signoff,
+          '',
+          'Sincerely,',
+          '',
+          ...sigLines,
+        ];
+
+        letter = parts.join('\n');
+      }
+
+      return letter;
     }
 
     // ─── Trait grid setup ───────────────────────────────────────────────────────
@@ -1114,6 +1225,12 @@
     }
 
     // ─── Event wiring ────────────────────────────────────────────────────────────
+
+    // Show/hide "Other" purpose text field
+    document.getElementById('purposeSelect').addEventListener('change', function () {
+      const otherGroup = document.getElementById('purposeOtherGroup');
+      otherGroup.style.display = this.value === 'other' ? 'block' : 'none';
+    });
 
     document.getElementById('generateBtn').addEventListener('click', () => {
       const letter = generateLetter();
@@ -1156,7 +1273,10 @@
       document.getElementById('lastName').value = '';
       document.getElementById('classSelect').value = '';
       document.getElementById('purposeSelect').value = '';
+      document.getElementById('purposeOther').value = '';
+      document.getElementById('purposeOtherGroup').style.display = 'none';
       document.getElementById('customParagraph').value = '';
+      document.getElementById('includeDigSig').checked = false;
       document.querySelectorAll('#traitGrid input').forEach(cb => {
         cb.checked = false;
         cb.closest('.trait-item').classList.remove('checked');
@@ -1189,6 +1309,84 @@
     });
 
     document.getElementById('printBtn').addEventListener('click', () => { window.print(); });
+
+    document.getElementById('wordExportBtn').addEventListener('click', async () => {
+      const letterText = document.getElementById('letterText').textContent;
+      if (!letterText) return;
+
+      const firstName = document.getElementById('firstName').value.trim();
+      const lastName  = document.getElementById('lastName').value.trim();
+      const btn = document.getElementById('wordExportBtn');
+      btn.disabled = true;
+      btn.textContent = '⏳ Exporting…';
+
+      try {
+        const { Document, Packer, Paragraph, TextRun, ImageRun, AlignmentType, convertInchesToTwip } = docx;
+
+        // Load the GISD letterhead logo
+        let logoImageRun = null;
+        try {
+          const logoResp = await fetch('wordprojectfiles/logo_square.png');
+          if (logoResp.ok) {
+            const logoBuffer = await logoResp.arrayBuffer();
+            logoImageRun = new ImageRun({
+              data: logoBuffer,
+              transformation: { width: 300, height: 202 },
+              type: 'png',
+            });
+          }
+        } catch (_) { /* skip logo if unavailable */ }
+
+        const lines = letterText.split('\n');
+        const children = [];
+
+        // Letterhead image paragraph
+        if (logoImageRun) {
+          children.push(new Paragraph({
+            children: [logoImageRun],
+            alignment: AlignmentType.CENTER,
+            spacing: { after: 240 },
+          }));
+        }
+
+        // Letter body paragraphs
+        lines.forEach(line => {
+          children.push(new Paragraph({
+            children: [new TextRun({ text: line, font: 'Times New Roman', size: 24 })],
+            spacing: { after: line === '' ? 120 : 0 },
+          }));
+        });
+
+        const doc = new Document({
+          sections: [{
+            properties: {
+              page: {
+                margin: {
+                  top:    convertInchesToTwip(0.5),
+                  right:  convertInchesToTwip(0.5),
+                  bottom: convertInchesToTwip(0.5),
+                  left:   convertInchesToTwip(0.5),
+                },
+              },
+            },
+            children,
+          }],
+        });
+
+        const blob = await Packer.toBlob(doc);
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement('a');
+        a.href     = url;
+        a.download = `Recommendation_Letter_${lastName}_${firstName}.docx`;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 5000);
+      } catch (err) {
+        alert('Word export failed. Please try again or use Print instead.\n\n' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '📄 Export Word';
+      }
+    });
 
     buildTraitGrid();
   </script>
