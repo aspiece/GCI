@@ -35,7 +35,8 @@
     button, input { font: inherit; }
 
     button:focus-visible,
-    input:focus-visible {
+    input:focus-visible,
+    summary:focus-visible {
       outline: 3px solid #ffbf47;
       outline-offset: 3px;
     }
@@ -128,6 +129,56 @@
       margin: 9px 0 0;
       color: rgba(255,255,255,.85);
       font-size: .92rem;
+    }
+
+    .estimate-badge {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.14);
+      color: white;
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .03em;
+    }
+
+    .estimate-note {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.12);
+      color: rgba(255,255,255,.92);
+      font-size: .8rem;
+    }
+
+    .estimate-note details {
+      margin: 0;
+    }
+
+    .estimate-note summary {
+      cursor: pointer;
+      font-weight: 800;
+      list-style: none;
+    }
+
+    .estimate-note summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .estimate-note summary::after {
+      content: " +";
+      font-weight: 900;
+    }
+
+    .estimate-note details[open] summary::after {
+      content: " −";
+    }
+
+    .estimate-note p {
+      margin: 8px 0 0;
+      color: rgba(255,255,255,.92);
+      font-size: .8rem;
     }
 
     .results-body {
@@ -295,6 +346,21 @@
       display: block;
       margin-bottom: 4px;
       color: #423303;
+    }
+
+    .limitations {
+      padding: 14px 15px;
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      background: #f8fbfb;
+      color: var(--muted);
+      font-size: .82rem;
+    }
+
+    .limitations strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--ink);
     }
 
     .actions {
@@ -516,6 +582,8 @@
           <small>Estimated impact</small>
           <h2 id="resultTitle">1 quick AI question</h2>
           <p id="resultSubtitle">This is an estimate, not a direct measurement.</p>
+          <div class="estimate-badge" id="estimateBadge">Research-based scenario</div>
+          <div class="estimate-note" id="estimateNote"></div>
         </div>
 
         <div class="results-body">
@@ -523,8 +591,8 @@
             <div class="impact-icon" aria-hidden="true">💡</div>
             <div>
               <p class="impact-name">Electricity</p>
-              <p class="impact-value" id="ledValue">About 2 minutes of LED light</p>
-              <p class="impact-note" id="energyNote">Equivalent to 0.34 watt-hours.</p>
+              <p class="impact-value" id="ledValue">About 1.9 minutes of LED light</p>
+              <p class="impact-note" id="energyNote">Equivalent to 0.31 watt-hours.</p>
             </div>
           </article>
 
@@ -532,23 +600,28 @@
             <div class="impact-icon" aria-hidden="true">📱</div>
             <div>
               <p class="impact-name">Phone battery</p>
-              <p class="impact-value" id="phoneValue">About 2% of one charge</p>
-              <p class="impact-note">Compared with a 15 Wh phone charge.</p>
+              <p class="impact-value" id="phoneValue">About 1.4% of one charge</p>
+              <p class="impact-note">Compared with an assumed 22 Wh smartphone charge.</p>
             </div>
           </article>
 
           <article class="impact">
             <div class="impact-icon" aria-hidden="true">💧</div>
             <div>
-              <p class="impact-name">Water footprint</p>
-              <p class="impact-value" id="waterValue">About 33 drops of water</p>
-              <p class="impact-note">Includes estimated cooling and electricity-related water.</p>
+              <p class="impact-name">Estimated U.S. water footprint</p>
+              <p class="impact-value" id="waterValue">About 30 drops of water</p>
+              <p class="impact-note">An educational estimate combining average data-center cooling water and electricity-related water. It is not a measurement of a specific AI provider or data center.</p>
             </div>
           </article>
 
           <div class="summary">
             <strong>What this means</strong>
             <span id="summaryText">One quick AI question has a small estimated impact, but repeated use across a class or school adds up.</span>
+          </div>
+
+          <div class="limitations">
+            <strong>Important limitation</strong>
+            <span>This classroom tool estimates scale using published reference values. Actual environmental impact varies by AI model, output length, hardware, data-center location, cooling system, and electricity source. Results should not be presented as exact measurements of a particular AI service.</span>
           </div>
         </div>
 
@@ -561,47 +634,40 @@
 
     <section class="card sources" aria-labelledby="sourcesTitle">
       <h2 id="sourcesTitle">Data sources</h2>
-      <p class="sources-intro">These studies and tools provide the reference values used in this calculator.</p>
+      <p class="sources-intro">These studies provide the published reference values used in this calculator.</p>
 
       <div class="source-list">
         <a class="source-link"
-           href="https://www.microsoft.com/en-us/research/publication/energy-use-of-ai-inference-efficiency-pathways-and-test-time-compute/"
+           href="https://www.microsoft.com/en-us/research/publication/energy-use-of-ai-inference-efficiency-pathways-and-test-time-scaling/"
            target="_blank" rel="noopener">
           <strong>Microsoft Research — Energy Use of AI Inference</strong>
-          <span>Supports the 0.34 Wh typical text-query estimate and the 4.32 Wh extended-reasoning estimate.</span>
+          <span>Supports the 0.31 Wh typical text-query estimate, its 0.16–0.60 Wh range, and the 3.91 Wh extended-reasoning scenario with a 2.15–7.05 Wh range.</span>
         </a>
 
         <a class="source-link"
            href="https://arxiv.org/abs/2311.16863"
            target="_blank" rel="noopener">
           <strong>Luccioni, Jernite &amp; Strubell — Power Hungry Processing</strong>
-          <span>Provides the image-generation benchmark used for the image preset.</span>
+          <span>Supports the 2.907 Wh mean image-generation benchmark. The study found substantial variation among models.</span>
         </a>
 
         <a class="source-link"
            href="https://eta-publications.lbl.gov/sites/default/files/2024-12/lbnl-2024-united-states-data-center-energy-usage-report_1.pdf"
            target="_blank" rel="noopener">
-          <strong>Berkeley Lab — U.S. Data Center Energy Usage Report</strong>
-          <span>Supports the national-average estimate of approximately 0.36 L/kWh of direct on-site cooling water.</span>
-        </a>
-
-        <a class="source-link"
-           href="https://waterimpacttool.lbl.gov/"
-           target="_blank" rel="noopener">
-          <strong>Berkeley Lab — Water IMPACT Tool</strong>
-          <span>Supports the 4.52 L/kWh electricity-related water reference used in the total water footprint.</span>
+          <strong>Berkeley Lab — 2024 United States Data Center Energy Usage Report</strong>
+          <span>Supports the national-average estimates of just over 0.36 L/kWh of direct data-center water and 4.52 L/kWh of electricity-related water.</span>
         </a>
       </div>
 
       <p class="source-note">
         The calculator combines estimates from sources with different methods and system boundaries.
-        Its results are intended for classroom comparison, not as exact measurements of a specific AI service.
+        Summary and document-analysis values are classroom comparison estimates, not measured averages.
       </p>
     </section>
 
     <p class="fine-print">
       Actual impact varies by model, response length, hardware, location, cooling system, and electricity source.
-      The rewrite, summary, and document-analysis presets use simple classroom multipliers based on the typical text-query estimate.
+      The rewrite, summary, and document-analysis presets use classroom comparison values anchored to the published typical text-query estimate.
     </p>
   </main>
 
@@ -614,40 +680,91 @@
       const tasks = {
         question: {
           label: "quick AI question",
-          wh: 0.34
+          wh: 0.31,
+          estimateType: "research"
         },
         rewrite: {
           label: "paragraph rewrite",
-          wh: 0.34
+          wh: 0.31,
+          estimateType: "classroom"
         },
         summary: {
           label: "one-page summary",
-          wh: 0.68
+          wh: 0.62,
+          estimateType: "classroom"
         },
         document: {
           label: "document analysis",
-          wh: 1.70
+          wh: 1.55,
+          estimateType: "classroom"
         },
         image: {
           label: "AI-generated image",
-          wh: 2.907
+          wh: 2.907,
+          estimateType: "benchmark"
         },
         reasoning: {
-          label: "deep reasoning task",
-          wh: 4.32
+          label: "extended reasoning task",
+          wh: 3.91,
+          estimateType: "research"
         }
       };
 
-      const WATER_L_PER_KWH = 4.88;
+      const PHONE_WH = 22;
       const LED_WATTS = 10;
-      const PHONE_WH = 15;
+      const DIRECT_WATER_L_PER_KWH = 0.36;
+      const INDIRECT_WATER_L_PER_KWH = 4.52;
+      const TOTAL_WATER_L_PER_KWH = DIRECT_WATER_L_PER_KWH + INDIRECT_WATER_L_PER_KWH;
       const DROP_ML = 0.05;
+      const TEASPOON_ML = 4.93;
+      const CUP_ML = 236.6;
+      const BOTTLE_LITERS = 0.5;
+
+      const estimateLabels = {
+        research: "Research-based scenario",
+        classroom: "Classroom comparison estimate",
+        benchmark: "Published benchmark average"
+      };
+
+      const estimateDetails = {
+        question: {
+          summary: "Published typical-query range",
+          body: "Approximately 0.16–0.60 Wh."
+        },
+        reasoning: {
+          summary: "Published extended-reasoning range",
+          body: "Approximately 2.15–7.05 Wh."
+        },
+        image: {
+          summary: "Published benchmark note",
+          body: "The benchmark mean was 2.907 Wh per image, but energy use varied widely among models and image sizes."
+        },
+        summary: {
+          summary: "Classroom comparison note",
+          body: "This uses a 2× classroom multiplier of the typical text-query value. It is not a measured average."
+        },
+        document: {
+          summary: "Classroom comparison note",
+          body: "This uses a 5× classroom multiplier of the typical text-query value. It is not a measured average."
+        },
+        rewrite: {
+          summary: "Classroom comparison note",
+          body: "This classroom comparison uses the typical text-query value rather than a separately measured average."
+        }
+      };
 
       let selectedTask = "question";
 
       function number(id, fallback = 1) {
-        const value = Number($(id).value);
-        return Number.isFinite(value) && value > 0 ? value : fallback;
+        const raw = Number($(id).value);
+        if (!Number.isFinite(raw)) return fallback;
+        return raw;
+      }
+
+      function safeCount(value) {
+        const normalized = Math.floor(value);
+        if (!Number.isFinite(normalized) || normalized < 1) return 1;
+        return Math.min(normalized, 1000000);
       }
 
       function fmt(value, digits = 1) {
@@ -668,50 +785,69 @@
       }
 
       function ledText(hours) {
-        const minutes = hours * 60;
-        if (minutes < 1) return `About ${fmt(minutes * 60, 0)} seconds of LED light`;
-        if (minutes < 90) return `About ${fmt(minutes, 0)} minutes of LED light`;
-        if (hours < 48) return `About ${fmt(hours, 1)} hours of LED light`;
-        return `About ${fmt(hours / 24, 1)} days of LED light`;
+        const safeHours = Math.max(0, hours);
+        const seconds = safeHours * 3600;
+        const minutes = safeHours * 60;
+        if (seconds < 60) return `About ${fmt(seconds, 0)} seconds of LED light`;
+        if (minutes < 60) return `About ${fmt(minutes, minutes < 10 ? 1 : 0)} minutes of LED light`;
+        if (safeHours < 48) return `About ${fmt(safeHours, safeHours < 10 ? 1 : 0)} hours of LED light`;
+        return `About ${fmt(safeHours / 24, safeHours / 24 < 10 ? 1 : 0)} days of LED light`;
       }
 
       function phoneText(charges) {
-        if (charges < 1) return `About ${fmt(charges * 100, 0)}% of one charge`;
-        return `About ${fmt(charges, charges < 10 ? 1 : 0)} phone ${plural(Math.round(charges), "charge")}`;
+        const safeCharges = Math.max(0, charges);
+        if (safeCharges < 1) return `About ${fmt(safeCharges * 100, 1)}% of one charge`;
+        return `About ${fmt(safeCharges, safeCharges < 10 ? 1 : 0)} smartphone ${plural(Math.round(safeCharges), "charge")}`;
       }
 
       function waterText(liters) {
-        const ml = liters * 1000;
+        const safeLiters = Math.max(0, liters);
+        const ml = safeLiters * 1000;
         if (ml < 5) {
           const drops = ml / DROP_ML;
           return `About ${fmt(drops, 0)} ${plural(Math.round(drops), "drop")} of water`;
         }
         if (ml < 250) {
-          const teaspoons = ml / 4.93;
+          const teaspoons = ml / TEASPOON_ML;
           return `About ${fmt(teaspoons, teaspoons < 10 ? 1 : 0)} ${plural(Math.round(teaspoons), "teaspoon")} of water`;
         }
         if (ml < 1000) {
-          const cups = ml / 236.6;
+          const cups = ml / CUP_ML;
           return `About ${fmt(cups, 1)} cups of water`;
         }
-        const bottles = liters / 0.5;
-        return `About ${fmt(bottles, bottles < 10 ? 1 : 0)} water ${plural(Math.round(bottles), "bottle")}`;
+        const bottles = safeLiters / BOTTLE_LITERS;
+        return `About ${fmt(bottles, bottles < 10 ? 1 : 0)} ${plural(Math.round(bottles), "500 mL water bottle")} of water`;
+      }
+
+      function estimateNoteMarkup(taskKey) {
+        const detail = estimateDetails[taskKey];
+        if (!detail) return "";
+        return `
+          <details>
+            <summary>${detail.summary}</summary>
+            <p>${detail.body}</p>
+          </details>
+        `;
       }
 
       function update() {
-        const count = Math.max(1, number("uses"));
-        const task = tasks[selectedTask];
+        const count = safeCount(number("uses"));
+        $("uses").value = count;
 
+        const task = tasks[selectedTask];
         const totalWh = count * task.wh;
         const ledHours = totalWh / LED_WATTS;
         const phoneCharges = totalWh / PHONE_WH;
-        const waterLiters = (totalWh / 1000) * WATER_L_PER_KWH;
+        const waterLiters = (totalWh / 1000) * TOTAL_WATER_L_PER_KWH;
 
         $("resultTitle").textContent =
           `${fmt(count, 0)} ${task.label}${count === 1 ? "" : "s"}`;
 
         $("resultSubtitle").textContent =
-          `${fmt(count, 0)} total ${plural(count, "use")}`;
+          `${fmt(count, 0)} total ${plural(count, "use")} · This is an estimate, not a direct measurement.`;
+
+        $("estimateBadge").textContent = estimateLabels[task.estimateType];
+        $("estimateNote").innerHTML = estimateNoteMarkup(selectedTask);
 
         $("ledValue").textContent = ledText(ledHours);
         $("energyNote").textContent = `Equivalent to ${energyText(totalWh)}.`;
@@ -722,15 +858,16 @@
           count === 1
             ? `One ${task.label} has a small estimated impact, but repeated use across a class or school adds up.`
             : count < 100
-              ? `This small group completed ${fmt(count, 0)} tasks. The impact is still modest, but the total is easier to see than a single use.`
-              : `At ${fmt(count, 0)} total tasks, small individual impacts have combined into a much larger classroom or school-wide total.`;
+              ? `This group completed ${fmt(count, 0)} tasks. The calculator scales each published reference estimate for the total number of uses.`
+              : `At ${fmt(count, 0)} total tasks, individually small estimates combine into a much larger classroom or school-wide total.`;
 
         $("summaryText").textContent = scaleMessage;
 
         $("copyButton").dataset.copy =
           `${fmt(count, 0)} ${task.label}${count === 1 ? "" : "s"}: ` +
-          `${ledText(ledHours)}, ${phoneText(phoneCharges).toLowerCase()}, and ` +
-          `${waterText(waterLiters).toLowerCase()}. This is an educational estimate, not a direct measurement.`;
+          `${energyText(totalWh)} total electricity, ${ledText(ledHours).toLowerCase()}, ` +
+          `${phoneText(phoneCharges).toLowerCase()}, and ${waterText(waterLiters).toLowerCase()}. ` +
+          `${estimateLabels[task.estimateType]}. This classroom tool uses published reference values and is not a direct measurement.`;
       }
 
       document.querySelectorAll(".task").forEach(button => {
@@ -742,7 +879,6 @@
           update();
         });
       });
-
 
       $("uses").addEventListener("input", update);
       $("uses").addEventListener("change", update);
