@@ -1,0 +1,781 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="A simple classroom calculator that translates everyday AI tasks into familiar environmental impact units." />
+  <title>Everyday AI Impact Calculator</title>
+  <style>
+    :root {
+      --ink: #132238;
+      --muted: #5d6978;
+      --bg: #eef5f4;
+      --card: #ffffff;
+      --line: #d7e2e1;
+      --accent: #087e8b;
+      --accent-dark: #075d66;
+      --soft: #e6f5f4;
+      --yellow: #fff3c4;
+      --shadow: 0 16px 42px rgba(19,34,56,.10);
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 0% 0%, rgba(8,126,139,.13), transparent 28rem),
+        var(--bg);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.45;
+    }
+
+    button, input { font: inherit; }
+
+    button:focus-visible,
+    input:focus-visible {
+      outline: 3px solid #ffbf47;
+      outline-offset: 3px;
+    }
+
+    .app {
+      width: min(980px, calc(100% - 24px));
+      margin: 0 auto;
+      padding: 24px 0 42px;
+    }
+
+    header {
+      text-align: center;
+      padding: 18px 12px 22px;
+    }
+
+    .label {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 6px 11px;
+      border-radius: 999px;
+      background: rgba(8,126,139,.11);
+      color: var(--accent-dark);
+      font-size: .8rem;
+      font-weight: 850;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.1rem, 7vw, 4.5rem);
+      line-height: .98;
+      letter-spacing: -.05em;
+    }
+
+    header p {
+      max-width: 690px;
+      margin: 14px auto 0;
+      color: var(--muted);
+      font-size: clamp(1rem, 2.2vw, 1.2rem);
+    }
+
+    .calculator {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(330px, .82fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .card {
+      background: rgba(255,255,255,.97);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .setup {
+      padding: 22px;
+    }
+
+    .results {
+      position: sticky;
+      top: 16px;
+      overflow: hidden;
+    }
+
+    .results-top {
+      padding: 22px;
+      color: white;
+      background: linear-gradient(135deg, #163f5b, var(--accent));
+    }
+
+    .results-top small {
+      display: block;
+      margin-bottom: 4px;
+      color: rgba(255,255,255,.78);
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .results-top h2 {
+      margin: 0;
+      font-size: clamp(1.7rem, 4vw, 2.7rem);
+      line-height: 1.05;
+      letter-spacing: -.04em;
+    }
+
+    .results-top p {
+      margin: 9px 0 0;
+      color: rgba(255,255,255,.85);
+      font-size: .92rem;
+    }
+
+    .results-body {
+      display: grid;
+      gap: 10px;
+      padding: 16px;
+    }
+
+    h2, h3 { letter-spacing: -.025em; }
+
+    .section-title {
+      margin: 0 0 4px;
+      font-size: 1.25rem;
+    }
+
+    .section-help {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .task-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 10px;
+    }
+
+    .task {
+      min-height: 122px;
+      padding: 15px;
+      text-align: left;
+      color: var(--ink);
+      background: #fff;
+      border: 2px solid var(--line);
+      border-radius: 17px;
+      cursor: pointer;
+      transition: transform .15s ease, border-color .15s ease, background .15s ease;
+    }
+
+    .task:hover {
+      transform: translateY(-2px);
+      border-color: #8cc8cd;
+    }
+
+    .task.active {
+      border-color: var(--accent);
+      background: var(--soft);
+    }
+
+    .task-icon {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 1.55rem;
+    }
+
+    .task strong {
+      display: block;
+      font-size: .96rem;
+    }
+
+    .task span:last-child {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: .78rem;
+    }
+
+    .inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: .9rem;
+      font-weight: 800;
+    }
+
+    .field input {
+      width: 100%;
+      min-height: 48px;
+      padding: 10px 12px;
+      border: 1px solid #b9c8c7;
+      border-radius: 13px;
+      color: var(--ink);
+      background: white;
+    }
+
+    .quick-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .quick {
+      min-height: 38px;
+      padding: 7px 11px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--ink);
+      background: #f9fbfb;
+      font-weight: 750;
+      cursor: pointer;
+    }
+
+    .quick:hover { background: var(--soft); }
+
+    .impact {
+      display: grid;
+      grid-template-columns: 48px minmax(0,1fr);
+      gap: 12px;
+      align-items: center;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      background: white;
+    }
+
+    .impact-icon {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 15px;
+      background: var(--soft);
+      font-size: 1.45rem;
+    }
+
+    .impact-name {
+      margin: 0;
+      color: var(--muted);
+      font-size: .77rem;
+      font-weight: 850;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    .impact-value {
+      margin: 2px 0 0;
+      font-size: clamp(1.25rem, 4vw, 1.8rem);
+      line-height: 1.05;
+      font-weight: 950;
+      letter-spacing: -.035em;
+    }
+
+    .impact-note {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: .78rem;
+    }
+
+    .summary {
+      padding: 15px;
+      border-radius: 17px;
+      background: var(--yellow);
+      color: #59470d;
+      font-size: .92rem;
+    }
+
+    .summary strong {
+      display: block;
+      margin-bottom: 4px;
+      color: #423303;
+    }
+
+    .actions {
+      display: flex;
+      gap: 9px;
+      padding: 0 16px 16px;
+    }
+
+    .action {
+      flex: 1;
+      min-height: 44px;
+      border-radius: 13px;
+      font-weight: 850;
+      cursor: pointer;
+    }
+
+    .primary {
+      border: 0;
+      color: white;
+      background: var(--accent);
+    }
+
+    .secondary {
+      border: 1px solid var(--line);
+      color: var(--ink);
+      background: white;
+    }
+
+    .amount-field {
+      max-width: 360px;
+      margin-top: 4px;
+    }
+
+    .amount-field input {
+      font-size: 1.25rem;
+      font-weight: 850;
+    }
+
+    .input-help {
+      display: block;
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: .78rem;
+    }
+
+    .sources {
+      margin-top: 18px;
+      padding: 21px;
+    }
+
+    .sources h2 {
+      margin: 0 0 4px;
+      font-size: 1.2rem;
+    }
+
+    .sources-intro {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: .88rem;
+    }
+
+    .source-list {
+      display: grid;
+      gap: 9px;
+    }
+
+    .source-link {
+      display: block;
+      padding: 13px 14px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      color: var(--ink);
+      background: #fbfdfd;
+      text-decoration: none;
+    }
+
+    .source-link:hover {
+      border-color: #8cc8cd;
+      background: var(--soft);
+    }
+
+    .source-link strong {
+      display: block;
+      color: var(--accent-dark);
+      font-size: .9rem;
+    }
+
+    .source-link span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: .78rem;
+    }
+
+    .source-note {
+      margin: 13px 0 0;
+      color: var(--muted);
+      font-size: .76rem;
+    }
+
+    .fine-print {
+      max-width: 800px;
+      margin: 18px auto 0;
+      color: var(--muted);
+      text-align: center;
+      font-size: .76rem;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 20px;
+      z-index: 20;
+      transform: translate(-50%, 16px);
+      padding: 10px 14px;
+      border-radius: 999px;
+      color: white;
+      background: var(--ink);
+      box-shadow: var(--shadow);
+      opacity: 0;
+      pointer-events: none;
+      transition: .2s ease;
+      font-size: .84rem;
+      font-weight: 800;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%,0);
+    }
+
+    @media (max-width: 780px) {
+      .calculator { grid-template-columns: 1fr; }
+      .results { position: static; }
+    }
+
+    @media (max-width: 520px) {
+      .app { width: min(100% - 14px, 980px); padding-top: 8px; }
+      header { padding-top: 12px; }
+      .setup { padding: 16px; }
+      .task-grid, .inputs { grid-template-columns: 1fr; }
+      .task { min-height: auto; }
+      .actions { flex-direction: column; }
+    }
+
+    @media print {
+      body { background: white; }
+      .app { width: 100%; padding: 0; }
+      header, .setup, .actions, .fine-print, .toast { display: none !important; }
+      .calculator { display: block; }
+      .results { position: static; box-shadow: none; border: 1px solid #999; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <span class="label">Student tool</span>
+      <h1>Everyday AI Impact</h1>
+      <p>Choose a common AI task and see its estimated environmental impact in units that are easier to picture.</p>
+    </header>
+
+    <section class="calculator" aria-label="Everyday AI environmental impact calculator">
+      <section class="card setup">
+        <h2 class="section-title">1. Choose a task</h2>
+        <p class="section-help">Pick the option closest to what you did.</p>
+
+        <div class="task-grid" id="taskGrid">
+          <button class="task active" type="button" data-task="question">
+            <span class="task-icon" aria-hidden="true">💬</span>
+            <strong>Ask a quick question</strong>
+            <span>A normal text prompt and response.</span>
+          </button>
+
+          <button class="task" type="button" data-task="rewrite">
+            <span class="task-icon" aria-hidden="true">✍️</span>
+            <strong>Rewrite a paragraph</strong>
+            <span>An email, caption, paragraph, or short response.</span>
+          </button>
+
+          <button class="task" type="button" data-task="summary">
+            <span class="task-icon" aria-hidden="true">📄</span>
+            <strong>Summarize a page</strong>
+            <span>A short reading, article, or set of notes.</span>
+          </button>
+
+          <button class="task" type="button" data-task="document">
+            <span class="task-icon" aria-hidden="true">📚</span>
+            <strong>Analyze a document</strong>
+            <span>A longer file or several pages of text.</span>
+          </button>
+
+          <button class="task" type="button" data-task="image">
+            <span class="task-icon" aria-hidden="true">🖼️</span>
+            <strong>Generate an image</strong>
+            <span>One AI-generated image.</span>
+          </button>
+
+          <button class="task" type="button" data-task="reasoning">
+            <span class="task-icon" aria-hidden="true">🧠</span>
+            <strong>Deep reasoning task</strong>
+            <span>A longer, multi-step answer or research response.</span>
+          </button>
+        </div>
+
+        <h2 class="section-title" style="margin-top:22px;">2. How many times?</h2>
+        <p class="section-help">Enter the total number of times the selected AI task was completed.</p>
+
+        <div class="field amount-field">
+          <label for="uses">Number of times</label>
+          <input id="uses" type="number" min="1" max="1000000" step="1" value="1"
+                 inputmode="numeric" aria-describedby="usesHelp" />
+          <span class="input-help" id="usesHelp">Example: Enter 30 if a class completed the task 30 times.</span>
+        </div>
+      </section>
+
+      <aside class="card results" aria-live="polite">
+        <div class="results-top">
+          <small>Estimated impact</small>
+          <h2 id="resultTitle">1 quick AI question</h2>
+          <p id="resultSubtitle">This is an estimate, not a direct measurement.</p>
+        </div>
+
+        <div class="results-body">
+          <article class="impact">
+            <div class="impact-icon" aria-hidden="true">💡</div>
+            <div>
+              <p class="impact-name">Electricity</p>
+              <p class="impact-value" id="ledValue">About 2 minutes of LED light</p>
+              <p class="impact-note" id="energyNote">Equivalent to 0.34 watt-hours.</p>
+            </div>
+          </article>
+
+          <article class="impact">
+            <div class="impact-icon" aria-hidden="true">📱</div>
+            <div>
+              <p class="impact-name">Phone battery</p>
+              <p class="impact-value" id="phoneValue">About 2% of one charge</p>
+              <p class="impact-note">Compared with a 15 Wh phone charge.</p>
+            </div>
+          </article>
+
+          <article class="impact">
+            <div class="impact-icon" aria-hidden="true">💧</div>
+            <div>
+              <p class="impact-name">Water footprint</p>
+              <p class="impact-value" id="waterValue">About 33 drops of water</p>
+              <p class="impact-note">Includes estimated cooling and electricity-related water.</p>
+            </div>
+          </article>
+
+          <div class="summary">
+            <strong>What this means</strong>
+            <span id="summaryText">One quick AI question has a small estimated impact, but repeated use across a class or school adds up.</span>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="action primary" id="copyButton" type="button">Copy result</button>
+          <button class="action secondary" id="printButton" type="button">Print</button>
+        </div>
+      </aside>
+    </section>
+
+    <section class="card sources" aria-labelledby="sourcesTitle">
+      <h2 id="sourcesTitle">Data sources</h2>
+      <p class="sources-intro">These studies and tools provide the reference values used in this calculator.</p>
+
+      <div class="source-list">
+        <a class="source-link"
+           href="https://www.microsoft.com/en-us/research/publication/energy-use-of-ai-inference-efficiency-pathways-and-test-time-compute/"
+           target="_blank" rel="noopener">
+          <strong>Microsoft Research — Energy Use of AI Inference</strong>
+          <span>Supports the 0.34 Wh typical text-query estimate and the 4.32 Wh extended-reasoning estimate.</span>
+        </a>
+
+        <a class="source-link"
+           href="https://arxiv.org/abs/2311.16863"
+           target="_blank" rel="noopener">
+          <strong>Luccioni, Jernite &amp; Strubell — Power Hungry Processing</strong>
+          <span>Provides the image-generation benchmark used for the image preset.</span>
+        </a>
+
+        <a class="source-link"
+           href="https://eta-publications.lbl.gov/sites/default/files/2024-12/lbnl-2024-united-states-data-center-energy-usage-report_1.pdf"
+           target="_blank" rel="noopener">
+          <strong>Berkeley Lab — U.S. Data Center Energy Usage Report</strong>
+          <span>Supports the national-average estimate of approximately 0.36 L/kWh of direct on-site cooling water.</span>
+        </a>
+
+        <a class="source-link"
+           href="https://waterimpacttool.lbl.gov/"
+           target="_blank" rel="noopener">
+          <strong>Berkeley Lab — Water IMPACT Tool</strong>
+          <span>Supports the 4.52 L/kWh electricity-related water reference used in the total water footprint.</span>
+        </a>
+      </div>
+
+      <p class="source-note">
+        The calculator combines estimates from sources with different methods and system boundaries.
+        Its results are intended for classroom comparison, not as exact measurements of a specific AI service.
+      </p>
+    </section>
+
+    <p class="fine-print">
+      Actual impact varies by model, response length, hardware, location, cooling system, and electricity source.
+      The rewrite, summary, and document-analysis presets use simple classroom multipliers based on the typical text-query estimate.
+    </p>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">Copied</div>
+
+  <script>
+    (() => {
+      const $ = (id) => document.getElementById(id);
+
+      const tasks = {
+        question: {
+          label: "quick AI question",
+          wh: 0.34
+        },
+        rewrite: {
+          label: "paragraph rewrite",
+          wh: 0.34
+        },
+        summary: {
+          label: "one-page summary",
+          wh: 0.68
+        },
+        document: {
+          label: "document analysis",
+          wh: 1.70
+        },
+        image: {
+          label: "AI-generated image",
+          wh: 2.907
+        },
+        reasoning: {
+          label: "deep reasoning task",
+          wh: 4.32
+        }
+      };
+
+      const WATER_L_PER_KWH = 4.88;
+      const LED_WATTS = 10;
+      const PHONE_WH = 15;
+      const DROP_ML = 0.05;
+
+      let selectedTask = "question";
+
+      function number(id, fallback = 1) {
+        const value = Number($(id).value);
+        return Number.isFinite(value) && value > 0 ? value : fallback;
+      }
+
+      function fmt(value, digits = 1) {
+        return new Intl.NumberFormat("en-US", {
+          maximumFractionDigits: digits
+        }).format(value);
+      }
+
+      function plural(value, singular, pluralForm = singular + "s") {
+        return value === 1 ? singular : pluralForm;
+      }
+
+      function energyText(wh) {
+        if (wh < 1) return `${fmt(wh, 2)} Wh`;
+        if (wh < 1000) return `${fmt(wh, wh < 10 ? 2 : 1)} Wh`;
+        if (wh < 1000000) return `${fmt(wh / 1000, 2)} kWh`;
+        return `${fmt(wh / 1000000, 2)} MWh`;
+      }
+
+      function ledText(hours) {
+        const minutes = hours * 60;
+        if (minutes < 1) return `About ${fmt(minutes * 60, 0)} seconds of LED light`;
+        if (minutes < 90) return `About ${fmt(minutes, 0)} minutes of LED light`;
+        if (hours < 48) return `About ${fmt(hours, 1)} hours of LED light`;
+        return `About ${fmt(hours / 24, 1)} days of LED light`;
+      }
+
+      function phoneText(charges) {
+        if (charges < 1) return `About ${fmt(charges * 100, 0)}% of one charge`;
+        return `About ${fmt(charges, charges < 10 ? 1 : 0)} phone ${plural(Math.round(charges), "charge")}`;
+      }
+
+      function waterText(liters) {
+        const ml = liters * 1000;
+        if (ml < 5) {
+          const drops = ml / DROP_ML;
+          return `About ${fmt(drops, 0)} ${plural(Math.round(drops), "drop")} of water`;
+        }
+        if (ml < 250) {
+          const teaspoons = ml / 4.93;
+          return `About ${fmt(teaspoons, teaspoons < 10 ? 1 : 0)} ${plural(Math.round(teaspoons), "teaspoon")} of water`;
+        }
+        if (ml < 1000) {
+          const cups = ml / 236.6;
+          return `About ${fmt(cups, 1)} cups of water`;
+        }
+        const bottles = liters / 0.5;
+        return `About ${fmt(bottles, bottles < 10 ? 1 : 0)} water ${plural(Math.round(bottles), "bottle")}`;
+      }
+
+      function update() {
+        const count = Math.max(1, number("uses"));
+        const task = tasks[selectedTask];
+
+        const totalWh = count * task.wh;
+        const ledHours = totalWh / LED_WATTS;
+        const phoneCharges = totalWh / PHONE_WH;
+        const waterLiters = (totalWh / 1000) * WATER_L_PER_KWH;
+
+        $("resultTitle").textContent =
+          `${fmt(count, 0)} ${task.label}${count === 1 ? "" : "s"}`;
+
+        $("resultSubtitle").textContent =
+          `${fmt(count, 0)} total ${plural(count, "use")}`;
+
+        $("ledValue").textContent = ledText(ledHours);
+        $("energyNote").textContent = `Equivalent to ${energyText(totalWh)}.`;
+        $("phoneValue").textContent = phoneText(phoneCharges);
+        $("waterValue").textContent = waterText(waterLiters);
+
+        const scaleMessage =
+          count === 1
+            ? `One ${task.label} has a small estimated impact, but repeated use across a class or school adds up.`
+            : count < 100
+              ? `This small group completed ${fmt(count, 0)} tasks. The impact is still modest, but the total is easier to see than a single use.`
+              : `At ${fmt(count, 0)} total tasks, small individual impacts have combined into a much larger classroom or school-wide total.`;
+
+        $("summaryText").textContent = scaleMessage;
+
+        $("copyButton").dataset.copy =
+          `${fmt(count, 0)} ${task.label}${count === 1 ? "" : "s"}: ` +
+          `${ledText(ledHours)}, ${phoneText(phoneCharges).toLowerCase()}, and ` +
+          `${waterText(waterLiters).toLowerCase()}. This is an educational estimate, not a direct measurement.`;
+      }
+
+      document.querySelectorAll(".task").forEach(button => {
+        button.addEventListener("click", () => {
+          selectedTask = button.dataset.task;
+          document.querySelectorAll(".task").forEach(item => {
+            item.classList.toggle("active", item === button);
+          });
+          update();
+        });
+      });
+
+
+      $("uses").addEventListener("input", update);
+      $("uses").addEventListener("change", update);
+
+      function toast(message) {
+        const el = $("toast");
+        el.textContent = message;
+        el.classList.add("show");
+        clearTimeout(toast.timer);
+        toast.timer = setTimeout(() => el.classList.remove("show"), 1600);
+      }
+
+      $("copyButton").addEventListener("click", async () => {
+        const text = $("copyButton").dataset.copy;
+        try {
+          await navigator.clipboard.writeText(text);
+        } catch {
+          const temp = document.createElement("textarea");
+          temp.value = text;
+          temp.style.position = "fixed";
+          temp.style.opacity = "0";
+          document.body.appendChild(temp);
+          temp.select();
+          document.execCommand("copy");
+          temp.remove();
+        }
+        toast("Result copied");
+      });
+
+      $("printButton").addEventListener("click", () => window.print());
+
+      update();
+    })();
+  </script>
+</body>
+</html>
