@@ -219,6 +219,7 @@
 
         var ready = d.filter(function (x) { return x.y === 'Ready'; }).length;
         var review = k - ready;
+        if (ready === review) return d[0].y;
         return ready > review ? 'Ready' : 'Needs Review';
       }
 
@@ -302,8 +303,7 @@
         }
 
         var actual = TEST.map(function (r) {
-          var picked = document.querySelector('input[name="pred-' + r.id + '"]:checked');
-          return picked ? picked.value : '';
+          return document.querySelector('input[name="pred-' + r.id + '"]:checked').value;
         });
         var hit = score(actual);
 
