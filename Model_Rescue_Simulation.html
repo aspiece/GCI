@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Model Rescue Simulation: train, test, improve, and compare a small fictional classifier." />
+  <title>Model Rescue Simulation</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .sim-wrap { max-width: 1000px; margin: 0 auto; padding: 1rem; }
+    .frame { border-top: 4px solid #005A70; padding: 20px; background-color: #f9f9f9; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 1rem; }
+    .warn { border: 2px solid #E67E22; background-color: #FFF9F3; padding: 15px; border-radius: 8px; margin-bottom: 1rem; }
+    .try { border: 2px solid #2980B9; background-color: #F2F9FD; padding: 15px; border-radius: 8px; margin-bottom: 1rem; }
+    .step { display: inline-block; width: 100%; border: 1px solid #ddd; padding: 15px; border-left: 8px solid #005A70; margin-bottom: 10px; border-radius: 4px; background: #fff; }
+    .step strong { color: #005A70; }
+    table { width: 100%; border-collapse: collapse; border: 1px solid #ddd; margin-top: .5rem; }
+    thead { background-color: #005A70; color: #fff; }
+    th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; font-size: .95rem; }
+    .pill { display: inline-block; font-size: .8rem; padding: .15rem .5rem; border-radius: 999px; background: #e6f7f7; color: #005A70; font-weight: 700; }
+    .good { color: #1b5e20; font-weight: 700; }
+    .bad { color: #8e1b1b; font-weight: 700; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 760px){ .grid2 { grid-template-columns: 1fr; } }
+    .hidden { display: none; }
+    .btn { border: 0; background: #005A70; color: white; padding: .55rem .85rem; border-radius: 6px; cursor: pointer; }
+    .btn:disabled { opacity: .55; cursor: not-allowed; }
+    .muted { color: #4b5563; }
+    .small { font-size: .9rem; }
+    .choice { margin: .35rem 0; }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <nav class="site-nav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-brand" aria-label="Genesee Learning Lab — Home">
+        <span class="nav-brand-icon" aria-hidden="true">GL</span>
+        Genesee Learning Lab
+      </a>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="primary-nav-list" aria-label="Open navigation menu">&#9776;</button>
+      <ul id="primary-nav-list" class="nav-links" role="list">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="projects.html" aria-current="page">Projects</a></li>
+        <li><a href="programs.html">Programs</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <header class="page-header" aria-labelledby="sim-heading">
+    <div class="container--sm">
+      <h1 id="sim-heading">Model Rescue Simulation</h1>
+      <p>Train, test, improve, and compare a small fictional model in about 20 minutes.</p>
+    </div>
+  </header>
+
+  <main id="main-content" tabindex="-1">
+    <div class="sim-wrap">
+      <section class="frame" aria-labelledby="overview-title">
+        <h2 id="overview-title">Overview</h2>
+        <p>This is the core simulation activity. You will use made-up data only.</p>
+        <p class="small muted">Reflection is submitted outside this simulation on your class worksheet.</p>
+      </section>
+
+      <section class="warn" aria-labelledby="safe-title">
+        <h3 id="safe-title" style="color:#E67E22;">⚠️ Critical Thinking Check</h3>
+        <p>Do not use this model for real decisions. Model output is a clue, not proof.</p>
+        <ul>
+          <li>Use only fictional records in this page.</li>
+          <li>Do not enter real student, client, or workplace data.</li>
+        </ul>
+      </section>
+
+      <section class="step" aria-labelledby="step1-title">
+        <strong id="step1-title">Step 1: Choose your program</strong>
+        <p>Pick your class area. The model data shape stays the same in every version.</p>
+        <label for="programSelect">Program version</label>
+        <select id="programSelect">
+          <option value="">Select one...</option>
+          <option>Version 1 — Agriscience / Health Science / Forensic Science</option>
+          <option>Version 2 — Automotive / Aviation / Mechatronics</option>
+          <option>Version 3 — Construction Trades / Welding</option>
+          <option>Version 4 — Computer Science / Marketing Graphic Design</option>
+          <option>Version 5 — Education / Public Safety / US Army JROTC</option>
+          <option>Version 6 — Cosmetology / Culinary</option>
+        </select>
+        <p id="scenarioText" class="small muted"></p>
+      </section>
+
+      <section class="step" aria-labelledby="step2-title">
+        <strong id="step2-title">Step 2: Review Version 1 training data</strong>
+        <p>Each record has 4 features scored from 1 to 10. Label is either <span class="pill">Ready</span> or <span class="pill">Needs Review</span>.</p>
+        <div id="trainTable"></div>
+      </section>
+
+      <section class="step" aria-labelledby="step3-title">
+        <strong id="step3-title">Step 3: Test Version 1</strong>
+        <p>Choose a predicted label for each test record, then check results.</p>
+        <div id="testArea"></div>
+        <button class="btn" id="gradeV1">Check Version 1</button>
+        <p id="v1Result" aria-live="polite"></p>
+      </section>
+
+      <section class="step" aria-labelledby="step4-title">
+        <strong id="step4-title">Step 4: Find the repeated error pattern</strong>
+        <div id="patternChoices"></div>
+        <button class="btn" id="checkPattern">Check Pattern Choice</button>
+        <p id="patternFeedback" aria-live="polite"></p>
+      </section>
+
+      <section class="try" aria-labelledby="step5-title">
+        <h3 id="step5-title" style="color:#2980B9;">🚀 Try It Out! Choose 3 improvement records</h3>
+        <p>Pick exactly 3 records that could fix the weakness you found.</p>
+        <div id="improvementBank"></div>
+        <button class="btn" id="applyImprovements">Apply 3 Improvements</button>
+        <p id="improveFeedback" aria-live="polite"></p>
+      </section>
+
+      <section class="step" aria-labelledby="step6-title">
+        <strong id="step6-title">Step 6: Compare Version 1 and Version 2</strong>
+        <p>Version 2 uses the same test records after your 3 additions.</p>
+        <div id="compareArea" class="hidden"></div>
+      </section>
+
+      <section class="frame" aria-labelledby="step7-title">
+        <h2 id="step7-title">Step 7: Human decision check</h2>
+        <p>Who has final authority?</p>
+        <div class="choice"><label><input type="radio" name="authority" value="model"> The model only</label></div>
+        <div class="choice"><label><input type="radio" name="authority" value="qualified"> A qualified person</label></div>
+        <div class="choice"><label><input type="radio" name="authority" value="anyone"> Anyone using the tool</label></div>
+        <button class="btn" id="checkAuthority">Check</button>
+        <p id="authorityFeedback" aria-live="polite"></p>
+        <p class="small muted">Optional backup: if needed, complete the simplified worksheet/reflection sheet assigned by your instructor.</p>
+      </section>
+
+      <p class="small muted">Last Updated: August 6, 2026</p>
+    </div>
+  </main>
+
+  <footer class="site-footer" aria-labelledby="sim-footer-heading">
+    <div class="footer-inner">
+      <h2 id="sim-footer-heading" class="sr-only">Site Footer</h2>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Genesee Learning Lab. All rights reserved.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var toggle = document.querySelector('.nav-toggle');
+      var navList = document.getElementById('primary-nav-list');
+      if (toggle && navList) {
+        toggle.addEventListener('click', function () {
+          var isOpen = navList.classList.toggle('is-open');
+          toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+          toggle.setAttribute('aria-label', isOpen ? 'Close navigation menu' : 'Open navigation menu');
+        });
+      }
+
+      var TRAIN_V1 = [
+        { id: 'T1', f: [8, 8, 7, 8], y: 'Ready' },
+        { id: 'T2', f: [7, 7, 8, 7], y: 'Ready' },
+        { id: 'T3', f: [9, 8, 8, 9], y: 'Ready' },
+        { id: 'T4', f: [8, 9, 7, 8], y: 'Ready' },
+        { id: 'T5', f: [6, 6, 6, 7], y: 'Ready' },
+        { id: 'T6', f: [7, 6, 7, 6], y: 'Ready' },
+        { id: 'T7', f: [3, 4, 3, 4], y: 'Needs Review' },
+        { id: 'T8', f: [2, 3, 4, 3], y: 'Needs Review' },
+        { id: 'T9', f: [4, 3, 3, 2], y: 'Needs Review' },
+        { id: 'T10', f: [3, 2, 4, 3], y: 'Needs Review' },
+        { id: 'T11', f: [4, 4, 3, 4], y: 'Needs Review' },
+        { id: 'T12', f: [2, 4, 2, 3], y: 'Needs Review' }
+      ];
+
+      var TEST = [
+        { id: 'X1', f: [6, 5, 6, 5], y: 'Needs Review' },
+        { id: 'X2', f: [5, 6, 5, 6], y: 'Needs Review' },
+        { id: 'X3', f: [7, 7, 6, 7], y: 'Ready' },
+        { id: 'X4', f: [3, 3, 4, 3], y: 'Needs Review' },
+        { id: 'X5', f: [8, 7, 8, 8], y: 'Ready' },
+        { id: 'X6', f: [5, 5, 5, 5], y: 'Needs Review' }
+      ];
+
+      var IMPROVEMENTS = [
+        { id: 'I1', f: [9, 9, 8, 9], y: 'Ready', note: 'High-quality Ready case' },
+        { id: 'I2', f: [6, 5, 6, 5], y: 'Needs Review', note: 'Borderline Needs Review case' },
+        { id: 'I3', f: [8, 8, 9, 8], y: 'Ready', note: 'Another strong Ready case' },
+        { id: 'I4', f: [2, 2, 3, 2], y: 'Needs Review', note: 'Very low Needs Review case' },
+        { id: 'I5', f: [5, 6, 5, 6], y: 'Needs Review', note: 'Borderline Needs Review case' },
+        { id: 'I6', f: [7, 8, 7, 7], y: 'Ready', note: 'Mid-high Ready case' },
+        { id: 'I7', f: [5, 5, 5, 5], y: 'Needs Review', note: 'Middle Needs Review case' },
+        { id: 'I8', f: [4, 8, 4, 8], y: 'Ready', note: 'Unusual pattern Ready case' }
+      ];
+
+      var scenarioByVersion = {
+        'Version 1 — Agriscience / Health Science / Forensic Science': 'Scenario focus: case and evidence review decisions.',
+        'Version 2 — Automotive / Aviation / Mechatronics': 'Scenario focus: equipment inspection decisions.',
+        'Version 3 — Construction Trades / Welding': 'Scenario focus: worksite readiness decisions.',
+        'Version 4 — Computer Science / Marketing Graphic Design': 'Scenario focus: digital project review decisions.',
+        'Version 5 — Education / Public Safety / US Army JROTC': 'Scenario focus: support and response decisions.',
+        'Version 6 — Cosmetology / Culinary': 'Scenario focus: client and service safety decisions.'
+      };
+
+      function euclid(a, b) {
+        var sum = 0;
+        for (var i = 0; i < a.length; i++) {
+          var d = a[i] - b[i];
+          sum += d * d;
+        }
+        return Math.sqrt(sum);
+      }
+
+      function predictLabel(train, point, k) {
+        var d = train.map(function (r) {
+          return { y: r.y, d: euclid(r.f, point) };
+        }).sort(function (a, b) { return a.d - b.d; }).slice(0, k);
+
+        var ready = d.filter(function (x) { return x.y === 'Ready'; }).length;
+        var review = k - ready;
+        return ready > review ? 'Ready' : 'Needs Review';
+      }
+
+      function renderTraining() {
+        var html = '<table><thead><tr><th>ID</th><th>F1</th><th>F2</th><th>F3</th><th>F4</th><th>Label</th></tr></thead><tbody>';
+        TRAIN_V1.forEach(function (r) {
+          html += '<tr><td>' + r.id + '</td><td>' + r.f[0] + '</td><td>' + r.f[1] + '</td><td>' + r.f[2] + '</td><td>' + r.f[3] + '</td><td>' + r.y + '</td></tr>';
+        });
+        html += '</tbody></table>';
+        document.getElementById('trainTable').innerHTML = html;
+      }
+
+      function renderTestArea() {
+        var html = '<table><thead><tr><th>ID</th><th>F1</th><th>F2</th><th>F3</th><th>F4</th><th>Your Prediction</th></tr></thead><tbody>';
+        TEST.forEach(function (r) {
+          html += '<tr><td>' + r.id + '</td><td>' + r.f[0] + '</td><td>' + r.f[1] + '</td><td>' + r.f[2] + '</td><td>' + r.f[3] + '</td>' +
+            '<td><label><input type="radio" name="pred-' + r.id + '" value="Ready"> Ready</label> ' +
+            '<label><input type="radio" name="pred-' + r.id + '" value="Needs Review"> Needs Review</label></td></tr>';
+        });
+        html += '</tbody></table>';
+        document.getElementById('testArea').innerHTML = html;
+      }
+
+      function renderPatternChoices() {
+        var html = '' +
+          '<div class="choice"><label><input type="radio" name="pattern" value="a"> It misses mostly borderline Needs Review cases.</label></div>' +
+          '<div class="choice"><label><input type="radio" name="pattern" value="b"> It misses mostly very low-score Needs Review cases.</label></div>' +
+          '<div class="choice"><label><input type="radio" name="pattern" value="c"> It misses mostly strong Ready cases.</label></div>';
+        document.getElementById('patternChoices').innerHTML = html;
+      }
+
+      function renderImprovementBank() {
+        var html = '<div class="grid2">';
+        IMPROVEMENTS.forEach(function (r) {
+          html += '<label class="frame" style="margin:0; padding:12px;"><input type="checkbox" name="imp" value="' + r.id + '"> ' +
+            '<strong>' + r.id + '</strong> — ' + r.note + '<br><span class="small muted">[' + r.f.join(', ') + '] → ' + r.y + '</span></label>';
+        });
+        html += '</div>';
+        document.getElementById('improvementBank').innerHTML = html;
+      }
+
+      function autoV1Predictions() {
+        return TEST.map(function (r) {
+          return predictLabel(TRAIN_V1, r.f, 3);
+        });
+      }
+
+      function score(preds) {
+        var hit = 0;
+        for (var i = 0; i < preds.length; i++) {
+          if (preds[i] === TEST[i].y) hit++;
+        }
+        return hit;
+      }
+
+      function compareWithV2(selectedIds) {
+        var add = IMPROVEMENTS.filter(function (x) { return selectedIds.indexOf(x.id) >= 0; });
+        var trainV2 = TRAIN_V1.concat(add);
+        var v1 = autoV1Predictions();
+        var v2 = TEST.map(function (r) { return predictLabel(trainV2, r.f, 3); });
+        return {
+          v1: v1,
+          v2: v2,
+          v1Score: score(v1),
+          v2Score: score(v2)
+        };
+      }
+
+      document.getElementById('programSelect').addEventListener('change', function (e) {
+        document.getElementById('scenarioText').textContent = scenarioByVersion[e.target.value] || '';
+      });
+
+      document.getElementById('gradeV1').addEventListener('click', function () {
+        var missing = TEST.some(function (r) {
+          return !document.querySelector('input[name="pred-' + r.id + '"]:checked');
+        });
+
+        if (missing) {
+          document.getElementById('v1Result').innerHTML = '<span class="bad">Please make a choice for each test record.</span>';
+          return;
+        }
+
+        var actual = TEST.map(function (r) {
+          var picked = document.querySelector('input[name="pred-' + r.id + '"]:checked');
+          return picked ? picked.value : '';
+        });
+        var hit = score(actual);
+
+        var patternMisses = [];
+        for (var i = 0; i < TEST.length; i++) {
+          if (actual[i] !== TEST[i].y) patternMisses.push(TEST[i].id);
+        }
+
+        document.getElementById('v1Result').innerHTML =
+          '<span class="good">Version 1 checked.</span> Model accuracy on test set: <strong>' + hit + '/6</strong>. ' +
+          (patternMisses.length ? 'Missed cases: ' + patternMisses.join(', ') + '. Look for the pattern, not just the score.' : 'No misses found on this run.');
+      });
+
+      document.getElementById('checkPattern').addEventListener('click', function () {
+        var pick = document.querySelector('input[name="pattern"]:checked');
+        var out = document.getElementById('patternFeedback');
+        if (!pick) {
+          out.innerHTML = '<span class="bad">Pick one pattern statement first.</span>';
+          return;
+        }
+        if (pick.value === 'a') {
+          out.innerHTML = '<span class="good">Yes. The main issue is weak coverage of borderline Needs Review cases.</span>';
+        } else {
+          out.innerHTML = '<span class="bad">Try again. Focus on cases near the middle scores where labels can flip.</span>';
+        }
+      });
+
+      document.getElementById('applyImprovements').addEventListener('click', function () {
+        var picks = Array.prototype.slice.call(document.querySelectorAll('input[name="imp"]:checked')).map(function (x) { return x.value; });
+        var out = document.getElementById('improveFeedback');
+        var compareArea = document.getElementById('compareArea');
+
+        if (picks.length !== 3) {
+          out.innerHTML = '<span class="bad">Choose exactly 3 records.</span>';
+          compareArea.classList.add('hidden');
+          return;
+        }
+
+        var bestSet = ['I2', 'I5', 'I7'];
+        var overlap = picks.filter(function (p) { return bestSet.indexOf(p) >= 0; }).length;
+
+        if (overlap >= 2) {
+          out.innerHTML = '<span class="good">Good choice. Your picks target the border-area weakness.</span>';
+        } else {
+          out.innerHTML = '<span class="bad">These picks may not target the main weakness. You can still compare and revise.</span>';
+        }
+
+        var cmp = compareWithV2(picks);
+        var rows = '';
+        for (var i = 0; i < TEST.length; i++) {
+          rows += '<tr><td>' + TEST[i].id + '</td><td>' + TEST[i].y + '</td><td>' + cmp.v1[i] + '</td><td>' + cmp.v2[i] + '</td></tr>';
+        }
+
+        compareArea.innerHTML =
+          '<p><strong>Version 1:</strong> ' + cmp.v1Score + '/6 correct &nbsp; | &nbsp; <strong>Version 2:</strong> ' + cmp.v2Score + '/6 correct</p>' +
+          '<table><thead><tr><th>Case</th><th>True Label</th><th>Version 1</th><th>Version 2</th></tr></thead><tbody>' + rows + '</tbody></table>' +
+          '<p class="small muted">If one label still looks questionable, fix the label issue even if the total score improved.</p>';
+        compareArea.classList.remove('hidden');
+      });
+
+      document.getElementById('checkAuthority').addEventListener('click', function () {
+        var pick = document.querySelector('input[name="authority"]:checked');
+        var out = document.getElementById('authorityFeedback');
+        if (!pick) {
+          out.innerHTML = '<span class="bad">Choose one option.</span>';
+          return;
+        }
+        if (pick.value === 'qualified') {
+          out.innerHTML = '<span class="good">Correct. A qualified person has final authority and must review model output with evidence.</span>';
+        } else {
+          out.innerHTML = '<span class="bad">Not correct. The model cannot be the final decision maker.</span>';
+        }
+      });
+
+      renderTraining();
+      renderTestArea();
+      renderPatternChoices();
+      renderImprovementBank();
+    }());
+  </script>
+</body>
+</html>
