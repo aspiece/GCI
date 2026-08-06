@@ -1224,10 +1224,22 @@
                         if (attempt > 8 && typeof console !== 'undefined' && console.debug) console.debug('generateExpression: rejecting candidate with too many exponents', { expr, expCount });
                         continue;
                     }
-                    // success: record sample (no heavy eval here) and return
+                    // Only return expressions that match the integer-answer contract used by the activity.
+                    let val;
+                    try {
+                        val = evaluateExpr(expr);
+                    } catch (e) {
+                        try { window._exprStats.rejects++; } catch (statsError) { }
+                        continue;
+                    }
+                    if (!Number.isInteger(val) || Math.abs(val) > 1e6) {
+                        try { window._exprStats.rejects++; } catch (e) { }
+                        continue;
+                    }
                     try {
                         window._exprStats.selected++;
-                        if (window._exprStats.samples.length < 6) window._exprStats.samples.push({ expr, val: null });
+                        window._exprStats.maxAbs = Math.max(window._exprStats.maxAbs || 0, Math.abs(val));
+                        if (window._exprStats.samples.length < 6) window._exprStats.samples.push({ expr, val });
                     } catch (e) { }
                     if (attempt > 12 && typeof console !== 'undefined' && console.info) console.info('generateExpression: selected expression after retries', { level, maxAbs, attempts: attempt + 1 });
                     return expr;
