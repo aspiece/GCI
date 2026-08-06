@@ -1272,6 +1272,10 @@
                 }
             }
 
+            // Expose deterministic test hooks for the Puppeteer stress harness.
+            window.generateExpression = generateExpression;
+            window.evaluateExpr = evaluateExpr;
+
             // Produce step-by-step reduction following PEMDAS-like stages.
             function stepsFor(expr) {
                 let s = expr.replace(/\s+/g, ' ').trim();
