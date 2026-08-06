@@ -28,6 +28,9 @@
     .muted { color: #4b5563; }
     .small { font-size: .9rem; }
     .choice { margin: .35rem 0; }
+    .help-tip { margin-top: .5rem; }
+    .help-tip summary { cursor: pointer; color: #005A70; font-weight: 700; }
+    .help-tip .tip-box { margin-top: .35rem; border-left: 4px solid #2980B9; background: #EEF6FF; padding: .6rem .7rem; border-radius: 4px; }
   </style>
 </head>
 <body>
@@ -51,7 +54,7 @@
   <header class="page-header" aria-labelledby="sim-heading">
     <div class="container--sm">
       <h1 id="sim-heading">Model Rescue Simulation</h1>
-      <p>Train, test, improve, and compare a small fictional model in about 20 minutes.</p>
+      <p>Run a short simulation to train, test, improve, and compare a fictional model in about 20 minutes.</p>
     </div>
   </header>
 
@@ -59,8 +62,8 @@
     <div class="sim-wrap">
       <section class="frame" aria-labelledby="overview-title">
         <h2 id="overview-title">Overview</h2>
-        <p>This is the core simulation activity. You will use made-up data only.</p>
-        <p class="small muted">Reflection is submitted outside this simulation on your class worksheet.</p>
+        <p>This activity shows how a simple model learns and makes predictions using made-up data.</p>
+        <p class="small muted">Submit your reflection using the Canvas instructions for this activity.</p>
       </section>
 
       <section class="warn" aria-labelledby="safe-title">
@@ -68,14 +71,14 @@
         <p>Do not use this model for real decisions. Model output is a clue, not proof.</p>
         <ul>
           <li>Use only fictional records in this page.</li>
-          <li>Do not enter real student, client, or workplace data.</li>
+          <li>Do not enter real personal, client, or workplace data.</li>
         </ul>
       </section>
 
       <section class="step" aria-labelledby="step1-title">
-        <strong id="step1-title">Step 1: Choose your program</strong>
-        <p>Pick your class area. The model data shape stays the same in every version.</p>
-        <label for="programSelect">Program version</label>
+        <strong id="step1-title">Step 1: Choose a version</strong>
+        <p>Pick a scenario version. The model setup stays the same in each one.</p>
+        <label for="programSelect">Version</label>
         <select id="programSelect">
           <option value="">Select one...</option>
           <option>Version 1 — Agriscience / Health Science / Forensic Science</option>
@@ -89,14 +92,28 @@
       </section>
 
       <section class="step" aria-labelledby="step2-title">
-        <strong id="step2-title">Step 2: Review Version 1 training data</strong>
-        <p>Each record has 4 features scored from 1 to 10. Label is either <span class="pill">Ready</span> or <span class="pill">Needs Review</span>.</p>
+        <strong id="step2-title">Step 2: Look at Version 1 training data</strong>
+        <p>Each record has 4 scores from 1 to 10. The label is either <span class="pill">Ready</span> or <span class="pill">Needs Review</span>.</p>
+        <details class="help-tip">
+          <summary>Need help with these words?</summary>
+          <div class="tip-box small">
+            <strong>Training data:</strong> examples used to teach the model.<br />
+            <strong>Feature:</strong> one score the model looks at.<br />
+            <strong>Label:</strong> the correct answer for that record.
+          </div>
+        </details>
         <div id="trainTable"></div>
       </section>
 
       <section class="step" aria-labelledby="step3-title">
         <strong id="step3-title">Step 3: Test Version 1</strong>
-        <p>Choose a predicted label for each test record, then check results.</p>
+        <p>Choose a label for each test record, then check your results.</p>
+        <details class="help-tip">
+          <summary>What is a prediction?</summary>
+          <div class="tip-box small">
+            A prediction is the model's best guess for a new record based on what it learned from training data.
+          </div>
+        </details>
         <div id="testArea"></div>
         <button class="btn" id="gradeV1">Check Version 1</button>
         <p id="v1Result" aria-live="polite"></p>
@@ -110,8 +127,8 @@
       </section>
 
       <section class="try" aria-labelledby="step5-title">
-        <h3 id="step5-title" style="color:#2980B9;">🚀 Try It Out! Choose 3 improvement records</h3>
-        <p>Pick exactly 3 records that could fix the weakness you found.</p>
+        <h3 id="step5-title" style="color:#2980B9;">🚀 Try It: Choose 3 improvement records</h3>
+        <p>Pick exactly 3 records that could fix the weak spot you found.</p>
         <div id="improvementBank"></div>
         <button class="btn" id="applyImprovements">Apply 3 Improvements</button>
         <p id="improveFeedback" aria-live="polite"></p>
@@ -119,19 +136,25 @@
 
       <section class="step" aria-labelledby="step6-title">
         <strong id="step6-title">Step 6: Compare Version 1 and Version 2</strong>
-        <p>Version 2 uses the same test records after your 3 additions.</p>
+        <p>Version 2 uses the same test records after your 3 added records.</p>
+        <details class="help-tip">
+          <summary>Why compare versions?</summary>
+          <div class="tip-box small">
+            Comparing versions helps you see whether the new training records improved model accuracy.
+          </div>
+        </details>
         <div id="compareArea" class="hidden"></div>
       </section>
 
       <section class="frame" aria-labelledby="step7-title">
         <h2 id="step7-title">Step 7: Human decision check</h2>
-        <p>Who has final authority?</p>
-        <div class="choice"><label><input type="radio" name="authority" value="model"> The model only</label></div>
-        <div class="choice"><label><input type="radio" name="authority" value="qualified"> A qualified person</label></div>
-        <div class="choice"><label><input type="radio" name="authority" value="anyone"> Anyone using the tool</label></div>
+        <p>Who should make the final decision?</p>
+        <div class="choice"><label><input type="radio" name="authority" value="model"> The model by itself</label></div>
+        <div class="choice"><label><input type="radio" name="authority" value="qualified"> A qualified person reviewing the evidence</label></div>
+        <div class="choice"><label><input type="radio" name="authority" value="anyone"> Anyone who uses the tool</label></div>
         <button class="btn" id="checkAuthority">Check</button>
         <p id="authorityFeedback" aria-live="polite"></p>
-        <p class="small muted">Optional backup: if needed, complete the simplified worksheet/reflection sheet assigned by your instructor.</p>
+        <p class="small muted">Optional backup: if needed, complete the simplified worksheet/reflection sheet listed in Canvas.</p>
       </section>
 
       <p class="small muted">Last Updated: August 6, 2026</p>
@@ -298,7 +321,7 @@
         });
 
         if (missing) {
-          document.getElementById('v1Result').innerHTML = '<span class="bad">Please make a choice for each test record.</span>';
+          document.getElementById('v1Result').innerHTML = '<span class="bad">Please choose a label for each test record.</span>';
           return;
         }
 
@@ -313,8 +336,8 @@
         }
 
         document.getElementById('v1Result').innerHTML =
-          '<span class="good">Version 1 checked.</span> Model accuracy on test set: <strong>' + hit + '/6</strong>. ' +
-          (patternMisses.length ? 'Missed cases: ' + patternMisses.join(', ') + '. Look for the pattern, not just the score.' : 'No misses found on this run.');
+          '<span class="good">Version 1 checked.</span> Accuracy on this test set: <strong>' + hit + '/6</strong>. ' +
+          (patternMisses.length ? 'Missed cases: ' + patternMisses.join(', ') + '. Look for the pattern, not only the score.' : 'No misses on this run.');
       });
 
       document.getElementById('checkPattern').addEventListener('click', function () {
@@ -327,7 +350,7 @@
         if (pick.value === 'a') {
           out.innerHTML = '<span class="good">Yes. The main issue is weak coverage of borderline Needs Review cases.</span>';
         } else {
-          out.innerHTML = '<span class="bad">Try again. Focus on cases near the middle scores where labels can flip.</span>';
+          out.innerHTML = '<span class="bad">Try again. Focus on middle-score cases where labels can flip.</span>';
         }
       });
 
@@ -346,7 +369,7 @@
         var overlap = picks.filter(function (p) { return bestSet.indexOf(p) >= 0; }).length;
 
         if (overlap >= 2) {
-          out.innerHTML = '<span class="good">Good choice. Your picks target the border-area weakness.</span>';
+          out.innerHTML = '<span class="good">Good choice. Your picks target the weak border area.</span>';
         } else {
           out.innerHTML = '<span class="bad">These picks may not target the main weakness. You can still compare and revise.</span>';
         }
@@ -360,7 +383,7 @@
         compareArea.innerHTML =
           '<p><strong>Version 1:</strong> ' + cmp.v1Score + '/6 correct &nbsp; | &nbsp; <strong>Version 2:</strong> ' + cmp.v2Score + '/6 correct</p>' +
           '<table><thead><tr><th>Case</th><th>True Label</th><th>Version 1</th><th>Version 2</th></tr></thead><tbody>' + rows + '</tbody></table>' +
-          '<p class="small muted">If one label still looks questionable, fix the label issue even if the total score improved.</p>';
+          '<p class="small muted">If one label still looks questionable, fix that label issue even if the total score improved.</p>';
         compareArea.classList.remove('hidden');
       });
 
@@ -372,9 +395,9 @@
           return;
         }
         if (pick.value === 'qualified') {
-          out.innerHTML = '<span class="good">Correct. A qualified person has final authority and must review model output with evidence.</span>';
+          out.innerHTML = '<span class="good">Correct. A qualified person has final authority and should review model output with evidence.</span>';
         } else {
-          out.innerHTML = '<span class="bad">Not correct. The model cannot be the final decision maker.</span>';
+          out.innerHTML = '<span class="bad">Not correct. The model should not be the final decision maker.</span>';
         }
       });
 
