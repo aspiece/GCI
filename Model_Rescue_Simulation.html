@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta
     name="description"
-    content="Model Rescue Simulation: investigate fictional training data, challenge a small model, improve it, and decide whether it is ready for further testing."
+    content="Model Rescue Simulation: look closely at made-up training data, challenge a small model, improve it, and decide whether it is ready for further testing."
   />
   <title>Model Rescue Simulation</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
@@ -2305,7 +2305,7 @@
   <header class="sim-title-bar" aria-labelledby="sim-heading">
     <div class="sim-wrap" style="padding-bottom: 0;">
       <h1 id="sim-heading" class="sim-title-inline">Model Rescue Simulation</h1>
-      <p class="sim-lead">Look at fake training data, find where the model keeps failing, add better examples, and decide if the model is ready for more testing.</p>
+      <p class="sim-lead">Look at made-up training data, find where the model keeps failing, add better examples, and decide if the model is ready for more testing.</p>
     </div>
   </header>
 
@@ -2343,31 +2343,41 @@
             <header class="stage-task-header">
               <p class="task-step">Introduction</p>
               <h2 id="stage0-heading" class="stage-heading" tabindex="-1">Mission Briefing</h2>
-              <p class="task-goal">Learn what happened, what your role is, and how you will inspect, test, improve, and decide.</p>
+              <p class="task-goal">Learn what happened, what your role is, and how you will look closely at the data, test, improve, and decide.</p>
               <p class="task-instruction">Human review stays in charge, even if the model improves.</p>
             </header>
 
             <div class="briefing-grid">
               <section class="stage-card stage-card-hero" aria-labelledby="briefing-overview-heading">
                 <h3 id="briefing-overview-heading">What happened</h3>
-                <p>A fictional company paused a model after it kept making the same kind of mistake.</p>
-                <p>You are the human reviewer who must inspect the data, test the model, improve its training set, and decide what should happen next.</p>
+                <p>A made-up (fictional) company stopped using an AI model. The model kept making the same mistake. You are the human reviewer. You will look closely at its training data, test its answers, add better examples, and decide what should happen next.</p>
               </section>
 
               <section class="stage-card" aria-labelledby="briefing-process-heading">
                 <h3 id="briefing-process-heading">Your four-part process</h3>
                 <ol class="process-list">
-                  <li><strong>Inspect</strong> the Version 1 training examples.</li>
-                  <li><strong>Test</strong> the model on new records.</li>
-                  <li><strong>Improve</strong> the training data with targeted rescue records.</li>
-                  <li><strong>Decide</strong> whether the model needs more testing or more improvement.</li>
+                  <li><strong>Look:</strong> Find patterns in the training data.</li>
+                  <li><strong>Test:</strong> Compare your labels with the model's labels.</li>
+                  <li><strong>Improve:</strong> Add examples that fill the missing area.</li>
+                  <li><strong>Decide:</strong> Choose whether the model needs more testing or more changes.</li>
                 </ol>
               </section>
             </div>
 
             <div class="briefing-reminder" role="note" aria-label="Safety reminder">
-              <strong>Reminder:</strong> This simulation uses fictional data. Model output is evidence to review, not proof, and a qualified person must make the final decision.
+              <strong>Reminder:</strong> This simulation uses made-up data. A model's answer is information to check, not proof. A trained person must make the final decision.
             </div>
+
+            <details class="stage-review-details" style="margin-top: 1rem;">
+              <summary>Key terms</summary>
+              <dl style="margin: 0.75rem 0 0; display: grid; gap: 0.5rem;">
+                <div><dt><strong>Training data</strong></dt><dd>Examples used to teach a model.</dd></div>
+                <div><dt><strong>Label</strong></dt><dd>The correct category for a record.</dd></div>
+                <div><dt><strong>Accuracy</strong></dt><dd>The percentage of answers the model gets correct.</dd></div>
+                <div><dt><strong>Human review</strong></dt><dd>A person checks the model's work.</dd></div>
+                <div><dt><strong>Model version</strong></dt><dd>A model before or after its training data changes.</dd></div>
+              </dl>
+            </details>
 
             <div class="button-row button-row-primary">
               <button id="beginMissionButton" class="btn" type="button">Begin Mission</button>
@@ -2383,7 +2393,7 @@
             <header class="stage-task-header">
               <p class="task-step">Step 1 of 8</p>
               <h2 id="stage1-heading" class="stage-heading" tabindex="-1">Choose a Career Mission</h2>
-              <p class="task-goal">Pick one workplace scenario so the records and decisions use a consistent story.</p>
+              <p class="task-goal">Pick one workplace scenario so the records and decisions use the same workplace story.</p>
             </header>
 
             <ul class="mission-grid" role="list" aria-label="Career mission choices">
@@ -2392,7 +2402,7 @@
                 <div>
                   <div class="mission-card-icon" aria-hidden="true">🚗</div>
                   <h3>Automotive Diagnostic Model</h3>
-                  <p>Review fictional car inspection records and decide whether the model needs more testing.</p>
+                  <p>Review made-up car inspection records and decide whether the model needs more testing.</p>
                 </div>
               </button></li>
 
@@ -2401,7 +2411,7 @@
                 <div>
                   <div class="mission-card-icon" aria-hidden="true">🐾</div>
                   <h3>Veterinary Review Model</h3>
-                  <p>Review fictional animal health records and decide whether the model needs more testing.</p>
+                  <p>Review made-up animal health records and decide whether the model needs more testing.</p>
                 </div>
               </button></li>
 
@@ -2410,7 +2420,7 @@
                 <div>
                   <div class="mission-card-icon" aria-hidden="true">🏗️</div>
                   <h3>Construction Safety Model</h3>
-                  <p>Review fictional job-site safety records and decide whether the model needs more testing.</p>
+                  <p>Review made-up job-site safety records and decide whether the model needs more testing.</p>
                 </div>
               </button></li>
 
@@ -2419,7 +2429,7 @@
                 <div>
                   <div class="mission-card-icon" aria-hidden="true">🛡️</div>
                   <h3>Cybersecurity Alert Model</h3>
-                  <p>Review fictional security alerts and decide whether the model needs more testing.</p>
+                  <p>Review made-up security alerts and decide whether the model needs more testing.</p>
                 </div>
               </button></li>
 
@@ -2428,7 +2438,7 @@
                 <div>
                   <div class="mission-card-icon" aria-hidden="true">🍽️</div>
                   <h3>Culinary Safety Model</h3>
-                  <p>Review fictional kitchen safety records and decide whether the model needs more testing.</p>
+                  <p>Review made-up kitchen safety records and decide whether the model needs more testing.</p>
                 </div>
               </button></li>
             </ul>
@@ -2450,9 +2460,9 @@
           <section aria-labelledby="stage2-heading">
             <header class="stage-task-header">
               <p class="task-step">Step 2 of 8</p>
-              <h2 id="stage2-heading" class="stage-heading" tabindex="-1">Inspect the Training Data</h2>
+              <h2 id="stage2-heading" class="stage-heading" tabindex="-1">Look Closely at the Training Data</h2>
               <p class="task-goal">Look for patterns in what Version 1 has already seen before you test anything new.</p>
-              <p id="trainingIntro" class="task-instruction">What kinds of examples has the model seen, and what kinds might be missing?</p>
+              <p id="trainingIntro" class="task-instruction">Look at each score range and label. Which combination of score range and label is missing?</p>
             </header>
 
             <div id="trainingPatternView" class="pattern-view" aria-live="polite"></div>
@@ -2462,6 +2472,41 @@
               <div id="trainingTableArea" class="table-wrap" aria-live="polite"></div>
               <div id="trainingCardsArea" class="mobile-records" aria-live="polite"></div>
             </details>
+
+            <section id="patternQuestionSection" class="stage-card" aria-labelledby="pattern-q-heading">
+              <h3 id="pattern-q-heading">Which type of training example appears to be missing?</h3>
+              <fieldset class="choice-group">
+                <legend class="sr-only">Missing training example type</legend>
+                <div class="choice-card">
+                  <label for="pq-a">
+                    <input id="pq-a" type="radio" name="patternQ" value="high-ready" />
+                    <span class="choice-title">High-range <strong>Ready</strong> examples</span>
+                  </label>
+                </div>
+                <div class="choice-card">
+                  <label for="pq-b">
+                    <input id="pq-b" type="radio" name="patternQ" value="middle-ready" />
+                    <span class="choice-title">Middle-range <strong>Ready</strong> examples</span>
+                  </label>
+                </div>
+                <div class="choice-card">
+                  <label for="pq-c">
+                    <input id="pq-c" type="radio" name="patternQ" value="middle-review" />
+                    <span class="choice-title">Middle-range <strong>Needs Review</strong> examples</span>
+                  </label>
+                </div>
+                <div class="choice-card">
+                  <label for="pq-d">
+                    <input id="pq-d" type="radio" name="patternQ" value="low-review" />
+                    <span class="choice-title">Low-range <strong>Needs Review</strong> examples</span>
+                  </label>
+                </div>
+              </fieldset>
+              <div id="patternQFeedback" class="feedback-box hidden" aria-live="polite"></div>
+              <div class="button-row">
+                <button id="checkPatternQButton" class="btn" type="button">Check My Answer</button>
+              </div>
+            </section>
 
             <div class="button-row button-row-primary">
               <button id="continueToChallengeButton" class="btn" type="button">Open Guided Challenge</button>
@@ -2476,9 +2521,9 @@
           <section aria-labelledby="stage3-heading">
             <header class="stage-task-header">
               <p class="task-step">Step 3 of 8</p>
-              <h2 id="stage3-heading" class="stage-heading" tabindex="-1">Test Version 1</h2>
-              <p class="task-goal">Make a prediction first, then compare it with the model's behavior on the same record.</p>
-              <p class="task-instruction">Start with one guided example. After that, finish the remaining records on your own.</p>
+              <h2 id="stage3-heading" class="stage-heading" tabindex="-1">Label and Test Version 1</h2>
+              <p class="task-goal">Choose the label you think each record should have. Then compare your answers with Version 1.</p>
+              <p class="task-instruction">Start with the guided example. After that, choose labels for the remaining records.</p>
             </header>
 
             <div id="guidedExampleArea" class="guided-example-area" aria-live="polite"></div>
@@ -2514,7 +2559,7 @@
                 <label for="pattern-a">
                   <input id="pattern-a" type="radio" name="pattern" value="a" />
                   <span class="choice-title">Version 1 mostly misses middle-range <strong>Needs Review</strong> cases.</span>
-                  <span class="choice-hint">These are the records closest to the gap you noticed in training.</span>
+                  <span class="choice-hint">These are the records closest to the missing area you noticed in training.</span>
                 </label>
               </div>
               <div class="choice-card">
@@ -2550,20 +2595,20 @@
             <header class="stage-task-header">
               <p class="task-step">Step 5 of 8</p>
               <h2 id="stage5-heading" class="stage-heading" tabindex="-1">Choose Three Rescue Records</h2>
-              <p class="task-goal">Add exactly three examples that address the middle-range gap you identified.</p>
-              <p class="task-instruction">Targeted examples help because they give Version 2 practice with the cases Version 1 handled poorly.</p>
+              <p class="task-goal">Add exactly three examples that fill the missing area you found.</p>
+              <p class="task-instruction">Records that fill the missing area give Version 2 more practice with the cases Version 1 kept getting wrong.</p>
             </header>
 
             <div id="rescueCounter" class="task-status" aria-live="polite">Select exactly 3 rescue records. 0 of 3 selected.</div>
-            <div id="rescueSetSummary" class="feedback-box">Choose the records that best address the identified gap.</div>
-            <div id="rescueSelectionFeedback" class="feedback-box">Select a rescue record to see immediate feedback.</div>
+            <div id="rescueSetSummary" class="feedback-box">Choose the records that best fill the missing area.</div>
+            <div id="rescueSelectionFeedback" class="feedback-box">Select a rescue record to start.</div>
 
             <div id="improvementGrid" class="grid-two" aria-live="polite"></div>
 
             <section class="stage-card" aria-labelledby="rationale-heading">
               <h3 id="rationale-heading">Why should these records help?</h3>
               <fieldset class="choice-group">
-                <legend class="sr-only">Rationale options</legend>
+                <legend class="sr-only">Reason options</legend>
                 <div class="rationale-card">
                   <label for="rationale-a">
                     <input id="rationale-a" type="radio" name="rationale" value="borderline-review" />
@@ -2598,13 +2643,14 @@
                 <p class="small-muted">Use this optional map to compare the original training records, possible rescue records, and the score region near the weak spot.</p>
                 <div id="boundaryLegend" class="boundary-legend" aria-label="Map legend"></div>
                 <div id="boundaryScale" class="boundary-scale-wrap"></div>
-                <div id="boundaryDetails" class="boundary-details" aria-live="polite">Select a record marker to inspect details.</div>
+                <div id="boundaryDetails" class="boundary-details" aria-live="polite">Select a record marker to see details.</div>
               </section>
             </details>
 
             <div id="improvementFeedback" class="feedback-box hidden" aria-live="polite"></div>
 
             <div class="button-row button-row-primary">
+              <p id="retrainingNote" class="small-muted">In this simulation, retraining means adding your selected records to the made-up training data and testing a new model version.</p>
               <button id="applyRescueRecordsButton" class="btn" type="button" disabled>Retrain Model</button>
               <button id="continueToRetestButton" class="btn hidden" type="button">View Comparison</button>
             </div>
@@ -2619,13 +2665,13 @@
             <header class="stage-task-header">
               <p class="task-step">Step 6 of 8</p>
               <h2 id="stage6-heading" class="stage-heading" tabindex="-1">Compare Version 1 and Version 2</h2>
-              <p class="task-goal">Judge whether the model improved without pretending that one small test proves it is safe.</p>
+              <p class="task-goal">Look at the evidence below. Then decide whether the results prove the model is ready for real-world use.</p>
             </header>
 
             <div id="retestComparisonArea" aria-live="polite"></div>
 
             <section class="stage-card" aria-labelledby="perfection-heading">
-              <h3 id="perfection-heading">Does this comparison prove the model is ready for real deployment?</h3>
+              <h3 id="perfection-heading">Do these results prove that the model is ready for real-world use?</h3>
               <fieldset class="choice-group">
                 <legend class="sr-only">Comparison judgment</legend>
                 <div class="inline-choice">
@@ -2637,7 +2683,7 @@
                 <div class="inline-choice">
                   <label for="perfect-no">
                     <input id="perfect-no" type="radio" name="perfect" value="no" />
-                    No. The model improved, but it still needs human review and more controlled testing.
+                    No. The model improved, but six test records are not enough to prove it is safe.
                   </label>
                 </div>
               </fieldset>
@@ -2646,7 +2692,7 @@
             <div id="retestFeedback" class="feedback-box hidden" aria-live="polite"></div>
 
             <div class="button-row button-row-primary">
-              <button id="checkRetestButton" class="btn" type="button">Compare Results</button>
+              <button id="checkRetestButton" class="btn" type="button">Check My Answer</button>
               <button id="continueToHumanReviewButton" class="btn hidden" type="button">Make Final Decision</button>
             </div>
           </section>
@@ -2670,27 +2716,63 @@
               <div class="choice-card">
                 <label for="authority-deploy">
                   <input id="authority-deploy" type="radio" name="authority" value="deploy-now" />
-                  <span class="choice-title">Ready for deployment now</span>
-                  <span class="choice-hint">Choose this only if a small classroom test is enough proof for real-world use.</span>
+                  <span class="choice-title">Use the model in the real world now.</span>
+                  <span class="choice-hint">Choose this only if six test records prove the model is safe.</span>
                 </label>
               </div>
               <div class="choice-card">
                 <label for="authority-qualified">
                   <input id="authority-qualified" type="radio" name="authority" value="qualified" />
-                  <span class="choice-title">Ready for more controlled testing with human review</span>
-                  <span class="choice-hint">Choose this if the results improved enough to justify careful next-step testing, not deployment.</span>
+                  <span class="choice-title">Test the model more in a safe, supervised setting.</span>
+                  <span class="choice-hint">Choose this if the results improved enough to justify more careful testing.</span>
                 </label>
               </div>
               <div class="choice-card">
                 <label for="authority-improve">
                   <input id="authority-improve" type="radio" name="authority" value="improve-more" />
-                  <span class="choice-title">Needs additional improvement before more testing</span>
-                  <span class="choice-hint">Choose this if the update still did not give enough evidence to move forward.</span>
+                  <span class="choice-title">Improve the model more before testing it again.</span>
+                  <span class="choice-hint">Choose this if the update did not give enough evidence to move forward.</span>
                 </label>
               </div>
             </fieldset>
 
             <div id="authorityFeedback" class="feedback-box hidden" aria-live="polite"></div>
+
+            <section id="understandingCheckSection" class="stage-card hidden" aria-labelledby="uc-heading">
+              <h3 id="uc-heading">Final understanding check</h3>
+              <p class="task-instruction">Why does a score of 6 out of 6 not prove that Version 2 is ready for real-world use?</p>
+              <fieldset class="choice-group">
+                <legend class="sr-only">Understanding check choices</legend>
+                <div class="inline-choice">
+                  <label for="uc-a">
+                    <input id="uc-a" type="radio" name="understanding" value="small-test" />
+                    The test used only a small number of records.
+                  </label>
+                </div>
+                <div class="inline-choice">
+                  <label for="uc-b">
+                    <input id="uc-b" type="radio" name="understanding" value="below-100" />
+                    Models must always receive a score below 100%.
+                  </label>
+                </div>
+                <div class="inline-choice">
+                  <label for="uc-c">
+                    <input id="uc-c" type="radio" name="understanding" value="no-reuse" />
+                    Training examples cannot be used more than once.
+                  </label>
+                </div>
+                <div class="inline-choice">
+                  <label for="uc-d">
+                    <input id="uc-d" type="radio" name="understanding" value="no-humans" />
+                    Human reviewers are not allowed to test models.
+                  </label>
+                </div>
+              </fieldset>
+              <div id="understandingFeedback" class="feedback-box hidden" aria-live="polite"></div>
+              <div class="button-row">
+                <button id="checkUnderstandingButton" class="btn" type="button">Check My Answer</button>
+              </div>
+            </section>
 
             <div class="button-row button-row-primary">
               <button id="checkDecisionButton" class="btn" type="button">Make Final Decision</button>
@@ -2748,7 +2830,7 @@
               <h3 id="reflection-heading">Build your final report</h3>
               <div class="form-grid">
                 <div class="field-card">
-                  <label for="reflectionWeakSpot">I tested the fictional model and found that it struggled when</label>
+                  <label for="reflectionWeakSpot">I tested the made-up model and found that it struggled when</label>
                   <select id="reflectionWeakSpot">
                     <option value="">Select an explanation...</option>
                     <option value="records had middle-range scores and looked like borderline Needs Review cases">records had middle-range scores and looked like borderline Needs Review cases</option>
@@ -2778,7 +2860,7 @@
                 </div>
 
                 <div class="field-card">
-                  <label for="reflectionOversight">A qualified person should make the final decision because</label>
+                  <label for="reflectionOversight">A trained person should make the final decision because</label>
                   <textarea id="reflectionOversight" placeholder="Explain why a person still needs to review the model even after it improves."></textarea>
                 </div>
               </div>
@@ -2894,8 +2976,8 @@
       var stageTitles = [
         'Mission Briefing',
         'Choose a Career Mission',
-        'Inspect the Training Data',
-        'Test Version 1',
+        'Look Closely at the Training Data',
+        'Label and Test Version 1',
         'Identify the Weak Spot',
         'Choose Three Rescue Records',
         'Compare Version 1 and Version 2',
@@ -2907,31 +2989,31 @@
         automotive: {
           name: 'Automotive Diagnostic Model',
           icon: '🚗',
-          description: 'Fictional car inspection records for a model review.',
+          description: 'Made-up car inspection records for a model review.',
           featureLabels: ['Performance Score', 'Safety Check', 'Electrical Score', 'Frame Integrity']
         },
         veterinary: {
           name: 'Veterinary Review Model',
           icon: '🐾',
-          description: 'Fictional animal health records for a model review.',
+          description: 'Made-up animal health records for a model review.',
           featureLabels: ['Vitals Score', 'Lab Results', 'Behavior Score', 'Treatment Response']
         },
         construction: {
           name: 'Construction Safety Model',
           icon: '🏗️',
-          description: 'Fictional construction safety records for a model review.',
+          description: 'Made-up construction safety records for a model review.',
           featureLabels: ['Safety Check', 'Materials Score', 'Equipment Score', 'Site Readiness']
         },
         cybersecurity: {
           name: 'Cybersecurity Alert Model',
           icon: '🛡️',
-          description: 'Fictional security alert records for a model review.',
+          description: 'Made-up security alert records for a model review.',
           featureLabels: ['Threat Score', 'Response Time', 'Patch Level', 'Alert Frequency']
         },
         culinary: {
           name: 'Culinary Safety Model',
           icon: '🍽️',
-          description: 'Fictional kitchen safety records for a model review.',
+          description: 'Made-up kitchen safety records for a model review.',
           featureLabels: ['Temperature Score', 'Prep Score', 'Storage Score', 'Hygiene Check']
         }
       };
@@ -2944,6 +3026,8 @@
           selectedMission: '',
           studentPredictions: {},
           guidedExampleReviewed: false,
+          patternQAnswer: '',
+          patternQCorrect: false,
           v1StudentScore: null,
           v1ModelScore: null,
           v1ModelPredictions: [],
@@ -2957,6 +3041,8 @@
           retestCorrect: false,
           authorityChoice: '',
           authorityCorrect: false,
+          understandingAnswer: '',
+          understandingCorrect: false,
           reflections: {
             weakSpot: '',
             recordReason: '',
@@ -2983,6 +3069,8 @@
             selectedMission: typeof parsed.selectedMission === 'string' ? parsed.selectedMission : base.selectedMission,
             studentPredictions: parsed.studentPredictions || base.studentPredictions,
             guidedExampleReviewed: !!parsed.guidedExampleReviewed,
+            patternQAnswer: typeof parsed.patternQAnswer === 'string' ? parsed.patternQAnswer : '',
+            patternQCorrect: !!parsed.patternQCorrect,
             v1StudentScore: typeof parsed.v1StudentScore === 'number' ? parsed.v1StudentScore : base.v1StudentScore,
             v1ModelScore: typeof parsed.v1ModelScore === 'number' ? parsed.v1ModelScore : base.v1ModelScore,
             v1ModelPredictions: Array.isArray(parsed.v1ModelPredictions) ? parsed.v1ModelPredictions : base.v1ModelPredictions,
@@ -2996,6 +3084,8 @@
             retestCorrect: !!parsed.retestCorrect,
             authorityChoice: typeof parsed.authorityChoice === 'string' ? parsed.authorityChoice : base.authorityChoice,
             authorityCorrect: !!parsed.authorityCorrect,
+            understandingAnswer: typeof parsed.understandingAnswer === 'string' ? parsed.understandingAnswer : '',
+            understandingCorrect: !!parsed.understandingCorrect,
             reflections: {
               weakSpot: parsed.reflections && typeof parsed.reflections.weakSpot === 'string' ? parsed.reflections.weakSpot : '',
               recordReason: parsed.reflections && typeof parsed.reflections.recordReason === 'string' ? parsed.reflections.recordReason : '',
@@ -3261,6 +3351,8 @@
         state.retestCorrect = false;
         state.authorityChoice = '';
         state.authorityCorrect = false;
+        state.understandingAnswer = '';
+        state.understandingCorrect = false;
         removeCompletedAfter(4);
       }
 
@@ -3271,6 +3363,8 @@
         state.retestCorrect = false;
         state.authorityChoice = '';
         state.authorityCorrect = false;
+        state.understandingAnswer = '';
+        state.understandingCorrect = false;
         removeCompletedAfter(5);
       }
 
@@ -3279,12 +3373,16 @@
         state.retestCorrect = false;
         state.authorityChoice = '';
         state.authorityCorrect = false;
+        state.understandingAnswer = '';
+        state.understandingCorrect = false;
         removeCompletedAfter(6);
       }
 
       function resetStageEight() {
         state.authorityChoice = '';
         state.authorityCorrect = false;
+        state.understandingAnswer = '';
+        state.understandingCorrect = false;
         removeCompletedAfter(7);
       }
 
@@ -3356,6 +3454,7 @@
       function renderTrainingStage() {
         renderTrainingPatternView();
         renderTrainingTable();
+        renderPatternQuestion();
       }
 
       function renderTrainingPatternView() {
@@ -3370,7 +3469,7 @@
 
         var prompt = document.createElement('p');
         prompt.className = 'pattern-prompt';
-        prompt.textContent = 'Look for patterns across label groups and score ranges before you move on.';
+        prompt.textContent = 'Look at each row and column. Which combination of score range and label has no records?';
         container.appendChild(prompt);
 
         var matrix = document.createElement('div');
@@ -3434,6 +3533,43 @@
         });
 
         container.appendChild(matrix);
+
+        var hint = document.createElement('details');
+        hint.className = 'help-tip';
+        var hintSummary = document.createElement('summary');
+        hintSummary.textContent = 'Hint (optional)';
+        var hintBox = document.createElement('div');
+        hintBox.className = 'tip-box';
+        hintBox.textContent = 'Check both the score range and the label. Look for an empty cell in the grid.';
+        hint.appendChild(hintSummary);
+        hint.appendChild(hintBox);
+        container.appendChild(hint);
+      }
+
+      function renderPatternQuestion() {
+        document.querySelectorAll('input[name="patternQ"]').forEach(function (radio) {
+          radio.checked = radio.value === state.patternQAnswer;
+        });
+        var section = document.getElementById('patternQuestionSection');
+        if (!section) {
+          return;
+        }
+        var checkBtn = document.getElementById('checkPatternQButton');
+        if (state.patternQCorrect) {
+          if (checkBtn) {
+            checkBtn.classList.add('hidden');
+          }
+          showFeedback('patternQFeedback', 'That\'s correct. Middle-range Needs Review examples are not included in the training data. This is the missing area. Keep this in mind as you test the model.', 'good');
+        } else {
+          if (checkBtn) {
+            checkBtn.classList.remove('hidden');
+          }
+          if (state.patternQAnswer) {
+            showFeedback('patternQFeedback', 'Look again. Check both the score range and the label in the grid. Which cell is empty?', 'bad');
+          } else {
+            hideFeedback('patternQFeedback');
+          }
+        }
       }
 
       function renderTrainingTable() {
@@ -3503,7 +3639,7 @@
         heading.textContent = 'Guided example: ' + record.id;
         card.appendChild(heading);
         var intro = document.createElement('p');
-        intro.textContent = 'Read the four feature scores, make your prediction, and then reveal what Version 1 actually did.';
+        intro.textContent = 'Look at the four scores and the average. Based on the training examples, which label should this record have?';
         card.appendChild(intro);
 
         var featureGrid = document.createElement('div');
@@ -3538,7 +3674,7 @@
         choiceGroup.className = 'choice-group';
         var legend = document.createElement('legend');
         legend.className = 'sr-only';
-        legend.textContent = 'Prediction for ' + record.id;
+        legend.textContent = 'Choose the correct label for ' + record.id;
         choiceGroup.appendChild(legend);
         ['Ready', 'Needs Review'].forEach(function (option) {
           var wrapper = document.createElement('div');
@@ -3561,16 +3697,19 @@
 
         var link = document.createElement('p');
         link.className = 'small-status-text';
-        link.textContent = 'Connect this record to the training data: it sits in the middle range, where Version 1 saw only a few similar examples.';
+        link.textContent = 'Think about what you saw in the training data. This record sits in the middle range.';
         card.appendChild(link);
 
         if (state.guidedExampleReviewed) {
           var actual = autoV1Predictions()[0];
           var callout = document.createElement('div');
           callout.className = 'guided-callout';
-          callout.innerHTML = '<strong>Guided reveal:</strong> You predicted <strong>' + (state.studentPredictions[record.id] || 'no label yet') + '</strong>. ' +
-            'Version 1 predicted <strong>' + actual + '</strong>, but the correct label is <strong>' + record.y + '</strong>. ' +
-            'This middle-range case is difficult because Version 1 has low-score <strong>Needs Review</strong> examples and stronger <strong>Ready</strong> examples, but not enough middle-range <strong>Needs Review</strong> examples.';
+          callout.innerHTML = '<strong>Result for ' + record.id + ':</strong> ' +
+            'Your label: <strong>' + (state.studentPredictions[record.id] || 'none') + '</strong>. ' +
+            'Correct label: <strong>' + record.y + '</strong>. ' +
+            'Version 1\'s label: <strong>' + actual + '</strong>. ' +
+            'Version 1 result: <strong>' + (actual === record.y ? 'Correct' : 'Incorrect') + '</strong>. ' +
+            'This middle-range record is tricky. Version 1 has low-score <strong>Needs Review</strong> examples and stronger <strong>Ready</strong> examples, but not enough middle-range <strong>Needs Review</strong> examples.';
           card.appendChild(callout);
         }
 
@@ -3588,13 +3727,13 @@
           return record.id;
         });
         if (!state.guidedExampleReviewed) {
-          box.textContent = 'Complete the guided example first. Then you will unlock the remaining 5 records.';
+          box.textContent = 'Complete the guided example first. Then you will see the remaining 5 records.';
           return;
         }
         if (remaining.length) {
-          box.textContent = 'Predictions complete: ' + completeCount + ' of 6. Still needed: ' + remaining.join(', ') + '.';
+          box.textContent = 'Labels complete: ' + completeCount + ' of 6. Still needed: ' + remaining.join(', ') + '.';
         } else {
-          box.textContent = 'All 6 predictions are complete. You can now test Version 1.';
+          box.textContent = 'All 6 labels are complete. You can now test Version 1.';
         }
       }
 
@@ -3625,7 +3764,7 @@
           left.appendChild(idBadge);
           left.appendChild(summary);
           top.appendChild(left);
-          top.appendChild(makeCompletionChip(answered, 'Prediction complete', 'Prediction needed'));
+          top.appendChild(makeCompletionChip(answered, 'Label selected', 'Label needed'));
           card.appendChild(top);
 
           var featureGrid = document.createElement('div');
@@ -3649,7 +3788,7 @@
           choiceGroup.className = 'choice-group';
           var legend = document.createElement('legend');
           legend.className = 'sr-only';
-          legend.textContent = 'Prediction for ' + record.id;
+          legend.textContent = 'Choose the correct label for ' + record.id;
           choiceGroup.appendChild(legend);
           ['Ready', 'Needs Review'].forEach(function (option) {
             var wrapper = document.createElement('div');
@@ -3713,18 +3852,18 @@
         summary.className = 'result-summary-card';
         var badges = document.createElement('div');
         badges.className = 'summary-inline';
-        badges.appendChild(makeCompletionChip(modelScore >= 5, 'Version 1 passed most cases', 'Version 1 still needs rescue'));
-        badges.appendChild(makeCompletionChip(studentScore === null ? false : true, 'Your prediction score: ' + studentScore + '/6', 'Prediction score pending'));
+        badges.appendChild(makeCompletionChip(true, 'Your labeling score: ' + studentScore + '/6', 'Labeling score pending'));
+        badges.appendChild(makeCompletionChip(modelScore >= 5, 'Version 1: ' + modelScore + '/6 correct', 'Version 1 still needs rescue'));
         summary.appendChild(badges);
         var heading = document.createElement('h3');
-        heading.textContent = 'Version 1 feedback';
+        heading.textContent = 'Version 1 results';
         summary.appendChild(heading);
         var intro = document.createElement('p');
-        intro.textContent = 'Student prediction, model prediction, and the correct label are shown below for each test record.';
+        intro.textContent = 'Your label, Version 1\'s label, and the correct label are shown below for each test record.';
         summary.appendChild(intro);
         var conclusion = document.createElement('div');
         conclusion.className = 'guided-callout';
-        conclusion.innerHTML = '<strong>Pattern to notice:</strong> Version 1 missed ' + errorIds.join(', ') + '. These are middle-range <strong>Needs Review</strong> cases, which were underrepresented in the training data.';
+        conclusion.innerHTML = '<strong>Pattern:</strong> Version 1 missed ' + errorIds.join(', ') + '. These are middle-range <strong>Needs Review</strong> records. They were not included enough in the training data.';
         summary.appendChild(conclusion);
 
         var grid = document.createElement('div');
@@ -3744,16 +3883,16 @@
           left.appendChild(idBadge);
           left.appendChild(summaryText);
           top.appendChild(left);
-          top.appendChild(makeCompletionChip(row.success, 'Model succeeded', 'Model failed'));
+          top.appendChild(makeCompletionChip(row.success, 'Version 1: Correct', 'Version 1: Incorrect'));
           card.appendChild(top);
 
           var metrics = document.createElement('div');
           metrics.className = 'result-data-grid';
           [
-            ['Your prediction', row.studentPrediction],
-            ['Version 1 prediction', row.modelPrediction],
+            ['Your label', row.studentPrediction],
+            ['Version 1 label', row.modelPrediction],
             ['Correct label', row.correctLabel],
-            ['Outcome', row.success ? 'Correct' : 'Incorrect']
+            ['Version 1 result', row.success ? 'Correct' : 'Incorrect']
           ].forEach(function (entry) {
             var metric = document.createElement('div');
             metric.className = 'metric-card';
@@ -3772,8 +3911,8 @@
           var note = document.createElement('p');
           note.className = 'result-case-note';
           note.textContent = row.success
-            ? 'Version 1 handled this record correctly.'
-            : 'This record sits in the middle range, where Version 1 needed better training examples.';
+            ? 'Version 1 got this record right.'
+            : 'This record is in the middle range. Version 1 needed more middle-range Needs Review examples to get this right.';
           card.appendChild(note);
           grid.appendChild(card);
         });
@@ -3792,7 +3931,7 @@
         }).map(function (record) {
           return record.id + ' (avg ' + averageScore(record).toFixed(1) + ')';
         });
-        box.textContent = 'Focus on the wrong answers: ' + missed.join(', ') + '. What do these records have in common?';
+        box.textContent = 'Version 1 got these records wrong: ' + missed.join(', ') + '. Look at their average scores. What do they have in common?';
       }
 
       function renderDiagnosisSelection() {
@@ -3820,9 +3959,9 @@
           return;
         }
         if (state.diagnosisCorrect) {
-          showFeedback('diagnosisFeedback', 'Good diagnosis. Version 1 mostly missed middle-range Needs Review cases because that part of the training data was underrepresented.', 'good');
+          showFeedback('diagnosisFeedback', 'Correct. Version 1 mostly missed middle-range Needs Review records. These records were not included enough in the training data.', 'good');
         } else {
-          showFeedback('diagnosisFeedback', 'Look again at the missed records. They are not the lowest-score cases or the strongest Ready cases.', 'bad');
+          showFeedback('diagnosisFeedback', 'Look again. The missed records are not the lowest-score records or the strongest Ready records. Check their average scores.', 'bad');
         }
       }
 
@@ -3895,12 +4034,12 @@
           idBadge.className = 'record-id-badge';
           idBadge.textContent = record.id;
           left.appendChild(idBadge);
-          var clue = document.createElement('p');
-          clue.className = 'record-summary';
-          clue.textContent = record.note;
-          left.appendChild(clue);
+          var avgP = document.createElement('p');
+          avgP.className = 'record-summary';
+          avgP.textContent = 'Average score: ' + averageScore(record).toFixed(1);
+          left.appendChild(avgP);
           top.appendChild(left);
-          top.appendChild(makeCompletionChip(analysis && analysis.category === 'direct', analysis ? 'Targets the gap' : 'Selected', analysis ? 'Does not directly target the gap' : 'Not selected'));
+          top.appendChild(makeCompletionChip(selected, 'Selected', 'Not selected'));
           label.appendChild(top);
 
           var featureList = document.createElement('ul');
@@ -3917,10 +4056,12 @@
           featureList.appendChild(avgItem);
           label.appendChild(featureList);
 
-          var reason = document.createElement('p');
-          reason.className = 'result-case-note';
-          reason.textContent = analysis ? analysis.id + ' ' + analysis.reason + '.' : 'Review this record before selecting it.';
-          label.appendChild(reason);
+          if (state.improvementApplied && selected) {
+            var postFeedback = document.createElement('p');
+            postFeedback.className = 'result-case-note';
+            postFeedback.textContent = analysis ? analysis.reason + '.' : 'This record was used in Version 2.';
+            label.appendChild(postFeedback);
+          }
 
           card.appendChild(label);
           container.appendChild(card);
@@ -3937,9 +4078,17 @@
         var analyses = analyzeSelectedRescues();
         if (!analyses.length) {
           summaryBox.className = 'feedback-box';
-          summaryBox.textContent = 'Choose the records that best address the identified middle-range gap.';
+          summaryBox.textContent = 'Choose the records that best fill the missing area.';
           latestBox.className = 'feedback-box';
-          latestBox.textContent = 'Select a rescue record to see immediate feedback.';
+          latestBox.textContent = 'Select a rescue record to start.';
+          return;
+        }
+        if (!state.improvementApplied) {
+          var latestRecord = state.selectedImprovements[state.selectedImprovements.length - 1];
+          latestBox.className = 'feedback-box';
+          latestBox.textContent = latestRecord + ' selected. Use the score and label to decide if this fills the missing area.';
+          summaryBox.className = 'feedback-box';
+          summaryBox.textContent = state.selectedImprovements.length + ' of 3 records selected.';
           return;
         }
         var latest = analyses[analyses.length - 1];
@@ -4084,7 +4233,7 @@
 
       function getMiddleRangeRepresentationStatus(version) {
         if (version === 1) {
-          return 'Underrepresented';
+          return 'Not included enough';
         }
         var analyses = analyzeSelectedRescues();
         var direct = analyses.filter(function (entry) {
@@ -4113,16 +4262,11 @@
         var heading = document.createElement('h3');
         heading.textContent = 'Version 1 vs Version 2';
         section.appendChild(heading);
-        var conclusion = document.createElement('p');
-        conclusion.className = 'comparison-conclusion';
-        conclusion.textContent = delta > 0
-          ? 'Version 2 improved on this test, but the result still does not prove the model is ready for deployment.'
-          : 'Version 2 did not improve enough on this test to justify moving forward yet.';
-        section.appendChild(conclusion);
-
         var change = document.createElement('div');
         change.className = 'comparison-change';
-        change.textContent = 'Accuracy change: ' + (delta >= 0 ? '+' : '') + delta + ' percentage points';
+        change.textContent = delta > 0
+          ? 'Accuracy increased from ' + v1Accuracy + '% to ' + v2Accuracy + '%'
+          : 'Accuracy change: ' + delta + ' percentage points';
         section.appendChild(change);
 
         var cardGrid = document.createElement('div');
@@ -4137,10 +4281,10 @@
           title.textContent = version.title;
           card.appendChild(title);
           [
-            ['Correct predictions', version.score + ' of ' + TEST.length],
+            ['Correct answers', version.score + ' of ' + TEST.length],
             ['Accuracy', version.accuracy],
-            ['Middle-range representation', version.middle],
-            ['Human review required', 'Yes']
+            ['Middle-range examples', version.middle],
+            ['Human review', 'Still required']
           ].forEach(function (entry) {
             var row = document.createElement('div');
             row.className = 'metric-row';
@@ -4223,9 +4367,9 @@
           return;
         }
         if (state.retestCorrect) {
-          showFeedback('retestFeedback', 'Correct. The model may have improved, but this small test still does not prove it is safe for deployment. Human review and controlled testing are still necessary.', 'good');
+          showFeedback('retestFeedback', 'Correct. Version 2 improved, but six test records are not enough to prove that the model is safe. It still needs human review and more testing in a safe, supervised setting.', 'good');
         } else {
-          showFeedback('retestFeedback', 'Not yet. Better classroom results are useful evidence, but they are not enough to prove the model is ready for real-world deployment.', 'bad');
+          showFeedback('retestFeedback', 'Not yet. Better results are useful, but they are not enough to prove the model is safe. Think about how many records were tested.', 'bad');
         }
       }
 
@@ -4241,13 +4385,13 @@
 
       function getDecisionOptionText(value) {
         if (value === 'qualified') {
-          return 'More controlled testing with human review';
+          return 'More testing in a safe, supervised setting with human review';
         }
         if (value === 'improve-more') {
           return 'Additional improvement before more testing';
         }
         if (value === 'deploy-now') {
-          return 'Deployment now';
+          return 'Real-world use now';
         }
         return 'Decision pending';
       }
@@ -4258,8 +4402,7 @@
           box.textContent = 'Complete the comparison first.';
           return;
         }
-        var recommendation = getRecommendedDecision();
-        box.textContent = 'Evidence: Version 1 = ' + state.compare.v1Score + '/6, Version 2 = ' + state.compare.v2Score + '/6, middle-range coverage = ' + getMiddleRangeRepresentationStatus(2) + ', human review = required. Recommended next step: ' + getDecisionOptionText(recommendation) + '.';
+        box.textContent = 'Evidence: Version 1 got ' + state.compare.v1Score + ' of 6 correct. Version 2 got ' + state.compare.v2Score + ' of 6 correct. Middle-range examples: ' + getMiddleRangeRepresentationStatus(2) + '. Human review: required. Test set: 6 records.';
       }
 
       function renderAuthoritySelection() {
@@ -4281,6 +4424,39 @@
             hideFeedback('authorityFeedback');
           }
         }
+        renderUnderstandingCheck();
+      }
+
+      function renderUnderstandingCheck() {
+        var section = document.getElementById('understandingCheckSection');
+        if (!section) {
+          return;
+        }
+        if (state.authorityCorrect) {
+          section.classList.remove('hidden');
+        } else {
+          section.classList.add('hidden');
+          return;
+        }
+        document.querySelectorAll('input[name="understanding"]').forEach(function (radio) {
+          radio.checked = radio.value === state.understandingAnswer;
+        });
+        var checkBtn = document.getElementById('checkUnderstandingButton');
+        if (state.understandingCorrect) {
+          if (checkBtn) {
+            checkBtn.classList.add('hidden');
+          }
+          showFeedback('understandingFeedback', 'Correct. Six test records is a very small sample. Models must be tested with many more examples, including new and unusual cases, before they can be trusted in real settings.', 'good');
+        } else {
+          if (checkBtn) {
+            checkBtn.classList.remove('hidden');
+          }
+          if (state.understandingAnswer) {
+            showFeedback('understandingFeedback', 'Not quite. Think about how many records were tested. Is six records enough to be sure a model works in all situations?', 'bad');
+          } else {
+            hideFeedback('understandingFeedback');
+          }
+        }
       }
 
       function renderAuthorityFeedback() {
@@ -4290,16 +4466,16 @@
         var recommendation = getRecommendedDecision();
         if (state.authorityCorrect) {
           if (recommendation === 'qualified') {
-            showFeedback('authorityFeedback', 'Correct. The evidence supports more controlled testing with human review, not deployment. A qualified person must still check the model’s work.', 'good');
+            showFeedback('authorityFeedback', 'Correct. The evidence supports more testing in a safe, supervised setting with human review. A trained person must still check the model’s work.', 'good');
           } else {
             showFeedback('authorityFeedback', 'Correct. The update still needs more improvement before more testing. Human review remains necessary throughout.', 'good');
           }
           return;
         }
         if (state.authorityChoice === 'deploy-now') {
-          showFeedback('authorityFeedback', 'Not correct. A small test set does not prove the model is ready for deployment.', 'bad');
+          showFeedback('authorityFeedback', 'Not correct. Six test records do not prove the model is safe for real-world use.', 'bad');
         } else if (recommendation === 'qualified') {
-          showFeedback('authorityFeedback', 'Not quite. The model improved enough for more controlled testing, but only with human review and continued oversight.', 'bad');
+          showFeedback('authorityFeedback', 'Not quite. The model improved enough for more testing in a safe, supervised setting, but human review is still required.', 'bad');
         } else {
           showFeedback('authorityFeedback', 'Not quite. These results still point to additional improvement before more testing.', 'bad');
         }
@@ -4326,7 +4502,7 @@
         if (state.compare && state.compare.v2Score === 6 && overlap === 3 && allCoreCorrect) {
           return {
             label: 'Rescue Architect',
-            text: 'You found the weak spot, chose the strongest rescue records, and kept human review at the center of your final decision.'
+            text: 'You found the missing area, chose records that filled it, and kept human review at the center of your final decision.'
           };
         }
         if (state.compare && state.compare.v2Score >= 5 && overlap >= 2 && allCoreCorrect) {
@@ -4408,10 +4584,10 @@
         if (!weakSpot || !recordReason || !performance || !oversight || !fix || !evidence) {
           return '';
         }
-        return 'I tested the fictional model and found that it struggled when ' + weakSpot + '. ' +
+        return 'I tested the made-up model and found that it struggled when ' + weakSpot + '. ' +
           'I selected new training records that ' + recordReason + '. ' +
           'Version 2 performed ' + (performance === 'the same' ? 'the same as' : performance + ' than') + ' Version 1. ' +
-          'A qualified person should make the final decision because ' + oversight + '. ' +
+          'A trained person should make the final decision because ' + oversight + '. ' +
           'What fixed the model: ' + fix + '. ' +
           'Evidence for my decision: ' + evidence + '.';
       }
@@ -4430,6 +4606,8 @@
         state = createDefaultState();
         window.localStorage.removeItem(STORAGE_KEY);
         hideFeedback('stage3Feedback');
+        hideFeedback('patternQFeedback');
+        hideFeedback('understandingFeedback');
         hideFeedback('diagnosisFeedback');
         hideFeedback('improvementFeedback');
         hideFeedback('retestFeedback');
@@ -4448,15 +4626,15 @@
       function handleStage3Primary() {
         if (!state.guidedExampleReviewed) {
           if (!state.studentPredictions[TEST[0].id]) {
-            showFeedback('stage3Feedback', 'Make a prediction for the guided example before you reveal it.', 'bad');
-            announce('Make a prediction for the guided example before you reveal it.', true);
+            showFeedback('stage3Feedback', 'Choose a label for the guided example before you reveal it.', 'bad');
+            announce('Choose a label for the guided example before you reveal it.', true);
             return;
           }
           state.guidedExampleReviewed = true;
           saveState();
           renderStage3();
-          showFeedback('stage3Feedback', 'Guided example revealed. Finish the remaining records before testing Version 1.', 'good');
-          announce('Guided example revealed. Finish the remaining records before testing Version 1.');
+          showFeedback('stage3Feedback', 'Guided example revealed. Choose labels for the remaining records.', 'good');
+          announce('Guided example revealed. Choose labels for the remaining records.');
           return;
         }
         var studentPreds = getStudentPredictionArray();
@@ -4466,8 +4644,8 @@
           return record.id;
         });
         if (missing.length) {
-          showFeedback('stage3Feedback', 'Complete a prediction for every test record before testing Version 1. Remaining: ' + missing.join(', ') + '.', 'bad');
-          announce('Complete a prediction for every test record before testing Version 1.', true);
+          showFeedback('stage3Feedback', 'Choose a label for every test record before testing Version 1. Missing labels: ' + missing.join(', ') + '.', 'bad');
+          announce('Choose a label for every test record before testing Version 1.', true);
           return;
         }
         state.v1StudentScore = score(studentPreds);
@@ -4476,7 +4654,7 @@
         markStageComplete(2);
         saveState();
         renderAll();
-        showFeedback('stage3Feedback', 'Version 1 tested. Review the error pattern, then identify the weak spot.', 'good');
+        showFeedback('stage3Feedback', 'Version 1 tested. Compare your labels with Version 1\'s labels to find the error pattern.', 'good');
         announce('Version 1 results are ready.');
       }
 
@@ -4499,8 +4677,8 @@
 
       function handleApplyRescues() {
         if (state.selectedImprovements.length !== 3 || !state.rationaleChoice) {
-          showFeedback('improvementFeedback', 'Select exactly three rescue records and one rationale before retraining.', 'bad');
-          announce('Select exactly three rescue records and one rationale before retraining.', true);
+          showFeedback('improvementFeedback', 'Select exactly three rescue records and one reason before retraining.', 'bad');
+          announce('Select exactly three rescue records and one reason before retraining.', true);
           return;
         }
         state.improvementApplied = true;
@@ -4508,9 +4686,9 @@
         saveState();
         renderAll();
         if (getRecommendedDecision() === 'qualified') {
-          showFeedback('improvementFeedback', 'Version 2 is ready to compare. Your rescue set addresses the weak spot well enough to justify another controlled test.', 'good');
+          showFeedback('improvementFeedback', 'Your records fill the missing area. They give the model more middle-range examples labeled Needs Review. View the comparison to see how Version 2 performed.', 'good');
         } else {
-          showFeedback('improvementFeedback', 'Version 2 is ready to compare. Review whether your rescue set filled the middle-range gap strongly enough.', 'warning');
+          showFeedback('improvementFeedback', 'Version 2 is ready. Check the comparison — your rescue set may not fill the missing area strongly enough. You can go back and change your records.', 'warning');
         }
         announce('Version 2 retrained. Compare the results next.');
       }
@@ -4583,6 +4761,24 @@
       }
 
       function bindStaticInputs() {
+        document.querySelectorAll('input[name="patternQ"]').forEach(function (radio) {
+          radio.addEventListener('change', function () {
+            state.patternQAnswer = radio.value;
+            state.patternQCorrect = false;
+            saveState();
+            renderPatternQuestion();
+          });
+        });
+
+        document.querySelectorAll('input[name="understanding"]').forEach(function (radio) {
+          radio.addEventListener('change', function () {
+            state.understandingAnswer = radio.value;
+            state.understandingCorrect = false;
+            saveState();
+            renderUnderstandingCheck();
+          });
+        });
+
         document.querySelectorAll('input[name="rationale"]').forEach(function (radio) {
           radio.addEventListener('change', function () {
             if (state.compare || state.improvementApplied || state.retestAnswer || state.authorityChoice) {
@@ -4668,7 +4864,25 @@
           goToStage(2, 'Mission selected.', false);
         });
         document.getElementById('continueToChallengeButton').addEventListener('click', function () {
+          if (!state.patternQCorrect) {
+            announce('Answer the pattern question correctly before continuing.', true);
+            showFeedback('patternQFeedback', 'Answer the question about the missing example type before moving on.', 'bad');
+            return;
+          }
           goToStage(3, 'Training data reviewed.', true);
+        });
+        document.getElementById('checkPatternQButton').addEventListener('click', function () {
+          var choice = document.querySelector('input[name="patternQ"]:checked');
+          if (!choice) {
+            showFeedback('patternQFeedback', 'Choose an answer before checking.', 'bad');
+            announce('Choose an answer before checking.', true);
+            return;
+          }
+          state.patternQAnswer = choice.value;
+          state.patternQCorrect = choice.value === 'middle-review';
+          saveState();
+          renderPatternQuestion();
+          announce(state.patternQCorrect ? 'Correct. Middle-range Needs Review examples are missing.' : 'Not yet. Try again.');
         });
         document.getElementById('checkVersion1Button').addEventListener('click', handleStage3Primary);
         document.getElementById('continueToDiagnosisButton').addEventListener('click', function () {
@@ -4702,9 +4916,28 @@
           goToStage(7, 'Comparison reviewed.', false);
         });
         document.getElementById('checkDecisionButton').addEventListener('click', handleCheckDecision);
+        document.getElementById('checkUnderstandingButton').addEventListener('click', function () {
+          var choice = document.querySelector('input[name="understanding"]:checked');
+          if (!choice) {
+            showFeedback('understandingFeedback', 'Choose an answer before checking.', 'bad');
+            announce('Choose an answer before checking.', true);
+            return;
+          }
+          state.understandingAnswer = choice.value;
+          state.understandingCorrect = choice.value === 'small-test';
+          saveState();
+          renderUnderstandingCheck();
+          announce(state.understandingCorrect ? 'Correct. Small test sets are not enough proof.' : 'Not quite. Think about the number of records tested.');
+        });
         document.getElementById('continueToReportButton').addEventListener('click', function () {
           if (!state.authorityCorrect) {
             announce('Make the evidence-based final decision before continuing.', true);
+            showFeedback('authorityFeedback', 'Make the final decision before continuing.', 'bad');
+            return;
+          }
+          if (!state.understandingCorrect) {
+            announce('Answer the final understanding check before continuing.', true);
+            showFeedback('understandingFeedback', 'Answer the understanding check before completing the mission.', 'bad');
             return;
           }
           markStageComplete(7);
@@ -4745,6 +4978,8 @@
         renderAuthoritySelection();
         renderReportSummary();
         renderReflectionFields();
+        renderUnderstandingCheck();
+        renderPatternQuestion();
       }
 
       bindMissionButtons();
