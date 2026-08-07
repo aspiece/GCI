@@ -1221,7 +1221,7 @@
               <span id="dashboardProgressLabel">Progress: 0 of 8 steps</span>
               <span id="dashboardProgressPercent">0%</span>
             </div>
-            <div class="progress-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="8" aria-labelledby="dashboardProgressLabel" aria-hidden="true">
+            <div id="dashboardProgressTrack" class="progress-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="8" aria-labelledby="dashboardProgressLabel">
               <div id="dashboardProgressFill" class="progress-fill" style="width: 0%;">0/8</div>
             </div>
           </div>
@@ -2206,7 +2206,7 @@
         document.getElementById('dashboardProgressPercent').textContent = progressPercent + '%';
         document.getElementById('dashboardProgressFill').style.width = progressPercent + '%';
         document.getElementById('dashboardProgressFill').textContent = progressSteps + '/8';
-        var progressTrack = document.querySelector('.progress-track');
+        var progressTrack = document.getElementById('dashboardProgressTrack');
         if (progressTrack) {
           progressTrack.setAttribute('aria-valuenow', String(progressSteps));
         }
