@@ -2762,6 +2762,7 @@
         'Approve or Pause the Model',
         'Complete Your Rescue Report'
       ];
+      var PERFORMING_WELL_RATIO = 0.8;
 
       var missionConfig = {
         automotive: {
@@ -3970,7 +3971,7 @@
 
         var visual = document.createElement('div');
         visual.className = 'comparison-visual';
-        var performingWellThreshold = Math.ceil(TEST.length * 0.8);
+        var performingWellThreshold = Math.ceil(TEST.length * PERFORMING_WELL_RATIO);
 
         var rows = [
           {
@@ -4015,7 +4016,7 @@
           track.setAttribute('aria-label', row.version + ' accuracy bar showing ' + row.correct + ' of ' + TEST.length + ' correct');
           var fill = document.createElement('div');
           fill.className = 'comparison-bar-fill' + (row.highlight ? ' improved' : '');
-          fill.style.width = formatPercent(row.correct, TEST.length) + '%';
+          fill.style.width = Math.round((row.correct / TEST.length) * 100) + '%';
           fill.textContent = row.correct + ' / ' + TEST.length + ' correct';
           track.appendChild(fill);
           card.appendChild(track);
@@ -4620,6 +4621,7 @@
       bindMissionButtons();
       bindStaticInputs();
       attachEvents();
+      updateNextStepCard();
       updateStagePanels();
       updateUtilityVisibility();
       updateDashboard();
