@@ -3,34 +3,1157 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Model Rescue Simulation: train, test, improve, and compare a small fictional classifier." />
+  <meta
+    name="description"
+    content="Model Rescue Simulation: investigate fictional training data, challenge a small model, improve it, and decide whether it is ready for further testing."
+  />
   <title>Model Rescue Simulation</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="styles.css" />
   <style>
-    .sim-wrap { max-width: 1000px; margin: 0 auto; padding: 1rem; }
-    .frame { border-top: 4px solid #005A70; padding: 20px; background-color: #f9f9f9; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 1rem; }
-    .warn { border: 2px solid #E67E22; background-color: #FFF9F3; padding: 15px; border-radius: 8px; margin-bottom: 1rem; }
-    .try { border: 2px solid #2980B9; background-color: #F2F9FD; padding: 15px; border-radius: 8px; margin-bottom: 1rem; }
-    .step { display: inline-block; width: 100%; border: 1px solid #ddd; padding: 15px; border-left: 8px solid #005A70; margin-bottom: 10px; border-radius: 4px; background: #fff; }
-    .step strong { color: #005A70; }
-    table { width: 100%; border-collapse: collapse; border: 1px solid #ddd; margin-top: .5rem; }
-    thead { background-color: #005A70; color: #fff; }
-    th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; font-size: .95rem; }
-    .pill { display: inline-block; font-size: .8rem; padding: .15rem .5rem; border-radius: 999px; background: #e6f7f7; color: #005A70; font-weight: 700; }
-    .good { color: #1b5e20; font-weight: 700; }
-    .bad { color: #8e1b1b; font-weight: 700; }
-    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    @media (max-width: 760px){ .grid2 { grid-template-columns: 1fr; } }
-    .hidden { display: none; }
-    .btn { border: 0; background: #005A70; color: white; padding: .55rem .85rem; border-radius: 6px; cursor: pointer; }
-    .btn:disabled { opacity: .55; cursor: not-allowed; }
-    .muted { color: #4b5563; }
-    .small { font-size: .9rem; }
-    .choice { margin: .35rem 0; }
-    .help-tip { margin-top: .5rem; }
-    .help-tip summary { cursor: pointer; color: #005A70; font-weight: 700; }
-    .help-tip .tip-box { margin-top: .35rem; border-left: 4px solid #2980B9; background: #EEF6FF; padding: .6rem .7rem; border-radius: 4px; }
+    :root {
+      --sim-primary: #005A70;
+      --sim-primary-dark: #003f4d;
+      --sim-primary-soft: #e6f4f7;
+      --sim-success: #1b5e20;
+      --sim-success-soft: #edf7ee;
+      --sim-error: #8e1b1b;
+      --sim-error-soft: #faeeee;
+      --sim-warning: #E67E22;
+      --sim-warning-soft: #FFF7ED;
+      --sim-border: #d7e1e8;
+      --sim-bg: #f4f8fb;
+      --sim-card: #ffffff;
+      --sim-text: #16212b;
+      --sim-muted: #4b5563;
+      --sim-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+      --sim-shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.06);
+      --sim-radius: 18px;
+      --sim-radius-sm: 12px;
+      --sim-tap: 44px;
+    }
+
+    main {
+      background:
+        radial-gradient(circle at top right, rgba(0, 90, 112, 0.08), transparent 24%),
+        linear-gradient(180deg, #f8fbfc 0%, #f1f6f9 100%);
+    }
+
+    .sim-wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 1rem 1rem 4rem;
+    }
+
+    .sim-lead {
+      margin: 0;
+      color: var(--sim-muted);
+      font-size: 1.05rem;
+    }
+
+    .mission-utility {
+      position: sticky;
+      top: calc(var(--nav-height) + 0.5rem);
+      z-index: 60;
+      display: none;
+      margin-bottom: 1rem;
+    }
+
+    .mission-utility.is-visible {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .utility-card {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid var(--sim-border);
+      border-radius: 999px;
+      padding: 0.55rem 0.75rem;
+      box-shadow: var(--sim-shadow-soft);
+      backdrop-filter: blur(10px);
+    }
+
+    .mission-dashboard {
+      position: sticky;
+      top: calc(var(--nav-height) + 4.1rem);
+      z-index: 55;
+      display: none;
+      margin-bottom: 1.25rem;
+    }
+
+    .mission-dashboard.is-visible {
+      display: block;
+    }
+
+    .dashboard-card {
+      background: rgba(255, 255, 255, 0.98);
+      border: 1px solid var(--sim-border);
+      border-left: 8px solid var(--sim-primary);
+      border-radius: var(--sim-radius);
+      box-shadow: var(--sim-shadow);
+      padding: 1rem 1.1rem;
+      backdrop-filter: blur(12px);
+    }
+
+    .dashboard-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .dashboard-title {
+      margin: 0;
+      font-size: 1.15rem;
+      color: var(--sim-primary-dark);
+    }
+
+    .dashboard-meta {
+      margin: 0.15rem 0 0;
+      color: var(--sim-muted);
+      font-size: 0.95rem;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .dashboard-stat {
+      border: 1px solid var(--sim-border);
+      border-radius: 14px;
+      background: #f9fcfd;
+      padding: 0.8rem;
+      min-height: 92px;
+    }
+
+    .dashboard-stat-label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--sim-muted);
+      margin-bottom: 0.35rem;
+    }
+
+    .dashboard-stat-value {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--sim-text);
+    }
+
+    .dashboard-progress-wrap {
+      display: grid;
+      gap: 0.4rem;
+      margin-top: 0.85rem;
+    }
+
+    .progress-label-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      font-size: 0.92rem;
+      color: var(--sim-muted);
+    }
+
+    .progress-track,
+    .meter-track {
+      width: 100%;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #dfe9ee;
+    }
+
+    .progress-track {
+      height: 16px;
+      border: 1px solid #c9d9e1;
+    }
+
+    .progress-fill,
+    .meter-fill {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: #ffffff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      white-space: nowrap;
+      transition: width 220ms ease;
+    }
+
+    .progress-fill {
+      background: linear-gradient(90deg, var(--sim-primary) 0%, #0f88a4 100%);
+      min-width: 2rem;
+    }
+
+    .meter-track {
+      height: 22px;
+      border: 1px solid #d4dee4;
+    }
+
+    .meter-fill.good {
+      background: linear-gradient(90deg, var(--sim-success) 0%, #2d8a35 100%);
+    }
+
+    .meter-fill.bad {
+      background: linear-gradient(90deg, var(--sim-error) 0%, #bf2b2b 100%);
+    }
+
+    .stage-panel {
+      margin-bottom: 1rem;
+      border: 1px solid var(--sim-border);
+      border-radius: var(--sim-radius);
+      background: var(--sim-card);
+      box-shadow: var(--sim-shadow-soft);
+      overflow: hidden;
+      transition: transform 220ms ease, box-shadow 220ms ease;
+    }
+
+    .stage-panel[open] {
+      box-shadow: var(--sim-shadow);
+    }
+
+    .stage-panel[hidden] {
+      display: none;
+    }
+
+    .stage-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      list-style: none;
+      cursor: pointer;
+      padding: 1rem 1.1rem;
+      background: linear-gradient(180deg, #ffffff 0%, #f9fbfc 100%);
+      min-height: var(--sim-tap);
+    }
+
+    .stage-summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .stage-summary:hover {
+      background: #f7fbfc;
+    }
+
+    .stage-summary-text {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      min-width: 0;
+    }
+
+    .stage-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.2rem;
+      height: 2.2rem;
+      border-radius: 999px;
+      background: var(--sim-primary-soft);
+      color: var(--sim-primary-dark);
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .stage-title-wrap {
+      min-width: 0;
+    }
+
+    .stage-kicker {
+      display: block;
+      color: var(--sim-muted);
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+    }
+
+    .stage-title {
+      display: block;
+      color: var(--sim-text);
+      font-size: 1.05rem;
+      font-weight: 800;
+      line-height: 1.3;
+    }
+
+    .stage-body {
+      padding: 0 1.1rem 1.1rem;
+    }
+
+    .stage-body > :first-child {
+      margin-top: 0;
+    }
+
+    .stage-heading {
+      margin: 0 0 0.6rem;
+      color: var(--sim-primary-dark);
+      font-size: 1.65rem;
+      line-height: 1.2;
+    }
+
+    .stage-intro {
+      margin: 0 0 1rem;
+      color: var(--sim-muted);
+      max-width: 72ch;
+    }
+
+    .big-hero-card,
+    .info-card,
+    .result-card,
+    .report-card,
+    .warning-card,
+    .glossary-card,
+    .summary-card {
+      border: 1px solid var(--sim-border);
+      border-left: 8px solid var(--sim-primary);
+      border-radius: var(--sim-radius);
+      background: #ffffff;
+      box-shadow: var(--sim-shadow-soft);
+      padding: 1.25rem;
+    }
+
+    .big-hero-card {
+      background:
+        linear-gradient(135deg, rgba(0, 90, 112, 0.06), rgba(0, 90, 112, 0.01)),
+        #ffffff;
+    }
+
+    .warning-card {
+      border-left-color: var(--sim-warning);
+      background: var(--sim-warning-soft);
+    }
+
+    .result-card.good,
+    .summary-card.good {
+      border-left-color: var(--sim-success);
+      background: linear-gradient(180deg, #ffffff 0%, #f8fcf8 100%);
+    }
+
+    .result-card.bad,
+    .summary-card.bad {
+      border-left-color: var(--sim-error);
+      background: linear-gradient(180deg, #ffffff 0%, #fff8f8 100%);
+    }
+
+    .mission-grid,
+    .grid-two,
+    .grid-three,
+    .grid-four {
+      display: grid;
+      gap: 1rem;
+    }
+
+    ul.mission-grid {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .mission-grid {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+
+    .grid-two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid-three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .grid-four {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .mission-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 0.8rem;
+      min-height: 220px;
+      width: 100%;
+      padding: 1rem;
+      border: 2px solid var(--sim-border);
+      border-left: 8px solid transparent;
+      border-radius: var(--sim-radius);
+      background: #ffffff;
+      color: var(--sim-text);
+      text-align: left;
+      box-shadow: var(--sim-shadow-soft);
+      cursor: pointer;
+      transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+      min-width: 0;
+      min-height: var(--sim-tap);
+    }
+
+    .mission-card:hover {
+      transform: translateY(-2px);
+      border-color: #c8dbe2;
+      box-shadow: var(--sim-shadow);
+    }
+
+    .mission-card.is-selected {
+      border-color: var(--sim-primary);
+      border-left-color: var(--sim-primary);
+      background: linear-gradient(180deg, #ffffff 0%, #f5fbfd 100%);
+    }
+
+    .mission-card-check {
+      position: absolute;
+      top: 0.8rem;
+      right: 0.8rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 999px;
+      background: var(--sim-primary);
+      color: #ffffff;
+      font-size: 1rem;
+      font-weight: 800;
+      opacity: 0;
+      transform: scale(0.9);
+      transition: opacity 180ms ease, transform 180ms ease;
+    }
+
+    .mission-card.is-selected .mission-card-check {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .mission-card-icon {
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .mission-card h3 {
+      margin: 0;
+      font-size: 1.1rem;
+      color: var(--sim-primary-dark);
+    }
+
+    .mission-card p {
+      margin: 0;
+      color: var(--sim-muted);
+      font-size: 0.95rem;
+    }
+
+    .mission-card ul {
+      margin: 0;
+      padding-left: 1.1rem;
+      color: var(--sim-muted);
+      font-size: 0.9rem;
+    }
+
+    .mission-selected-banner {
+      margin-top: 1rem;
+      padding: 0.9rem 1rem;
+      border-radius: 14px;
+      border: 1px solid #b7d2da;
+      background: #f4fbfd;
+      color: var(--sim-primary-dark);
+      font-weight: 700;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+      margin-top: 1rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      min-height: var(--sim-tap);
+      padding: 0.75rem 1rem;
+      border: 0;
+      border-radius: 12px;
+      background: var(--sim-primary);
+      color: #ffffff;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.96rem;
+      line-height: 1.2;
+      box-shadow: 0 6px 12px rgba(0, 90, 112, 0.18);
+      transition: transform 180ms ease, box-shadow 180ms ease, opacity 180ms ease;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 18px rgba(0, 90, 112, 0.22);
+    }
+
+    .btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-secondary {
+      background: #eef4f6;
+      color: var(--sim-primary-dark);
+      border: 1px solid #c8d9df;
+      box-shadow: none;
+    }
+
+    .btn-secondary:hover {
+      box-shadow: none;
+      background: #e4eef2;
+    }
+
+    .btn-warning {
+      background: var(--sim-warning);
+      box-shadow: 0 6px 12px rgba(230, 126, 34, 0.2);
+    }
+
+    .btn-ghost {
+      background: #ffffff;
+      color: var(--sim-primary-dark);
+      border: 1px solid var(--sim-border);
+      box-shadow: none;
+    }
+
+    .btn-ghost:hover {
+      background: #f7fbfc;
+      box-shadow: none;
+    }
+
+    .list-compact {
+      margin: 0.8rem 0 0;
+      padding-left: 1.15rem;
+    }
+
+    .list-compact li + li {
+      margin-top: 0.45rem;
+    }
+
+    .faux-note {
+      margin-top: 1rem;
+      padding: 0.9rem 1rem;
+      border-radius: 14px;
+      border: 1px solid #d4e1e7;
+      background: #f8fbfc;
+      color: var(--sim-muted);
+    }
+
+    .pill,
+    .status-badge,
+    .achievement-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 0.83rem;
+      line-height: 1.2;
+      border: 1px solid transparent;
+    }
+
+    .pill.ready {
+      background: #edf7ee;
+      color: var(--sim-success);
+      border-color: #cbe5ce;
+    }
+
+    .pill.review {
+      background: #fff2e8;
+      color: #99510d;
+      border-color: #f0c69d;
+    }
+
+    .status-badge.current {
+      background: #eef7fa;
+      color: var(--sim-primary-dark);
+      border-color: #b8d4dd;
+    }
+
+    .status-badge.complete {
+      background: var(--sim-success-soft);
+      color: var(--sim-success);
+      border-color: #c7dfc9;
+    }
+
+    .status-badge.pending {
+      background: #f5f7f8;
+      color: var(--sim-muted);
+      border-color: #d9e2e7;
+    }
+
+    .status-badge.warning {
+      background: var(--sim-warning-soft);
+      color: #99510d;
+      border-color: #f1caa2;
+    }
+
+    .status-badge.error {
+      background: var(--sim-error-soft);
+      color: var(--sim-error);
+      border-color: #e7c1c1;
+    }
+
+    .achievement-badge {
+      background: linear-gradient(90deg, #eaf7fb 0%, #f7fcfd 100%);
+      color: var(--sim-primary-dark);
+      border: 1px solid #bdd5dd;
+    }
+
+    .key-value-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .kv-card {
+      border: 1px solid var(--sim-border);
+      border-radius: 14px;
+      padding: 0.9rem;
+      background: #fbfdfe;
+    }
+
+    .kv-card h3,
+    .kv-card h4,
+    .result-card h3,
+    .report-card h3,
+    .summary-card h3,
+    .warning-card h3,
+    .info-card h3,
+    .glossary-card h3 {
+      margin-top: 0;
+      margin-bottom: 0.55rem;
+      color: var(--sim-primary-dark);
+    }
+
+    .kv-card p,
+    .result-card p,
+    .report-card p,
+    .summary-card p,
+    .warning-card p,
+    .info-card p,
+    .glossary-card p {
+      margin-top: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      background: #ffffff;
+      border: 1px solid var(--sim-border);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: var(--sim-shadow-soft);
+    }
+
+    caption {
+      caption-side: top;
+      text-align: left;
+      padding: 0.9rem 1rem 0;
+      font-weight: 700;
+      color: var(--sim-primary-dark);
+    }
+
+    thead {
+      background: var(--sim-primary);
+      color: #ffffff;
+    }
+
+    th,
+    td {
+      padding: 0.85rem 0.8rem;
+      text-align: left;
+      border-bottom: 1px solid #dbe6eb;
+      vertical-align: top;
+      font-size: 0.95rem;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #fbfdfe;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 14px;
+    }
+
+    .choice-group {
+      display: grid;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .choice-card,
+    .inline-choice,
+    .rationale-card,
+    .rescue-card {
+      border: 1px solid var(--sim-border);
+      border-radius: 16px;
+      background: #ffffff;
+      box-shadow: var(--sim-shadow-soft);
+    }
+
+    .choice-card label,
+    .inline-choice label,
+    .rationale-card label,
+    .rescue-card label {
+      display: block;
+      min-height: var(--sim-tap);
+      cursor: pointer;
+    }
+
+    .choice-card label,
+    .rationale-card label {
+      padding: 0.9rem 1rem;
+    }
+
+    .choice-card input,
+    .inline-choice input,
+    .rationale-card input,
+    .rescue-card input {
+      margin-right: 0.55rem;
+    }
+
+    .inline-choice {
+      padding: 0.7rem 0.9rem;
+    }
+
+    .choice-title {
+      font-weight: 700;
+      color: var(--sim-text);
+    }
+
+    .choice-hint {
+      display: block;
+      color: var(--sim-muted);
+      font-size: 0.9rem;
+      margin-top: 0.3rem;
+      padding-left: 1.7rem;
+    }
+
+    .feedback-box {
+      margin-top: 1rem;
+      padding: 0.95rem 1rem;
+      border-radius: 14px;
+      border: 1px solid var(--sim-border);
+      background: #f8fbfc;
+      color: var(--sim-text);
+    }
+
+    .feedback-box.good {
+      border-color: #bfd8c1;
+      background: var(--sim-success-soft);
+      color: var(--sim-success);
+    }
+
+    .feedback-box.bad {
+      border-color: #e4c0c0;
+      background: var(--sim-error-soft);
+      color: var(--sim-error);
+    }
+
+    .feedback-box.warning {
+      border-color: #f0cbab;
+      background: var(--sim-warning-soft);
+      color: #99510d;
+    }
+
+    .help-tip {
+      margin-top: 1rem;
+      border: 1px solid var(--sim-border);
+      border-radius: 14px;
+      background: #fbfdfe;
+      padding: 0.25rem 0.75rem 0.75rem;
+    }
+
+    .help-tip summary {
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--sim-primary-dark);
+      min-height: var(--sim-tap);
+      display: flex;
+      align-items: center;
+    }
+
+    .tip-box {
+      margin-top: 0.55rem;
+      padding: 0.75rem 0.9rem;
+      border-left: 4px solid var(--sim-primary);
+      background: #eef7fa;
+      border-radius: 10px;
+      color: var(--sim-text);
+    }
+
+    .rescue-counter {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      margin-top: 0.75rem;
+      padding: 0.55rem 0.8rem;
+      border-radius: 999px;
+      background: #f3f8fa;
+      border: 1px solid #d2e2e8;
+      color: var(--sim-primary-dark);
+      font-weight: 700;
+    }
+
+    .rescue-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .rescue-card label {
+      padding: 1rem;
+    }
+
+    .rescue-card.is-selected {
+      border-color: var(--sim-primary);
+      box-shadow: var(--sim-shadow);
+      background: linear-gradient(180deg, #ffffff 0%, #f5fbfd 100%);
+    }
+
+    .rescue-id-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.7rem;
+    }
+
+    .rescue-id {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--sim-primary-dark);
+    }
+
+    .rescue-note {
+      margin: 0.7rem 0 0;
+      color: var(--sim-muted);
+      font-size: 0.92rem;
+    }
+
+    .feature-list {
+      margin: 0;
+      padding-left: 1rem;
+      color: var(--sim-text);
+      font-size: 0.92rem;
+    }
+
+    .feature-list li + li {
+      margin-top: 0.2rem;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.9rem;
+      margin-top: 1rem;
+    }
+
+    .result-stat {
+      border: 1px solid var(--sim-border);
+      border-radius: 14px;
+      background: #fbfdfe;
+      padding: 0.9rem;
+    }
+
+    .result-stat-label {
+      display: block;
+      color: var(--sim-muted);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+    }
+
+    .result-stat-value {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--sim-text);
+    }
+
+    .accuracy-callout {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+      margin-top: 0.4rem;
+      margin-bottom: 0.2rem;
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--sim-primary-dark);
+    }
+
+    .delta-card {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      margin-top: 0.8rem;
+      padding: 0.7rem 0.9rem;
+      border-radius: 14px;
+      border: 1px solid #bdd6c0;
+      background: #f3fbf4;
+      color: var(--sim-success);
+      font-weight: 800;
+    }
+
+    .delta-card.negative {
+      border-color: #e1c0c0;
+      background: #fff4f4;
+      color: var(--sim-error);
+    }
+
+    .small-muted {
+      color: var(--sim-muted);
+      font-size: 0.93rem;
+    }
+
+    .icon-text {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-weight: 700;
+    }
+
+    .report-summary-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 1rem;
+      align-items: start;
+      margin-top: 1rem;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .field-card {
+      border: 1px solid var(--sim-border);
+      border-radius: 16px;
+      background: #fbfdfe;
+      padding: 1rem;
+    }
+
+    .field-card label {
+      display: block;
+      font-weight: 700;
+      color: var(--sim-text);
+      margin-bottom: 0.5rem;
+    }
+
+    .field-card select,
+    .field-card input[type="text"],
+    .field-card textarea {
+      width: 100%;
+      min-height: var(--sim-tap);
+      border-radius: 12px;
+      border: 1px solid #c8d8df;
+      background: #ffffff;
+      padding: 0.75rem 0.85rem;
+      font: inherit;
+      color: var(--sim-text);
+    }
+
+    .field-card textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .report-preview {
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 16px;
+      border: 1px solid #cfe0e6;
+      background: #f4fafc;
+    }
+
+    .report-preview p {
+      margin: 0;
+      white-space: pre-wrap;
+    }
+
+    .summary-table th {
+      width: 34%;
+    }
+
+    .touch-note {
+      margin-top: 0.75rem;
+      color: var(--sim-muted);
+      font-size: 0.9rem;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .summary-inline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      align-items: center;
+    }
+
+    dialog {
+      width: min(32rem, calc(100% - 2rem));
+      border: 0;
+      border-radius: 18px;
+      padding: 0;
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.24);
+    }
+
+    dialog::backdrop {
+      background: rgba(6, 17, 24, 0.55);
+    }
+
+    .dialog-card {
+      padding: 1.25rem;
+    }
+
+    .dialog-card h2 {
+      margin-top: 0;
+      color: var(--sim-primary-dark);
+    }
+
+    .dialog-card p {
+      color: var(--sim-muted);
+    }
+
+    :focus-visible {
+      outline: 3px solid #0ea5c6;
+      outline-offset: 2px;
+    }
+
+    @media (max-width: 1100px) {
+      .mission-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .dashboard-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .result-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 820px) {
+      .grid-two,
+      .report-summary-grid,
+      .key-value-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .dashboard-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .mission-dashboard {
+        top: calc(var(--nav-height) + 4.5rem);
+      }
+    }
+
+    @media (max-width: 760px) {
+      .mission-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .result-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stage-summary {
+        align-items: flex-start;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .sim-wrap {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+      }
+
+      .mission-grid,
+      .dashboard-grid,
+      .grid-two,
+      .grid-three,
+      .grid-four {
+        grid-template-columns: 1fr;
+      }
+
+      .utility-card,
+      .dashboard-top,
+      .progress-label-row,
+      .button-row {
+        align-items: stretch;
+      }
+
+      .mission-utility.is-visible {
+        justify-content: stretch;
+      }
+
+      .utility-card {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .stage-panel,
+      .progress-fill,
+      .meter-fill,
+      .btn,
+      .mission-card,
+      .mission-card-check {
+        transition: none !important;
+      }
+
+      .btn:hover,
+      .mission-card:hover {
+        transform: none;
+      }
+    }
   </style>
 </head>
 <body>
@@ -41,7 +1164,14 @@
         <span class="nav-brand-icon" aria-hidden="true">GL</span>
         Genesee Learning Lab
       </a>
-      <button class="nav-toggle" aria-expanded="false" aria-controls="primary-nav-list" aria-label="Open navigation menu">&#9776;</button>
+      <button
+        class="nav-toggle"
+        aria-expanded="false"
+        aria-controls="primary-nav-list"
+        aria-label="Open navigation menu"
+      >
+        &#9776;
+      </button>
       <ul id="primary-nav-list" class="nav-links" role="list">
         <li><a href="index.html">Home</a></li>
         <li><a href="projects.html" aria-current="page">Projects</a></li>
@@ -54,110 +1184,630 @@
   <header class="page-header" aria-labelledby="sim-heading">
     <div class="container--sm">
       <h1 id="sim-heading">Model Rescue Simulation</h1>
-      <p>Run a short simulation to train, test, improve, and compare a fictional model in about 20 minutes.</p>
+      <p class="sim-lead">
+        Look at fake training data, find where the model keeps failing, add better examples,
+        and decide if the model is ready for more testing.
+      </p>
     </div>
   </header>
 
   <main id="main-content" tabindex="-1">
     <div class="sim-wrap">
-      <section class="frame" aria-labelledby="overview-title">
-        <h2 id="overview-title">Overview</h2>
-        <p>This activity shows how a simple model learns and makes predictions using made-up data.</p>
-        <p class="small muted">Submit your reflection using the Canvas instructions for this activity.</p>
-      </section>
+      <div id="global-live" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+      <div id="global-live-assertive" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
 
-      <section class="warn" aria-labelledby="safe-title">
-        <h3 id="safe-title" style="color:#E67E22;">⚠️ Critical Thinking Check</h3>
-        <p>Do not use this model for real decisions. Model output is a clue, not proof.</p>
-        <ul>
-          <li>Use only fictional records in this page.</li>
-          <li>Do not enter real personal, client, or workplace data.</li>
-        </ul>
-      </section>
+      <div id="missionUtility" class="mission-utility" aria-label="Mission controls">
+        <div class="utility-card">
+          <span class="small-muted">Mission controls stay available while you work.</span>
+          <button id="restartMissionButton" class="btn btn-ghost" type="button">Restart Mission</button>
+        </div>
+      </div>
 
-      <section class="step" aria-labelledby="step1-title">
-        <strong id="step1-title">Step 1: Choose a version</strong>
-        <p>Pick a scenario version. The model setup stays the same in each one.</p>
-        <label for="programSelect">Version</label>
-        <select id="programSelect">
-          <option value="">Select one...</option>
-          <option>Version 1 — Agriscience / Health Science / Forensic Science</option>
-          <option>Version 2 — Automotive / Aviation / Mechatronics</option>
-          <option>Version 3 — Construction Trades / Welding</option>
-          <option>Version 4 — Computer Science / Marketing Graphic Design</option>
-          <option>Version 5 — Education / Public Safety / US Army JROTC</option>
-          <option>Version 6 — Cosmetology / Culinary</option>
-        </select>
-        <p id="scenarioText" class="small muted"></p>
-      </section>
-
-      <section class="step" aria-labelledby="step2-title">
-        <strong id="step2-title">Step 2: Look at Version 1 training data</strong>
-        <p>Each record has 4 scores from 1 to 10. The label is either <span class="pill">Ready</span> or <span class="pill">Needs Review</span>.</p>
-        <details class="help-tip">
-          <summary>Need help with these words?</summary>
-          <div class="tip-box small">
-            <strong>Training data:</strong> examples used to teach the model.<br />
-            <strong>Feature:</strong> one score the model looks at.<br />
-            <strong>Label:</strong> the correct answer for that record.
+      <aside id="missionDashboard" class="mission-dashboard" aria-label="Mission dashboard">
+        <div class="dashboard-card">
+          <div class="dashboard-top">
+            <div>
+              <h2 class="dashboard-title">Mission Dashboard</h2>
+              <p id="dashboardMissionMeta" class="dashboard-meta">Select a mission to begin tracking progress.</p>
+            </div>
+            <div class="summary-inline">
+              <span id="dashboardMissionStatus" class="status-badge pending">Not started</span>
+              <span id="dashboardCurrentStage" class="status-badge current">Current stage: Mission Briefing</span>
+            </div>
           </div>
-        </details>
-        <div id="trainTable"></div>
-      </section>
 
-      <section class="step" aria-labelledby="step3-title">
-        <strong id="step3-title">Step 3: Test Version 1</strong>
-        <p>Choose a label for each test record, then check your results.</p>
-        <details class="help-tip">
-          <summary>What is a prediction?</summary>
-          <div class="tip-box small">
-            A prediction is the model's best guess for a new record based on what it learned from training data.
+          <div class="dashboard-progress-wrap" aria-label="Overall mission progress">
+            <div class="progress-label-row">
+              <span id="dashboardProgressLabel">Progress: 0 of 8 steps</span>
+              <span id="dashboardProgressPercent">0%</span>
+            </div>
+            <div id="dashboardProgressTrack" class="progress-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="8" aria-labelledby="dashboardProgressLabel">
+              <div id="dashboardProgressFill" class="progress-fill" style="width: 0%;">0/8</div>
+            </div>
           </div>
-        </details>
-        <div id="testArea"></div>
-        <button class="btn" id="gradeV1">Check Version 1</button>
-        <p id="v1Result" aria-live="polite"></p>
-      </section>
 
-      <section class="step" aria-labelledby="step4-title">
-        <strong id="step4-title">Step 4: Find the repeated error pattern</strong>
-        <div id="patternChoices"></div>
-        <button class="btn" id="checkPattern">Check Pattern Choice</button>
-        <p id="patternFeedback" aria-live="polite"></p>
-      </section>
-
-      <section class="try" aria-labelledby="step5-title">
-        <h3 id="step5-title" style="color:#2980B9;">🚀 Try It: Choose 3 improvement records</h3>
-        <p>Pick exactly 3 records that could fix the weak spot you found.</p>
-        <div id="improvementBank"></div>
-        <button class="btn" id="applyImprovements">Apply 3 Improvements</button>
-        <p id="improveFeedback" aria-live="polite"></p>
-      </section>
-
-      <section class="step" aria-labelledby="step6-title">
-        <strong id="step6-title">Step 6: Compare Version 1 and Version 2</strong>
-        <p>Version 2 uses the same test records after your 3 added records.</p>
-        <details class="help-tip">
-          <summary>Why compare versions?</summary>
-          <div class="tip-box small">
-            Comparing versions helps you see whether the new training records improved model accuracy.
+          <div class="dashboard-grid">
+            <div class="dashboard-stat">
+              <span class="dashboard-stat-label">Mission</span>
+              <p id="dashboardMissionName" class="dashboard-stat-value">Pending</p>
+            </div>
+            <div class="dashboard-stat">
+              <span class="dashboard-stat-label">Version 1 Accuracy</span>
+              <p id="dashboardV1" class="dashboard-stat-value">Pending</p>
+            </div>
+            <div class="dashboard-stat">
+              <span class="dashboard-stat-label">Version 2 Accuracy</span>
+              <p id="dashboardV2" class="dashboard-stat-value">Pending</p>
+            </div>
+            <div class="dashboard-stat">
+              <span class="dashboard-stat-label">Rescue Records</span>
+              <p id="dashboardRescues" class="dashboard-stat-value">0 of 3 selected</p>
+            </div>
+            <div class="dashboard-stat">
+              <span class="dashboard-stat-label">Mission Status</span>
+              <p id="dashboardStatusText" class="dashboard-stat-value">Awaiting setup</p>
+            </div>
           </div>
-        </details>
-        <div id="compareArea" class="hidden"></div>
-      </section>
+        </div>
+      </aside>
 
-      <section class="frame" aria-labelledby="step7-title">
-        <h2 id="step7-title">Step 7: Human decision check</h2>
-        <p>Who should make the final decision?</p>
-        <div class="choice"><label><input type="radio" name="authority" value="model"> The model by itself</label></div>
-        <div class="choice"><label><input type="radio" name="authority" value="qualified"> A qualified person reviewing the evidence</label></div>
-        <div class="choice"><label><input type="radio" name="authority" value="anyone"> Anyone who uses the tool</label></div>
-        <button class="btn" id="checkAuthority">Check</button>
-        <p id="authorityFeedback" aria-live="polite"></p>
-        <p class="small muted">Optional backup: if needed, complete the simplified worksheet/reflection sheet listed in Canvas.</p>
-      </section>
+      <details id="stage-0" class="stage-panel" data-stage="0" open>
+        <summary class="stage-summary">
+          <span class="stage-summary-text">
+            <span class="stage-number" aria-hidden="true">0</span>
+            <span class="stage-title-wrap">
+              <span class="stage-kicker">Stage 0</span>
+              <span class="stage-title">Mission Briefing</span>
+            </span>
+          </span>
+          <span id="stage-status-0" class="status-badge current">Current</span>
+        </summary>
+        <div class="stage-body">
+          <section class="big-hero-card" aria-labelledby="stage0-heading">
+            <h2 id="stage0-heading" class="stage-heading" tabindex="-1">Your Mission: Rescue the Model</h2>
+            <p class="stage-intro">
+              A fictional company stopped using its AI system because it keeps making the same mistake.
+              Your job is to look at the training data, find the problem, fix it, and decide if the model is ready for more testing.
+            </p>
 
-      <p class="small muted">Last Updated: August 6, 2026</p>
+            <div class="key-value-grid">
+              <div class="kv-card">
+                <h3>Success Criteria</h3>
+                <ul class="list-compact">
+                  <li>Pick a career setting and use the scores to understand what the data means.</li>
+                  <li>Test Version 1 and find the pattern of errors — don't just look at one case.</li>
+                  <li>Pick three new training records that fix the specific weakness you found.</li>
+                  <li>Decide if the improved model should only move forward with a qualified person reviewing it.</li>
+                </ul>
+              </div>
+              <div class="warning-card" aria-labelledby="fiction-warning-heading">
+                <h3 id="fiction-warning-heading">Warning: Fictional data only</h3>
+                <p>
+                  Everything in this simulation is fake and for learning only. Do not type in real names, real workplaces, or real patient information.
+                </p>
+                <ul class="list-compact">
+                  <li>Use the built-in records only.</li>
+                  <li>Model output is a clue, not proof.</li>
+                  <li>A trained professional must review all evidence before any real decision is made.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="faux-note" aria-label="Mission note">
+              <strong>Mission note:</strong> The next stage is hidden until you finish this one. Completed stages stay open so you can look back at your work.
+            </div>
+
+            <div class="button-row">
+              <button id="beginMissionButton" class="btn" type="button">Begin Mission</button>
+            </div>
+          </section>
+        </div>
+      </details>
+
+      <details id="stage-1" class="stage-panel" data-stage="1" hidden>
+        <summary class="stage-summary">
+          <span class="stage-summary-text">
+            <span class="stage-number" aria-hidden="true">1</span>
+            <span class="stage-title-wrap">
+              <span class="stage-kicker">Stage 1</span>
+              <span class="stage-title">Choose a Career Mission</span>
+            </span>
+          </span>
+          <span id="stage-status-1" class="status-badge pending">Pending</span>
+        </summary>
+        <div class="stage-body">
+          <section aria-labelledby="stage1-heading">
+            <h2 id="stage1-heading" class="stage-heading" tabindex="-1">Choose a Career Mission</h2>
+            <p class="stage-intro">
+              Pick a fictional workplace setting. The model data is the same for all missions, but the names and story change to match your choice.
+            </p>
+
+            <ul class="mission-grid" role="list" aria-label="Career mission choices">
+              <li><button class="mission-card" id="mission-automotive" type="button" data-mission="automotive" aria-pressed="false">
+                <span class="mission-card-check" aria-hidden="true">✓</span>
+                <div>
+                  <div class="mission-card-icon" aria-hidden="true">🚗</div>
+                  <h3>Automotive Diagnostic Model</h3>
+                  <p>Look at fake car inspection records and decide if more testing is needed.</p>
+                </div>
+                <ul>
+                  <li>Focus: mechanical readiness</li>
+                  <li>Read the scores like a checklist</li>
+                </ul>
+              </button></li>
+
+              <li><button class="mission-card" id="mission-veterinary" type="button" data-mission="veterinary" aria-pressed="false">
+                <span class="mission-card-check" aria-hidden="true">✓</span>
+                <div>
+                  <div class="mission-card-icon" aria-hidden="true">🐾</div>
+                  <h3>Veterinary Review Model</h3>
+                  <p>Look at fake animal health records and decide if a case needs treatment follow-up.</p>
+                </div>
+                <ul>
+                  <li>Focus: health monitoring</li>
+                  <li>Read the scores as signs of health</li>
+                </ul>
+              </button></li>
+
+              <li><button class="mission-card" id="mission-construction" type="button" data-mission="construction" aria-pressed="false">
+                <span class="mission-card-check" aria-hidden="true">✓</span>
+                <div>
+                  <div class="mission-card-icon" aria-hidden="true">🏗️</div>
+                  <h3>Construction Safety Model</h3>
+                  <p>Look at fake construction site reports and decide if work is safe to continue.</p>
+                </div>
+                <ul>
+                  <li>Focus: job-site safety</li>
+                  <li>Read the scores as safety checks</li>
+                </ul>
+              </button></li>
+
+              <li><button class="mission-card" id="mission-cybersecurity" type="button" data-mission="cybersecurity" aria-pressed="false">
+                <span class="mission-card-check" aria-hidden="true">✓</span>
+                <div>
+                  <div class="mission-card-icon" aria-hidden="true">🛡️</div>
+                  <h3>Cybersecurity Alert Model</h3>
+                  <p>Look at fake security alerts and decide if a threat needs action.</p>
+                </div>
+                <ul>
+                  <li>Focus: sorting alerts</li>
+                  <li>Read the scores like clues about each alert</li>
+                </ul>
+              </button></li>
+
+              <li><button class="mission-card" id="mission-culinary" type="button" data-mission="culinary" aria-pressed="false">
+                <span class="mission-card-check" aria-hidden="true">✓</span>
+                <div>
+                  <div class="mission-card-icon" aria-hidden="true">🍽️</div>
+                  <h3>Culinary Safety Model</h3>
+                  <p>Look at fake kitchen safety records and decide if service can start.</p>
+                </div>
+                <ul>
+                  <li>Focus: food safety readiness</li>
+                  <li>Read the scores as food safety checks</li>
+                </ul>
+              </button></li>
+            </ul>
+
+            <div id="missionSelectedBanner" class="mission-selected-banner" aria-live="polite">
+              No mission selected yet.
+            </div>
+
+            <div class="button-row">
+              <button id="continueMissionButton" class="btn" type="button" disabled>Continue Mission</button>
+            </div>
+          </section>
+        </div>
+      </details>
+
+      <details id="stage-2" class="stage-panel" data-stage="2" hidden>
+        <summary class="stage-summary">
+          <span class="stage-summary-text">
+            <span class="stage-number" aria-hidden="true">2</span>
+            <span class="stage-title-wrap">
+              <span class="stage-kicker">Stage 2</span>
+              <span class="stage-title">Investigate the Training Data</span>
+            </span>
+          </span>
+          <span id="stage-status-2" class="status-badge pending">Pending</span>
+        </summary>
+        <div class="stage-body">
+          <section aria-labelledby="stage2-heading">
+            <h2 id="stage2-heading" class="stage-heading" tabindex="-1">Investigate the Training Data</h2>
+            <p id="trainingIntro" class="stage-intro">
+              Look at the fake Version 1 training records. Each record has four scores and a final label.
+            </p>
+
+            <div class="glossary-card">
+              <h3>Quick glossary</h3>
+              <details class="help-tip">
+                <summary>Open the glossary for key terms</summary>
+                <div class="tip-box">
+                  <p><strong>Training data:</strong> the examples the model studies to learn how to make predictions.</p>
+                  <p><strong>Feature:</strong> one score the model looks at when judging a record.</p>
+                  <p><strong>Label:</strong> the correct answer attached to a record.</p>
+                  <p><strong>Borderline case:</strong> a record with middle scores that is hard to label correctly when the training data is missing similar examples.</p>
+                </div>
+              </details>
+            </div>
+
+            <div id="trainingTableArea" class="table-wrap" aria-live="polite"></div>
+
+            <div class="button-row">
+              <button id="continueToChallengeButton" class="btn" type="button">Continue to Challenge</button>
+            </div>
+          </section>
+        </div>
+      </details>
+
+      <details id="stage-3" class="stage-panel" data-stage="3" hidden>
+        <summary class="stage-summary">
+          <span class="stage-summary-text">
+            <span class="stage-number" aria-hidden="true">3</span>
+            <span class="stage-title-wrap">
+              <span class="stage-kicker">Stage 3</span>
+              <span class="stage-title">Challenge the Model</span>
+            </span>
+          </span>
+          <span id="stage-status-3" class="status-badge pending">Pending</span>
+        </summary>
+        <div class="stage-body">
+          <section aria-labelledby="stage3-heading">
+            <h2 id="stage3-heading" class="stage-heading" tabindex="-1">Challenge the Model</h2>
+            <p class="stage-intro">
+              Guess how the model would label each fake test record. Then see how the real Version 1 model actually did.
+            </p>
+
+            <div id="testTableArea" class="table-wrap" aria-live="polite"></div>
+
+            <div class="button-row">
+              <button id="checkVersion1Button" class="btn" type="button">Check Version 1</button>
+            </div>
+
+            <div id="stage3Feedback" class="feedback-box hidden" aria-live="polite"></div>
+            <div id="v1ResultArea" aria-live="polite"></div>
+
+            <div class="button-row">
+              <button id="continueToDiagnosisButton" class="btn hidden" type="button">Continue to Diagnosis</button>
+            </div>
+          </section>
+        </div>
+      </details>
+
+      <details id="stage-4" class="stage-panel" data-stage="4" hidden>
+        <summary class="stage-summary">
+          <span class="stage-summary-text">
+            <span class="stage-number" aria-hidden="true">4</span>
+            <span class="stage-title-wrap">
+              <span class="stage-kicker">Stage 4</span>
+              <span class="stage-title">Diagnose the Weak Spot</span>
+            </span>
+          </span>
+          <span id="stage-status-4" class="status-badge pending">Pending</span>
+        </summary>
+        <div class="stage-body">
+          <section aria-labelledby="stage4-heading">
+            <h2 id="stage4-heading" class="stage-heading" tabindex="-1">Diagnose the Weak Spot</h2>
+            <p class="stage-intro">
+              Look at the records Version 1 got wrong. What do they have in common?
+            </p>
+
+            <fieldset class="choice-group">
+              <legend class="sr-only">Diagnosis options</legend>
+              <div class="choice-card">
+                <label for="pattern-a">
+                  <input id="pattern-a" type="radio" name="pattern" value="a" />
+                  <span class="choice-title">A. It mostly misses borderline Needs Review cases.</span>
+                  <span class="choice-hint">Look for middle scores that are missing similar Needs Review examples in the training data.</span>
+                </label>
+              </div>
+              <div class="choice-card">
+                <label for="pattern-b">
+                  <input id="pattern-b" type="radio" name="pattern" value="b" />
+                  <span class="choice-title">B. It misses mostly very low-score Needs Review cases.</span>
+                  <span class="choice-hint">This would be true if the model failed on records with very low scores.</span>
+                </label>
+              </div>
+              <div class="choice-card">
+                <label for="pattern-c">
+                  <input id="pattern-c" type="radio" name="pattern" value="c" />
+                  <span class="choice-title">C. It misses mostly strong Ready cases.</span>
+                  <span class="choice-hint">This would be true if the model was too strict about labeling high-scoring records.</span>
+                </label>
+              </div>
+            </fieldset>
+
+            <div class="button-row">
+              <button id="checkDiagnosisButton" class="btn" type="button">Check Diagnosis</button>
+            </div>
+
+            <div id="diagnosisFeedback" class="feedback-box hidden" aria-live="polite"></div>
+
+            <div class="button-row">
+              <button id="continueToImprovementButton" class="btn hidden" type="button">Continue to Improvement</button>
+            </div>
+          </section>
+        </div>
+      </details>
+
+      <details id="stage-5" class="stage-panel" data-stage="5" hidden>
+        <summary class="stage-summary">
+          <span class="stage-summary-text">
+            <span class="stage-number" aria-hidden="true">5</span>
+            <span class="stage-title-wrap">
+              <span class="stage-kicker">Stage 5</span>
+              <span class="stage-title">Choose Three Rescue Records</span>
+            </span>
+          </span>
+          <span id="stage-status-5" class="status-badge pending">Pending</span>
+        </summary>
+        <div class="stage-body">
+          <section aria-labelledby="stage5-heading">
+            <h2 id="stage5-heading" class="stage-heading" tabindex="-1">Choose Three Rescue Records</h2>
+            <p class="stage-intro">
+              Add exactly three new fake training records. Don't pick random ones — pick records that fix the weakness you found.
+            </p>
+
+            <div id="rescueCounter" class="rescue-counter" aria-live="polite">Rescue slots filled: 0 of 3</div>
+
+            <div id="improvementGrid" class="grid-two" aria-live="polite"></div>
+
+            <section class="info-card" aria-labelledby="rationale-heading">
+              <h3 id="rationale-heading">Why are these the right rescue records?</h3>
+              <fieldset class="choice-group">
+                <legend class="sr-only">Rationale options</legend>
+                <div class="rationale-card">
+                  <label for="rationale-a">
+                    <input id="rationale-a" type="radio" name="rationale" value="borderline-review" />
+                    <span class="choice-title">They add more borderline Needs Review examples near the model's weak spot.</span>
+                  </label>
+                </div>
+                <div class="rationale-card">
+                  <label for="rationale-b">
+                    <input id="rationale-b" type="radio" name="rationale" value="extreme-only" />
+                    <span class="choice-title">They mostly add extreme scores because dramatic examples are what models learn from best.</span>
+                  </label>
+                </div>
+                <div class="rationale-card">
+                  <label for="rationale-c">
+                    <input id="rationale-c" type="radio" name="rationale" value="ready-balance" />
+                    <span class="choice-title">They add more strong Ready examples to make the model feel confident.</span>
+                  </label>
+                </div>
+                <div class="rationale-card">
+                  <label for="rationale-d">
+                    <input id="rationale-d" type="radio" name="rationale" value="unusual-patterns" />
+                    <span class="choice-title">They add unusual patterns because unexpected records always help models improve.</span>
+                  </label>
+                </div>
+              </fieldset>
+            </section>
+
+            <div class="button-row">
+              <button id="applyRescueRecordsButton" class="btn" type="button" disabled>Apply Rescue Records</button>
+            </div>
+
+            <div id="improvementFeedback" class="feedback-box hidden" aria-live="polite"></div>
+
+            <div class="button-row">
+              <button id="continueToRetestButton" class="btn hidden" type="button">Continue to Retest</button>
+            </div>
+          </section>
+        </div>
+      </details>
+
+      <details id="stage-6" class="stage-panel" data-stage="6" hidden>
+        <summary class="stage-summary">
+          <span class="stage-summary-text">
+            <span class="stage-number" aria-hidden="true">6</span>
+            <span class="stage-title-wrap">
+              <span class="stage-kicker">Stage 6</span>
+              <span class="stage-title">Retest the Model</span>
+            </span>
+          </span>
+          <span id="stage-status-6" class="status-badge pending">Pending</span>
+        </summary>
+        <div class="stage-body">
+          <section aria-labelledby="stage6-heading">
+            <h2 id="stage6-heading" class="stage-heading" tabindex="-1">Retest the Model</h2>
+            <p class="stage-intro">
+              Compare Version 1 and Version 2 on the same fake test records to see if your new records helped.
+            </p>
+
+            <div id="retestComparisonArea" aria-live="polite"></div>
+
+            <section class="info-card" aria-labelledby="perfection-heading">
+              <h3 id="perfection-heading">Did the model become perfect?</h3>
+              <fieldset class="choice-group">
+                <legend class="sr-only">Perfection question</legend>
+                <div class="inline-choice">
+                  <label for="perfect-yes">
+                    <input id="perfect-yes" type="radio" name="perfect" value="yes" />
+                    Yes, the model is now perfect.
+                  </label>
+                </div>
+                <div class="inline-choice">
+                  <label for="perfect-no">
+                    <input id="perfect-no" type="radio" name="perfect" value="no" />
+                    No, better results don't mean the model is perfect.
+                  </label>
+                </div>
+              </fieldset>
+            </section>
+
+            <div class="button-row">
+              <button id="checkRetestButton" class="btn" type="button">Check Retest Reflection</button>
+            </div>
+
+            <div id="retestFeedback" class="feedback-box hidden" aria-live="polite"></div>
+
+            <div class="button-row">
+              <button id="continueToHumanReviewButton" class="btn hidden" type="button">Continue to Human Review</button>
+            </div>
+          </section>
+        </div>
+      </details>
+
+      <details id="stage-7" class="stage-panel" data-stage="7" hidden>
+        <summary class="stage-summary">
+          <span class="stage-summary-text">
+            <span class="stage-number" aria-hidden="true">7</span>
+            <span class="stage-title-wrap">
+              <span class="stage-kicker">Stage 7</span>
+              <span class="stage-title">Approve or Pause the Model</span>
+            </span>
+          </span>
+          <span id="stage-status-7" class="status-badge pending">Pending</span>
+        </summary>
+        <div class="stage-body">
+          <section aria-labelledby="stage7-heading">
+            <h2 id="stage7-heading" class="stage-heading" tabindex="-1">Approve or Pause the Model</h2>
+            <p class="stage-intro">
+              Decide what should happen next. Even after improving, this fictional model still needs a person to check its work.
+            </p>
+
+            <fieldset class="choice-group">
+              <legend class="sr-only">Oversight decision choices</legend>
+              <div class="choice-card">
+                <label for="authority-qualified">
+                  <input id="authority-qualified" type="radio" name="authority" value="qualified" />
+                  <span class="choice-title">Be approved for limited additional testing with human review.</span>
+                </label>
+              </div>
+              <div class="choice-card">
+                <label for="authority-model-only">
+                  <input id="authority-model-only" type="radio" name="authority" value="model-only" />
+                  <span class="choice-title">Be used to make final decisions on its own.</span>
+                </label>
+              </div>
+              <div class="choice-card">
+                <label for="authority-deploy">
+                  <input id="authority-deploy" type="radio" name="authority" value="deploy-now" />
+                  <span class="choice-title">Be put into use without more testing.</span>
+                </label>
+              </div>
+              <div class="choice-card">
+                <label for="authority-replace">
+                  <input id="authority-replace" type="radio" name="authority" value="replace-professionals" />
+                  <span class="choice-title">Replace qualified workplace professionals.</span>
+                </label>
+              </div>
+            </fieldset>
+
+            <div class="button-row">
+              <button id="checkDecisionButton" class="btn" type="button">Check Decision</button>
+            </div>
+
+            <div id="authorityFeedback" class="feedback-box hidden" aria-live="polite"></div>
+
+            <div class="button-row">
+              <button id="continueToReportButton" class="btn hidden" type="button">Continue to Report</button>
+            </div>
+          </section>
+        </div>
+      </details>
+
+      <details id="stage-8" class="stage-panel" data-stage="8" hidden>
+        <summary class="stage-summary">
+          <span class="stage-summary-text">
+            <span class="stage-number" aria-hidden="true">8</span>
+            <span class="stage-title-wrap">
+              <span class="stage-kicker">Stage 8</span>
+              <span class="stage-title">Complete Your Rescue Report</span>
+            </span>
+          </span>
+          <span id="stage-status-8" class="status-badge pending">Pending</span>
+        </summary>
+        <div class="stage-body">
+          <section aria-labelledby="stage8-heading">
+            <h2 id="stage8-heading" class="stage-heading" tabindex="-1">Complete Your Rescue Report</h2>
+            <p class="stage-intro">
+              Summarize what you learned, what got better, and why a person still needs to check the model's work.
+            </p>
+
+            <div class="report-card" aria-labelledby="report-complete-heading">
+              <div class="summary-inline">
+                <span class="achievement-badge"><span aria-hidden="true">🏁</span> Achievement unlocked</span>
+                <span id="achievementLabel" class="status-badge current">Mission in progress</span>
+              </div>
+              <h3 id="report-complete-heading">Model Rescue Complete</h3>
+              <p>
+                You looked into the fake Version 1 model, found its weakness, tested the updated version,
+                and made a decision based on the evidence.
+              </p>
+            </div>
+
+            <div class="report-summary-grid">
+              <div class="summary-card good">
+                <h3>Mission summary</h3>
+                <div id="reportSummaryArea" class="table-wrap"></div>
+              </div>
+              <div class="summary-card">
+                <h3>Achievement</h3>
+                <p id="achievementText">
+                  Finish the rescue steps to unlock your final mission label.
+                </p>
+                <p class="small-muted">
+                  Your achievement shows how well you found the weak spot, picked the right rescue records,
+                  and applied the human review rule.
+                </p>
+              </div>
+            </div>
+
+            <section class="info-card" aria-labelledby="reflection-heading">
+              <h3 id="reflection-heading">Fill in the blanks</h3>
+              <div class="form-grid">
+                <div class="field-card">
+                  <label for="reflectionWeakSpot">I tested the fictional model and found that it struggled when</label>
+                  <select id="reflectionWeakSpot">
+                    <option value="">Select an explanation...</option>
+                    <option value="records had middle-range scores and looked like borderline Needs Review cases">records had middle-range scores and looked like borderline Needs Review cases</option>
+                    <option value="the training data did not include enough examples near the decision boundary">the training data didn't have enough examples near the dividing line between labels</option>
+                    <option value="it had to judge cases that looked similar to both labels">it had to judge cases that looked similar to both labels</option>
+                  </select>
+                </div>
+
+                <div class="field-card">
+                  <label for="reflectionRecords">I selected new training records that</label>
+                  <select id="reflectionRecords">
+                    <option value="">Select a reason...</option>
+                    <option value="added more borderline Needs Review examples near the weak spot">added more borderline Needs Review examples near the weak spot</option>
+                    <option value="gave the model examples that matched the cases it kept missing">gave the model examples that matched the cases it kept missing</option>
+                    <option value="improved coverage of middle-range Needs Review records">added more middle-range Needs Review records to fill the gap</option>
+                  </select>
+                </div>
+
+                <div class="field-card">
+                  <label for="reflectionPerformance">Version 2 performed</label>
+                  <select id="reflectionPerformance">
+                    <option value="">Select one...</option>
+                    <option value="better">better</option>
+                    <option value="worse">worse</option>
+                    <option value="the same">the same</option>
+                  </select>
+                </div>
+
+                <div class="field-card">
+                  <label for="reflectionOversight">A qualified person should make the final decision because</label>
+                  <textarea id="reflectionOversight" placeholder="Explain why a person still needs to review the model even after it gets better."></textarea>
+                </div>
+              </div>
+
+              <div class="report-preview" aria-live="polite">
+                <h4>Rescue report preview</h4>
+                <p id="reportPreviewText">Complete the reflection fields to generate your final report paragraph.</p>
+              </div>
+
+              <div class="button-row">
+                <button id="copyReportButton" class="btn" type="button">Copy My Rescue Report</button>
+              </div>
+              <div id="copyReportStatus" class="feedback-box hidden" aria-live="polite"></div>
+            </section>
+          </section>
+        </div>
+      </details>
+
+      <p class="touch-note">Last updated: August 6, 2026</p>
     </div>
   </main>
 
@@ -169,6 +1819,19 @@
       </div>
     </div>
   </footer>
+
+  <dialog id="restartDialog" aria-labelledby="restartDialogHeading">
+    <div class="dialog-card">
+      <h2 id="restartDialogHeading">Restart this mission?</h2>
+      <p>
+        This will delete your mission choice, your answers, your rescue records, and your report text saved in this browser.
+      </p>
+      <div class="button-row">
+        <button id="confirmRestartButton" class="btn btn-warning" type="button">Yes, restart mission</button>
+        <button id="cancelRestartButton" class="btn btn-secondary" type="button">Cancel</button>
+      </div>
+    </div>
+  </dialog>
 
   <script>
     (function () {
@@ -217,15 +1880,6 @@
         { id: 'I8', f: [4, 8, 4, 8], y: 'Ready', note: 'Unusual pattern Ready case' }
       ];
 
-      var scenarioByVersion = {
-        'Version 1 — Agriscience / Health Science / Forensic Science': 'Scenario focus: case and evidence review decisions.',
-        'Version 2 — Automotive / Aviation / Mechatronics': 'Scenario focus: equipment inspection decisions.',
-        'Version 3 — Construction Trades / Welding': 'Scenario focus: worksite readiness decisions.',
-        'Version 4 — Computer Science / Marketing Graphic Design': 'Scenario focus: digital project review decisions.',
-        'Version 5 — Education / Public Safety / US Army JROTC': 'Scenario focus: support and response decisions.',
-        'Version 6 — Cosmetology / Culinary': 'Scenario focus: client and service safety decisions.'
-      };
-
       function euclid(a, b) {
         var sum = 0;
         for (var i = 0; i < a.length; i++) {
@@ -244,44 +1898,6 @@
         var review = k - ready;
         if (ready === review) return d[0].y;
         return ready > review ? 'Ready' : 'Needs Review';
-      }
-
-      function renderTraining() {
-        var html = '<table><thead><tr><th>ID</th><th>F1</th><th>F2</th><th>F3</th><th>F4</th><th>Label</th></tr></thead><tbody>';
-        TRAIN_V1.forEach(function (r) {
-          html += '<tr><td>' + r.id + '</td><td>' + r.f[0] + '</td><td>' + r.f[1] + '</td><td>' + r.f[2] + '</td><td>' + r.f[3] + '</td><td>' + r.y + '</td></tr>';
-        });
-        html += '</tbody></table>';
-        document.getElementById('trainTable').innerHTML = html;
-      }
-
-      function renderTestArea() {
-        var html = '<table><thead><tr><th>ID</th><th>F1</th><th>F2</th><th>F3</th><th>F4</th><th>Your Prediction</th></tr></thead><tbody>';
-        TEST.forEach(function (r) {
-          html += '<tr><td>' + r.id + '</td><td>' + r.f[0] + '</td><td>' + r.f[1] + '</td><td>' + r.f[2] + '</td><td>' + r.f[3] + '</td>' +
-            '<td><label><input type="radio" name="pred-' + r.id + '" value="Ready"> Ready</label> ' +
-            '<label><input type="radio" name="pred-' + r.id + '" value="Needs Review"> Needs Review</label></td></tr>';
-        });
-        html += '</tbody></table>';
-        document.getElementById('testArea').innerHTML = html;
-      }
-
-      function renderPatternChoices() {
-        var html = '' +
-          '<div class="choice"><label><input type="radio" name="pattern" value="a"> It misses mostly borderline Needs Review cases.</label></div>' +
-          '<div class="choice"><label><input type="radio" name="pattern" value="b"> It misses mostly very low-score Needs Review cases.</label></div>' +
-          '<div class="choice"><label><input type="radio" name="pattern" value="c"> It misses mostly strong Ready cases.</label></div>';
-        document.getElementById('patternChoices').innerHTML = html;
-      }
-
-      function renderImprovementBank() {
-        var html = '<div class="grid2">';
-        IMPROVEMENTS.forEach(function (r) {
-          html += '<label class="frame" style="margin:0; padding:12px;"><input type="checkbox" name="imp" value="' + r.id + '"> ' +
-            '<strong>' + r.id + '</strong> — ' + r.note + '<br><span class="small muted">[' + r.f.join(', ') + '] → ' + r.y + '</span></label>';
-        });
-        html += '</div>';
-        document.getElementById('improvementBank').innerHTML = html;
       }
 
       function autoV1Predictions() {
@@ -311,100 +1927,1391 @@
         };
       }
 
-      document.getElementById('programSelect').addEventListener('change', function (e) {
-        document.getElementById('scenarioText').textContent = scenarioByVersion[e.target.value] || '';
-      });
+      var STORAGE_KEY = 'gll-model-rescue-simulation-redesign-v1';
+      var stageTitles = [
+        'Mission Briefing',
+        'Choose a Career Mission',
+        'Investigate the Training Data',
+        'Challenge the Model',
+        'Diagnose the Weak Spot',
+        'Choose Three Rescue Records',
+        'Retest the Model',
+        'Approve or Pause the Model',
+        'Complete Your Rescue Report'
+      ];
 
-      document.getElementById('gradeV1').addEventListener('click', function () {
-        var missing = TEST.some(function (r) {
-          return !document.querySelector('input[name="pred-' + r.id + '"]:checked');
+      var missionConfig = {
+        automotive: {
+          name: 'Automotive Diagnostic Model',
+          icon: '🚗',
+          description: 'Fake car inspection records for a review.',
+          featureLabels: ['Performance Score', 'Safety Check', 'Electrical Score', 'Frame Integrity']
+        },
+        veterinary: {
+          name: 'Veterinary Review Model',
+          icon: '🐾',
+          description: 'Fake animal health records for treatment follow-up.',
+          featureLabels: ['Vitals Score', 'Lab Results', 'Behavior Score', 'Treatment Response']
+        },
+        construction: {
+          name: 'Construction Safety Model',
+          icon: '🏗️',
+          description: 'Fake construction site records for a safety review.',
+          featureLabels: ['Safety Check', 'Materials Score', 'Equipment Score', 'Site Readiness']
+        },
+        cybersecurity: {
+          name: 'Cybersecurity Alert Model',
+          icon: '🛡️',
+          description: 'Fake security alert records for a review.',
+          featureLabels: ['Threat Score', 'Response Time', 'Patch Level', 'Alert Frequency']
+        },
+        culinary: {
+          name: 'Culinary Safety Model',
+          icon: '🍽️',
+          description: 'Fake kitchen safety records for service readiness.',
+          featureLabels: ['Temperature Score', 'Prep Score', 'Storage Score', 'Hygiene Check']
+        }
+      };
+
+      function createDefaultState() {
+        return {
+          started: false,
+          currentStage: 0,
+          completedStages: [],
+          selectedMission: '',
+          studentPredictions: {},
+          v1StudentScore: null,
+          v1ModelScore: null,
+          v1ModelPredictions: [],
+          diagnosisChoice: '',
+          diagnosisCorrect: false,
+          selectedImprovements: [],
+          rationaleChoice: '',
+          improvementApplied: false,
+          compare: null,
+          retestAnswer: '',
+          retestCorrect: false,
+          authorityChoice: '',
+          authorityCorrect: false,
+          reflections: {
+            weakSpot: '',
+            recordReason: '',
+            performance: '',
+            oversight: ''
+          }
+        };
+      }
+
+      function loadState() {
+        try {
+          var raw = window.localStorage.getItem(STORAGE_KEY);
+          if (!raw) {
+            return createDefaultState();
+          }
+          var parsed = JSON.parse(raw);
+          var base = createDefaultState();
+          return {
+            started: !!parsed.started,
+            currentStage: typeof parsed.currentStage === 'number' ? parsed.currentStage : base.currentStage,
+            completedStages: Array.isArray(parsed.completedStages) ? parsed.completedStages : base.completedStages,
+            selectedMission: typeof parsed.selectedMission === 'string' ? parsed.selectedMission : base.selectedMission,
+            studentPredictions: parsed.studentPredictions || base.studentPredictions,
+            v1StudentScore: typeof parsed.v1StudentScore === 'number' ? parsed.v1StudentScore : base.v1StudentScore,
+            v1ModelScore: typeof parsed.v1ModelScore === 'number' ? parsed.v1ModelScore : base.v1ModelScore,
+            v1ModelPredictions: Array.isArray(parsed.v1ModelPredictions) ? parsed.v1ModelPredictions : base.v1ModelPredictions,
+            diagnosisChoice: typeof parsed.diagnosisChoice === 'string' ? parsed.diagnosisChoice : base.diagnosisChoice,
+            diagnosisCorrect: !!parsed.diagnosisCorrect,
+            selectedImprovements: Array.isArray(parsed.selectedImprovements) ? parsed.selectedImprovements : base.selectedImprovements,
+            rationaleChoice: typeof parsed.rationaleChoice === 'string' ? parsed.rationaleChoice : base.rationaleChoice,
+            improvementApplied: !!parsed.improvementApplied,
+            compare: parsed.compare || base.compare,
+            retestAnswer: typeof parsed.retestAnswer === 'string' ? parsed.retestAnswer : base.retestAnswer,
+            retestCorrect: !!parsed.retestCorrect,
+            authorityChoice: typeof parsed.authorityChoice === 'string' ? parsed.authorityChoice : base.authorityChoice,
+            authorityCorrect: !!parsed.authorityCorrect,
+            reflections: {
+              weakSpot: parsed.reflections && typeof parsed.reflections.weakSpot === 'string' ? parsed.reflections.weakSpot : '',
+              recordReason: parsed.reflections && typeof parsed.reflections.recordReason === 'string' ? parsed.reflections.recordReason : '',
+              performance: parsed.reflections && typeof parsed.reflections.performance === 'string' ? parsed.reflections.performance : '',
+              oversight: parsed.reflections && typeof parsed.reflections.oversight === 'string' ? parsed.reflections.oversight : ''
+            }
+          };
+        } catch (error) {
+          return createDefaultState();
+        }
+      }
+
+      var state = loadState();
+
+      function saveState() {
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      }
+
+      function clearNode(node) {
+        while (node.firstChild) {
+          node.removeChild(node.firstChild);
+        }
+      }
+
+      function getMission() {
+        return missionConfig[state.selectedMission] || null;
+      }
+
+      function getFeatureLabels() {
+        var mission = getMission();
+        if (mission) {
+          return mission.featureLabels.slice();
+        }
+        return ['F1', 'F2', 'F3', 'F4'];
+      }
+
+      function hasCompletedStage(stageIndex) {
+        return state.completedStages.indexOf(stageIndex) >= 0;
+      }
+
+      function markStageComplete(stageIndex) {
+        if (!hasCompletedStage(stageIndex)) {
+          state.completedStages.push(stageIndex);
+          state.completedStages.sort(function (a, b) {
+            return a - b;
+          });
+        }
+      }
+
+      function announce(message, assertive) {
+        var target = document.getElementById(assertive ? 'global-live-assertive' : 'global-live');
+        target.textContent = '';
+        window.setTimeout(function () {
+          target.textContent = message;
+        }, 20);
+      }
+
+      function makePill(label) {
+        var span = document.createElement('span');
+        span.className = 'pill ' + (label === 'Ready' ? 'ready' : 'review');
+        span.textContent = label;
+        return span;
+      }
+
+      function makeStatusBadge(text, className) {
+        var span = document.createElement('span');
+        span.className = 'status-badge ' + className;
+        span.textContent = text;
+        return span;
+      }
+
+      function formatPercent(hit, total) {
+        return Math.round((hit / total) * 100);
+      }
+
+      function missionStatusText() {
+        if (!state.started) {
+          return 'Awaiting start';
+        }
+        if (!state.selectedMission) {
+          return 'Choose mission';
+        }
+        if (state.currentStage <= 2) {
+          return 'Investigating data';
+        }
+        if (state.currentStage === 3) {
+          return 'Testing Version 1';
+        }
+        if (state.currentStage === 4) {
+          return 'Diagnosing weak spot';
+        }
+        if (state.currentStage === 5) {
+          return 'Selecting rescue records';
+        }
+        if (state.currentStage === 6) {
+          return 'Retesting model';
+        }
+        if (state.currentStage === 7) {
+          return 'Making oversight decision';
+        }
+        if (state.currentStage >= 8) {
+          return hasCompletedStage(8) ? 'Mission complete' : 'Completing report';
+        }
+        return 'Mission active';
+      }
+
+      function setStageStatus(stageIndex, type, text) {
+        var badge = document.getElementById('stage-status-' + stageIndex);
+        if (!badge) {
+          return;
+        }
+        badge.className = 'status-badge ' + type;
+        badge.textContent = text;
+      }
+
+      function updateStagePanels() {
+        for (var i = 0; i <= 8; i++) {
+          var panel = document.getElementById('stage-' + i);
+          if (!panel) {
+            continue;
+          }
+
+          var shouldShow = i === 0 || hasCompletedStage(i) || i <= state.currentStage;
+          if (shouldShow) {
+            panel.hidden = false;
+          } else {
+            panel.hidden = true;
+          }
+
+          if (i === state.currentStage) {
+            panel.open = true;
+            setStageStatus(i, 'current', 'Current');
+          } else if (hasCompletedStage(i)) {
+            panel.open = false;
+            setStageStatus(i, 'complete', 'Completed');
+          } else {
+            panel.open = false;
+            setStageStatus(i, 'pending', 'Pending');
+          }
+        }
+      }
+
+      function updateUtilityVisibility() {
+        var utility = document.getElementById('missionUtility');
+        if (state.started) {
+          utility.classList.add('is-visible');
+        } else {
+          utility.classList.remove('is-visible');
+        }
+      }
+
+      function updateDashboard() {
+        var dashboard = document.getElementById('missionDashboard');
+        var showDashboard = hasCompletedStage(1);
+        if (showDashboard) {
+          dashboard.classList.add('is-visible');
+        } else {
+          dashboard.classList.remove('is-visible');
+        }
+
+        var mission = getMission();
+        var missionName = mission ? mission.name : 'Pending';
+        var progressSteps = Math.max(0, Math.min(state.currentStage, 8));
+        var progressPercent = Math.round((progressSteps / 8) * 100);
+        var v1Value = state.v1ModelScore === null ? 'Pending' : state.v1ModelScore + '/6 (' + formatPercent(state.v1ModelScore, 6) + '%)';
+        var v2Value = !state.compare ? 'Pending' : state.compare.v2Score + '/6 (' + formatPercent(state.compare.v2Score, 6) + '%)';
+        var stageLabel = stageTitles[state.currentStage] || stageTitles[0];
+
+        document.getElementById('dashboardMissionMeta').textContent = mission ? mission.description : 'Select a mission to begin tracking progress.';
+        document.getElementById('dashboardMissionName').textContent = missionName;
+        document.getElementById('dashboardCurrentStage').textContent = 'Current stage: ' + stageLabel;
+        document.getElementById('dashboardMissionStatus').className = 'status-badge ' + (hasCompletedStage(8) ? 'complete' : 'current');
+        document.getElementById('dashboardMissionStatus').textContent = hasCompletedStage(8) ? 'Complete' : 'Active';
+        document.getElementById('dashboardProgressLabel').textContent = 'Progress: ' + progressSteps + ' of 8 steps';
+        document.getElementById('dashboardProgressPercent').textContent = progressPercent + '%';
+        document.getElementById('dashboardProgressFill').style.width = progressPercent + '%';
+        document.getElementById('dashboardProgressFill').textContent = progressSteps + '/8';
+        var progressTrack = document.getElementById('dashboardProgressTrack');
+        if (progressTrack) {
+          progressTrack.setAttribute('aria-valuenow', String(progressSteps));
+        }
+        document.getElementById('dashboardV1').textContent = v1Value;
+        document.getElementById('dashboardV2').textContent = v2Value;
+        document.getElementById('dashboardRescues').textContent = state.selectedImprovements.length + ' of 3 selected';
+        document.getElementById('dashboardStatusText').textContent = missionStatusText();
+      }
+
+      function focusStage(stageIndex) {
+        var heading = document.querySelector('#stage-' + stageIndex + ' .stage-heading');
+        if (heading) {
+          heading.focus();
+        }
+      }
+
+      function advanceToStage(fromStage, toStage, message) {
+        markStageComplete(fromStage);
+        state.currentStage = toStage;
+        saveState();
+        updateStagePanels();
+        updateUtilityVisibility();
+        updateDashboard();
+        focusStage(toStage);
+        if (message) {
+          announce(message);
+        }
+      }
+
+      function buildTableCell(text) {
+        var td = document.createElement('td');
+        td.textContent = text;
+        return td;
+      }
+
+      function renderTrainingTable() {
+        var area = document.getElementById('trainingTableArea');
+        clearNode(area);
+
+        var mission = getMission();
+        var labels = getFeatureLabels();
+        var table = document.createElement('table');
+        var caption = document.createElement('caption');
+        caption.textContent = (mission ? mission.name : 'Mission') + ' — Version 1 training data';
+        table.appendChild(caption);
+
+        var thead = document.createElement('thead');
+        var headRow = document.createElement('tr');
+        ['ID', labels[0], labels[1], labels[2], labels[3], 'Label'].forEach(function (label) {
+          var th = document.createElement('th');
+          th.scope = 'col';
+          th.textContent = label;
+          headRow.appendChild(th);
+        });
+        thead.appendChild(headRow);
+        table.appendChild(thead);
+
+        var tbody = document.createElement('tbody');
+        TRAIN_V1.forEach(function (record) {
+          var tr = document.createElement('tr');
+          tr.appendChild(buildTableCell(record.id));
+          tr.appendChild(buildTableCell(String(record.f[0])));
+          tr.appendChild(buildTableCell(String(record.f[1])));
+          tr.appendChild(buildTableCell(String(record.f[2])));
+          tr.appendChild(buildTableCell(String(record.f[3])));
+          var labelCell = document.createElement('td');
+          labelCell.appendChild(makePill(record.y));
+          tr.appendChild(labelCell);
+          tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+        area.appendChild(table);
+
+        var intro = document.getElementById('trainingIntro');
+        if (mission) {
+          intro.textContent = 'Review the fictional Version 1 training records for the ' + mission.name + '. Each record shows four feature scores and a label.';
+        }
+      }
+
+      function setPredictionValue(recordId, value) {
+        state.studentPredictions[recordId] = value;
+        saveState();
+      }
+
+      function renderTestTable() {
+        var area = document.getElementById('testTableArea');
+        clearNode(area);
+        var labels = getFeatureLabels();
+        var mission = getMission();
+
+        var table = document.createElement('table');
+        var caption = document.createElement('caption');
+        caption.textContent = (mission ? mission.name : 'Mission') + ' — test records for your Version 1 challenge';
+        table.appendChild(caption);
+
+        var thead = document.createElement('thead');
+        var headRow = document.createElement('tr');
+        ['ID', labels[0], labels[1], labels[2], labels[3], 'Your prediction'].forEach(function (label) {
+          var th = document.createElement('th');
+          th.scope = 'col';
+          th.textContent = label;
+          headRow.appendChild(th);
+        });
+        thead.appendChild(headRow);
+        table.appendChild(thead);
+
+        var tbody = document.createElement('tbody');
+        TEST.forEach(function (record) {
+          var tr = document.createElement('tr');
+          tr.appendChild(buildTableCell(record.id));
+          tr.appendChild(buildTableCell(String(record.f[0])));
+          tr.appendChild(buildTableCell(String(record.f[1])));
+          tr.appendChild(buildTableCell(String(record.f[2])));
+          tr.appendChild(buildTableCell(String(record.f[3])));
+
+          var choiceCell = document.createElement('td');
+          var group = document.createElement('div');
+          group.className = 'choice-group';
+          group.style.marginTop = '0';
+
+          ['Ready', 'Needs Review'].forEach(function (option) {
+            var id = 'pred-' + record.id + '-' + option.replace(/\s+/g, '-').toLowerCase();
+            var wrapper = document.createElement('div');
+            wrapper.className = 'inline-choice';
+            var label = document.createElement('label');
+            label.setAttribute('for', id);
+            var input = document.createElement('input');
+            input.type = 'radio';
+            input.name = 'pred-' + record.id;
+            input.id = id;
+            input.value = option;
+            if (state.studentPredictions[record.id] === option) {
+              input.checked = true;
+            }
+            input.addEventListener('change', function () {
+              setPredictionValue(record.id, option);
+            });
+            label.appendChild(input);
+            label.appendChild(document.createTextNode(option));
+            wrapper.appendChild(label);
+            group.appendChild(wrapper);
+          });
+
+          choiceCell.appendChild(group);
+          tr.appendChild(choiceCell);
+          tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+        area.appendChild(table);
+      }
+
+      function getStudentPredictionArray() {
+        return TEST.map(function (record) {
+          return state.studentPredictions[record.id] || '';
+        });
+      }
+
+      function showFeedback(elementId, message, type) {
+        var box = document.getElementById(elementId);
+        box.className = 'feedback-box ' + type;
+        box.textContent = message;
+        box.classList.remove('hidden');
+      }
+
+      function renderV1ResultCard() {
+        var area = document.getElementById('v1ResultArea');
+        clearNode(area);
+
+        if (state.v1ModelScore === null) {
+          return;
+        }
+
+        var total = TEST.length;
+        var accuracyPercent = formatPercent(state.v1ModelScore, total);
+        var errorCount = total - state.v1ModelScore;
+        var missedIds = TEST.filter(function (r, i) {
+          return state.v1ModelPredictions[i] !== r.y;
+        }).map(function (r) { return r.id; });
+        var healthy = state.v1ModelScore >= 5;
+        var resultCard = document.createElement('section');
+        resultCard.className = 'result-card ' + (healthy ? 'good' : 'bad');
+        resultCard.setAttribute('aria-labelledby', 'v1-result-heading');
+
+        var summaryLine = document.createElement('div');
+        summaryLine.className = 'summary-inline';
+        summaryLine.appendChild(makeStatusBadge(healthy ? 'Performing Well' : 'Needs Rescue', healthy ? 'complete' : 'error'));
+        var trialBadge = makeStatusBadge('Your trial score: ' + state.v1StudentScore + '/6', 'current');
+        summaryLine.appendChild(trialBadge);
+        resultCard.appendChild(summaryLine);
+
+        var heading = document.createElement('h3');
+        heading.id = 'v1-result-heading';
+        heading.textContent = 'Version 1 result card';
+        resultCard.appendChild(heading);
+
+        var accuracy = document.createElement('p');
+        accuracy.className = 'accuracy-callout';
+        accuracy.textContent = 'Accuracy: ' + state.v1ModelScore + '/6 (' + accuracyPercent + '%)';
+        resultCard.appendChild(accuracy);
+
+        var resultGrid = document.createElement('div');
+        resultGrid.className = 'result-grid';
+
+        var stat1 = document.createElement('div');
+        stat1.className = 'result-stat';
+        var stat1Label = document.createElement('span');
+        stat1Label.className = 'result-stat-label';
+        stat1Label.textContent = 'Correct count';
+        var stat1Value = document.createElement('p');
+        stat1Value.className = 'result-stat-value';
+        stat1Value.textContent = String(state.v1ModelScore);
+        stat1.appendChild(stat1Label);
+        stat1.appendChild(stat1Value);
+
+        var stat2 = document.createElement('div');
+        stat2.className = 'result-stat';
+        var stat2Label = document.createElement('span');
+        stat2Label.className = 'result-stat-label';
+        stat2Label.textContent = 'Error count';
+        var stat2Value = document.createElement('p');
+        stat2Value.className = 'result-stat-value';
+        stat2Value.textContent = String(errorCount);
+        stat2.appendChild(stat2Label);
+        stat2.appendChild(stat2Value);
+
+        var stat3 = document.createElement('div');
+        stat3.className = 'result-stat';
+        var stat3Label = document.createElement('span');
+        stat3Label.className = 'result-stat-label';
+        stat3Label.textContent = 'Model status';
+        var stat3Value = document.createElement('p');
+        stat3Value.className = 'result-stat-value';
+        stat3Value.textContent = healthy ? 'Performing Well' : 'Needs Rescue';
+        stat3.appendChild(stat3Label);
+        stat3.appendChild(stat3Value);
+
+        var stat4 = document.createElement('div');
+        stat4.className = 'result-stat';
+        var stat4Label = document.createElement('span');
+        stat4Label.className = 'result-stat-label';
+        stat4Label.textContent = 'Missed cases';
+        var stat4Value = document.createElement('p');
+        stat4Value.className = 'result-stat-value';
+        stat4Value.textContent = missedIds.length > 0 ? missedIds.join(', ') : 'None';
+        stat4.appendChild(stat4Label);
+        stat4.appendChild(stat4Value);
+
+        resultGrid.appendChild(stat1);
+        resultGrid.appendChild(stat2);
+        resultGrid.appendChild(stat3);
+        resultGrid.appendChild(stat4);
+        resultCard.appendChild(resultGrid);
+
+        var meterWrap = document.createElement('div');
+        meterWrap.style.marginTop = '1rem';
+        var meterLabel = document.createElement('p');
+        meterLabel.className = 'small-muted';
+        meterLabel.textContent = 'Model health meter: ' + state.v1ModelScore + ' of 6 correct';
+        meterWrap.appendChild(meterLabel);
+        var meterTrack = document.createElement('div');
+        meterTrack.className = 'meter-track';
+        meterTrack.setAttribute('role', 'img');
+        meterTrack.setAttribute('aria-label', 'Model health meter showing ' + state.v1ModelScore + ' of 6 correct');
+        var meterFill = document.createElement('div');
+        meterFill.className = 'meter-fill ' + (healthy ? 'good' : 'bad');
+        meterFill.style.width = accuracyPercent + '%';
+        meterFill.textContent = state.v1ModelScore + ' / 6';
+        meterTrack.appendChild(meterFill);
+        meterWrap.appendChild(meterTrack);
+        resultCard.appendChild(meterWrap);
+
+        var note = document.createElement('p');
+        note.className = 'small-muted';
+        note.textContent = 'Your predictions were scored, but the table below shows what Version 1 actually predicted for each test case.';
+        resultCard.appendChild(note);
+
+        var tableWrap = document.createElement('div');
+        tableWrap.className = 'table-wrap';
+        var table = document.createElement('table');
+        var caption = document.createElement('caption');
+        caption.textContent = 'Version 1 case-by-case results';
+        table.appendChild(caption);
+        var thead = document.createElement('thead');
+        var headRow = document.createElement('tr');
+        ['Case', 'True label', 'Your prediction', 'Version 1 prediction', 'Result'].forEach(function (label) {
+          var th = document.createElement('th');
+          th.scope = 'col';
+          th.textContent = label;
+          headRow.appendChild(th);
+        });
+        thead.appendChild(headRow);
+        table.appendChild(thead);
+        var tbody = document.createElement('tbody');
+
+        TEST.forEach(function (record, index) {
+          var modelLabel = state.v1ModelPredictions[index];
+          var userLabel = state.studentPredictions[record.id] || 'Not answered';
+          var isCorrect = modelLabel === record.y;
+          var tr = document.createElement('tr');
+          tr.appendChild(buildTableCell(record.id));
+
+          var trueCell = document.createElement('td');
+          trueCell.appendChild(makePill(record.y));
+          tr.appendChild(trueCell);
+
+          var userCell = document.createElement('td');
+          userCell.textContent = userLabel;
+          tr.appendChild(userCell);
+
+          var modelCell = document.createElement('td');
+          modelCell.textContent = modelLabel;
+          tr.appendChild(modelCell);
+
+          var resultCell = document.createElement('td');
+          var resultSpan = document.createElement('span');
+          resultSpan.className = 'icon-text';
+          resultSpan.textContent = isCorrect ? '✓ Correct' : '✗ Incorrect';
+          resultCell.appendChild(resultSpan);
+          tr.appendChild(resultCell);
+          tbody.appendChild(tr);
+        });
+
+        table.appendChild(tbody);
+        tableWrap.appendChild(table);
+        resultCard.appendChild(tableWrap);
+
+        area.appendChild(resultCard);
+      }
+
+      function renderMissionSelection() {
+        var buttons = document.querySelectorAll('.mission-card');
+        var banner = document.getElementById('missionSelectedBanner');
+        buttons.forEach(function (button) {
+          var selected = button.getAttribute('data-mission') === state.selectedMission;
+          button.classList.toggle('is-selected', selected);
+          button.setAttribute('aria-pressed', selected ? 'true' : 'false');
+        });
+
+        if (state.selectedMission && missionConfig[state.selectedMission]) {
+          banner.textContent = 'Selected mission: ' + missionConfig[state.selectedMission].name + '. Continue when you are ready.';
+        } else {
+          banner.textContent = 'No mission selected yet.';
+        }
+
+        document.getElementById('continueMissionButton').disabled = !state.selectedMission;
+      }
+
+      function renderImprovementGrid() {
+        var grid = document.getElementById('improvementGrid');
+        clearNode(grid);
+        var labels = getFeatureLabels();
+
+        IMPROVEMENTS.forEach(function (record) {
+          var wrapper = document.createElement('div');
+          wrapper.className = 'rescue-card' + (state.selectedImprovements.indexOf(record.id) >= 0 ? ' is-selected' : '');
+
+          var label = document.createElement('label');
+          label.setAttribute('for', 'imp-' + record.id);
+
+          var checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.id = 'imp-' + record.id;
+          checkbox.name = 'imp';
+          checkbox.value = record.id;
+          checkbox.checked = state.selectedImprovements.indexOf(record.id) >= 0;
+          checkbox.disabled = !checkbox.checked && state.selectedImprovements.length >= 3;
+          checkbox.addEventListener('change', function () {
+            if (checkbox.checked) {
+              if (state.selectedImprovements.indexOf(record.id) < 0) {
+                state.selectedImprovements.push(record.id);
+              }
+            } else {
+              state.selectedImprovements = state.selectedImprovements.filter(function (id) {
+                return id !== record.id;
+              });
+            }
+            saveState();
+            renderImprovementGrid();
+            updateRescueCounter();
+            updateApplyButton();
+            updateDashboard();
+          });
+
+          var idRow = document.createElement('div');
+          idRow.className = 'rescue-id-row';
+          var idText = document.createElement('span');
+          idText.className = 'rescue-id';
+          idText.textContent = record.id;
+          idRow.appendChild(idText);
+          idRow.appendChild(makePill(record.y));
+
+          var featureList = document.createElement('ul');
+          featureList.className = 'feature-list';
+          for (var i = 0; i < labels.length; i++) {
+            var li = document.createElement('li');
+            li.textContent = labels[i] + ': ' + record.f[i];
+            featureList.appendChild(li);
+          }
+
+          var note = document.createElement('p');
+          note.className = 'rescue-note';
+          note.textContent = 'Clue: ' + record.note;
+
+          label.appendChild(checkbox);
+          label.appendChild(idRow);
+          label.appendChild(featureList);
+          label.appendChild(note);
+          wrapper.appendChild(label);
+          grid.appendChild(wrapper);
+        });
+      }
+
+      function updateRescueCounter() {
+        document.getElementById('rescueCounter').textContent = 'Rescue slots filled: ' + state.selectedImprovements.length + ' of 3';
+      }
+
+      function updateApplyButton() {
+        document.getElementById('applyRescueRecordsButton').disabled = !(state.selectedImprovements.length === 3 && !!state.rationaleChoice);
+      }
+
+      function renderRationaleSelection() {
+        var saved = state.rationaleChoice;
+        var options = document.querySelectorAll('input[name="rationale"]');
+        options.forEach(function (option) {
+          option.checked = option.value === saved;
+        });
+      }
+
+      function renderPatternSelection() {
+        var saved = state.diagnosisChoice;
+        var options = document.querySelectorAll('input[name="pattern"]');
+        options.forEach(function (option) {
+          option.checked = option.value === saved;
+        });
+      }
+
+      function renderRetestSelection() {
+        var saved = state.retestAnswer;
+        var options = document.querySelectorAll('input[name="perfect"]');
+        options.forEach(function (option) {
+          option.checked = option.value === saved;
+        });
+      }
+
+      function renderAuthoritySelection() {
+        var saved = state.authorityChoice;
+        var options = document.querySelectorAll('input[name="authority"]');
+        options.forEach(function (option) {
+          option.checked = option.value === saved;
+        });
+      }
+
+      function renderDiagnosisFeedback() {
+        if (!state.diagnosisChoice) {
+          return;
+        }
+        if (state.diagnosisCorrect) {
+          showFeedback(
+            'diagnosisFeedback',
+            'Good diagnosis. Most missed records have middle-range scores. The training data has very few examples like them.',
+            'good'
+          );
+          document.getElementById('continueToImprovementButton').classList.remove('hidden');
+        } else {
+          showFeedback(
+            'diagnosisFeedback',
+            'Look again. Focus on only the records the model missed. What do those scores have in common?',
+            'bad'
+          );
+        }
+      }
+
+      function renderImprovementFeedback() {
+        if (!state.improvementApplied || !state.compare) {
+          return;
+        }
+        var bestSet = ['I2', 'I5', 'I7'];
+        var overlap = state.selectedImprovements.filter(function (pick) {
+          return bestSet.indexOf(pick) >= 0;
+        }).length;
+        if (overlap === 3) {
+          showFeedback(
+            'improvementFeedback',
+            'Great choice! All three records target the exact weak spot — borderline Needs Review cases.',
+            'good'
+          );
+        } else if (overlap >= 2) {
+          showFeedback(
+            'improvementFeedback',
+            'Good choice. Your picks help fill in the weak area.',
+            'good'
+          );
+        } else {
+          showFeedback(
+            'improvementFeedback',
+            'These picks may not fix the main weakness. You can still compare results and try again, but they don\'t match the best rescue set.',
+            'warning'
+          );
+        }
+        document.getElementById('continueToRetestButton').classList.remove('hidden');
+      }
+
+      function renderRetestComparison() {
+        var area = document.getElementById('retestComparisonArea');
+        clearNode(area);
+        if (!state.compare) {
+          return;
+        }
+
+        var v1Accuracy = formatPercent(state.compare.v1Score, TEST.length);
+        var v2Accuracy = formatPercent(state.compare.v2Score, TEST.length);
+        var delta = v2Accuracy - v1Accuracy;
+        var section = document.createElement('section');
+        section.className = 'result-card ' + (delta >= 0 ? 'good' : 'bad');
+        section.setAttribute('aria-labelledby', 'retest-heading-card');
+
+        var heading = document.createElement('h3');
+        heading.id = 'retest-heading-card';
+        heading.textContent = 'Before-and-after comparison';
+        section.appendChild(heading);
+
+        var intro = document.createElement('p');
+        intro.textContent = 'Version 2 uses your three added rescue records. Compare the baseline against the updated result below.';
+        section.appendChild(intro);
+
+        var tableWrap = document.createElement('div');
+        tableWrap.className = 'table-wrap';
+        var table = document.createElement('table');
+        var caption = document.createElement('caption');
+        caption.textContent = 'Version comparison table';
+        table.appendChild(caption);
+
+        var thead = document.createElement('thead');
+        var headRow = document.createElement('tr');
+        ['Version', 'Correct', 'Incorrect', 'Accuracy', 'Model Status'].forEach(function (label) {
+          var th = document.createElement('th');
+          th.scope = 'col';
+          th.textContent = label;
+          headRow.appendChild(th);
+        });
+        thead.appendChild(headRow);
+        table.appendChild(thead);
+
+        var tbody = document.createElement('tbody');
+        var rows = [
+          {
+            version: 'Version 1',
+            correct: state.compare.v1Score,
+            incorrect: TEST.length - state.compare.v1Score,
+            accuracy: v1Accuracy + '%',
+            status: state.compare.v1Score < 5 ? 'Needs Rescue' : 'Performing Well'
+          },
+          {
+            version: 'Version 2',
+            correct: state.compare.v2Score,
+            incorrect: TEST.length - state.compare.v2Score,
+            accuracy: v2Accuracy + '%',
+            status: state.compare.v2Score < 5 ? 'Needs Rescue' : 'Performing Well'
+          }
+        ];
+
+        rows.forEach(function (row) {
+          var tr = document.createElement('tr');
+          tr.appendChild(buildTableCell(row.version));
+          tr.appendChild(buildTableCell(String(row.correct)));
+          tr.appendChild(buildTableCell(String(row.incorrect)));
+          tr.appendChild(buildTableCell(row.accuracy));
+          tr.appendChild(buildTableCell(row.status));
+          tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+        tableWrap.appendChild(table);
+        section.appendChild(tableWrap);
+
+        var deltaCard = document.createElement('div');
+        deltaCard.className = 'delta-card' + (delta < 0 ? ' negative' : '');
+        deltaCard.textContent = 'Change: ' + (delta >= 0 ? '+' : '') + delta + ' percentage points';
+        section.appendChild(deltaCard);
+
+        var selectedNote = document.createElement('p');
+        selectedNote.className = 'small-muted';
+        selectedNote.textContent = 'Rescue records used: ' + state.selectedImprovements.join(', ');
+        section.appendChild(selectedNote);
+
+        area.appendChild(section);
+      }
+
+      function renderRetestFeedback() {
+        if (!state.retestAnswer) {
+          return;
+        }
+        if (state.retestCorrect) {
+          showFeedback(
+            'retestFeedback',
+            'Correct. Even if the model improves, it is not perfect. A person still needs to review results because one test doesn\'t remove all risk.',
+            'good'
+          );
+          document.getElementById('continueToHumanReviewButton').classList.remove('hidden');
+        } else {
+          showFeedback(
+            'retestFeedback',
+            'Not quite. The model got better, but that doesn\'t make it perfect. Look at the comparison table again and remember that a person must still review decisions.',
+            'bad'
+          );
+        }
+      }
+
+      function renderAuthorityFeedback() {
+        if (!state.authorityChoice) {
+          return;
+        }
+        if (state.authorityCorrect) {
+          showFeedback(
+            'authorityFeedback',
+            'Correct. The fictional model should only be used for more testing with a person reviewing it. A trained professional must check the evidence and make the final call.',
+            'good'
+          );
+          document.getElementById('continueToReportButton').classList.remove('hidden');
+          return;
+        }
+
+        var message = '';
+        if (state.authorityChoice === 'model-only') {
+          message = 'Not correct. The model should not make final decisions on its own.';
+        } else if (state.authorityChoice === 'deploy-now') {
+          message = 'Not correct. Getting better on a fake test is not enough to put it into real use without more testing.';
+        } else if (state.authorityChoice === 'replace-professionals') {
+          message = 'Not correct. Models can support qualified professionals, but they should not replace them.';
+        }
+        showFeedback('authorityFeedback', message, 'bad');
+      }
+
+      function getOversightDecisionText() {
+        if (state.authorityCorrect) {
+          return 'Approved for limited additional testing with human review';
+        }
+        return 'Decision pending';
+      }
+
+      function getDiagnosisSummaryText() {
+        return state.diagnosisCorrect ? 'Version 1 didn\'t have enough borderline Needs Review examples.' : 'Diagnosis pending';
+      }
+
+      function getImprovementText() {
+        if (!state.compare) {
+          return 'Pending';
+        }
+        var delta = formatPercent(state.compare.v2Score, TEST.length) - formatPercent(state.compare.v1Score, TEST.length);
+        return (delta >= 0 ? '+' : '') + delta + ' percentage points';
+      }
+
+      function getPerformanceWord() {
+        if (state.compare) {
+          if (state.compare.v2Score > state.compare.v1Score) {
+            return 'better';
+          }
+          if (state.compare.v2Score < state.compare.v1Score) {
+            return 'worse';
+          }
+          return 'the same';
+        }
+        return '';
+      }
+
+      function getAchievementData() {
+        var overlap = state.selectedImprovements.filter(function (pick) {
+          return ['I2', 'I5', 'I7'].indexOf(pick) >= 0;
+        }).length;
+        var allCoreCorrect = state.diagnosisCorrect && state.retestCorrect && state.authorityCorrect;
+        if (state.compare && state.compare.v2Score === 6 && overlap === 3 && allCoreCorrect) {
+          return {
+            label: 'Rescue Architect',
+            text: 'You found the main weak spot, picked the best rescue records, and finished with a perfect Version 2 score and the right oversight decision.'
+          };
+        }
+        if (state.compare && state.compare.v2Score >= 5 && overlap >= 2 && allCoreCorrect) {
+          return {
+            label: 'Model Stabilizer',
+            text: 'You improved the model in the right direction and kept human review at the center of every decision.'
+          };
+        }
+        if (state.compare && state.compare.v2Score >= state.compare.v1Score) {
+          return {
+            label: 'Careful Analyst',
+            text: 'You finished the investigation, collected the evidence, and explained why a better score still needs a person in charge.'
+          };
+        }
+        return {
+          label: 'Mission Starter',
+          text: 'You finished the rescue steps. Go back to earlier stages to improve your diagnosis or swap out rescue records.'
+        };
+      }
+
+      function renderReportSummary() {
+        var area = document.getElementById('reportSummaryArea');
+        clearNode(area);
+        if (!state.compare) {
+          return;
+        }
+
+        var table = document.createElement('table');
+        table.className = 'summary-table';
+        var caption = document.createElement('caption');
+        caption.textContent = 'Rescue report summary';
+        table.appendChild(caption);
+
+        var tbody = document.createElement('tbody');
+        var rows = [
+          ['Diagnosis', getDiagnosisSummaryText()],
+          ['Records selected', state.selectedImprovements.join(', ') || 'Pending'],
+          ['Version 1 accuracy', state.compare.v1Score + '/6 (' + formatPercent(state.compare.v1Score, TEST.length) + '%)'],
+          ['Version 2 accuracy', state.compare.v2Score + '/6 (' + formatPercent(state.compare.v2Score, TEST.length) + '%)'],
+          ['Improvement', getImprovementText()],
+          ['Oversight decision', getOversightDecisionText()]
+        ];
+
+        rows.forEach(function (row) {
+          var tr = document.createElement('tr');
+          var th = document.createElement('th');
+          th.scope = 'row';
+          th.textContent = row[0];
+          var td = document.createElement('td');
+          td.textContent = row[1];
+          tr.appendChild(th);
+          tr.appendChild(td);
+          tbody.appendChild(tr);
+        });
+
+        table.appendChild(tbody);
+        area.appendChild(table);
+
+        var achievement = getAchievementData();
+        document.getElementById('achievementLabel').textContent = achievement.label;
+        document.getElementById('achievementText').textContent = achievement.text;
+      }
+
+      function renderReflectionFields() {
+        var performanceSelect = document.getElementById('reflectionPerformance');
+        var weakSpotSelect = document.getElementById('reflectionWeakSpot');
+        var recordsSelect = document.getElementById('reflectionRecords');
+        var oversightField = document.getElementById('reflectionOversight');
+
+        if (!state.reflections.performance && state.compare) {
+          state.reflections.performance = getPerformanceWord();
+          saveState();
+        }
+
+        weakSpotSelect.value = state.reflections.weakSpot;
+        recordsSelect.value = state.reflections.recordReason;
+        performanceSelect.value = state.reflections.performance;
+        oversightField.value = state.reflections.oversight;
+        updateReportPreview();
+      }
+
+      function buildReportText() {
+        var weakSpot = state.reflections.weakSpot;
+        var recordReason = state.reflections.recordReason;
+        var performance = state.reflections.performance;
+        var oversight = state.reflections.oversight.trim();
+
+        if (!weakSpot || !recordReason || !performance || !oversight) {
+          return '';
+        }
+
+        return 'I tested the fictional model and found that it struggled when ' + weakSpot + '. ' +
+          'I selected new training records that ' + recordReason + '. ' +
+          'Version 2 performed ' + (performance === 'the same' ? 'the same as' : performance + ' than') + ' Version 1. ' +
+          'A qualified person should make the final decision because ' + oversight + '.';
+      }
+
+      function updateReportPreview() {
+        var preview = document.getElementById('reportPreviewText');
+        var reportText = buildReportText();
+        if (reportText) {
+          preview.textContent = reportText;
+        } else {
+          preview.textContent = 'Complete the reflection fields to generate your final report paragraph.';
+        }
+      }
+
+      function resetState() {
+        state = createDefaultState();
+        window.localStorage.removeItem(STORAGE_KEY);
+
+        document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(function (input) {
+          input.checked = false;
+        });
+        document.querySelectorAll('.feedback-box').forEach(function (box) {
+          box.textContent = '';
+          box.className = 'feedback-box hidden';
+        });
+
+        document.getElementById('continueToDiagnosisButton').classList.add('hidden');
+        document.getElementById('continueToImprovementButton').classList.add('hidden');
+        document.getElementById('continueToRetestButton').classList.add('hidden');
+        document.getElementById('continueToHumanReviewButton').classList.add('hidden');
+        document.getElementById('continueToReportButton').classList.add('hidden');
+        document.getElementById('copyReportStatus').classList.add('hidden');
+        document.getElementById('copyReportStatus').textContent = '';
+
+        renderMissionSelection();
+        renderTrainingTable();
+        renderTestTable();
+        renderPatternSelection();
+        renderImprovementGrid();
+        updateRescueCounter();
+        renderRationaleSelection();
+        renderRetestSelection();
+        renderAuthoritySelection();
+        renderRetestComparison();
+        renderReportSummary();
+        renderReflectionFields();
+        updateApplyButton();
+        updateStagePanels();
+        updateUtilityVisibility();
+        updateDashboard();
+        clearNode(document.getElementById('v1ResultArea'));
+        announce('Mission restarted.');
+        focusStage(0);
+      }
+
+      function handleBeginMission() {
+        state.started = true;
+        advanceToStage(0, 1, 'Mission started. Choose a career mission.');
+      }
+
+      function handleCheckVersion1() {
+        var studentPreds = getStudentPredictionArray();
+        var missing = studentPreds.some(function (value) {
+          return !value;
         });
 
         if (missing) {
-          document.getElementById('v1Result').innerHTML = '<span class="bad">Please choose a label for each test record.</span>';
+          showFeedback('stage3Feedback', 'Please choose a label for each test record before checking Version 1.', 'bad');
+          announce('Please choose a label for each test record before checking Version 1.', true);
           return;
         }
 
-        var actual = TEST.map(function (r) {
-          return document.querySelector('input[name="pred-' + r.id + '"]:checked').value;
-        });
-        var hit = score(actual);
+        state.v1StudentScore = score(studentPreds);
+        state.v1ModelPredictions = autoV1Predictions();
+        state.v1ModelScore = score(state.v1ModelPredictions);
+        saveState();
 
-        var patternMisses = [];
-        for (var i = 0; i < TEST.length; i++) {
-          if (actual[i] !== TEST[i].y) patternMisses.push(TEST[i].id);
-        }
+        showFeedback('stage3Feedback', 'Version 1 has been checked. Look at the result card, then continue to find the weak spot.', 'good');
+        renderV1ResultCard();
+        document.getElementById('continueToDiagnosisButton').classList.remove('hidden');
+        updateDashboard();
+        announce('Version 1 results are ready.');
+      }
 
-        document.getElementById('v1Result').innerHTML =
-          '<span class="good">Version 1 checked.</span> Accuracy on this test set: <strong>' + hit + '/6</strong>. ' +
-          (patternMisses.length ? 'Missed cases: ' + patternMisses.join(', ') + '. Look for the pattern, not only the score.' : 'No misses on this run.');
-      });
-
-      document.getElementById('checkPattern').addEventListener('click', function () {
+      function handleCheckDiagnosis() {
         var pick = document.querySelector('input[name="pattern"]:checked');
-        var out = document.getElementById('patternFeedback');
         if (!pick) {
-          out.innerHTML = '<span class="bad">Pick one pattern statement first.</span>';
-          return;
-        }
-        if (pick.value === 'a') {
-          out.innerHTML = '<span class="good">Yes. The main issue is weak coverage of borderline Needs Review cases.</span>';
-        } else {
-          out.innerHTML = '<span class="bad">Try again. Focus on middle-score cases where labels can flip.</span>';
-        }
-      });
-
-      document.getElementById('applyImprovements').addEventListener('click', function () {
-        var picks = Array.prototype.slice.call(document.querySelectorAll('input[name="imp"]:checked')).map(function (x) { return x.value; });
-        var out = document.getElementById('improveFeedback');
-        var compareArea = document.getElementById('compareArea');
-
-        if (picks.length !== 3) {
-          out.innerHTML = '<span class="bad">Choose exactly 3 records.</span>';
-          compareArea.classList.add('hidden');
+          showFeedback('diagnosisFeedback', 'Select one diagnosis before checking your answer.', 'bad');
+          announce('Select one diagnosis before checking your answer.', true);
           return;
         }
 
-        var bestSet = ['I2', 'I5', 'I7'];
-        var overlap = picks.filter(function (p) { return bestSet.indexOf(p) >= 0; }).length;
+        state.diagnosisChoice = pick.value;
+        state.diagnosisCorrect = pick.value === 'a';
+        saveState();
+        renderDiagnosisFeedback();
+        updateDashboard();
+        announce(state.diagnosisCorrect ? 'Diagnosis confirmed.' : 'Diagnosis needs another look.');
+      }
 
-        if (overlap >= 2) {
-          out.innerHTML = '<span class="good">Good choice. Your picks target the weak border area.</span>';
-        } else {
-          out.innerHTML = '<span class="bad">These picks may not target the main weakness. You can still compare and revise.</span>';
+      function handleApplyRescues() {
+        if (state.selectedImprovements.length !== 3 || !state.rationaleChoice) {
+          showFeedback('improvementFeedback', 'Choose exactly three rescue records and one rationale before applying them.', 'bad');
+          announce('Choose exactly three rescue records and one rationale before applying them.', true);
+          return;
         }
 
-        var cmp = compareWithV2(picks);
-        var rows = '';
-        for (var i = 0; i < TEST.length; i++) {
-          rows += '<tr><td>' + TEST[i].id + '</td><td>' + TEST[i].y + '</td><td>' + cmp.v1[i] + '</td><td>' + cmp.v2[i] + '</td></tr>';
+        state.improvementApplied = true;
+        state.compare = compareWithV2(state.selectedImprovements);
+        saveState();
+        renderImprovementFeedback();
+        renderRetestComparison();
+        updateDashboard();
+        announce('Rescue records applied. Version 2 is ready for retesting.');
+      }
+
+      function handleCheckRetest() {
+        var pick = document.querySelector('input[name="perfect"]:checked');
+        if (!pick) {
+          showFeedback('retestFeedback', 'Choose Yes or No before checking the retest reflection.', 'bad');
+          announce('Choose Yes or No before checking the retest reflection.', true);
+          return;
         }
 
-        compareArea.innerHTML =
-          '<p><strong>Version 1:</strong> ' + cmp.v1Score + '/6 correct &nbsp; | &nbsp; <strong>Version 2:</strong> ' + cmp.v2Score + '/6 correct</p>' +
-          '<table><thead><tr><th>Case</th><th>True Label</th><th>Version 1</th><th>Version 2</th></tr></thead><tbody>' + rows + '</tbody></table>' +
-          '<p class="small muted">If one label still looks questionable, fix that label issue even if the total score improved.</p>';
-        compareArea.classList.remove('hidden');
-      });
+        state.retestAnswer = pick.value;
+        state.retestCorrect = pick.value === 'no';
+        saveState();
+        renderRetestFeedback();
+        updateDashboard();
+        announce(state.retestCorrect ? 'Retest reflection confirmed.' : 'Retest reflection needs another look.');
+      }
 
-      document.getElementById('checkAuthority').addEventListener('click', function () {
+      function handleCheckAuthority() {
         var pick = document.querySelector('input[name="authority"]:checked');
-        var out = document.getElementById('authorityFeedback');
         if (!pick) {
-          out.innerHTML = '<span class="bad">Choose one option.</span>';
+          showFeedback('authorityFeedback', 'Choose one oversight decision before checking your answer.', 'bad');
+          announce('Choose one oversight decision before checking your answer.', true);
           return;
         }
-        if (pick.value === 'qualified') {
-          out.innerHTML = '<span class="good">Correct. A qualified person has final authority and must review model output with evidence.</span>';
-        } else {
-          out.innerHTML = '<span class="bad">Not correct. The model should not be the final decision maker.</span>';
-        }
-      });
 
-      renderTraining();
-      renderTestArea();
-      renderPatternChoices();
-      renderImprovementBank();
+        state.authorityChoice = pick.value;
+        state.authorityCorrect = pick.value === 'qualified';
+        saveState();
+        renderAuthorityFeedback();
+        updateDashboard();
+        announce(state.authorityCorrect ? 'Oversight decision confirmed.' : 'Oversight decision is not correct yet.');
+      }
+
+      function handleCopyReport() {
+        var reportText = buildReportText();
+        if (!reportText) {
+          showFeedback('copyReportStatus', 'Fill in every reflection field before copying your rescue report.', 'bad');
+          announce('Fill in every reflection field before copying your rescue report.', true);
+          return;
+        }
+
+        navigator.clipboard.writeText(reportText).then(function () {
+          showFeedback('copyReportStatus', 'Rescue report copied to clipboard.', 'good');
+          markStageComplete(8);
+          saveState();
+          updateStagePanels();
+          updateDashboard();
+          announce('Rescue report copied to clipboard.');
+        }).catch(function () {
+          markStageComplete(8);
+          saveState();
+          updateStagePanels();
+          updateDashboard();
+          showFeedback('copyReportStatus', 'Clipboard copying isn\'t available in this browser. You can copy the preview text manually.', 'warning');
+          announce('Clipboard copying isn\'t available in this browser. Please copy the text manually.');
+        });
+      }
+
+      function bindMissionButtons() {
+        document.querySelectorAll('.mission-card').forEach(function (button) {
+          button.addEventListener('click', function () {
+            state.selectedMission = button.getAttribute('data-mission') || '';
+            saveState();
+            renderMissionSelection();
+            renderTrainingTable();
+            renderTestTable();
+            renderImprovementGrid();
+            updateDashboard();
+            announce((missionConfig[state.selectedMission] ? missionConfig[state.selectedMission].name : 'Mission') + ' selected.');
+          });
+        });
+      }
+
+      function bindStaticInputs() {
+        document.querySelectorAll('input[name="rationale"]').forEach(function (radio) {
+          radio.addEventListener('change', function () {
+            state.rationaleChoice = radio.value;
+            saveState();
+            updateApplyButton();
+          });
+        });
+
+        document.getElementById('reflectionWeakSpot').addEventListener('change', function (event) {
+          state.reflections.weakSpot = event.target.value;
+          saveState();
+          updateReportPreview();
+        });
+
+        document.getElementById('reflectionRecords').addEventListener('change', function (event) {
+          state.reflections.recordReason = event.target.value;
+          saveState();
+          updateReportPreview();
+        });
+
+        document.getElementById('reflectionPerformance').addEventListener('change', function (event) {
+          state.reflections.performance = event.target.value;
+          saveState();
+          updateReportPreview();
+        });
+
+        document.getElementById('reflectionOversight').addEventListener('input', function (event) {
+          state.reflections.oversight = event.target.value;
+          saveState();
+          updateReportPreview();
+        });
+      }
+
+      function attachEvents() {
+        document.getElementById('beginMissionButton').addEventListener('click', handleBeginMission);
+        document.getElementById('continueMissionButton').addEventListener('click', function () {
+          if (!state.selectedMission) {
+            announce('Select a career mission before continuing.', true);
+            return;
+          }
+          advanceToStage(1, 2, 'Mission selected. Training data is now available.');
+        });
+        document.getElementById('continueToChallengeButton').addEventListener('click', function () {
+          advanceToStage(2, 3, 'Training data reviewed. Challenge the model next.');
+        });
+        document.getElementById('checkVersion1Button').addEventListener('click', handleCheckVersion1);
+        document.getElementById('continueToDiagnosisButton').addEventListener('click', function () {
+          advanceToStage(3, 4, 'Version 1 reviewed. Diagnose the weak spot.');
+        });
+        document.getElementById('checkDiagnosisButton').addEventListener('click', handleCheckDiagnosis);
+        document.getElementById('continueToImprovementButton').addEventListener('click', function () {
+          if (!state.diagnosisCorrect) {
+            announce('Confirm the correct diagnosis before continuing.', true);
+            return;
+          }
+          advanceToStage(4, 5, 'Diagnosis confirmed. Choose three rescue records.');
+        });
+        document.getElementById('applyRescueRecordsButton').addEventListener('click', handleApplyRescues);
+        document.getElementById('continueToRetestButton').addEventListener('click', function () {
+          if (!state.improvementApplied) {
+            announce('Apply rescue records before continuing.', true);
+            return;
+          }
+          advanceToStage(5, 6, 'Rescue records applied. Retest the model.');
+        });
+        document.getElementById('checkRetestButton').addEventListener('click', handleCheckRetest);
+        document.getElementById('continueToHumanReviewButton').addEventListener('click', function () {
+          if (!state.retestCorrect) {
+            announce('Answer the retest reflection correctly before continuing.', true);
+            return;
+          }
+          advanceToStage(6, 7, 'Retest done. Decide what should happen to the model next.');
+        });
+        document.getElementById('checkDecisionButton').addEventListener('click', handleCheckAuthority);
+        document.getElementById('continueToReportButton').addEventListener('click', function () {
+          if (!state.authorityCorrect) {
+            announce('Choose the correct oversight decision before continuing.', true);
+            return;
+          }
+          advanceToStage(7, 8, 'Oversight decision confirmed. Complete your rescue report.');
+          renderReportSummary();
+          renderReflectionFields();
+        });
+        document.getElementById('copyReportButton').addEventListener('click', handleCopyReport);
+
+        var restartDialog = document.getElementById('restartDialog');
+        document.getElementById('restartMissionButton').addEventListener('click', function () {
+          if (typeof restartDialog.showModal === 'function') {
+            restartDialog.showModal();
+          } else {
+            var confirmRestart = window.confirm('Restart this mission? This will clear your saved progress in this browser.');
+            if (confirmRestart) {
+              resetState();
+            }
+          }
+        });
+        document.getElementById('cancelRestartButton').addEventListener('click', function () {
+          restartDialog.close();
+        });
+        document.getElementById('confirmRestartButton').addEventListener('click', function () {
+          restartDialog.close();
+          resetState();
+        });
+      }
+
+      function restoreConditionalUI() {
+        renderMissionSelection();
+        renderTrainingTable();
+        renderTestTable();
+        renderPatternSelection();
+        renderImprovementGrid();
+        updateRescueCounter();
+        renderRationaleSelection();
+        renderRetestSelection();
+        renderAuthoritySelection();
+        updateApplyButton();
+        renderRetestComparison();
+        renderReportSummary();
+        renderReflectionFields();
+
+        if (state.v1ModelScore !== null) {
+          showFeedback('stage3Feedback', 'Version 1 has been checked. Look at the result card, then continue to find the weak spot.', 'good');
+          renderV1ResultCard();
+          document.getElementById('continueToDiagnosisButton').classList.remove('hidden');
+        }
+
+        if (state.diagnosisChoice) {
+          renderDiagnosisFeedback();
+        }
+
+        if (state.improvementApplied) {
+          renderImprovementFeedback();
+        }
+
+        if (state.retestAnswer) {
+          renderRetestFeedback();
+        }
+
+        if (state.authorityChoice) {
+          renderAuthorityFeedback();
+        }
+      }
+
+      bindMissionButtons();
+      bindStaticInputs();
+      attachEvents();
+      updateStagePanels();
+      updateUtilityVisibility();
+      updateDashboard();
+      restoreConditionalUI();
     }());
   </script>
 </body>
