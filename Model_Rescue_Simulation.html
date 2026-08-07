@@ -2916,7 +2916,7 @@
 
       function updateWhatHappenedPanel() {
         var summary = getWhatHappenedFromState();
-        document.getElementById('actionHeadline').textContent = summary.changed;
+        document.getElementById('actionHeadline').textContent = summary.did;
         document.getElementById('actionDid').textContent = summary.did;
         document.getElementById('actionChanged').textContent = summary.changed;
         document.getElementById('actionWhy').textContent = summary.why;
@@ -4230,7 +4230,7 @@
         var fix = state.reflections.fix.trim();
         var evidence = state.reflections.evidence.trim();
 
-        if (!weakSpot || !recordReason || !performance || !oversight) {
+        if (!weakSpot || !recordReason || !performance || !oversight || !fix || !evidence) {
           return '';
         }
 
