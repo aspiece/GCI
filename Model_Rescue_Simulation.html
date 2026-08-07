@@ -3285,7 +3285,10 @@
         if (utility && typeof utility.getBoundingClientRect === 'function') {
           utilityOffset = utility.getBoundingClientRect().height + UTILITY_GAP_PX;
         }
-        var viewportBottom = window.innerHeight || document.documentElement.clientHeight || 0;
+        var viewportBottom = window.innerHeight || document.documentElement.clientHeight;
+        if (!viewportBottom) {
+          return false;
+        }
         return rect.top < utilityOffset || rect.bottom > viewportBottom;
       }
 
