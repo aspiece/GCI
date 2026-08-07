@@ -98,6 +98,12 @@
       margin-bottom: 0.9rem;
     }
 
+    .mission-side-stack {
+      display: grid;
+      gap: 0.8rem;
+      min-width: 0;
+    }
+
     .mission-dashboard {
       display: none;
       min-width: 0;
@@ -989,6 +995,63 @@
       font-size: 0.93rem;
     }
 
+    .comparison-visual {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.9rem;
+      margin-top: 1rem;
+    }
+
+    .comparison-bar-card {
+      border: 1px solid var(--sim-border);
+      border-radius: 16px;
+      background: #fbfdfe;
+      padding: 0.95rem;
+    }
+
+    .comparison-bar-card h4 {
+      margin: 0 0 0.55rem;
+      color: var(--sim-primary-dark);
+    }
+
+    .comparison-bar-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+      color: var(--sim-muted);
+    }
+
+    .comparison-bar-track {
+      width: 100%;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #dfe9ee;
+    }
+
+    .comparison-bar-fill {
+      min-height: 1.3rem;
+      padding: 0.18rem 0.55rem;
+      border-radius: 999px;
+      font-size: 0.83rem;
+      font-weight: 800;
+      color: #ffffff;
+      background: linear-gradient(90deg, #708694 0%, #46606d 100%);
+    }
+
+    .comparison-bar-fill.improved {
+      background: linear-gradient(90deg, var(--sim-success) 0%, #2d8a35 100%);
+    }
+
+    .reflection-prompt-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
     .icon-text {
       display: inline-flex;
       align-items: center;
@@ -1056,9 +1119,93 @@
       gap: 0.35rem;
     }
 
+    .action-headline {
+      margin: 0 0 0.45rem;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--sim-primary-dark);
+    }
+
+    .action-details {
+      margin-top: 0.15rem;
+      border: 1px solid #d1e2e8;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.75);
+      padding: 0.2rem 0.75rem 0.65rem;
+    }
+
+    .action-details summary {
+      cursor: pointer;
+      min-height: var(--sim-tap);
+      display: flex;
+      align-items: center;
+      font-weight: 700;
+      color: var(--sim-primary-dark);
+    }
+
     .action-narrative-content p {
       margin: 0;
       font-size: 0.92rem;
+    }
+
+    .next-step-card {
+      border-left-color: var(--sim-success);
+      background: linear-gradient(180deg, #ffffff 0%, #f7fcf8 100%);
+    }
+
+    .next-step-label {
+      margin: 0;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--sim-muted);
+    }
+
+    .next-step-card h2 {
+      margin: 0.15rem 0 0.4rem;
+      font-size: 1rem;
+      color: var(--sim-primary-dark);
+    }
+
+    .next-step-text {
+      margin-bottom: 0;
+    }
+
+    .goal-strip {
+      margin-bottom: 0.9rem;
+      padding: 0.8rem 0.95rem;
+      border: 1px solid #d6e4e9;
+      border-radius: 14px;
+      background: linear-gradient(180deg, #fbfdfe 0%, #f4fafc 100%);
+    }
+
+    .goal-strip-label {
+      display: block;
+      margin-bottom: 0.28rem;
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--sim-muted);
+    }
+
+    .goal-strip-text {
+      margin: 0;
+      font-weight: 700;
+      color: var(--sim-primary-dark);
+    }
+
+    .briefing-summary {
+      margin-top: 0.85rem;
+    }
+
+    .briefing-learn-more {
+      margin-top: 1rem;
+    }
+
+    .briefing-learn-more .key-value-grid {
+      margin-top: 0.75rem;
     }
 
     .boundary-legend {
@@ -1376,12 +1523,18 @@
       .result-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
+
+      .comparison-visual,
+      .reflection-prompt-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     @media (max-width: 820px) {
       .grid-two,
       .report-summary-grid,
-      .key-value-grid {
+      .key-value-grid,
+      .reflection-prompt-grid {
         grid-template-columns: 1fr;
       }
 
@@ -1458,6 +1611,11 @@
 
       .dashboard-meta {
         display: none;
+      }
+
+      .action-details {
+        padding-left: 0.65rem;
+        padding-right: 0.65rem;
       }
 
       .boundary-scale-wrap {
@@ -1651,22 +1809,37 @@
                 <p id="dashboardRescues" class="dashboard-stat-value">0 of 3 selected</p>
               </div>
               <div class="dashboard-stat">
-                <span class="dashboard-stat-label">Mission Status</span>
-                <p id="dashboardStatusText" class="dashboard-stat-value">Awaiting setup</p>
+                <span class="dashboard-stat-label">Improvement</span>
+                <p id="dashboardStatusText" class="dashboard-stat-value">Pending</p>
               </div>
             </div>
           </div>
         </aside>
 
-        <section id="actionNarrativePanel" class="info-card action-narrative-panel" aria-labelledby="actionNarrativeHeading">
-          <h2 id="actionNarrativeHeading">What Just Happened?</h2>
-          <div id="actionNarrativeLive" class="action-narrative-content" aria-live="polite" aria-atomic="true">
-            <p><strong>What you did:</strong> <span id="actionDid">Start the mission to begin.</span></p>
-            <p><strong>What changed:</strong> <span id="actionChanged">The model has not been tested yet.</span></p>
-            <p><strong>Why it matters:</strong> <span id="actionWhy">Each step helps you gather evidence before making decisions.</span></p>
-            <p><strong>What to examine next:</strong> <span id="actionNext">Read the mission briefing, then continue to Stage 1.</span></p>
-          </div>
-        </section>
+        <div class="mission-side-stack">
+          <section id="actionNarrativePanel" class="info-card action-narrative-panel" aria-labelledby="actionNarrativeHeading">
+            <h2 id="actionNarrativeHeading">What Just Happened?</h2>
+            <p id="actionHeadline" class="action-headline">The model has not been tested yet.</p>
+            <details id="actionNarrativeDetails" class="action-details">
+              <summary>See full breakdown</summary>
+              <div id="actionNarrativeLive" class="action-narrative-content" aria-live="polite" aria-atomic="true">
+                <p><strong>What you did:</strong> <span id="actionDid">Start the mission to begin.</span></p>
+                <p><strong>What changed:</strong> <span id="actionChanged">The model has not been tested yet.</span></p>
+                <p><strong>Why it matters:</strong> <span id="actionWhy">Each step helps you gather evidence before making decisions.</span></p>
+                <p><strong>What to examine next:</strong> <span id="actionNext">Read the mission briefing, then continue to Stage 1.</span></p>
+              </div>
+            </details>
+          </section>
+
+          <section id="missionNextStepCard" class="info-card next-step-card" aria-labelledby="missionNextStepHeading">
+            <p class="next-step-label">Your next move</p>
+            <h2 id="missionNextStepHeading">Stay with the active task</h2>
+            <p id="missionNextStepText" class="next-step-text">Read the mission briefing, then begin when you are ready.</p>
+            <div class="button-row">
+              <button id="missionNextStepButton" class="btn" type="button">Jump to current task</button>
+            </div>
+          </section>
+        </div>
       </div>
 
       <details id="stage-0" class="stage-panel" data-stage="0" open>
@@ -1681,6 +1854,10 @@
           <span id="stage-status-0" class="status-badge current">Current</span>
         </summary>
         <div class="stage-body">
+          <div class="goal-strip">
+            <span class="goal-strip-label">Your goal right now</span>
+            <p class="goal-strip-text">Understand the mission, the safety rules, and the kind of evidence you will need before you start.</p>
+          </div>
           <section class="big-hero-card" aria-labelledby="stage0-heading">
             <h2 id="stage0-heading" class="stage-heading" tabindex="-1">Your Mission: Rescue the Model</h2>
             <p class="stage-intro">
@@ -1688,32 +1865,41 @@
               Your job is to look at the training data, find the problem, fix it, and decide if the model is ready for more testing.
             </p>
 
-            <div class="key-value-grid">
-              <div class="kv-card">
-                <h3>Success Criteria</h3>
-                <ul class="list-compact">
-                  <li>Pick a career setting and use the scores to understand what the data means.</li>
-                  <li>Test Version 1 and find the pattern of errors — don't just look at one case.</li>
-                  <li>Pick three new training records that fix the specific weakness you found.</li>
-                  <li>Decide if the improved model should only move forward with a qualified person reviewing it.</li>
-                </ul>
-              </div>
-              <div class="warning-card" aria-labelledby="fiction-warning-heading">
-                <h3 id="fiction-warning-heading">Warning: Fictional data only</h3>
-                <p>
-                  Everything in this simulation is fake and for learning only. Do not type in real names, real workplaces, or real patient information.
-                </p>
-                <ul class="list-compact">
-                  <li>Use the built-in records only.</li>
-                  <li>Model output is a clue, not proof.</li>
-                  <li>A trained professional must review all evidence before any real decision is made.</li>
-                </ul>
-              </div>
-            </div>
+            <ul class="list-compact briefing-summary">
+              <li>Follow the same data story from Version 1 through Version 2.</li>
+              <li>Look for patterns across records, not just one surprising case.</li>
+              <li>Keep human review in charge even if the model improves.</li>
+            </ul>
 
-            <div class="faux-note" aria-label="Mission note">
-              <strong>Mission note:</strong> The next stage is hidden until you finish this one. Completed stages stay open so you can look back at your work.
-            </div>
+            <details class="help-tip briefing-learn-more">
+              <summary>Learn more about this mission</summary>
+              <div class="key-value-grid">
+                <div class="kv-card">
+                  <h3>Success Criteria</h3>
+                  <ul class="list-compact">
+                    <li>Pick a career setting and use the scores to understand what the data means.</li>
+                    <li>Test Version 1 and find the pattern of errors — don't just look at one case.</li>
+                    <li>Pick three new training records that fix the specific weakness you found.</li>
+                    <li>Decide if the improved model should only move forward with a qualified person reviewing it.</li>
+                  </ul>
+                </div>
+                <div class="warning-card" aria-labelledby="fiction-warning-heading">
+                  <h3 id="fiction-warning-heading">Warning: Fictional data only</h3>
+                  <p>
+                    Everything in this simulation is fake and for learning only. Do not type in real names, real workplaces, or real patient information.
+                  </p>
+                  <ul class="list-compact">
+                    <li>Use the built-in records only.</li>
+                    <li>Model output is a clue, not proof.</li>
+                    <li>A trained professional must review all evidence before any real decision is made.</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="faux-note" aria-label="Mission note">
+                <strong>Mission note:</strong> The next stage stays hidden until you finish this one. Completed stages collapse so you can stay focused on the active task.
+              </div>
+            </details>
 
             <div class="button-row">
               <button id="beginMissionButton" class="btn" type="button">Begin Mission</button>
@@ -1734,6 +1920,10 @@
           <span id="stage-status-1" class="status-badge pending">Pending</span>
         </summary>
         <div class="stage-body">
+          <div class="goal-strip">
+            <span class="goal-strip-label">Your goal right now</span>
+            <p class="goal-strip-text">Choose one mission setting so the model data has a clear workplace story to follow.</p>
+          </div>
           <section aria-labelledby="stage1-heading">
             <h2 id="stage1-heading" class="stage-heading" tabindex="-1">Choose a Career Mission</h2>
             <p class="stage-intro">
@@ -1830,6 +2020,10 @@
           <span id="stage-status-2" class="status-badge pending">Pending</span>
         </summary>
         <div class="stage-body">
+          <div class="goal-strip">
+            <span class="goal-strip-label">Your goal right now</span>
+            <p class="goal-strip-text">Scan the Version 1 training examples and notice what kinds of records the model has already seen.</p>
+          </div>
           <section aria-labelledby="stage2-heading">
             <h2 id="stage2-heading" class="stage-heading" tabindex="-1">Investigate the Training Data</h2>
             <p id="trainingIntro" class="stage-intro">
@@ -1871,6 +2065,10 @@
           <span id="stage-status-3" class="status-badge pending">Pending</span>
         </summary>
         <div class="stage-body">
+          <div class="goal-strip">
+            <span class="goal-strip-label">Your goal right now</span>
+            <p class="goal-strip-text">Test the model on new cases so you can see its baseline mistakes before trying to fix anything.</p>
+          </div>
           <section aria-labelledby="stage3-heading">
             <h2 id="stage3-heading" class="stage-heading" tabindex="-1">Challenge the Model</h2>
             <p class="stage-intro">
@@ -1905,6 +2103,10 @@
           <span id="stage-status-4" class="status-badge pending">Pending</span>
         </summary>
         <div class="stage-body">
+          <div class="goal-strip">
+            <span class="goal-strip-label">Your goal right now</span>
+            <p class="goal-strip-text">Find the pattern behind the wrong answers so your rescue choices target the real weak spot.</p>
+          </div>
           <section aria-labelledby="stage4-heading">
             <h2 id="stage4-heading" class="stage-heading" tabindex="-1">Diagnose the Weak Spot</h2>
             <p class="stage-intro">
@@ -1961,6 +2163,10 @@
           <span id="stage-status-5" class="status-badge pending">Pending</span>
         </summary>
         <div class="stage-body">
+          <div class="goal-strip">
+            <span class="goal-strip-label">Your goal right now</span>
+            <p class="goal-strip-text">Pick three rescue records that fill the missing pattern instead of adding random examples.</p>
+          </div>
           <section aria-labelledby="stage5-heading">
             <h2 id="stage5-heading" class="stage-heading" tabindex="-1">Choose Three Rescue Records</h2>
             <p class="stage-intro">
@@ -2052,6 +2258,10 @@
           <span id="stage-status-6" class="status-badge pending">Pending</span>
         </summary>
         <div class="stage-body">
+          <div class="goal-strip">
+            <span class="goal-strip-label">Your goal right now</span>
+            <p class="goal-strip-text">Compare Version 1 and Version 2 on the same test set so you can judge improvement fairly.</p>
+          </div>
           <section aria-labelledby="stage6-heading">
             <h2 id="stage6-heading" class="stage-heading" tabindex="-1">Retest the Model</h2>
             <p class="stage-intro">
@@ -2104,6 +2314,10 @@
           <span id="stage-status-7" class="status-badge pending">Pending</span>
         </summary>
         <div class="stage-body">
+          <div class="goal-strip">
+            <span class="goal-strip-label">Your goal right now</span>
+            <p class="goal-strip-text">Decide how the model can move forward while keeping a qualified person responsible for the final decision.</p>
+          </div>
           <section aria-labelledby="stage7-heading">
             <h2 id="stage7-heading" class="stage-heading" tabindex="-1">Approve or Pause the Model</h2>
             <p class="stage-intro">
@@ -2163,6 +2377,10 @@
           <span id="stage-status-8" class="status-badge pending">Pending</span>
         </summary>
         <div class="stage-body">
+          <div class="goal-strip">
+            <span class="goal-strip-label">Your goal right now</span>
+            <p class="goal-strip-text">Explain what fixed the model, what evidence supports your decision, and why human review still matters.</p>
+          </div>
           <section aria-labelledby="stage8-heading">
             <h2 id="stage8-heading" class="stage-heading" tabindex="-1">Complete Your Rescue Report</h2>
             <p class="stage-intro">
@@ -2197,6 +2415,21 @@
                 </p>
               </div>
             </div>
+
+            <section class="info-card" aria-labelledby="reflection-prompts-heading">
+              <h3 id="reflection-prompts-heading">Quick reflection</h3>
+              <p class="small-muted">Use these short responses to capture the key evidence before you write your final rescue report.</p>
+              <div class="reflection-prompt-grid">
+                <div class="field-card">
+                  <label for="reflectionFix">What fixed the model?</label>
+                  <textarea id="reflectionFix" placeholder="Describe the change to the training data that helped Version 2 improve."></textarea>
+                </div>
+                <div class="field-card">
+                  <label for="reflectionEvidence">What evidence supports your decision?</label>
+                  <textarea id="reflectionEvidence" placeholder="Point to the comparison results, patterns, or oversight reasons that support your decision."></textarea>
+                </div>
+              </div>
+            </section>
 
             <section class="info-card" aria-labelledby="reflection-heading">
               <h3 id="reflection-heading">Fill in the blanks</h3>
@@ -2580,7 +2813,9 @@
             weakSpot: '',
             recordReason: '',
             performance: '',
-            oversight: ''
+            oversight: '',
+            fix: '',
+            evidence: ''
           }
         };
       }
@@ -2617,7 +2852,9 @@
               weakSpot: parsed.reflections && typeof parsed.reflections.weakSpot === 'string' ? parsed.reflections.weakSpot : '',
               recordReason: parsed.reflections && typeof parsed.reflections.recordReason === 'string' ? parsed.reflections.recordReason : '',
               performance: parsed.reflections && typeof parsed.reflections.performance === 'string' ? parsed.reflections.performance : '',
-              oversight: parsed.reflections && typeof parsed.reflections.oversight === 'string' ? parsed.reflections.oversight : ''
+              oversight: parsed.reflections && typeof parsed.reflections.oversight === 'string' ? parsed.reflections.oversight : '',
+              fix: parsed.reflections && typeof parsed.reflections.fix === 'string' ? parsed.reflections.fix : '',
+              evidence: parsed.reflections && typeof parsed.reflections.evidence === 'string' ? parsed.reflections.evidence : ''
             }
           };
         } catch (error) {
@@ -2679,10 +2916,207 @@
 
       function updateWhatHappenedPanel() {
         var summary = getWhatHappenedFromState();
+        document.getElementById('actionHeadline').textContent = summary.changed;
         document.getElementById('actionDid').textContent = summary.did;
         document.getElementById('actionChanged').textContent = summary.changed;
         document.getElementById('actionWhy').textContent = summary.why;
         document.getElementById('actionNext').textContent = summary.next;
+        document.getElementById('actionNarrativeDetails').open = false;
+      }
+
+      function focusCurrentStageHeading() {
+        focusStage(state.currentStage);
+      }
+
+      function getNextStepPrompt() {
+        if (!state.started) {
+          return {
+            title: 'Begin the mission',
+            text: 'Read the briefing, then begin when you are ready.',
+            button: 'Begin Mission',
+            targetId: 'beginMissionButton'
+          };
+        }
+
+        if (state.currentStage === 1) {
+          if (state.selectedMission) {
+            return {
+              title: 'Continue to the training data',
+              text: 'Your mission is selected. Move on and inspect the Version 1 examples.',
+              button: 'Continue Mission',
+              targetId: 'continueMissionButton'
+            };
+          }
+          return {
+            title: 'Choose a mission',
+            text: 'Pick one career mission card to give the data a workplace story.',
+            button: 'View mission choices',
+            targetId: 'stage1-heading',
+            focusOnly: true
+          };
+        }
+
+        if (state.currentStage === 2) {
+          return {
+            title: 'Move into the challenge',
+            text: 'You have the training examples. Continue when you are ready to test Version 1.',
+            button: 'Continue to Challenge',
+            targetId: 'continueToChallengeButton'
+          };
+        }
+
+        if (state.currentStage === 3) {
+          if (state.v1ModelScore === null) {
+            return {
+              title: 'Check Version 1',
+              text: 'Label each test case, then check how Version 1 actually performs.',
+              button: 'Review current task',
+              targetId: 'stage3-heading',
+              focusOnly: true
+            };
+          }
+          return {
+            title: 'Continue to diagnosis',
+            text: 'Use the baseline results to find the pattern in the wrong answers.',
+            button: 'Continue to Diagnosis',
+            targetId: 'continueToDiagnosisButton'
+          };
+        }
+
+        if (state.currentStage === 4) {
+          if (!state.diagnosisCorrect) {
+            return {
+              title: 'Diagnose the weak spot',
+              text: 'Choose the explanation that matches the pattern in the missed cases.',
+              button: 'Review current task',
+              targetId: 'stage4-heading',
+              focusOnly: true
+            };
+          }
+          return {
+            title: 'Continue to rescue records',
+            text: 'Your diagnosis is confirmed. Pick the examples that target that weak spot.',
+            button: 'Continue to Improvement',
+            targetId: 'continueToImprovementButton'
+          };
+        }
+
+        if (state.currentStage === 5) {
+          if (!state.improvementApplied) {
+            if (state.selectedImprovements.length < 3) {
+              return {
+                title: 'Choose rescue records',
+                text: 'Select ' + (3 - state.selectedImprovements.length) + ' more rescue record' + (state.selectedImprovements.length === 2 ? '' : 's') + ' that match the weak spot.',
+                button: 'Review current task',
+                targetId: 'stage5-heading',
+                focusOnly: true
+              };
+            }
+            if (!state.rationaleChoice) {
+              return {
+                title: 'Finish your rescue set',
+                text: 'You picked three records. Add the rationale that explains why they help.',
+                button: 'Review current task',
+                targetId: 'stage5-heading',
+                focusOnly: true
+              };
+            }
+            return {
+              title: 'Build Version 2',
+              text: 'Your rescue set is ready. Apply it to rebuild the model.',
+              button: 'Apply Rescue Records',
+              targetId: 'applyRescueRecordsButton'
+            };
+          }
+          return {
+            title: 'Continue to retest',
+            text: 'Version 2 is ready. Compare both versions on the same test set.',
+            button: 'Continue to Retest',
+            targetId: 'continueToRetestButton'
+          };
+        }
+
+        if (state.currentStage === 6) {
+          if (!state.retestCorrect) {
+            return {
+              title: 'Interpret the comparison',
+              text: 'Use the before-and-after evidence to answer whether the model is now perfect.',
+              button: 'Review current task',
+              targetId: 'stage6-heading',
+              focusOnly: true
+            };
+          }
+          return {
+            title: 'Continue to human review',
+            text: 'You confirmed that improvement is not the same as perfection. Make the oversight decision next.',
+            button: 'Continue to Human Review',
+            targetId: 'continueToHumanReviewButton'
+          };
+        }
+
+        if (state.currentStage === 7) {
+          if (!state.authorityCorrect) {
+            return {
+              title: 'Make the oversight decision',
+              text: 'Choose the next step that keeps a qualified person responsible for the final call.',
+              button: 'Review current task',
+              targetId: 'stage7-heading',
+              focusOnly: true
+            };
+          }
+          return {
+            title: 'Continue to the report',
+            text: 'Your oversight decision is set. Finish by explaining the evidence.',
+            button: 'Continue to Report',
+            targetId: 'continueToReportButton'
+          };
+        }
+
+        if (buildReportText()) {
+          return {
+            title: 'Finish the mission',
+            text: 'Your report is ready. Copy it to complete the rescue mission.',
+            button: 'Copy My Rescue Report',
+            targetId: 'copyReportButton'
+          };
+        }
+
+        return {
+          title: 'Complete the rescue report',
+          text: 'Use the reflection fields to explain what fixed the model and what evidence supports your decision.',
+          button: 'Review current task',
+          targetId: 'stage8-heading',
+          focusOnly: true
+        };
+      }
+
+      function updateNextStepCard() {
+        var prompt = getNextStepPrompt();
+        document.getElementById('missionNextStepHeading').textContent = prompt.title;
+        document.getElementById('missionNextStepText').textContent = prompt.text;
+        document.getElementById('missionNextStepButton').textContent = prompt.button;
+      }
+
+      function handleMissionNextStep() {
+        var prompt = getNextStepPrompt();
+        var target = document.getElementById(prompt.targetId);
+        if (!target) {
+          focusCurrentStageHeading();
+          return;
+        }
+        if (prompt.focusOnly) {
+          if (typeof target.focus === 'function') {
+            target.focus();
+          } else {
+            focusCurrentStageHeading();
+          }
+          return;
+        }
+        if (target.disabled) {
+          focusCurrentStageHeading();
+          return;
+        }
+        target.click();
       }
 
       function makePill(label) {
@@ -2812,7 +3246,9 @@
         document.getElementById('dashboardV1').textContent = v1Value;
         document.getElementById('dashboardV2').textContent = v2Value;
         document.getElementById('dashboardRescues').textContent = state.selectedImprovements.length + ' of 3 selected';
-        document.getElementById('dashboardStatusText').textContent = missionStatusText();
+        document.getElementById('dashboardStatusText').textContent = state.compare ? getImprovementText() : 'Pending';
+        updateWhatHappenedPanel();
+        updateNextStepCard();
       }
 
       function focusStage(stageIndex) {
@@ -3523,6 +3959,53 @@
         intro.textContent = 'Version 2 uses your three added rescue records. Compare the baseline against the updated result below.';
         section.appendChild(intro);
 
+        var visual = document.createElement('div');
+        visual.className = 'comparison-visual';
+
+        var rows = [
+          {
+            version: 'Version 1',
+            correct: state.compare.v1Score,
+            incorrect: TEST.length - state.compare.v1Score,
+            accuracy: v1Accuracy + '%',
+            status: state.compare.v1Score < 5 ? 'Needs Rescue' : 'Performing Well'
+          },
+          {
+            version: 'Version 2',
+            correct: state.compare.v2Score,
+            incorrect: TEST.length - state.compare.v2Score,
+            accuracy: v2Accuracy + '%',
+            status: state.compare.v2Score < 5 ? 'Needs Rescue' : 'Performing Well'
+          }
+        ];
+
+        rows.forEach(function (row) {
+          var card = document.createElement('div');
+          card.className = 'comparison-bar-card';
+          var cardHeading = document.createElement('h4');
+          cardHeading.textContent = row.version;
+          card.appendChild(cardHeading);
+          var meta = document.createElement('div');
+          meta.className = 'comparison-bar-meta';
+          var accuracyMeta = document.createElement('span');
+          accuracyMeta.textContent = row.accuracy + ' accuracy';
+          var statusMeta = document.createElement('span');
+          statusMeta.textContent = row.status;
+          meta.appendChild(accuracyMeta);
+          meta.appendChild(statusMeta);
+          card.appendChild(meta);
+          var track = document.createElement('div');
+          track.className = 'comparison-bar-track';
+          var fill = document.createElement('div');
+          fill.className = 'comparison-bar-fill' + (row.version === 'Version 2' && delta >= 0 ? ' improved' : '');
+          fill.style.width = formatPercent(row.correct, TEST.length) + '%';
+          fill.textContent = row.correct + ' / ' + TEST.length + ' correct';
+          track.appendChild(fill);
+          card.appendChild(track);
+          visual.appendChild(card);
+        });
+        section.appendChild(visual);
+
         var tableWrap = document.createElement('div');
         tableWrap.className = 'table-wrap';
         var table = document.createElement('table');
@@ -3542,23 +4025,6 @@
         table.appendChild(thead);
 
         var tbody = document.createElement('tbody');
-        var rows = [
-          {
-            version: 'Version 1',
-            correct: state.compare.v1Score,
-            incorrect: TEST.length - state.compare.v1Score,
-            accuracy: v1Accuracy + '%',
-            status: state.compare.v1Score < 5 ? 'Needs Rescue' : 'Performing Well'
-          },
-          {
-            version: 'Version 2',
-            correct: state.compare.v2Score,
-            incorrect: TEST.length - state.compare.v2Score,
-            accuracy: v2Accuracy + '%',
-            status: state.compare.v2Score < 5 ? 'Needs Rescue' : 'Performing Well'
-          }
-        ];
-
         rows.forEach(function (row) {
           var tr = document.createElement('tr');
           tr.appendChild(buildTableCell(row.version));
@@ -3739,6 +4205,8 @@
         var weakSpotSelect = document.getElementById('reflectionWeakSpot');
         var recordsSelect = document.getElementById('reflectionRecords');
         var oversightField = document.getElementById('reflectionOversight');
+        var fixField = document.getElementById('reflectionFix');
+        var evidenceField = document.getElementById('reflectionEvidence');
 
         if (!state.reflections.performance && state.compare) {
           state.reflections.performance = getPerformanceWord();
@@ -3749,6 +4217,8 @@
         recordsSelect.value = state.reflections.recordReason;
         performanceSelect.value = state.reflections.performance;
         oversightField.value = state.reflections.oversight;
+        fixField.value = state.reflections.fix;
+        evidenceField.value = state.reflections.evidence;
         updateReportPreview();
       }
 
@@ -3757,6 +4227,8 @@
         var recordReason = state.reflections.recordReason;
         var performance = state.reflections.performance;
         var oversight = state.reflections.oversight.trim();
+        var fix = state.reflections.fix.trim();
+        var evidence = state.reflections.evidence.trim();
 
         if (!weakSpot || !recordReason || !performance || !oversight) {
           return '';
@@ -3765,7 +4237,9 @@
         return 'I tested the fictional model and found that it struggled when ' + weakSpot + '. ' +
           'I selected new training records that ' + recordReason + '. ' +
           'Version 2 performed ' + (performance === 'the same' ? 'the same as' : performance + ' than') + ' Version 1. ' +
-          'A qualified person should make the final decision because ' + oversight + '.';
+          'A qualified person should make the final decision because ' + oversight + '.' +
+          (fix ? ' What fixed the model: ' + fix + '.' : '') +
+          (evidence ? ' Evidence for my decision: ' + evidence + '.' : '');
       }
 
       function updateReportPreview() {
@@ -3839,6 +4313,7 @@
         state.v1StudentScore = score(studentPreds);
         state.v1ModelPredictions = autoV1Predictions();
         state.v1ModelScore = score(state.v1ModelPredictions);
+        setLastAction('test-v1');
         saveState();
 
         showFeedback('stage3Feedback', 'Version 1 has been checked. Look at the result card, then continue to find the weak spot.', 'good');
@@ -3858,6 +4333,7 @@
 
         state.diagnosisChoice = pick.value;
         state.diagnosisCorrect = pick.value === 'a';
+        setLastAction('diagnose-weak-spot', { correct: state.diagnosisCorrect });
         saveState();
         renderDiagnosisFeedback();
         updateDashboard();
@@ -3873,6 +4349,7 @@
 
         state.improvementApplied = true;
         state.compare = compareWithV2(state.selectedImprovements);
+        setLastAction('rescue-confirmed');
         saveState();
         renderImprovementFeedback();
         renderRetestComparison();
@@ -3890,6 +4367,7 @@
 
         state.retestAnswer = pick.value;
         state.retestCorrect = pick.value === 'no';
+        setLastAction('test-v2');
         saveState();
         renderRetestFeedback();
         updateDashboard();
@@ -3906,6 +4384,7 @@
 
         state.authorityChoice = pick.value;
         state.authorityCorrect = pick.value === 'qualified';
+        setLastAction('decision-made', { correct: state.authorityCorrect });
         saveState();
         renderAuthorityFeedback();
         updateDashboard();
@@ -3984,15 +4463,29 @@
           saveState();
           updateReportPreview();
         });
+
+        document.getElementById('reflectionFix').addEventListener('input', function (event) {
+          state.reflections.fix = event.target.value;
+          saveState();
+          updateReportPreview();
+        });
+
+        document.getElementById('reflectionEvidence').addEventListener('input', function (event) {
+          state.reflections.evidence = event.target.value;
+          saveState();
+          updateReportPreview();
+        });
       }
 
       function attachEvents() {
+        document.getElementById('missionNextStepButton').addEventListener('click', handleMissionNextStep);
         document.getElementById('beginMissionButton').addEventListener('click', handleBeginMission);
         document.getElementById('continueMissionButton').addEventListener('click', function () {
           if (!state.selectedMission) {
             announce('Select a career mission before continuing.', true);
             return;
           }
+          setLastAction('inspect-training');
           advanceToStage(1, 2, 'Mission selected. Training data is now available.');
         });
         document.getElementById('continueToChallengeButton').addEventListener('click', function () {
