@@ -702,6 +702,40 @@
       border-radius: 14px;
     }
 
+    .mobile-records {
+      display: none;
+      gap: 0.75rem;
+      margin-top: 0.85rem;
+    }
+
+    .mobile-record-card {
+      border: 1px solid var(--sim-border);
+      border-radius: 14px;
+      background: #ffffff;
+      box-shadow: var(--sim-shadow-soft);
+      padding: 0.8rem;
+      display: grid;
+      gap: 0.45rem;
+    }
+
+    .mobile-record-title {
+      font-weight: 800;
+      color: var(--sim-primary-dark);
+    }
+
+    .mobile-record-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.75rem;
+      align-items: center;
+      font-size: 0.94rem;
+    }
+
+    .mobile-record-row .label {
+      color: var(--sim-muted);
+      font-weight: 700;
+    }
+
     .choice-group {
       display: grid;
       gap: 0.75rem;
@@ -1169,6 +1203,14 @@
         padding: 0.7rem 0.6rem;
       }
 
+      .mobile-records {
+        display: grid;
+      }
+
+      #trainingTableArea {
+        display: none;
+      }
+
       .summary-table th {
         width: auto;
       }
@@ -1467,6 +1509,7 @@
             </div>
 
             <div id="trainingTableArea" class="table-wrap" aria-live="polite"></div>
+            <div id="trainingCardsArea" class="mobile-records" aria-live="polite"></div>
 
             <div class="button-row">
               <button id="continueToChallengeButton" class="btn" type="button">Continue to Challenge</button>
@@ -2279,7 +2322,9 @@
 
       function renderTrainingTable() {
         var area = document.getElementById('trainingTableArea');
+        var cardsArea = document.getElementById('trainingCardsArea');
         clearNode(area);
+        clearNode(cardsArea);
 
         var mission = getMission();
         var labels = getFeatureLabels();
@@ -2314,6 +2359,42 @@
         });
         table.appendChild(tbody);
         area.appendChild(table);
+
+        TRAIN_V1.forEach(function (record) {
+          var card = document.createElement('article');
+          card.className = 'mobile-record-card';
+
+          var title = document.createElement('div');
+          title.className = 'mobile-record-title';
+          title.textContent = record.id;
+          card.appendChild(title);
+
+          labels.forEach(function (featureLabel, idx) {
+            var row = document.createElement('div');
+            row.className = 'mobile-record-row';
+            var key = document.createElement('span');
+            key.className = 'label';
+            key.textContent = featureLabel;
+            var value = document.createElement('span');
+            value.textContent = String(record.f[idx]);
+            row.appendChild(key);
+            row.appendChild(value);
+            card.appendChild(row);
+          });
+
+          var labelRow = document.createElement('div');
+          labelRow.className = 'mobile-record-row';
+          var labelKey = document.createElement('span');
+          labelKey.className = 'label';
+          labelKey.textContent = 'Label';
+          var labelValue = document.createElement('span');
+          labelValue.appendChild(makePill(record.y));
+          labelRow.appendChild(labelKey);
+          labelRow.appendChild(labelValue);
+          card.appendChild(labelRow);
+
+          cardsArea.appendChild(card);
+        });
 
         var intro = document.getElementById('trainingIntro');
         if (mission) {
