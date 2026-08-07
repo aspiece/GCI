@@ -3985,7 +3985,7 @@
             incorrect: TEST.length - state.compare.v2Score,
             accuracy: v2Accuracy + '%',
             status: state.compare.v2Score < 5 ? 'Needs Rescue' : 'Performing Well',
-            highlight: delta >= 0
+            highlight: state.compare.v2Score >= state.compare.v1Score
           }
         ];
 
@@ -4247,9 +4247,9 @@
         return 'I tested the fictional model and found that it struggled when ' + weakSpot + '. ' +
           'I selected new training records that ' + recordReason + '. ' +
           'Version 2 performed ' + (performance === 'the same' ? 'the same as' : performance + ' than') + ' Version 1. ' +
-          'A qualified person should make the final decision because ' + oversight + '.' +
-          (fix ? ' What fixed the model: ' + fix + '.' : '') +
-          (evidence ? ' Evidence for my decision: ' + evidence + '.' : '');
+          'A qualified person should make the final decision because ' + oversight + '. ' +
+          'What fixed the model: ' + fix + '. ' +
+          'Evidence for my decision: ' + evidence + '.';
       }
 
       function updateReportPreview() {
