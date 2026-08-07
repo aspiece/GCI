@@ -4264,9 +4264,9 @@
         section.appendChild(heading);
         var change = document.createElement('div');
         change.className = 'comparison-change';
-        change.textContent = delta === 50
+        change.textContent = delta > 0
           ? 'Accuracy increased from ' + v1Accuracy + '% to ' + v2Accuracy + '%'
-          : 'Accuracy change: ' + (delta >= 0 ? '+' : '') + delta + ' percentage points';
+          : 'Accuracy change: ' + delta + ' percentage points';
         section.appendChild(change);
 
         var cardGrid = document.createElement('div');
@@ -4932,6 +4932,7 @@
         document.getElementById('continueToReportButton').addEventListener('click', function () {
           if (!state.authorityCorrect) {
             announce('Make the evidence-based final decision before continuing.', true);
+            showFeedback('authorityFeedback', 'Make the final decision before continuing.', 'bad');
             return;
           }
           if (!state.understandingCorrect) {
