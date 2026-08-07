@@ -2973,6 +2973,7 @@
       var STORAGE_KEY = 'gll-model-rescue-simulation-redesign-v2';
       var TOTAL_STEPS = 8;
       var PERFORMING_WELL_RATIO = 0.8;
+      var UTILITY_GAP_PX = 16;
       var stageTitles = [
         'Mission Briefing',
         'Choose a Career Mission',
@@ -3274,6 +3275,23 @@
         return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       }
 
+      function shouldScrollStageIntoView(stage) {
+        if (!stage || typeof stage.getBoundingClientRect !== 'function') {
+          return false;
+        }
+        var rect = stage.getBoundingClientRect();
+        var utility = document.querySelector('.mission-utility.is-visible');
+        var utilityOffset = 0;
+        if (utility && typeof utility.getBoundingClientRect === 'function') {
+          utilityOffset = utility.getBoundingClientRect().height + UTILITY_GAP_PX;
+        }
+        var viewportBottom = window.innerHeight || document.documentElement.clientHeight;
+        if (!viewportBottom) {
+          return false;
+        }
+        return rect.top < utilityOffset || rect.bottom > viewportBottom;
+      }
+
       function focusStage(stageIndex) {
         var stage = document.getElementById('stage-' + stageIndex);
         var heading = stage ? stage.querySelector('.stage-heading') : null;
@@ -3285,10 +3303,10 @@
               heading.focus();
             }
           }
-          if (typeof stage.scrollIntoView === 'function') {
+          if (typeof stage.scrollIntoView === 'function' && shouldScrollStageIntoView(stage)) {
             stage.scrollIntoView({
               behavior: prefersReducedMotion() ? 'auto' : 'smooth',
-              block: 'start'
+              block: 'nearest'
             });
           }
         }
