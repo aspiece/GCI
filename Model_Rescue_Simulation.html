@@ -3080,7 +3080,7 @@
           };
         }
 
-        if (buildReportText()) {
+        if (isReportComplete()) {
           return {
             title: 'Finish the mission',
             text: 'Your report is ready. Copy it to complete the rescue mission.',
@@ -3985,7 +3985,7 @@
             incorrect: TEST.length - state.compare.v2Score,
             accuracy: v2Accuracy + '%',
             status: state.compare.v2Score < 5 ? 'Needs Rescue' : 'Performing Well',
-            highlight: state.compare.v2Score >= state.compare.v1Score
+            highlight: state.compare.v2Score > state.compare.v1Score
           }
         ];
 
@@ -4006,6 +4006,11 @@
           card.appendChild(meta);
           var track = document.createElement('div');
           track.className = 'comparison-bar-track';
+          track.setAttribute('role', 'progressbar');
+          track.setAttribute('aria-valuenow', String(row.correct));
+          track.setAttribute('aria-valuemin', '0');
+          track.setAttribute('aria-valuemax', String(TEST.length));
+          track.setAttribute('aria-label', row.version + ' accuracy bar showing ' + row.correct + ' of ' + TEST.length + ' correct');
           var fill = document.createElement('div');
           fill.className = 'comparison-bar-fill' + (row.highlight ? ' improved' : '');
           fill.style.width = formatPercent(row.correct, TEST.length) + '%';
@@ -4250,6 +4255,17 @@
           'A qualified person should make the final decision because ' + oversight + '. ' +
           'What fixed the model: ' + fix + '. ' +
           'Evidence for my decision: ' + evidence + '.';
+      }
+
+      function isReportComplete() {
+        return !!(
+          state.reflections.weakSpot &&
+          state.reflections.recordReason &&
+          state.reflections.performance &&
+          state.reflections.oversight.trim() &&
+          state.reflections.fix.trim() &&
+          state.reflections.evidence.trim()
+        );
       }
 
       function updateReportPreview() {
