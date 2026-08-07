@@ -90,12 +90,17 @@
       backdrop-filter: blur(10px);
     }
 
+    .mission-overview {
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(280px, 1fr);
+      gap: 0.8rem;
+      align-items: start;
+      margin-bottom: 0.9rem;
+    }
+
     .mission-dashboard {
-      position: sticky;
-      top: calc(var(--nav-height) + 4.1rem);
-      z-index: 55;
       display: none;
-      margin-bottom: 0.8rem;
+      min-width: 0;
     }
 
     .mission-dashboard.is-visible {
@@ -108,7 +113,7 @@
       border-left: 8px solid var(--sim-primary);
       border-radius: var(--sim-radius);
       box-shadow: var(--sim-shadow);
-      padding: 0.8rem 0.9rem;
+      padding: 0.7rem 0.8rem;
       backdrop-filter: blur(12px);
     }
 
@@ -136,15 +141,15 @@
     .dashboard-grid {
       display: grid;
       grid-template-columns: repeat(5, minmax(110px, 1fr));
-      gap: 0.5rem;
-      margin-top: 0.7rem;
+      gap: 0.45rem;
+      margin-top: 0.6rem;
     }
 
     .dashboard-stat {
       border: 1px solid var(--sim-border);
       border-radius: 14px;
       background: #f9fcfd;
-      padding: 0.55rem 0.6rem;
+      padding: 0.45rem 0.55rem;
       min-height: 0;
     }
 
@@ -1035,14 +1040,25 @@
     }
 
     .action-narrative-panel {
-      margin-top: 0.8rem;
-      margin-bottom: 1rem;
+      margin: 0;
       border-left: 6px solid var(--sim-primary);
       background: #f4fafc;
+      padding: 0.8rem 0.95rem;
+    }
+
+    .action-narrative-panel h2 {
+      margin: 0 0 0.45rem;
+      font-size: 1rem;
+    }
+
+    .action-narrative-content {
+      display: grid;
+      gap: 0.35rem;
     }
 
     .action-narrative-content p {
-      margin: 0.45rem 0;
+      margin: 0;
+      font-size: 0.92rem;
     }
 
     .boundary-legend {
@@ -1345,6 +1361,10 @@
     }
 
     @media (max-width: 1100px) {
+      .mission-overview {
+        grid-template-columns: 1fr;
+      }
+
       .mission-grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
       }
@@ -1369,8 +1389,8 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
-      .mission-dashboard {
-        top: calc(var(--nav-height) + 4.2rem);
+      .mission-overview {
+        gap: 0.7rem;
       }
     }
 
@@ -1430,10 +1450,6 @@
 
       .progress-label-row {
         gap: 0.5rem;
-      }
-
-      .mission-dashboard {
-        top: calc(var(--nav-height) + 4.15rem);
       }
 
       .dashboard-card {
@@ -1593,63 +1609,65 @@
         </div>
       </div>
 
-      <aside id="missionDashboard" class="mission-dashboard" aria-label="Mission dashboard">
-        <div class="dashboard-card">
-          <div class="dashboard-top">
-            <div>
-              <h2 class="dashboard-title">Mission Dashboard</h2>
-              <p id="dashboardMissionMeta" class="dashboard-meta">Select a mission to begin tracking progress.</p>
+      <div class="mission-overview">
+        <aside id="missionDashboard" class="mission-dashboard" aria-label="Mission dashboard">
+          <div class="dashboard-card">
+            <div class="dashboard-top">
+              <div>
+                <h2 class="dashboard-title">Mission Dashboard</h2>
+                <p id="dashboardMissionMeta" class="dashboard-meta">Select a mission to begin tracking progress.</p>
+              </div>
+              <div class="summary-inline">
+                <span id="dashboardMissionStatus" class="status-badge pending">Not started</span>
+                <span id="dashboardCurrentStage" class="status-badge current">Current stage: Mission Briefing</span>
+              </div>
             </div>
-            <div class="summary-inline">
-              <span id="dashboardMissionStatus" class="status-badge pending">Not started</span>
-              <span id="dashboardCurrentStage" class="status-badge current">Current stage: Mission Briefing</span>
+
+            <div class="dashboard-progress-wrap" aria-label="Overall mission progress">
+              <div class="progress-label-row">
+                <span id="dashboardProgressLabel">Progress: 0 of 8 steps</span>
+                <span id="dashboardProgressPercent">0%</span>
+              </div>
+              <div id="dashboardProgressTrack" class="progress-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="8" aria-labelledby="dashboardProgressLabel">
+                <div id="dashboardProgressFill" class="progress-fill" style="width: 0%;">0/8</div>
+              </div>
+            </div>
+
+            <div class="dashboard-grid">
+              <div class="dashboard-stat">
+                <span class="dashboard-stat-label">Mission</span>
+                <p id="dashboardMissionName" class="dashboard-stat-value">Pending</p>
+              </div>
+              <div class="dashboard-stat">
+                <span class="dashboard-stat-label">Version 1 Accuracy</span>
+                <p id="dashboardV1" class="dashboard-stat-value">Pending</p>
+              </div>
+              <div class="dashboard-stat">
+                <span class="dashboard-stat-label">Version 2 Accuracy</span>
+                <p id="dashboardV2" class="dashboard-stat-value">Pending</p>
+              </div>
+              <div class="dashboard-stat">
+                <span class="dashboard-stat-label">Rescue Records</span>
+                <p id="dashboardRescues" class="dashboard-stat-value">0 of 3 selected</p>
+              </div>
+              <div class="dashboard-stat">
+                <span class="dashboard-stat-label">Mission Status</span>
+                <p id="dashboardStatusText" class="dashboard-stat-value">Awaiting setup</p>
+              </div>
             </div>
           </div>
+        </aside>
 
-          <div class="dashboard-progress-wrap" aria-label="Overall mission progress">
-            <div class="progress-label-row">
-              <span id="dashboardProgressLabel">Progress: 0 of 8 steps</span>
-              <span id="dashboardProgressPercent">0%</span>
-            </div>
-            <div id="dashboardProgressTrack" class="progress-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="8" aria-labelledby="dashboardProgressLabel">
-              <div id="dashboardProgressFill" class="progress-fill" style="width: 0%;">0/8</div>
-            </div>
+        <section id="actionNarrativePanel" class="info-card action-narrative-panel" aria-labelledby="actionNarrativeHeading">
+          <h2 id="actionNarrativeHeading">What Just Happened?</h2>
+          <div id="actionNarrativeLive" class="action-narrative-content" aria-live="polite" aria-atomic="true">
+            <p><strong>What you did:</strong> <span id="actionDid">Start the mission to begin.</span></p>
+            <p><strong>What changed:</strong> <span id="actionChanged">The model has not been tested yet.</span></p>
+            <p><strong>Why it matters:</strong> <span id="actionWhy">Each step helps you gather evidence before making decisions.</span></p>
+            <p><strong>What to examine next:</strong> <span id="actionNext">Read the mission briefing, then continue to Stage 1.</span></p>
           </div>
-
-          <div class="dashboard-grid">
-            <div class="dashboard-stat">
-              <span class="dashboard-stat-label">Mission</span>
-              <p id="dashboardMissionName" class="dashboard-stat-value">Pending</p>
-            </div>
-            <div class="dashboard-stat">
-              <span class="dashboard-stat-label">Version 1 Accuracy</span>
-              <p id="dashboardV1" class="dashboard-stat-value">Pending</p>
-            </div>
-            <div class="dashboard-stat">
-              <span class="dashboard-stat-label">Version 2 Accuracy</span>
-              <p id="dashboardV2" class="dashboard-stat-value">Pending</p>
-            </div>
-            <div class="dashboard-stat">
-              <span class="dashboard-stat-label">Rescue Records</span>
-              <p id="dashboardRescues" class="dashboard-stat-value">0 of 3 selected</p>
-            </div>
-            <div class="dashboard-stat">
-              <span class="dashboard-stat-label">Mission Status</span>
-              <p id="dashboardStatusText" class="dashboard-stat-value">Awaiting setup</p>
-            </div>
-          </div>
-        </div>
-      </aside>
-
-      <section id="actionNarrativePanel" class="info-card action-narrative-panel" aria-labelledby="actionNarrativeHeading">
-        <h2 id="actionNarrativeHeading">What Just Happened?</h2>
-        <div id="actionNarrativeLive" class="action-narrative-content" aria-live="polite" aria-atomic="true">
-          <p><strong>What you did:</strong> <span id="actionDid">Start the mission to begin.</span></p>
-          <p><strong>What changed:</strong> <span id="actionChanged">The model has not been tested yet.</span></p>
-          <p><strong>Why it matters:</strong> <span id="actionWhy">Each step helps you gather evidence before making decisions.</span></p>
-          <p><strong>What to examine next:</strong> <span id="actionNext">Read the mission briefing, then continue to Stage 1.</span></p>
-        </div>
-      </section>
+        </section>
+      </div>
 
       <details id="stage-0" class="stage-panel" data-stage="0" open>
         <summary class="stage-summary">
