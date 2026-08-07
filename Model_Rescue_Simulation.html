@@ -991,6 +991,237 @@
       font-weight: 700;
     }
 
+    .indicator-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      border-radius: 999px;
+      padding: 0.2rem 0.55rem;
+      border: 1px solid transparent;
+      font-size: 0.82rem;
+      font-weight: 800;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    .indicator-chip.correct {
+      background: var(--sim-success-soft);
+      border-color: #bcdabd;
+      color: var(--sim-success);
+    }
+
+    .indicator-chip.incorrect {
+      background: var(--sim-error-soft);
+      border-color: #e4c0c0;
+      color: var(--sim-error);
+    }
+
+    .indicator-chip.borderline {
+      background: repeating-linear-gradient(45deg, #fff8d9 0, #fff8d9 6px, #f5ecc3 6px, #f5ecc3 12px);
+      border-color: #ebd68c;
+      color: #8f6a00;
+    }
+
+    .indicator-chip.added {
+      background: #eaf4ff;
+      border-color: #bad3f3;
+      color: #1d4f8f;
+    }
+
+    .indicator-chip.human-review {
+      background: #eef7fa;
+      border-color: #bdd5dd;
+      color: var(--sim-primary-dark);
+    }
+
+    .action-narrative-panel {
+      margin-top: 0.8rem;
+      margin-bottom: 1rem;
+      border-left: 6px solid var(--sim-primary);
+      background: #f4fafc;
+    }
+
+    .action-narrative-content p {
+      margin: 0.45rem 0;
+    }
+
+    .boundary-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-top: 0.8rem;
+    }
+
+    .boundary-scale-wrap {
+      margin-top: 0.85rem;
+      border: 1px solid var(--sim-border);
+      border-radius: 14px;
+      padding: 0.9rem;
+      background: #fbfdfe;
+    }
+
+    .boundary-region-row {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid #cedee5;
+      min-height: 2.1rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .boundary-region {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-align: center;
+      padding: 0.35rem;
+    }
+
+    .boundary-region.review {
+      background: #fff3ea;
+      color: #8b4e14;
+    }
+
+    .boundary-region.ready {
+      background: #edf7ee;
+      color: #1f6f26;
+    }
+
+    .boundary-line {
+      position: absolute;
+      top: -0.2rem;
+      bottom: -0.2rem;
+      width: 3px;
+      background: #19384d;
+      border-radius: 999px;
+      transform: translateX(-50%);
+    }
+
+    .boundary-line span {
+      position: absolute;
+      top: -1.45rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #19384d;
+      color: #fff;
+      border-radius: 8px;
+      padding: 0.08rem 0.38rem;
+      font-size: 0.72rem;
+      white-space: nowrap;
+    }
+
+    .boundary-points-row {
+      position: relative;
+      min-height: 8.2rem;
+      border-top: 1px dashed #cbdde4;
+      padding-top: 0.8rem;
+    }
+
+    .boundary-marker {
+      position: absolute;
+      transform: translateX(-50%);
+      border-radius: 999px;
+      border: 1px solid #8aa8b6;
+      background: #fff;
+      padding: 0.18rem 0.45rem;
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--sim-text);
+      cursor: pointer;
+    }
+
+    .boundary-marker[data-kind="training"] {
+      top: 0.3rem;
+    }
+
+    .boundary-marker[data-kind="rescue"] {
+      top: 2.35rem;
+    }
+
+    .boundary-marker[data-kind="test"] {
+      top: 4.4rem;
+    }
+
+    .boundary-marker.is-borderline {
+      border-style: dashed;
+      background: repeating-linear-gradient(45deg, #fff8d9 0, #fff8d9 6px, #f5ecc3 6px, #f5ecc3 12px);
+    }
+
+    .boundary-marker.is-incorrect {
+      border-color: #be4a4a;
+      box-shadow: inset 0 0 0 1px #ffd8d8;
+    }
+
+    .boundary-marker.is-added {
+      border-color: #336fb2;
+      box-shadow: inset 0 0 0 1px #dceaff;
+    }
+
+    .boundary-marker:focus-visible {
+      outline: 3px solid #0ea5c6;
+      outline-offset: 1px;
+      z-index: 5;
+    }
+
+    .boundary-axis {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 5.9rem;
+      color: var(--sim-muted);
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .boundary-details {
+      margin-top: 0.75rem;
+      border-radius: 12px;
+      border: 1px solid #d6e3e8;
+      background: #f5fbfd;
+      padding: 0.7rem 0.85rem;
+      font-size: 0.92rem;
+    }
+
+    .retraining-flow {
+      margin-top: 1rem;
+    }
+
+    .retraining-steps {
+      margin: 0.75rem 0 0;
+      padding-left: 0;
+      list-style: none;
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .retraining-steps li {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: 1px solid var(--sim-border);
+      border-radius: 12px;
+      padding: 0.55rem 0.7rem;
+      background: #fbfdfe;
+    }
+
+    .step-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      background: #e9f4f8;
+      color: var(--sim-primary-dark);
+      border: 1px solid #bdd5dd;
+      flex-shrink: 0;
+    }
+
     .report-summary-grid {
       display: grid;
       grid-template-columns: 1.1fr 0.9fr;
@@ -1213,6 +1444,19 @@
         display: none;
       }
 
+      .boundary-scale-wrap {
+        padding: 0.75rem 0.6rem;
+      }
+
+      .boundary-points-row {
+        min-height: 9rem;
+      }
+
+      .boundary-axis {
+        margin-top: 6.55rem;
+        font-size: 0.72rem;
+      }
+
       .button-row {
         flex-direction: column;
         align-items: stretch;
@@ -1252,6 +1496,11 @@
       .progress-label-row {
         gap: 0.25rem;
         font-size: 0.85rem;
+      }
+
+      .boundary-marker {
+        font-size: 0.67rem;
+        padding: 0.14rem 0.34rem;
       }
 
       .mission-card {
@@ -1391,6 +1640,16 @@
           </div>
         </div>
       </aside>
+
+      <section id="actionNarrativePanel" class="info-card action-narrative-panel" aria-labelledby="actionNarrativeHeading">
+        <h2 id="actionNarrativeHeading">What Just Happened?</h2>
+        <div id="actionNarrativeLive" class="action-narrative-content" aria-live="polite" aria-atomic="true">
+          <p><strong>What you did:</strong> <span id="actionDid">Start the mission to begin.</span></p>
+          <p><strong>What changed:</strong> <span id="actionChanged">The model has not been tested yet.</span></p>
+          <p><strong>Why it matters:</strong> <span id="actionWhy">Each step helps you gather evidence before making decisions.</span></p>
+          <p><strong>What to examine next:</strong> <span id="actionNext">Read the mission briefing, then continue to Stage 1.</span></p>
+        </div>
+      </section>
 
       <details id="stage-0" class="stage-panel" data-stage="0" open>
         <summary class="stage-summary">
@@ -1690,7 +1949,19 @@
               Add exactly three new fake training records. Don't pick random ones — pick records that fix the weakness you found.
             </p>
 
+            <section class="info-card" aria-labelledby="boundary-map-heading">
+              <h3 id="boundary-map-heading">Decision boundary map</h3>
+              <p class="small-muted">
+                This scale uses the model's own score behavior to show where records are usually judged as <strong>Needs Review</strong> or <strong>Ready</strong>.
+              </p>
+              <div id="boundaryLegend" class="boundary-legend" aria-label="Map legend"></div>
+              <div id="boundaryScale" class="boundary-scale-wrap"></div>
+              <div id="boundaryDetails" class="boundary-details" aria-live="polite">Select a record marker to inspect details.</div>
+            </section>
+
             <div id="rescueCounter" class="rescue-counter" aria-live="polite">Rescue slots filled: 0 of 3</div>
+            <div id="rescueSetSummary" class="feedback-box">Choose records to build your rescue set summary.</div>
+            <div id="rescueSelectionFeedback" class="feedback-box">Select a rescue record to see immediate feedback.</div>
 
             <div id="improvementGrid" class="grid-two" aria-live="polite"></div>
 
@@ -1728,6 +1999,19 @@
             <div class="button-row">
               <button id="applyRescueRecordsButton" class="btn" type="button" disabled>Apply Rescue Records</button>
             </div>
+
+            <section class="info-card retraining-flow" aria-labelledby="retraining-flow-heading">
+              <h3 id="retraining-flow-heading">How retraining builds Version 2</h3>
+              <p class="small-muted">
+                The selected rescue records are added to training examples, then Version 2 is rebuilt and tested on the <strong>same test records</strong> for a fair comparison.
+              </p>
+              <ol id="retrainingSteps" class="retraining-steps">
+                <li><span class="step-chip">1</span> Original Version 1 training records</li>
+                <li><span class="step-chip">2</span> Add your three rescue records (<span id="retrainingSelectedRecords">none selected yet</span>)</li>
+                <li><span class="step-chip">3</span> Build Version 2 from the expanded training set</li>
+                <li><span class="step-chip">4</span> Test Version 2 on the same six test records used for Version 1</li>
+              </ol>
+            </section>
 
             <div id="improvementFeedback" class="feedback-box hidden" aria-live="polite"></div>
 
@@ -1975,6 +2259,7 @@
     </div>
   </dialog>
 
+  <script src="assets/model_rescue_logic.js"></script>
   <script>
     (function () {
       var toggle = document.querySelector('.nav-toggle');
@@ -2069,6 +2354,143 @@
         };
       }
 
+      var logic = window.ModelRescueLogic || {};
+
+      function indicatorForResult(correct) {
+        return correct ? {
+          className: 'correct',
+          text: 'Correct',
+          icon: '✓'
+        } : {
+          className: 'incorrect',
+          text: 'Incorrect',
+          icon: '✗'
+        };
+      }
+
+      function makeIndicatorChip(kind, text, icon) {
+        var span = document.createElement('span');
+        span.className = 'indicator-chip ' + kind;
+        span.setAttribute('role', 'img');
+        span.setAttribute('aria-label', text);
+        var iconNode = document.createElement('span');
+        iconNode.setAttribute('aria-hidden', 'true');
+        iconNode.textContent = icon + ' ';
+        span.appendChild(iconNode);
+        span.appendChild(document.createTextNode(text));
+        return span;
+      }
+
+      function getComparisonRows() {
+        if (!state.compare || !logic.buildVersionComparisonRows) {
+          return [];
+        }
+        return logic.buildVersionComparisonRows(TEST, state.compare.v1, state.compare.v2);
+      }
+
+      function getDecisionBoundaryScore() {
+        if (!logic.computeDecisionBoundary) {
+          return 5;
+        }
+        return logic.computeDecisionBoundary(TRAIN_V1, predictLabel);
+      }
+
+      function getRescueRecordById(id) {
+        return IMPROVEMENTS.find(function (record) {
+          return record.id === id;
+        }) || null;
+      }
+
+      function analyzeRescueRecord(record) {
+        if (!record || !logic.classifyRescueRecord) {
+          return null;
+        }
+        return logic.classifyRescueRecord(record, TRAIN_V1, getDecisionBoundaryScore());
+      }
+
+      function analyzeSelectedRescues() {
+        return state.selectedImprovements.map(function (id) {
+          return analyzeRescueRecord(getRescueRecordById(id));
+        }).filter(function (item) {
+          return !!item;
+        });
+      }
+
+      function getWhatHappenedDefaults() {
+        return {
+          did: 'Start the mission to begin.',
+          changed: 'The model has not been tested yet.',
+          why: 'Each step helps you gather evidence before making decisions.',
+          next: 'Read the mission briefing, then continue to Stage 1.'
+        };
+      }
+
+      function getWhatHappenedFromState() {
+        if (!state.lastAction || !state.lastAction.key) {
+          return getWhatHappenedDefaults();
+        }
+
+        var context = state.lastAction.context || {};
+        var selectedCount = state.selectedImprovements.length;
+        if (state.lastAction.key === 'inspect-training') {
+          return {
+            did: 'You inspected the Version 1 training data.',
+            changed: 'You can now see which examples the model used to learn.',
+            why: 'You need training-data clues to diagnose model mistakes later.',
+            next: 'Move to the Version 1 challenge and test predictions.'
+          };
+        }
+        if (state.lastAction.key === 'test-v1') {
+          return {
+            did: 'You tested Version 1 on the same six test records.',
+            changed: 'You now have baseline results, including incorrect predictions.',
+            why: 'The baseline tells you where the model is weak.',
+            next: 'Find the pattern in the missed records.'
+          };
+        }
+        if (state.lastAction.key === 'diagnose-weak-spot') {
+          return {
+            did: context.correct ? 'You identified the weak spot.' : 'You checked a diagnosis guess.',
+            changed: context.correct ? 'Stage 5 is unlocked so you can choose rescue records.' : 'Your diagnosis needs adjustment before moving on.',
+            why: 'A correct diagnosis keeps retraining focused on real errors.',
+            next: context.correct ? 'Choose rescue records that target borderline Needs Review cases.' : 'Review missed records and try diagnosis option A.'
+          };
+        }
+        if (state.lastAction.key === 'rescue-added' || state.lastAction.key === 'rescue-removed') {
+          return {
+            did: (state.lastAction.key === 'rescue-added' ? 'You added ' : 'You removed ') + context.recordId + ' in your rescue set.',
+            changed: 'Your rescue set now has ' + selectedCount + ' of 3 records selected.',
+            why: context.reason || 'Each rescue pick changes which examples Version 2 will learn from.',
+            next: 'Compare selected records, then confirm exactly three with a rationale.'
+          };
+        }
+        if (state.lastAction.key === 'rescue-confirmed') {
+          return {
+            did: 'You confirmed three rescue records and rebuilt Version 2.',
+            changed: 'Version 2 now trains on the original records plus your selected rescue set.',
+            why: 'Retraining changes model behavior because the training examples changed.',
+            next: 'Compare Version 1 and Version 2 on the same test records.'
+          };
+        }
+        if (state.lastAction.key === 'test-v2') {
+          return {
+            did: 'You reviewed Version 2 retest results.',
+            changed: 'You can now see which record outcomes improved or stayed the same.',
+            why: 'Record-by-record evidence shows whether the rescue set helped fairly.',
+            next: 'Decide whether to approve limited testing with human review.'
+          };
+        }
+        if (state.lastAction.key === 'decision-made') {
+          return {
+            did: 'You made an oversight decision for this model.',
+            changed: context.correct ? 'The decision stage is complete.' : 'The decision needs revision before continuing.',
+            why: 'Improved accuracy still requires qualified human review.',
+            next: context.correct ? 'Complete your final rescue report.' : 'Pick the option that keeps human review in charge.'
+          };
+        }
+        return getWhatHappenedDefaults();
+      }
+
       var STORAGE_KEY = 'gll-model-rescue-simulation-redesign-v1';
       var stageTitles = [
         'Mission Briefing',
@@ -2135,6 +2557,7 @@
           retestCorrect: false,
           authorityChoice: '',
           authorityCorrect: false,
+          lastAction: null,
           reflections: {
             weakSpot: '',
             recordReason: '',
@@ -2171,6 +2594,7 @@
             retestCorrect: !!parsed.retestCorrect,
             authorityChoice: typeof parsed.authorityChoice === 'string' ? parsed.authorityChoice : base.authorityChoice,
             authorityCorrect: !!parsed.authorityCorrect,
+            lastAction: parsed.lastAction && typeof parsed.lastAction.key === 'string' ? parsed.lastAction : base.lastAction,
             reflections: {
               weakSpot: parsed.reflections && typeof parsed.reflections.weakSpot === 'string' ? parsed.reflections.weakSpot : '',
               recordReason: parsed.reflections && typeof parsed.reflections.recordReason === 'string' ? parsed.reflections.recordReason : '',
@@ -2226,6 +2650,21 @@
         window.setTimeout(function () {
           target.textContent = message;
         }, 20);
+      }
+
+      function setLastAction(key, context) {
+        state.lastAction = {
+          key: key,
+          context: context || {}
+        };
+      }
+
+      function updateWhatHappenedPanel() {
+        var summary = getWhatHappenedFromState();
+        document.getElementById('actionDid').textContent = summary.did;
+        document.getElementById('actionChanged').textContent = summary.changed;
+        document.getElementById('actionWhy').textContent = summary.why;
+        document.getElementById('actionNext').textContent = summary.next;
       }
 
       function makePill(label) {
@@ -2701,10 +3140,8 @@
           tr.appendChild(modelCell);
 
           var resultCell = document.createElement('td');
-          var resultSpan = document.createElement('span');
-          resultSpan.className = 'icon-text';
-          resultSpan.textContent = isCorrect ? '✓ Correct' : '✗ Incorrect';
-          resultCell.appendChild(resultSpan);
+          var resultMeta = indicatorForResult(isCorrect);
+          resultCell.appendChild(makeIndicatorChip(resultMeta.className, resultMeta.text, resultMeta.icon));
           tr.appendChild(resultCell);
           tbody.appendChild(tr);
         });
@@ -2734,6 +3171,149 @@
         document.getElementById('continueMissionButton').disabled = !state.selectedMission;
       }
 
+      function renderBoundaryLegend() {
+        var legend = document.getElementById('boundaryLegend');
+        clearNode(legend);
+        var items = [
+          { kind: 'correct', text: '✓ Correct', icon: '✓' },
+          { kind: 'incorrect', text: '✗ Incorrect', icon: '✗' },
+          { kind: 'borderline', text: 'Borderline', icon: '≈' },
+          { kind: 'added', text: '+ Added to training', icon: '+' },
+          { kind: 'human-review', text: '👤 Human review required', icon: '👤' }
+        ];
+        items.forEach(function (item) {
+          legend.appendChild(makeIndicatorChip(item.kind, item.text, item.icon));
+        });
+      }
+
+      function getBoundaryPosition(score) {
+        var clamped = Math.max(0, Math.min(10, score));
+        return (clamped / 10) * 100;
+      }
+
+      function makeBoundaryMarker(record, kind, score, boundary, isIncorrect, isAdded) {
+        var button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'boundary-marker';
+        button.setAttribute('data-kind', kind);
+        button.style.left = getBoundaryPosition(score) + '%';
+        button.textContent = record.id;
+        var isBorderline = Math.abs(score - boundary) <= 0.9;
+        if (isBorderline) {
+          button.classList.add('is-borderline');
+        }
+        if (isIncorrect) {
+          button.classList.add('is-incorrect');
+        }
+        if (isAdded) {
+          button.classList.add('is-added');
+        }
+        var description = record.id + ' (' + kind + ') average score ' + score.toFixed(2) + ', label ' + record.y;
+        button.setAttribute('aria-label', description + (isIncorrect ? ', incorrect prediction' : '') + (isAdded ? ', added to training' : ''));
+        button.addEventListener('click', function () {
+          var details = document.getElementById('boundaryDetails');
+          var parts = [record.id + ': average score ' + score.toFixed(2), 'Label: ' + record.y];
+          if (isBorderline) {
+            parts.push('Borderline relative to decision boundary');
+          }
+          if (isAdded) {
+            parts.push('Selected as a new training example');
+          }
+          if (isIncorrect) {
+            parts.push('Incorrect model prediction');
+          }
+          details.textContent = parts.join('. ') + '.';
+        });
+        return button;
+      }
+
+      function renderDecisionBoundaryMap() {
+        var wrap = document.getElementById('boundaryScale');
+        clearNode(wrap);
+        renderBoundaryLegend();
+
+        var boundary = getDecisionBoundaryScore();
+        var regionRow = document.createElement('div');
+        regionRow.className = 'boundary-region-row';
+        var reviewRegion = document.createElement('div');
+        reviewRegion.className = 'boundary-region review';
+        reviewRegion.textContent = 'Needs Review region';
+        var readyRegion = document.createElement('div');
+        readyRegion.className = 'boundary-region ready';
+        readyRegion.textContent = 'Ready region';
+        var boundaryLine = document.createElement('div');
+        boundaryLine.className = 'boundary-line';
+        boundaryLine.style.left = getBoundaryPosition(boundary) + '%';
+        var boundaryLabel = document.createElement('span');
+        boundaryLabel.textContent = 'Boundary ' + boundary.toFixed(1);
+        boundaryLine.appendChild(boundaryLabel);
+        regionRow.appendChild(reviewRegion);
+        regionRow.appendChild(readyRegion);
+        regionRow.appendChild(boundaryLine);
+        wrap.appendChild(regionRow);
+
+        var pointsRow = document.createElement('div');
+        pointsRow.className = 'boundary-points-row';
+
+        TRAIN_V1.forEach(function (record) {
+          var avg = logic.averageFeatureScore(record.f);
+          pointsRow.appendChild(makeBoundaryMarker(record, 'training', avg, boundary, false, false));
+        });
+
+        IMPROVEMENTS.forEach(function (record) {
+          var avg = logic.averageFeatureScore(record.f);
+          var isAdded = state.selectedImprovements.indexOf(record.id) >= 0;
+          pointsRow.appendChild(makeBoundaryMarker(record, 'rescue', avg, boundary, false, isAdded));
+        });
+
+        if (state.compare) {
+          TEST.forEach(function (record, index) {
+            var avg = logic.averageFeatureScore(record.f);
+            var incorrect = state.compare.v2[index] !== record.y;
+            pointsRow.appendChild(makeBoundaryMarker(record, 'test', avg, boundary, incorrect, false));
+          });
+        }
+
+        var axis = document.createElement('div');
+        axis.className = 'boundary-axis';
+        for (var tick = 0; tick <= 10; tick += 2) {
+          var span = document.createElement('span');
+          span.textContent = String(tick);
+          axis.appendChild(span);
+        }
+        pointsRow.appendChild(axis);
+        wrap.appendChild(pointsRow);
+      }
+
+      function renderRetrainingFlow() {
+        var selected = state.selectedImprovements.length ? state.selectedImprovements.join(', ') : 'none selected yet';
+        document.getElementById('retrainingSelectedRecords').textContent = selected;
+      }
+
+      function renderRescueSelectionFeedback() {
+        var box = document.getElementById('rescueSelectionFeedback');
+        var summaryBox = document.getElementById('rescueSetSummary');
+        var analyses = analyzeSelectedRescues();
+
+        if (analyses.length === 0) {
+          box.textContent = 'Select a rescue record to see whether it targets the weak spot, adds variety, or is mostly redundant.';
+          box.className = 'feedback-box';
+          summaryBox.textContent = 'Choose records to build your rescue set summary.';
+          summaryBox.className = 'feedback-box';
+          return;
+        }
+
+        var lastSelectedId = state.selectedImprovements[state.selectedImprovements.length - 1];
+        var latest = analyses.find(function (entry) { return entry.id === lastSelectedId; }) || analyses[analyses.length - 1];
+        var categoryType = latest.category === 'direct' ? 'good' : (latest.category === 'variety' ? 'warning' : 'bad');
+        box.className = 'feedback-box ' + categoryType;
+        box.textContent = latest.id + ' ' + latest.reason + '.';
+
+        var setSummary = logic.summarizeRescueSet ? logic.summarizeRescueSet(analyses) : null;
+        summaryBox.className = 'feedback-box';
+        summaryBox.textContent = setSummary ? setSummary.sentence : 'Review your selected rescue set before applying changes.';
+      }
+
       function renderImprovementGrid() {
         var grid = document.getElementById('improvementGrid');
         clearNode(grid);
@@ -2754,19 +3334,32 @@
           checkbox.checked = state.selectedImprovements.indexOf(record.id) >= 0;
           checkbox.disabled = !checkbox.checked && state.selectedImprovements.length >= 3;
           checkbox.addEventListener('change', function () {
+            var analysis = analyzeRescueRecord(record);
             if (checkbox.checked) {
               if (state.selectedImprovements.indexOf(record.id) < 0) {
                 state.selectedImprovements.push(record.id);
               }
+              setLastAction('rescue-added', {
+                recordId: record.id,
+                reason: analysis ? (record.id + ' ' + analysis.reason + '.') : ''
+              });
             } else {
               state.selectedImprovements = state.selectedImprovements.filter(function (id) {
                 return id !== record.id;
+              });
+              setLastAction('rescue-removed', {
+                recordId: record.id,
+                reason: analysis ? (record.id + ' ' + analysis.reason + '.') : ''
               });
             }
             saveState();
             renderImprovementGrid();
             updateRescueCounter();
             updateApplyButton();
+            renderRescueSelectionFeedback();
+            renderRetrainingFlow();
+            renderDecisionBoundaryMap();
+            updateWhatHappenedPanel();
             updateDashboard();
           });
 
