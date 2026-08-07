@@ -1179,6 +1179,10 @@
         justify-content: space-between;
       }
 
+      .progress-label-row {
+        gap: 0.5rem;
+      }
+
       .mission-utility,
       .mission-dashboard {
         position: static;
@@ -1213,6 +1217,41 @@
 
       .summary-table th {
         width: auto;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .progress-label-row {
+        gap: 0.25rem;
+        font-size: 0.85rem;
+      }
+
+      .mission-card {
+        min-height: 140px;
+      }
+
+      .progress-fill {
+        font-size: 0.65rem;
+      }
+
+      .button-row {
+        gap: 0.5rem;
+      }
+
+      .table-wrap th,
+      .table-wrap td {
+        padding: 0.5rem 0.4rem;
+        font-size: 0.85rem;
+      }
+
+      .choice-card label,
+      .rationale-card label,
+      .inline-choice label {
+        padding: 0.75rem 0.8rem;
+      }
+
+      dialog {
+        width: min(90vw, 28rem);
       }
     }
 
