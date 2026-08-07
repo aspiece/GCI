@@ -1185,8 +1185,8 @@
     <div class="container--sm">
       <h1 id="sim-heading">Model Rescue Simulation</h1>
       <p class="sim-lead">
-        Investigate fictional training data, identify a repeated model weakness, apply targeted rescue records,
-        and decide whether the model is ready for further testing.
+        Look at fake training data, find where the model keeps failing, add better examples,
+        and decide if the model is ready for more testing.
       </p>
     </div>
   </header>
@@ -1221,7 +1221,7 @@
               <span id="dashboardProgressLabel">Progress: 0 of 8 steps</span>
               <span id="dashboardProgressPercent">0%</span>
             </div>
-            <div class="progress-track" aria-hidden="true">
+            <div class="progress-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="8" aria-labelledby="dashboardProgressLabel" aria-hidden="true">
               <div id="dashboardProgressFill" class="progress-fill" style="width: 0%;">0/8</div>
             </div>
           </div>
@@ -1266,37 +1266,35 @@
           <section class="big-hero-card" aria-labelledby="stage0-heading">
             <h2 id="stage0-heading" class="stage-heading" tabindex="-1">Your Mission: Rescue the Model</h2>
             <p class="stage-intro">
-              A fictional workplace has paused its AI system because it keeps making the same kind of mistake.
-              You have been asked to investigate the training data, identify the weakness, improve the model,
-              and decide whether it is ready for further testing.
+              A fictional company stopped using its AI system because it keeps making the same mistake.
+              Your job is to look at the training data, find the problem, fix it, and decide if the model is ready for more testing.
             </p>
 
             <div class="key-value-grid">
               <div class="kv-card">
                 <h3>Success Criteria</h3>
                 <ul class="list-compact">
-                  <li>Choose a career mission and interpret the fictional feature scores in context.</li>
-                  <li>Test Version 1 and identify the repeated error pattern rather than guessing from one case.</li>
-                  <li>Select three rescue records that directly target the weak spot in the training data.</li>
-                  <li>Decide whether the improved model should advance only with qualified human review.</li>
+                  <li>Pick a career setting and use the scores to understand what the data means.</li>
+                  <li>Test Version 1 and find the pattern of errors — don't just look at one case.</li>
+                  <li>Pick three new training records that fix the specific weakness you found.</li>
+                  <li>Decide if the improved model should only move forward with a qualified person reviewing it.</li>
                 </ul>
               </div>
               <div class="warning-card" aria-labelledby="fiction-warning-heading">
                 <h3 id="fiction-warning-heading">Warning: Fictional data only</h3>
                 <p>
-                  Everything in this simulation is made up for learning. Do not enter real people, real workplace,
-                  client, or patient information into this page.
+                  Everything in this simulation is fake and for learning only. Do not type in real names, real workplaces, or real patient information.
                 </p>
                 <ul class="list-compact">
                   <li>Use the built-in records only.</li>
                   <li>Model output is a clue, not proof.</li>
-                  <li>Qualified people must review evidence before any decision.</li>
+                  <li>A trained professional must review all evidence before any real decision is made.</li>
                 </ul>
               </div>
             </div>
 
             <div class="faux-note" aria-label="Mission note">
-              <strong>Mission note:</strong> Future stages stay hidden until you finish the current one. Completed stages remain visible so you can review your work.
+              <strong>Mission note:</strong> The next stage is hidden until you finish this one. Completed stages stay open so you can look back at your work.
             </div>
 
             <div class="button-row">
@@ -1321,20 +1319,20 @@
           <section aria-labelledby="stage1-heading">
             <h2 id="stage1-heading" class="stage-heading" tabindex="-1">Choose a Career Mission</h2>
             <p class="stage-intro">
-              Pick the fictional workplace context you want to use. The model data stays the same, but the feature names and story change to match the mission.
+              Pick a fictional workplace setting. The model data is the same for all missions, but the names and story change to match your choice.
             </p>
 
-            <ul class="mission-grid" aria-label="Career mission choices">
+            <ul class="mission-grid" role="list" aria-label="Career mission choices">
               <li><button class="mission-card" id="mission-automotive" type="button" data-mission="automotive" aria-pressed="false">
                 <span class="mission-card-check" aria-hidden="true">✓</span>
                 <div>
                   <div class="mission-card-icon" aria-hidden="true">🚗</div>
                   <h3>Automotive Diagnostic Model</h3>
-                  <p>Review fictional vehicle inspection records before recommending more testing.</p>
+                  <p>Look at fake car inspection records and decide if more testing is needed.</p>
                 </div>
                 <ul>
                   <li>Focus: mechanical readiness</li>
-                  <li>Use score patterns like an inspection checklist</li>
+                  <li>Read the scores like a checklist</li>
                 </ul>
               </button></li>
 
@@ -1343,11 +1341,11 @@
                 <div>
                   <div class="mission-card-icon" aria-hidden="true">🐾</div>
                   <h3>Veterinary Review Model</h3>
-                  <p>Review fictional animal case summaries before moving a case forward for treatment review.</p>
+                  <p>Look at fake animal health records and decide if a case needs treatment follow-up.</p>
                 </div>
                 <ul>
-                  <li>Focus: clinical monitoring</li>
-                  <li>Interpret score patterns as support signals</li>
+                  <li>Focus: health monitoring</li>
+                  <li>Read the scores as signs of health</li>
                 </ul>
               </button></li>
 
@@ -1356,11 +1354,11 @@
                 <div>
                   <div class="mission-card-icon" aria-hidden="true">🏗️</div>
                   <h3>Construction Safety Model</h3>
-                  <p>Review fictional site-readiness records before deciding whether work can continue.</p>
+                  <p>Look at fake construction site reports and decide if work is safe to continue.</p>
                 </div>
                 <ul>
                   <li>Focus: job-site safety</li>
-                  <li>Interpret scores as readiness checks</li>
+                  <li>Read the scores as safety checks</li>
                 </ul>
               </button></li>
 
@@ -1369,11 +1367,11 @@
                 <div>
                   <div class="mission-card-icon" aria-hidden="true">🛡️</div>
                   <h3>Cybersecurity Alert Model</h3>
-                  <p>Review fictional alert records before escalating or clearing a possible threat.</p>
+                  <p>Look at fake security alerts and decide if a threat needs action.</p>
                 </div>
                 <ul>
-                  <li>Focus: incident triage</li>
-                  <li>Interpret scores like alert investigation signals</li>
+                  <li>Focus: sorting alerts</li>
+                  <li>Read the scores like clues about each alert</li>
                 </ul>
               </button></li>
 
@@ -1382,11 +1380,11 @@
                 <div>
                   <div class="mission-card-icon" aria-hidden="true">🍽️</div>
                   <h3>Culinary Safety Model</h3>
-                  <p>Review fictional kitchen safety checks before approving a service workflow.</p>
+                  <p>Look at fake kitchen safety records and decide if service can start.</p>
                 </div>
                 <ul>
                   <li>Focus: food safety readiness</li>
-                  <li>Interpret scores as service-quality checks</li>
+                  <li>Read the scores as food safety checks</li>
                 </ul>
               </button></li>
             </ul>
@@ -1417,7 +1415,7 @@
           <section aria-labelledby="stage2-heading">
             <h2 id="stage2-heading" class="stage-heading" tabindex="-1">Investigate the Training Data</h2>
             <p id="trainingIntro" class="stage-intro">
-              Review the fictional Version 1 training records. Each record has four feature scores and a final label.
+              Look at the fake Version 1 training records. Each record has four scores and a final label.
             </p>
 
             <div class="glossary-card">
@@ -1425,10 +1423,10 @@
               <details class="help-tip">
                 <summary>Open the glossary for key terms</summary>
                 <div class="tip-box">
-                  <p><strong>Training data:</strong> examples the model uses to learn patterns before it sees new records.</p>
-                  <p><strong>Feature:</strong> one score the model uses when comparing one record to another.</p>
-                  <p><strong>Label:</strong> the correct outcome attached to a training or test record.</p>
-                  <p><strong>Borderline case:</strong> a record with middle-range scores that may be hard to classify if the training data is unbalanced.</p>
+                  <p><strong>Training data:</strong> the examples the model studies to learn how to make predictions.</p>
+                  <p><strong>Feature:</strong> one score the model looks at when judging a record.</p>
+                  <p><strong>Label:</strong> the correct answer attached to a record.</p>
+                  <p><strong>Borderline case:</strong> a record with middle scores that is hard to label correctly when the training data is missing similar examples.</p>
                 </div>
               </details>
             </div>
@@ -1457,7 +1455,7 @@
           <section aria-labelledby="stage3-heading">
             <h2 id="stage3-heading" class="stage-heading" tabindex="-1">Challenge the Model</h2>
             <p class="stage-intro">
-              Predict how the model might classify each fictional test record, then compare your thinking with the model's actual Version 1 performance.
+              Guess how the model would label each fake test record. Then see how the real Version 1 model actually did.
             </p>
 
             <div id="testTableArea" class="table-wrap" aria-live="polite"></div>
@@ -1491,7 +1489,7 @@
           <section aria-labelledby="stage4-heading">
             <h2 id="stage4-heading" class="stage-heading" tabindex="-1">Diagnose the Weak Spot</h2>
             <p class="stage-intro">
-              Focus on the records Version 1 missed. What do those incorrect predictions have in common?
+              Look at the records Version 1 got wrong. What do they have in common?
             </p>
 
             <fieldset class="choice-group">
@@ -1499,22 +1497,22 @@
               <div class="choice-card">
                 <label for="pattern-a">
                   <input id="pattern-a" type="radio" name="pattern" value="a" />
-                  <span class="choice-title">A. It misses mostly borderline Needs Review cases.</span>
-                  <span class="choice-hint">Look for middle-range values that do not have many matching Needs Review examples in the training data.</span>
+                  <span class="choice-title">A. It mostly misses borderline Needs Review cases.</span>
+                  <span class="choice-hint">Look for middle scores that are missing similar Needs Review examples in the training data.</span>
                 </label>
               </div>
               <div class="choice-card">
                 <label for="pattern-b">
                   <input id="pattern-b" type="radio" name="pattern" value="b" />
                   <span class="choice-title">B. It misses mostly very low-score Needs Review cases.</span>
-                  <span class="choice-hint">This would be true if the model failed on obviously weak records near the bottom of the score range.</span>
+                  <span class="choice-hint">This would be true if the model failed on records with very low scores.</span>
                 </label>
               </div>
               <div class="choice-card">
                 <label for="pattern-c">
                   <input id="pattern-c" type="radio" name="pattern" value="c" />
                   <span class="choice-title">C. It misses mostly strong Ready cases.</span>
-                  <span class="choice-hint">This would be true if high-scoring records were being labeled too harshly.</span>
+                  <span class="choice-hint">This would be true if the model was too strict about labeling high-scoring records.</span>
                 </label>
               </div>
             </fieldset>
@@ -1547,7 +1545,7 @@
           <section aria-labelledby="stage5-heading">
             <h2 id="stage5-heading" class="stage-heading" tabindex="-1">Choose Three Rescue Records</h2>
             <p class="stage-intro">
-              Add exactly three new fictional training records. Your goal is not to add random data. Your goal is to target the weakness you just diagnosed.
+              Add exactly three new fake training records. Don't pick random ones — pick records that fix the weakness you found.
             </p>
 
             <div id="rescueCounter" class="rescue-counter" aria-live="polite">Rescue slots filled: 0 of 3</div>
@@ -1567,7 +1565,7 @@
                 <div class="rationale-card">
                   <label for="rationale-b">
                     <input id="rationale-b" type="radio" name="rationale" value="extreme-only" />
-                    <span class="choice-title">They mostly add extreme scores because the model only learns from dramatic examples.</span>
+                    <span class="choice-title">They mostly add extreme scores because dramatic examples are what models learn from best.</span>
                   </label>
                 </div>
                 <div class="rationale-card">
@@ -1579,7 +1577,7 @@
                 <div class="rationale-card">
                   <label for="rationale-d">
                     <input id="rationale-d" type="radio" name="rationale" value="unusual-patterns" />
-                    <span class="choice-title">They add unusual patterns because surprising records always improve models.</span>
+                    <span class="choice-title">They add unusual patterns because unexpected records always help models improve.</span>
                   </label>
                 </div>
               </fieldset>
@@ -1613,7 +1611,7 @@
           <section aria-labelledby="stage6-heading">
             <h2 id="stage6-heading" class="stage-heading" tabindex="-1">Retest the Model</h2>
             <p class="stage-intro">
-              Compare Version 1 and Version 2 on the same fictional test set to see whether your rescue records improved performance.
+              Compare Version 1 and Version 2 on the same fake test records to see if your new records helped.
             </p>
 
             <div id="retestComparisonArea" aria-live="polite"></div>
@@ -1631,7 +1629,7 @@
                 <div class="inline-choice">
                   <label for="perfect-no">
                     <input id="perfect-no" type="radio" name="perfect" value="no" />
-                    No, better results do not make the model perfect.
+                    No, better results don't mean the model is perfect.
                   </label>
                 </div>
               </fieldset>
@@ -1665,7 +1663,7 @@
           <section aria-labelledby="stage7-heading">
             <h2 id="stage7-heading" class="stage-heading" tabindex="-1">Approve or Pause the Model</h2>
             <p class="stage-intro">
-              Decide what should happen next. Even after improvement, this fictional model still requires human oversight.
+              Decide what should happen next. Even after improving, this fictional model still needs a person to check its work.
             </p>
 
             <fieldset class="choice-group">
@@ -1679,13 +1677,13 @@
               <div class="choice-card">
                 <label for="authority-model-only">
                   <input id="authority-model-only" type="radio" name="authority" value="model-only" />
-                  <span class="choice-title">Be used to make final decisions independently.</span>
+                  <span class="choice-title">Be used to make final decisions on its own.</span>
                 </label>
               </div>
               <div class="choice-card">
                 <label for="authority-deploy">
                   <input id="authority-deploy" type="radio" name="authority" value="deploy-now" />
-                  <span class="choice-title">Be deployed without additional evaluation.</span>
+                  <span class="choice-title">Be put into use without more testing.</span>
                 </label>
               </div>
               <div class="choice-card">
@@ -1724,7 +1722,7 @@
           <section aria-labelledby="stage8-heading">
             <h2 id="stage8-heading" class="stage-heading" tabindex="-1">Complete Your Rescue Report</h2>
             <p class="stage-intro">
-              Summarize what you learned, what improved, and why qualified human review still matters.
+              Summarize what you learned, what got better, and why a person still needs to check the model's work.
             </p>
 
             <div class="report-card" aria-labelledby="report-complete-heading">
@@ -1734,8 +1732,8 @@
               </div>
               <h3 id="report-complete-heading">Model Rescue Complete</h3>
               <p>
-                You investigated the fictional Version 1 model, targeted its weakness, retested the updated version,
-                and made an oversight decision grounded in evidence.
+                You looked into the fake Version 1 model, found its weakness, tested the updated version,
+                and made a decision based on the evidence.
               </p>
             </div>
 
@@ -1750,8 +1748,8 @@
                   Finish the rescue steps to unlock your final mission label.
                 </p>
                 <p class="small-muted">
-                  Your achievement reflects how well you diagnosed the weak spot, selected targeted rescue records,
-                  and applied the human oversight rule.
+                  Your achievement shows how well you found the weak spot, picked the right rescue records,
+                  and applied the human review rule.
                 </p>
               </div>
             </div>
@@ -1764,7 +1762,7 @@
                   <select id="reflectionWeakSpot">
                     <option value="">Select an explanation...</option>
                     <option value="records had middle-range scores and looked like borderline Needs Review cases">records had middle-range scores and looked like borderline Needs Review cases</option>
-                    <option value="the training data did not include enough examples near the decision boundary">the training data did not include enough examples near the decision boundary</option>
+                    <option value="the training data did not include enough examples near the decision boundary">the training data didn't have enough examples near the dividing line between labels</option>
                     <option value="it had to judge cases that looked similar to both labels">it had to judge cases that looked similar to both labels</option>
                   </select>
                 </div>
@@ -1775,7 +1773,7 @@
                     <option value="">Select a reason...</option>
                     <option value="added more borderline Needs Review examples near the weak spot">added more borderline Needs Review examples near the weak spot</option>
                     <option value="gave the model examples that matched the cases it kept missing">gave the model examples that matched the cases it kept missing</option>
-                    <option value="improved coverage of middle-range Needs Review records">improved coverage of middle-range Needs Review records</option>
+                    <option value="improved coverage of middle-range Needs Review records">added more middle-range Needs Review records to fill the gap</option>
                   </select>
                 </div>
 
@@ -1791,7 +1789,7 @@
 
                 <div class="field-card">
                   <label for="reflectionOversight">A qualified person should make the final decision because</label>
-                  <textarea id="reflectionOversight" placeholder="Explain why human review still matters even after the model improves."></textarea>
+                  <textarea id="reflectionOversight" placeholder="Explain why a person still needs to review the model even after it gets better."></textarea>
                 </div>
               </div>
 
@@ -1826,7 +1824,7 @@
     <div class="dialog-card">
       <h2 id="restartDialogHeading">Restart this mission?</h2>
       <p>
-        This will clear your selected mission, your answers, your rescue records, and your report text saved in this browser.
+        This will delete your mission choice, your answers, your rescue records, and your report text saved in this browser.
       </p>
       <div class="button-row">
         <button id="confirmRestartButton" class="btn btn-warning" type="button">Yes, restart mission</button>
@@ -1946,31 +1944,31 @@
         automotive: {
           name: 'Automotive Diagnostic Model',
           icon: '🚗',
-          description: 'Fictional vehicle inspection records for a diagnostic review.',
+          description: 'Fake car inspection records for a review.',
           featureLabels: ['Performance Score', 'Safety Check', 'Electrical Score', 'Frame Integrity']
         },
         veterinary: {
           name: 'Veterinary Review Model',
           icon: '🐾',
-          description: 'Fictional animal case review records for treatment follow-up.',
+          description: 'Fake animal health records for treatment follow-up.',
           featureLabels: ['Vitals Score', 'Lab Results', 'Behavior Score', 'Treatment Response']
         },
         construction: {
           name: 'Construction Safety Model',
           icon: '🏗️',
-          description: 'Fictional site-readiness records for a safety review.',
+          description: 'Fake construction site records for a safety review.',
           featureLabels: ['Safety Check', 'Materials Score', 'Equipment Score', 'Site Readiness']
         },
         cybersecurity: {
           name: 'Cybersecurity Alert Model',
           icon: '🛡️',
-          description: 'Fictional alert triage records for a security review.',
+          description: 'Fake security alert records for a review.',
           featureLabels: ['Threat Score', 'Response Time', 'Patch Level', 'Alert Frequency']
         },
         culinary: {
           name: 'Culinary Safety Model',
           icon: '🍽️',
-          description: 'Fictional kitchen safety records for service readiness.',
+          description: 'Fake kitchen safety records for service readiness.',
           featureLabels: ['Temperature Score', 'Prep Score', 'Storage Score', 'Hygiene Check']
         }
       };
@@ -2208,6 +2206,10 @@
         document.getElementById('dashboardProgressPercent').textContent = progressPercent + '%';
         document.getElementById('dashboardProgressFill').style.width = progressPercent + '%';
         document.getElementById('dashboardProgressFill').textContent = progressSteps + '/8';
+        var progressTrack = document.querySelector('.progress-track');
+        if (progressTrack) {
+          progressTrack.setAttribute('aria-valuenow', String(progressSteps));
+        }
         document.getElementById('dashboardV1').textContent = v1Value;
         document.getElementById('dashboardV2').textContent = v2Value;
         document.getElementById('dashboardRescues').textContent = state.selectedImprovements.length + ' of 3 selected';
@@ -2478,7 +2480,7 @@
 
         var note = document.createElement('p');
         note.className = 'small-muted';
-        note.textContent = 'Your radio-button predictions were scored too, but the table below shows the model\'s actual Version 1 performance on each test case.';
+        note.textContent = 'Your predictions were scored, but the table below shows what Version 1 actually predicted for each test case.';
         resultCard.appendChild(note);
 
         var tableWrap = document.createElement('div');
@@ -2664,14 +2666,14 @@
         if (state.diagnosisCorrect) {
           showFeedback(
             'diagnosisFeedback',
-            'Good diagnosis. Most incorrect predictions share mid-range scores, and the training data contains very few examples of borderline Needs Review cases.',
+            'Good diagnosis. Most missed records have middle-range scores. The training data has very few examples like them.',
             'good'
           );
           document.getElementById('continueToImprovementButton').classList.remove('hidden');
         } else {
           showFeedback(
             'diagnosisFeedback',
-            'Look again. Compare only the records the model missed. What do their feature values have in common?',
+            'Look again. Focus on only the records the model missed. What do those scores have in common?',
             'bad'
           );
         }
@@ -2688,19 +2690,19 @@
         if (overlap === 3) {
           showFeedback(
             'improvementFeedback',
-            'Excellent rescue choice. All three selected records directly strengthen the weak borderline Needs Review area.',
+            'Great choice! All three records target the exact weak spot — borderline Needs Review cases.',
             'good'
           );
         } else if (overlap >= 2) {
           showFeedback(
             'improvementFeedback',
-            'Good choice. Your picks target the weak border area.',
+            'Good choice. Your picks help fill in the weak area.',
             'good'
           );
         } else {
           showFeedback(
             'improvementFeedback',
-            'These picks may not target the main weakness. You can still compare and revise, but they do not closely match the best rescue set.',
+            'These picks may not fix the main weakness. You can still compare results and try again, but they don\'t match the best rescue set.',
             'warning'
           );
         }
@@ -2799,14 +2801,14 @@
         if (state.retestCorrect) {
           showFeedback(
             'retestFeedback',
-            'Correct. Even when performance improves, the model is not perfect. Human oversight still matters because one test result does not remove risk or uncertainty.',
+            'Correct. Even if the model improves, it is not perfect. A person still needs to review results because one test doesn\'t remove all risk.',
             'good'
           );
           document.getElementById('continueToHumanReviewButton').classList.remove('hidden');
         } else {
           showFeedback(
             'retestFeedback',
-            'Not quite. The model improved, but improvement does not mean perfection. Check the comparison table and remember that human oversight is still required.',
+            'Not quite. The model got better, but that doesn\'t make it perfect. Look at the comparison table again and remember that a person must still review decisions.',
             'bad'
           );
         }
@@ -2819,7 +2821,7 @@
         if (state.authorityCorrect) {
           showFeedback(
             'authorityFeedback',
-            'Correct. The fictional model should only be approved for limited additional testing with human review. A qualified person must review evidence and retain final authority.',
+            'Correct. The fictional model should only be used for more testing with a person reviewing it. A trained professional must check the evidence and make the final call.',
             'good'
           );
           document.getElementById('continueToReportButton').classList.remove('hidden');
@@ -2828,9 +2830,9 @@
 
         var message = '';
         if (state.authorityChoice === 'model-only') {
-          message = 'Not correct. Final decisions should not be made independently by the model.';
+          message = 'Not correct. The model should not make final decisions on its own.';
         } else if (state.authorityChoice === 'deploy-now') {
-          message = 'Not correct. A small improvement on a fictional test set is not enough for deployment without additional evaluation.';
+          message = 'Not correct. Getting better on a fake test is not enough to put it into real use without more testing.';
         } else if (state.authorityChoice === 'replace-professionals') {
           message = 'Not correct. Models can support qualified professionals, but they should not replace them.';
         }
@@ -2845,7 +2847,7 @@
       }
 
       function getDiagnosisSummaryText() {
-        return state.diagnosisCorrect ? 'Borderline Needs Review cases were underrepresented in Version 1.' : 'Diagnosis pending';
+        return state.diagnosisCorrect ? 'Version 1 didn\'t have enough borderline Needs Review examples.' : 'Diagnosis pending';
       }
 
       function getImprovementText() {
@@ -2877,24 +2879,24 @@
         if (state.compare && state.compare.v2Score === 6 && overlap === 3 && allCoreCorrect) {
           return {
             label: 'Rescue Architect',
-            text: 'You found the core weak spot, chose the strongest rescue set, and completed the mission with a perfect Version 2 result and correct oversight decision.'
+            text: 'You found the main weak spot, picked the best rescue records, and finished with a perfect Version 2 score and the right oversight decision.'
           };
         }
         if (state.compare && state.compare.v2Score >= 5 && overlap >= 2 && allCoreCorrect) {
           return {
             label: 'Model Stabilizer',
-            text: 'You improved the model in the right direction and kept human review at the center of the decision process.'
+            text: 'You improved the model in the right direction and kept human review at the center of every decision.'
           };
         }
         if (state.compare && state.compare.v2Score >= state.compare.v1Score) {
           return {
             label: 'Careful Analyst',
-            text: 'You completed the investigation, recorded evidence, and showed why better performance still needs responsible oversight.'
+            text: 'You finished the investigation, collected the evidence, and explained why a better score still needs a person in charge.'
           };
         }
         return {
           label: 'Mission Starter',
-          text: 'You completed the rescue workflow and can revisit the earlier stages to refine your diagnosis or rescue records.'
+          text: 'You finished the rescue steps. Go back to earlier stages to improve your diagnosis or swap out rescue records.'
         };
       }
 
@@ -3048,7 +3050,7 @@
         state.v1ModelScore = score(state.v1ModelPredictions);
         saveState();
 
-        showFeedback('stage3Feedback', 'Version 1 has been checked. Review the model result card and then continue to diagnose the weak spot.', 'good');
+        showFeedback('stage3Feedback', 'Version 1 has been checked. Look at the result card, then continue to find the weak spot.', 'good');
         renderV1ResultCard();
         document.getElementById('continueToDiagnosisButton').classList.remove('hidden');
         updateDashboard();
@@ -3122,8 +3124,8 @@
       function handleCopyReport() {
         var reportText = buildReportText();
         if (!reportText) {
-          showFeedback('copyReportStatus', 'Complete every reflection field before copying your rescue report.', 'bad');
-          announce('Complete every reflection field before copying your rescue report.', true);
+          showFeedback('copyReportStatus', 'Fill in every reflection field before copying your rescue report.', 'bad');
+          announce('Fill in every reflection field before copying your rescue report.', true);
           return;
         }
 
@@ -3139,8 +3141,8 @@
           saveState();
           updateStagePanels();
           updateDashboard();
-          showFeedback('copyReportStatus', 'Clipboard copy was not available in this browser. You can still copy the preview text manually.', 'warning');
-          announce('Clipboard copy was not available in this browser. Please copy the text manually.');
+          showFeedback('copyReportStatus', 'Clipboard copying isn\'t available in this browser. You can copy the preview text manually.', 'warning');
+          announce('Clipboard copying isn\'t available in this browser. Please copy the text manually.');
         });
       }
 
@@ -3231,7 +3233,7 @@
             announce('Answer the retest reflection correctly before continuing.', true);
             return;
           }
-          advanceToStage(6, 7, 'Retest complete. Decide how the model should be handled next.');
+          advanceToStage(6, 7, 'Retest done. Decide what should happen to the model next.');
         });
         document.getElementById('checkDecisionButton').addEventListener('click', handleCheckAuthority);
         document.getElementById('continueToReportButton').addEventListener('click', function () {
@@ -3281,7 +3283,7 @@
         renderReflectionFields();
 
         if (state.v1ModelScore !== null) {
-          showFeedback('stage3Feedback', 'Version 1 has been checked. Review the model result card and then continue to diagnose the weak spot.', 'good');
+          showFeedback('stage3Feedback', 'Version 1 has been checked. Look at the result card, then continue to find the weak spot.', 'good');
           renderV1ResultCard();
           document.getElementById('continueToDiagnosisButton').classList.remove('hidden');
         }
