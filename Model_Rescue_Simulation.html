@@ -2669,6 +2669,7 @@
 
       function getWhatHappenedDefaults() {
         return {
+          headline: 'Mission not tested yet.',
           did: 'Start the mission to begin.',
           changed: 'The model has not been tested yet.',
           why: 'Each step helps you gather evidence before making decisions.',
@@ -2685,6 +2686,7 @@
         var selectedCount = state.selectedImprovements.length;
         if (state.lastAction.key === 'inspect-training') {
           return {
+            headline: 'Training data is ready to inspect.',
             did: 'You inspected the Version 1 training data.',
             changed: 'You can now see which examples the model used to learn.',
             why: 'You need training-data clues to diagnose model mistakes later.',
@@ -2693,6 +2695,7 @@
         }
         if (state.lastAction.key === 'test-v1') {
           return {
+            headline: 'Version 1 baseline results are ready.',
             did: 'You tested Version 1 on the same six test records.',
             changed: 'You now have baseline results, including incorrect predictions.',
             why: 'The baseline tells you where the model is weak.',
@@ -2701,6 +2704,7 @@
         }
         if (state.lastAction.key === 'diagnose-weak-spot') {
           return {
+            headline: context.correct ? 'Weak spot identified.' : 'Diagnosis needs another look.',
             did: context.correct ? 'You identified the weak spot.' : 'You checked a diagnosis guess.',
             changed: context.correct ? 'Stage 5 is unlocked so you can choose rescue records.' : 'Your diagnosis needs adjustment before moving on.',
             why: 'A correct diagnosis keeps retraining focused on real errors.',
@@ -2709,6 +2713,7 @@
         }
         if (state.lastAction.key === 'rescue-added' || state.lastAction.key === 'rescue-removed') {
           return {
+            headline: 'Your rescue set changed.',
             did: (state.lastAction.key === 'rescue-added' ? 'You added ' : 'You removed ') + context.recordId + ' in your rescue set.',
             changed: 'Your rescue set now has ' + selectedCount + ' of 3 records selected.',
             why: context.reason || 'Each rescue pick changes which examples Version 2 will learn from.',
@@ -2717,6 +2722,7 @@
         }
         if (state.lastAction.key === 'rescue-confirmed') {
           return {
+            headline: 'Version 2 is ready for retesting.',
             did: 'You confirmed three rescue records and rebuilt Version 2.',
             changed: 'Version 2 now trains on the original records plus your selected rescue set.',
             why: 'Retraining changes model behavior because the training examples changed.',
@@ -2725,6 +2731,7 @@
         }
         if (state.lastAction.key === 'test-v2') {
           return {
+            headline: 'Version 2 results are in.',
             did: 'You reviewed Version 2 retest results.',
             changed: 'You can now see which record outcomes improved or stayed the same.',
             why: 'Record-by-record evidence shows whether the rescue set helped fairly.',
@@ -2733,6 +2740,7 @@
         }
         if (state.lastAction.key === 'decision-made') {
           return {
+            headline: context.correct ? 'Oversight decision confirmed.' : 'Oversight decision needs revision.',
             did: 'You made an oversight decision for this model.',
             changed: context.correct ? 'The decision stage is complete.' : 'The decision needs revision before continuing.',
             why: 'Improved accuracy still requires qualified human review.',
@@ -2916,7 +2924,7 @@
 
       function updateWhatHappenedPanel() {
         var summary = getWhatHappenedFromState();
-        document.getElementById('actionHeadline').textContent = summary.did;
+        document.getElementById('actionHeadline').textContent = summary.headline || summary.did;
         document.getElementById('actionDid').textContent = summary.did;
         document.getElementById('actionChanged').textContent = summary.changed;
         document.getElementById('actionWhy').textContent = summary.why;
@@ -3968,14 +3976,16 @@
             correct: state.compare.v1Score,
             incorrect: TEST.length - state.compare.v1Score,
             accuracy: v1Accuracy + '%',
-            status: state.compare.v1Score < 5 ? 'Needs Rescue' : 'Performing Well'
+            status: state.compare.v1Score < 5 ? 'Needs Rescue' : 'Performing Well',
+            highlight: false
           },
           {
             version: 'Version 2',
             correct: state.compare.v2Score,
             incorrect: TEST.length - state.compare.v2Score,
             accuracy: v2Accuracy + '%',
-            status: state.compare.v2Score < 5 ? 'Needs Rescue' : 'Performing Well'
+            status: state.compare.v2Score < 5 ? 'Needs Rescue' : 'Performing Well',
+            highlight: delta >= 0
           }
         ];
 
@@ -3997,7 +4007,7 @@
           var track = document.createElement('div');
           track.className = 'comparison-bar-track';
           var fill = document.createElement('div');
-          fill.className = 'comparison-bar-fill' + (row.version === 'Version 2' && delta >= 0 ? ' improved' : '');
+          fill.className = 'comparison-bar-fill' + (row.highlight ? ' improved' : '');
           fill.style.width = formatPercent(row.correct, TEST.length) + '%';
           fill.textContent = row.correct + ' / ' + TEST.length + ' correct';
           track.appendChild(fill);
