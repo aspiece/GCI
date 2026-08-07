@@ -45,10 +45,24 @@
       padding: 1rem 1rem 4rem;
     }
 
+    .sim-title-bar {
+      padding: 0.6rem 0 0.75rem;
+      border-bottom: 1px solid var(--sim-border);
+      margin-bottom: 1rem;
+    }
+
+    .sim-title-inline {
+      margin: 0 0 0.15rem;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--sim-primary);
+      letter-spacing: -0.01em;
+    }
+
     .sim-lead {
       margin: 0;
       color: var(--sim-muted);
-      font-size: 1.05rem;
+      font-size: 0.9rem;
     }
 
     .mission-utility {
@@ -1297,18 +1311,12 @@
     </div>
   </nav>
 
-  <header class="page-header" aria-labelledby="sim-heading">
-    <div class="container--sm">
-      <h1 id="sim-heading">Model Rescue Simulation</h1>
-      <p class="sim-lead">
-        Look at fake training data, find where the model keeps failing, add better examples,
-        and decide if the model is ready for more testing.
-      </p>
-    </div>
-  </header>
-
-  <main id="main-content" tabindex="-1">
+  <main id="main-content" tabindex="-1" aria-labelledby="sim-heading">
     <div class="sim-wrap">
+      <div class="sim-title-bar">
+        <h1 id="sim-heading" class="sim-title-inline">Model Rescue Simulation</h1>
+        <p class="sim-lead">Look at fake training data, find where the model keeps failing, add better examples, and decide if the model is ready for more testing.</p>
+      </div>
       <div id="global-live" class="sr-only" aria-live="polite" aria-atomic="true"></div>
       <div id="global-live-assertive" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
 
