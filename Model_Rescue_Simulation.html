@@ -3270,8 +3270,18 @@
         box.className = 'feedback-box hidden';
       }
 
-      function prefersReducedMotion() {
-        return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      function shouldScrollStageIntoView(stage) {
+        if (!stage || typeof stage.getBoundingClientRect !== 'function') {
+          return false;
+        }
+        var rect = stage.getBoundingClientRect();
+        var utility = document.querySelector('.mission-utility.is-visible');
+        var utilityOffset = 0;
+        if (utility && typeof utility.getBoundingClientRect === 'function') {
+          utilityOffset = utility.getBoundingClientRect().height + 16;
+        }
+        var viewportBottom = window.innerHeight || document.documentElement.clientHeight || 0;
+        return rect.top < utilityOffset || rect.bottom > viewportBottom;
       }
 
       function focusStage(stageIndex) {
@@ -3285,10 +3295,10 @@
               heading.focus();
             }
           }
-          if (typeof stage.scrollIntoView === 'function') {
+          if (typeof stage.scrollIntoView === 'function' && shouldScrollStageIntoView(stage)) {
             stage.scrollIntoView({
-              behavior: prefersReducedMotion() ? 'auto' : 'smooth',
-              block: 'start'
+              behavior: 'auto',
+              block: 'nearest'
             });
           }
         }
