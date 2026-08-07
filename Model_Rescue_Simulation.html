@@ -2606,7 +2606,7 @@
 
             <div class="button-row button-row-primary">
               <button id="applyRescueRecordsButton" class="btn" type="button" disabled>Retrain Model</button>
-              <button id="continueToRetestButton" class="btn hidden" type="button">Compare Results</button>
+              <button id="continueToRetestButton" class="btn hidden" type="button">View Comparison</button>
             </div>
           </section>
         </div>
@@ -3391,7 +3391,10 @@
         buckets.forEach(function (bucket) {
           var rangeLabel = document.createElement('div');
           rangeLabel.className = 'pattern-range-label';
-          rangeLabel.innerHTML = bucket.label + '<span>' + bucket.hint + '</span>';
+          rangeLabel.appendChild(document.createTextNode(bucket.label));
+          var hint = document.createElement('span');
+          hint.textContent = bucket.hint;
+          rangeLabel.appendChild(hint);
           matrix.appendChild(rangeLabel);
 
           labels.forEach(function (label) {
@@ -3710,7 +3713,7 @@
         summary.className = 'result-summary-card';
         var badges = document.createElement('div');
         badges.className = 'summary-inline';
-        badges.appendChild(makeCompletionChip(modelScore >= 5, 'Version 1 improved on most cases', 'Version 1 still needs rescue'));
+        badges.appendChild(makeCompletionChip(modelScore >= 5, 'Version 1 passed most cases', 'Version 1 still needs rescue'));
         badges.appendChild(makeCompletionChip(studentScore === null ? false : true, 'Your prediction score: ' + studentScore + '/6', 'Prediction score pending'));
         summary.appendChild(badges);
         var heading = document.createElement('h3');
@@ -3991,6 +3994,17 @@
         if (isAdded) {
           button.classList.add('is-added');
         }
+        var parts = [record.id, kind + ' record', 'average score ' + scoreValue.toFixed(1), 'label ' + record.y];
+        if (Math.abs(scoreValue - boundary) <= 0.9) {
+          parts.push('near the decision boundary');
+        }
+        if (isIncorrect) {
+          parts.push('incorrect test result');
+        }
+        if (isAdded) {
+          parts.push('selected for Version 2');
+        }
+        button.setAttribute('aria-label', parts.join(', '));
         button.addEventListener('click', function () {
           var details = document.getElementById('boundaryDetails');
           details.textContent = record.id + ' · avg ' + scoreValue.toFixed(1) + ' · ' + record.y + (isIncorrect ? ' · incorrect test result' : '') + (isAdded ? ' · selected for Version 2' : '');
@@ -4737,7 +4751,7 @@
       bindStaticInputs();
       attachEvents();
       renderAll();
-
-    }());
+    }());
+  </script>
 </body>
 </html>
