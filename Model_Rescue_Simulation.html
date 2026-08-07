@@ -3011,10 +3011,11 @@
 
         if (state.currentStage === 5) {
           if (!state.improvementApplied) {
+            var remainingRescues = 3 - state.selectedImprovements.length;
             if (state.selectedImprovements.length < 3) {
               return {
                 title: 'Choose rescue records',
-                text: 'Select ' + (3 - state.selectedImprovements.length) + ' more rescue record' + (state.selectedImprovements.length === 2 ? '' : 's') + ' that match the weak spot.',
+                text: 'Select ' + remainingRescues + ' more rescue record' + (remainingRescues === 1 ? '' : 's') + ' that match the weak spot.',
                 button: 'Review current task',
                 targetId: 'stage5-heading',
                 focusOnly: true
@@ -3969,6 +3970,7 @@
 
         var visual = document.createElement('div');
         visual.className = 'comparison-visual';
+        var performingWellThreshold = Math.ceil(TEST.length * 0.8);
 
         var rows = [
           {
@@ -3976,7 +3978,7 @@
             correct: state.compare.v1Score,
             incorrect: TEST.length - state.compare.v1Score,
             accuracy: v1Accuracy + '%',
-            status: state.compare.v1Score < 5 ? 'Needs Rescue' : 'Performing Well',
+            status: state.compare.v1Score < performingWellThreshold ? 'Needs Rescue' : 'Performing Well',
             highlight: false
           },
           {
@@ -3984,7 +3986,7 @@
             correct: state.compare.v2Score,
             incorrect: TEST.length - state.compare.v2Score,
             accuracy: v2Accuracy + '%',
-            status: state.compare.v2Score < 5 ? 'Needs Rescue' : 'Performing Well',
+            status: state.compare.v2Score < performingWellThreshold ? 'Needs Rescue' : 'Performing Well',
             highlight: state.compare.v2Score > state.compare.v1Score
           }
         ];
