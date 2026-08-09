@@ -461,6 +461,171 @@
       font-size: .76rem;
     }
 
+    /* ── Infrastructure comparison section ── */
+    .infra-section {
+      margin-top: 18px;
+      padding: 22px;
+    }
+
+    .infra-section h2 {
+      margin: 0 0 4px;
+      font-size: 1.2rem;
+    }
+
+    .infra-intro {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: .88rem;
+    }
+
+    .infra-cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 12px;
+    }
+
+    .infra-card {
+      padding: 16px;
+      border: 2px solid var(--line);
+      border-radius: 18px;
+      background: white;
+    }
+
+    .infra-card.scenario-conventional {
+      border-color: #c8d8d7;
+    }
+
+    .infra-card.scenario-lowwater {
+      border-color: #7bbfda;
+    }
+
+    .infra-card.scenario-lowcarbon {
+      border-color: #5aab8a;
+    }
+
+    .infra-card-label {
+      display: inline-block;
+      margin-bottom: 8px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: .73rem;
+      font-weight: 850;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    .scenario-conventional .infra-card-label {
+      background: #e8efef;
+      color: #3a5a5a;
+    }
+
+    .scenario-lowwater .infra-card-label {
+      background: #daeef8;
+      color: #1a5a7a;
+    }
+
+    .scenario-lowcarbon .infra-card-label {
+      background: #d3f0e5;
+      color: #1a5a3e;
+    }
+
+    .infra-card h3 {
+      margin: 0 0 10px;
+      font-size: .95rem;
+      line-height: 1.3;
+      letter-spacing: -.02em;
+    }
+
+    .infra-metric {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      padding: 5px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: .82rem;
+    }
+
+    .infra-metric:last-child {
+      border-bottom: none;
+    }
+
+    .infra-metric-name {
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+
+    .infra-metric-value {
+      font-weight: 850;
+      text-align: right;
+    }
+
+    .infra-estimate-note {
+      margin-top: 10px;
+      padding: 6px 10px;
+      border-radius: 10px;
+      background: #f4f8f8;
+      color: var(--muted);
+      font-size: .73rem;
+    }
+
+    .water-note-box {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-left: 4px solid var(--accent);
+      border-radius: 4px 12px 12px 4px;
+      background: var(--soft);
+      font-size: .86rem;
+      color: var(--ink);
+    }
+
+    /* ── "What makes the difference" section ── */
+    .factors-section {
+      margin-top: 18px;
+      padding: 22px;
+    }
+
+    .factors-section h2 {
+      margin: 0 0 6px;
+      font-size: 1.2rem;
+    }
+
+    .factors-list {
+      margin: 0;
+      padding-left: 1.35em;
+      color: var(--muted);
+      font-size: .9rem;
+      line-height: 1.7;
+    }
+
+    .factors-list li {
+      padding-left: .2em;
+    }
+
+    /* ── Updated takeaway ── */
+    .takeaway-section {
+      margin-top: 18px;
+      padding: 18px 22px;
+    }
+
+    .takeaway-box {
+      padding: 16px 18px;
+      border-radius: 17px;
+      background: var(--yellow);
+      color: #59470d;
+      font-size: .92rem;
+    }
+
+    .takeaway-box strong {
+      display: block;
+      margin-bottom: 5px;
+      color: #423303;
+    }
+
+    @media (max-width: 780px) {
+      .infra-cards { grid-template-columns: 1fr; }
+    }
+
     .fine-print {
       max-width: 800px;
       margin: 18px auto 0;
@@ -657,12 +822,70 @@
           <strong>Berkeley Lab — 2024 United States Data Center Energy Usage Report</strong>
           <span>Supports the national-average estimates of just over 0.36 L/kWh of direct data-center water and 4.52 L/kWh of electricity-related water.</span>
         </a>
+
+        <a class="source-link"
+           href="https://www.epa.gov/egrid"
+           target="_blank" rel="noopener">
+          <strong>EPA eGRID 2022 — Emissions &amp; Generation Resource Integrated Database</strong>
+          <span>Supports the ~0.386 kg CO₂e/kWh U.S. national average grid emissions factor used in the Conventional Infrastructure scenario.</span>
+        </a>
+
+        <a class="source-link"
+           href="https://www.ipcc.ch/report/ar6/wg3/"
+           target="_blank" rel="noopener">
+          <strong>IPCC Sixth Assessment Report (AR6), Working Group III</strong>
+          <span>⚠️ Used as a reference for illustrative low-carbon electricity CO₂e ranges (~0.007–0.048 kg CO₂e/kWh for wind and solar). The blended 0.02 kg CO₂e/kWh value used in Scenario 3 is an estimate requiring expert validation.</span>
+        </a>
       </div>
 
       <p class="source-note">
         The calculator combines estimates from sources with different methods and system boundaries.
         Summary and document-analysis values are classroom comparison estimates, not measured averages.
+        Infrastructure scenario values for Scenarios 2 and 3 are illustrative estimates; see ⚠️ notes above.
       </p>
+    </section>
+
+    <!-- Infrastructure comparison section -->
+    <section class="card infra-section" aria-labelledby="infraTitle">
+      <h2 id="infraTitle">How infrastructure changes the picture</h2>
+      <p class="infra-intro">
+        Your choices affect how often AI is used, but the data center's design can also make a big difference.
+        The same AI task can have very different environmental impacts depending on how the data center is cooled and powered.
+      </p>
+
+      <div class="infra-cards" id="infraCards" aria-live="polite">
+        <!-- Cards are rendered by JavaScript -->
+      </div>
+
+      <div class="water-note-box" role="note">
+        <strong>Two types of water use</strong>
+        Using less water at the data center does not always mean an AI system has zero water impact.
+        Electricity generation can also require water.
+        <br><br>
+        <strong>Direct water</strong> is used at the data center itself — mainly for cooling servers.<br>
+        <strong>Indirect water</strong> is used off-site to generate the electricity the data center needs (for example, to cool power-plant condensers or produce steam).
+      </div>
+    </section>
+
+    <!-- "What makes the difference" section -->
+    <section class="card factors-section" aria-labelledby="factorsTitle">
+      <h2 id="factorsTitle">What makes the difference?</h2>
+      <p class="infra-intro">AI's environmental impact depends on more than how many prompts you send. These five factors shape the total footprint:</p>
+      <ul class="factors-list">
+        <li><strong>Number and type of AI requests</strong> — more complex tasks take more computing power.</li>
+        <li><strong>Computing hardware and efficiency</strong> — newer chips often do more work per watt.</li>
+        <li><strong>Cooling technology</strong> — closed-loop liquid cooling uses far less water than evaporative cooling towers.</li>
+        <li><strong>Source of electricity</strong> — renewable energy produces less CO₂ and can require less water than fossil fuels.</li>
+        <li><strong>Data center location and climate</strong> — cooler climates and regions with cleaner grids have lower footprints.</li>
+      </ul>
+    </section>
+
+    <!-- Student takeaway -->
+    <section class="card takeaway-section" aria-labelledby="takeawayTitle">
+      <div class="takeaway-box">
+        <strong id="takeawayTitle">What you can do — and what companies can do</strong>
+        <span id="takeawayText">Your choices can reduce unnecessary AI use, but infrastructure matters too. More efficient cooling and cleaner electricity can greatly reduce the impact of the same AI task. Using AI intentionally — and avoiding unnecessary retries — is still a good habit, but the biggest gains come from better data center design.</span>
+      </div>
     </section>
 
     <p class="fine-print">
@@ -868,6 +1091,133 @@
           `${energyText(totalWh)} total electricity, ${ledText(ledHours).toLowerCase()}, ` +
           `${phoneText(phoneCharges).toLowerCase()}, and ${waterText(waterLiters).toLowerCase()}. ` +
           `${estimateLabels[task.estimateType]}. This classroom tool uses published reference values and is not a direct measurement.`;
+
+        renderInfraCards(totalWh);
+      }
+
+      // ── Infrastructure scenario constants ──────────────────────────────────
+      // Scenario 1: Conventional data center
+      // Uses national-average values already in the calculator.
+      // Source: Berkeley Lab 2024 US Data Center Energy Usage Report
+      const CONV_DIRECT_L_PER_KWH  = 0.36;   // L/kWh – direct cooling water (national avg)
+      const CONV_INDIRECT_L_PER_KWH = 4.52;   // L/kWh – electricity-related water (national avg)
+      // CO2e from US average grid: ~0.386 kg CO2e/kWh (EPA eGRID 2022 national avg, ~386 g CO2e/kWh)
+      // Source: EPA eGRID 2022 – https://www.epa.gov/egrid
+      const CONV_CO2_KG_PER_KWH    = 0.386;   // kg CO2e/kWh – US average grid
+
+      // Scenario 2: Low-water data center (closed-loop/dry cooling, grid electricity)
+      // NOTE: These values are illustrative estimates requiring expert validation.
+      // Closed-loop/dry cooling can reduce direct cooling water to near zero (~0.01–0.05 L/kWh).
+      // Indirect water is unchanged because the grid electricity mix is the same as Scenario 1.
+      // Reference range: US DOE/ASHRAE literature suggests <0.05 L/kWh for dry/adiabatic cooling.
+      const LOW_WATER_DIRECT_L_PER_KWH  = 0.04;   // ⚠️ Estimate – requires validation
+      const LOW_WATER_INDIRECT_L_PER_KWH = 4.52;   // Same grid, same indirect water
+      const LOW_WATER_CO2_KG_PER_KWH    = 0.386;   // Same grid, same CO2e
+
+      // Scenario 3: Low-water + low-carbon (dry cooling + renewables)
+      // NOTE: These values are illustrative estimates requiring expert validation.
+      // Renewables (wind/solar) have very low operational water use:
+      //   ~0.0–0.1 L/kWh for wind; ~0.0–0.4 L/kWh for utility PV (life-cycle operational).
+      //   Used 0.08 L/kWh as a conservative blended renewable estimate.
+      // Source: NREL Life Cycle Assessment Harmonization (various), IPCC AR6 Ch. 12 energy tables.
+      // CO2e: wind/solar operational ~0.007–0.048 kg CO2e/kWh (IPCC median values).
+      //   Used 0.02 kg CO2e/kWh as a blended low-carbon estimate.
+      const LOW_CARBON_DIRECT_L_PER_KWH  = 0.04;   // ⚠️ Estimate – dry cooling, requires validation
+      const LOW_CARBON_INDIRECT_L_PER_KWH = 0.08;   // ⚠️ Estimate – renewable electricity, requires validation
+      const LOW_CARBON_CO2_KG_PER_KWH    = 0.02;    // ⚠️ Estimate – low-carbon grid, requires validation
+
+      // ── Infrastructure scenarios definition ───────────────────────────────
+      const infraScenarios = [
+        {
+          id: "conventional",
+          label: "Scenario 1",
+          title: "Conventional Infrastructure",
+          desc: "Grid electricity · Evaporative cooling",
+          cssClass: "scenario-conventional",
+          directLPerKwh:   CONV_DIRECT_L_PER_KWH,
+          indirectLPerKwh: CONV_INDIRECT_L_PER_KWH,
+          co2KgPerKwh:     CONV_CO2_KG_PER_KWH,
+          note: "Based on U.S. national averages (Berkeley Lab 2024, EPA eGRID 2022)."
+        },
+        {
+          id: "lowwater",
+          label: "Scenario 2",
+          title: "Low-Water Infrastructure",
+          desc: "Grid electricity · Closed-loop / dry cooling",
+          cssClass: "scenario-lowwater",
+          directLPerKwh:   LOW_WATER_DIRECT_L_PER_KWH,
+          indirectLPerKwh: LOW_WATER_INDIRECT_L_PER_KWH,
+          co2KgPerKwh:     LOW_WATER_CO2_KG_PER_KWH,
+          note: "⚠️ Estimate: direct cooling water reduced by dry/closed-loop cooling. Indirect water and CO₂ unchanged (same grid). Requires expert validation."
+        },
+        {
+          id: "lowcarbon",
+          label: "Scenario 3",
+          title: "Low-Water + Low-Carbon Infrastructure",
+          desc: "Renewable electricity · Closed-loop / dry cooling",
+          cssClass: "scenario-lowcarbon",
+          directLPerKwh:   LOW_CARBON_DIRECT_L_PER_KWH,
+          indirectLPerKwh: LOW_CARBON_INDIRECT_L_PER_KWH,
+          co2KgPerKwh:     LOW_CARBON_CO2_KG_PER_KWH,
+          note: "⚠️ Estimate: blended renewable electricity (wind/solar operational values, IPCC AR6/NREL). Requires expert validation."
+        }
+      ];
+
+      function renderInfraCards(totalWh) {
+        const totalKwh = totalWh / 1000;
+        const container = $("infraCards");
+        if (!container) return;
+
+        const html = infraScenarios.map(s => {
+          const directL   = totalKwh * s.directLPerKwh;
+          const indirectL = totalKwh * s.indirectLPerKwh;
+          const totalL    = directL + indirectL;
+          const co2Kg     = totalKwh * s.co2KgPerKwh;
+          const co2Grams  = co2Kg * 1000;
+
+          const waterFmt = (l) => {
+            const ml = l * 1000;
+            if (ml < 5)   return `~${fmt(ml / DROP_ML, 0)} drops`;
+            if (ml < 250) return `~${fmt(ml / TEASPOON_ML, 1)} tsp`;
+            if (ml < 1000) return `~${fmt(ml / CUP_ML, 1)} cups`;
+            return `~${fmt(l / BOTTLE_LITERS, 1)} × 500 mL bottles`;
+          };
+
+          const co2Fmt = co2Grams < 1000
+            ? `~${fmt(co2Grams, co2Grams < 10 ? 2 : 1)} g CO₂e`
+            : `~${fmt(co2Kg, co2Kg < 10 ? 2 : 1)} kg CO₂e`;
+
+          return `
+            <div class="infra-card ${s.cssClass}" role="region" aria-label="${s.title}">
+              <span class="infra-card-label">${s.label}</span>
+              <h3>${s.title}</h3>
+              <p style="font-size:.78rem;color:var(--muted);margin:0 0 10px;">${s.desc}</p>
+              <div class="infra-metric">
+                <span class="infra-metric-name">Energy</span>
+                <span class="infra-metric-value">${energyText(totalWh)}</span>
+              </div>
+              <div class="infra-metric">
+                <span class="infra-metric-name">Direct cooling water</span>
+                <span class="infra-metric-value">${waterFmt(directL)}</span>
+              </div>
+              <div class="infra-metric">
+                <span class="infra-metric-name">Indirect (electricity) water</span>
+                <span class="infra-metric-value">${waterFmt(indirectL)}</span>
+              </div>
+              <div class="infra-metric">
+                <span class="infra-metric-name">Total est. water</span>
+                <span class="infra-metric-value">${waterFmt(totalL)}</span>
+              </div>
+              <div class="infra-metric">
+                <span class="infra-metric-name">CO₂e</span>
+                <span class="infra-metric-value">${co2Fmt}</span>
+              </div>
+              <p class="infra-estimate-note">${s.note}</p>
+            </div>
+          `;
+        }).join("");
+
+        container.innerHTML = html;
       }
 
       document.querySelectorAll(".task").forEach(button => {
