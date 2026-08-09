@@ -1168,6 +1168,15 @@
         const container = $("infraCards");
         if (!container) return;
 
+        // Escape helper to safely insert text into innerHTML templates
+        function esc(str) {
+          return str
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+        }
+
         const html = infraScenarios.map(s => {
           const directL   = totalKwh * s.directLPerKwh;
           const indirectL = totalKwh * s.indirectLPerKwh;
@@ -1212,7 +1221,7 @@
                 <span class="infra-metric-name">CO₂e</span>
                 <span class="infra-metric-value">${co2Fmt}</span>
               </div>
-              <p class="infra-estimate-note">${s.note}</p>
+              <p class="infra-estimate-note">${esc(s.note)}</p>
             </div>
           `;
         }).join("");
