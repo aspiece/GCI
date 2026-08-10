@@ -797,54 +797,6 @@
       </aside>
     </section>
 
-    <section class="card sources" aria-labelledby="sourcesTitle">
-      <h2 id="sourcesTitle">Data sources</h2>
-      <p class="sources-intro">These studies provide the published reference values used in this calculator.</p>
-
-      <div class="source-list">
-        <a class="source-link"
-           href="https://www.microsoft.com/en-us/research/publication/energy-use-of-ai-inference-efficiency-pathways-and-test-time-scaling/"
-           target="_blank" rel="noopener">
-          <strong>Microsoft Research — Energy Use of AI Inference</strong>
-          <span>Supports the 0.31 Wh typical text-query estimate, its 0.16–0.60 Wh range, and the 3.91 Wh extended-reasoning scenario with a 2.15–7.05 Wh range.</span>
-        </a>
-
-        <a class="source-link"
-           href="https://arxiv.org/abs/2311.16863"
-           target="_blank" rel="noopener">
-          <strong>Luccioni, Jernite &amp; Strubell — Power Hungry Processing</strong>
-          <span>Supports the 2.907 Wh mean image-generation benchmark. The study found substantial variation among models.</span>
-        </a>
-
-        <a class="source-link"
-           href="https://eta-publications.lbl.gov/sites/default/files/2024-12/lbnl-2024-united-states-data-center-energy-usage-report_1.pdf"
-           target="_blank" rel="noopener">
-          <strong>Berkeley Lab — 2024 United States Data Center Energy Usage Report</strong>
-          <span>Supports the national-average estimates of just over 0.36 L/kWh of direct data-center water and 4.52 L/kWh of electricity-related water.</span>
-        </a>
-
-        <a class="source-link"
-           href="https://www.epa.gov/egrid"
-           target="_blank" rel="noopener">
-          <strong>EPA eGRID 2022 — Emissions &amp; Generation Resource Integrated Database</strong>
-          <span>Supports the ~0.386 kg CO₂e/kWh U.S. national average grid emissions factor used in the Conventional Infrastructure scenario.</span>
-        </a>
-
-        <a class="source-link"
-           href="https://www.ipcc.ch/report/ar6/wg3/"
-           target="_blank" rel="noopener">
-          <strong>IPCC Sixth Assessment Report (AR6), Working Group III</strong>
-          <span>⚠️ Used as a reference for illustrative low-carbon electricity CO₂e ranges (~0.007–0.048 kg CO₂e/kWh for wind and solar). The blended 0.02 kg CO₂e/kWh value used in Scenario 3 is an estimate requiring expert validation.</span>
-        </a>
-      </div>
-
-      <p class="source-note">
-        The calculator combines estimates from sources with different methods and system boundaries.
-        Summary and document-analysis values are classroom comparison estimates, not measured averages.
-        Infrastructure scenario values for Scenarios 2 and 3 are illustrative estimates; see ⚠️ notes above.
-      </p>
-    </section>
-
     <!-- Infrastructure comparison section -->
     <section class="card infra-section" aria-labelledby="infraTitle">
       <h2 id="infraTitle">How infrastructure changes the picture</h2>
@@ -892,6 +844,54 @@
       Actual impact varies by model, response length, hardware, location, cooling system, and electricity source.
       The rewrite, summary, and document-analysis presets use classroom comparison values anchored to the published typical text-query estimate.
     </p>
+
+    <section class="card sources" aria-labelledby="sourcesTitle">
+      <h2 id="sourcesTitle">Data sources</h2>
+      <p class="sources-intro">These studies provide the published reference values used in this calculator.</p>
+
+      <div class="source-list">
+        <a class="source-link"
+           href="https://www.microsoft.com/en-us/research/publication/energy-use-of-ai-inference-efficiency-pathways-and-test-time-scaling/"
+           target="_blank" rel="noopener">
+          <strong>Microsoft Research — Energy Use of AI Inference</strong>
+          <span>Supports the 0.31 Wh typical text-query estimate, its 0.16–0.60 Wh range, and the 3.91 Wh extended-reasoning scenario with a 2.15–7.05 Wh range.</span>
+        </a>
+
+        <a class="source-link"
+           href="https://arxiv.org/abs/2311.16863"
+           target="_blank" rel="noopener">
+          <strong>Luccioni, Jernite &amp; Strubell — Power Hungry Processing</strong>
+          <span>Supports the 2.907 Wh mean image-generation benchmark. The study found substantial variation among models.</span>
+        </a>
+
+        <a class="source-link"
+           href="https://eta-publications.lbl.gov/sites/default/files/2024-12/lbnl-2024-united-states-data-center-energy-usage-report_1.pdf"
+           target="_blank" rel="noopener">
+          <strong>Berkeley Lab — 2024 United States Data Center Energy Usage Report</strong>
+          <span>Supports the national-average estimates of just over 0.36 L/kWh of direct data-center water and 4.52 L/kWh of electricity-related water.</span>
+        </a>
+
+        <a class="source-link"
+           href="https://www.epa.gov/egrid"
+           target="_blank" rel="noopener">
+          <strong>EPA eGRID 2022 — Emissions &amp; Generation Resource Integrated Database</strong>
+          <span>Supports the ~0.386 kg CO₂e/kWh U.S. national average grid emissions factor used in the Conventional Infrastructure scenario.</span>
+        </a>
+
+        <a class="source-link"
+           href="https://www.ipcc.ch/report/ar6/wg3/"
+           target="_blank" rel="noopener">
+          <strong>IPCC Sixth Assessment Report (AR6), Working Group III</strong>
+          <span>⚠️ Used as a reference for illustrative low-carbon electricity CO₂e ranges (~0.007–0.048 kg CO₂e/kWh for wind and solar). The blended 0.02 kg CO₂e/kWh value used in Scenario 3 is an estimate requiring expert validation.</span>
+        </a>
+      </div>
+
+      <p class="source-note">
+        The calculator combines estimates from sources with different methods and system boundaries.
+        Summary and document-analysis values are classroom comparison estimates, not measured averages.
+        Infrastructure scenario values for Scenarios 2 and 3 are illustrative estimates; see ⚠️ notes above.
+      </p>
+    </section>
   </main>
 
   <div class="toast" id="toast" role="status" aria-live="polite">Copied</div>
