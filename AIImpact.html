@@ -366,7 +366,8 @@
     .actions {
       display: flex;
       gap: 9px;
-      padding: 0 16px 16px;
+      padding: 0;
+      margin: 16px 0;
     }
 
     .action {
@@ -414,6 +415,32 @@
     .sources h2 {
       margin: 0 0 4px;
       font-size: 1.2rem;
+    }
+
+    .sources details > summary {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      margin: 0 0 4px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--ink);
+      user-select: none;
+    }
+
+    .sources details > summary::-webkit-details-marker { display: none; }
+
+    .sources details > summary::after {
+      content: '▸';
+      font-size: .85rem;
+      color: var(--muted);
+      transition: transform .2s;
+    }
+
+    .sources details[open] > summary::after {
+      transform: rotate(90deg);
     }
 
     .sources-intro {
@@ -790,10 +817,6 @@
           </div>
         </div>
 
-        <div class="actions">
-          <button class="action primary" id="copyButton" type="button">Copy result</button>
-          <button class="action secondary" id="printButton" type="button">Print</button>
-        </div>
       </aside>
     </section>
 
@@ -845,11 +868,17 @@
       The rewrite, summary, and document-analysis presets use classroom comparison values anchored to the published typical text-query estimate.
     </p>
 
-    <section class="card sources" aria-labelledby="sourcesTitle">
-      <h2 id="sourcesTitle">Data sources</h2>
-      <p class="sources-intro">These studies provide the published reference values used in this calculator.</p>
+    <div class="actions">
+      <button class="action primary" id="copyButton" type="button">Copy result</button>
+      <button class="action secondary" id="printButton" type="button">Print</button>
+    </div>
 
-      <div class="source-list">
+    <section class="card sources" aria-labelledby="sourcesTitle">
+      <details>
+        <summary id="sourcesTitle">Data sources</summary>
+        <p class="sources-intro">These studies provide the published reference values used in this calculator.</p>
+
+        <div class="source-list">
         <a class="source-link"
            href="https://www.microsoft.com/en-us/research/publication/energy-use-of-ai-inference-efficiency-pathways-and-test-time-scaling/"
            target="_blank" rel="noopener">
@@ -891,6 +920,7 @@
         Summary and document-analysis values are classroom comparison estimates, not measured averages.
         Infrastructure scenario values for Scenarios 2 and 3 are illustrative estimates; see ⚠️ notes above.
       </p>
+      </details>
     </section>
   </main>
 
