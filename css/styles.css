@@ -364,6 +364,11 @@ button {
   max-width: 22rem;
 }
 
+.button-uppercase {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
 .progress-header {
   display: flex;
   align-items: end;
@@ -465,6 +470,10 @@ button {
 .status-card strong {
   display: block;
   margin-bottom: 0.35rem;
+}
+
+.status-emoji {
+  margin-right: 0.35rem;
 }
 
 .status-ready strong {

@@ -36,7 +36,7 @@ The site is built for GitHub Pages with only HTML, CSS, and vanilla JavaScript.
 
 Because this is a static site, you can preview it in either of these ways:
 
-1. Open `/home/runner/work/GCI/GCI/index.html` directly in a browser.
+1. Open `index.html` directly in a browser.
 2. Or run a simple local server from the repository root:
 
 ```bash
@@ -60,7 +60,7 @@ All site links use relative paths so the portal also works from GitHub Pages pro
 
 All course data and editable external links live in:
 
-- `/home/runner/work/GCI/GCI/js/config.js`
+- `js/config.js`
 
 This includes:
 
@@ -103,7 +103,7 @@ The homepage course cards and dashboard content are generated from that configur
 
 Put the official GCI logo in:
 
-- `/home/runner/work/GCI/GCI/assets/`
+- `assets/`
 
 A placeholder logo area is already built into the interface so the site still looks polished before the final logo is available.
 

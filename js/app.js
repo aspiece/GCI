@@ -6,6 +6,7 @@
   }
 
   const page = document.body.dataset.page;
+  let homePageControlsInitialized = false;
 
   function getSelectedCourseId() {
     return localStorage.getItem(config.storageKeys.selectedCourse) || '';
@@ -49,7 +50,7 @@
 
   function createExternalLink(link) {
     const anchor = document.createElement('a');
-    anchor.className = 'resource-link';
+    anchor.className = link.className || 'resource-link';
     anchor.href = link.url;
     anchor.target = '_blank';
     anchor.rel = 'noopener noreferrer';
@@ -58,7 +59,7 @@
     return anchor;
   }
 
-  function createStepCard(step, courseId, course) {
+  function createStepCard(step, courseId, course, steps) {
     const stepCard = document.createElement('section');
     stepCard.className = 'card step-card';
     stepCard.setAttribute('aria-labelledby', `step-${step.id}-heading`);
@@ -92,7 +93,7 @@
     completionInput.checked = Boolean(getCourseProgress(courseId)[step.id]);
     completionInput.addEventListener('change', function () {
       setStepComplete(courseId, step.id, completionInput.checked);
-      renderHomePage();
+      updateProgress(courseId, steps);
     });
 
     const completionText = document.createElement('span');
@@ -109,7 +110,7 @@
     return stepCard;
   }
 
-  function buildSteps(course) {
+  function buildSteps(courseId) {
     return [
       {
         id: 'sign-in',
@@ -188,11 +189,12 @@
 
           const syllabusLink = createExternalLink({
             label: 'View Course Syllabus',
-            url: activeCourse.syllabusUrl
+            url: activeCourse.syllabusUrl,
+            className: 'button button-secondary'
           });
           const orientationLink = document.createElement('a');
           orientationLink.className = 'button button-secondary';
-          orientationLink.href = `./orientation.html?course=${encodeURIComponent(getSelectedCourseId())}`;
+          orientationLink.href = `./orientation.html?course=${encodeURIComponent(courseId)}`;
           orientationLink.textContent = 'Start Course Orientation';
 
           buttonRow.append(syllabusLink, orientationLink);
@@ -219,19 +221,40 @@
           const buttonRow = document.createElement('div');
           buttonRow.className = 'button-row';
           const setupCheck = createExternalLink({
-            label: 'COMPLETE MY SETUP CHECK',
-            url: config.setupCheckUrl
+            label: 'Complete my setup check',
+            url: config.setupCheckUrl,
+            className: 'button button-primary button-large button-uppercase'
           });
-          setupCheck.classList.add('button-large');
           buttonRow.append(setupCheck);
 
           const statusGrid = document.createElement('div');
           statusGrid.className = 'status-grid';
-          statusGrid.innerHTML = `
-            <div class="status-card status-ready"><strong>🟢 READY</strong><span>Everything works.</span></div>
-            <div class="status-card status-almost"><strong>🟡 ALMOST READY</strong><span>Something needs attention, but you can continue.</span></div>
-            <div class="status-card status-help"><strong>🔴 HELP NEEDED</strong><span>A problem is preventing you from continuing.</span></div>
-          `;
+
+          [
+            ['status-ready', '🟢', 'READY', 'Everything works.'],
+            ['status-almost', '🟡', 'ALMOST READY', 'Something needs attention, but you can continue.'],
+            ['status-help', '🔴', 'HELP NEEDED', 'A problem is preventing you from continuing.']
+          ].forEach(function ([className, emoji, label, description]) {
+            const statusCard = document.createElement('div');
+            statusCard.className = `status-card ${className}`;
+
+            const statusLabel = document.createElement('strong');
+            const emojiSpan = document.createElement('span');
+            emojiSpan.className = 'status-emoji';
+            emojiSpan.setAttribute('aria-hidden', 'true');
+            emojiSpan.textContent = emoji;
+
+            const labelSpan = document.createElement('span');
+            labelSpan.textContent = label;
+
+            statusLabel.append(emojiSpan, labelSpan);
+
+            const statusDescription = document.createElement('span');
+            statusDescription.textContent = description;
+
+            statusCard.append(statusLabel, statusDescription);
+            statusGrid.append(statusCard);
+          });
 
           fragment.append(buttonRow, statusGrid);
           return fragment;
@@ -245,7 +268,9 @@
         content: function (activeCourse) {
           const fragment = document.createDocumentFragment();
           const heading = document.createElement('p');
-          heading.innerHTML = '<strong>Meet Your Computer</strong>';
+          const headingStrong = document.createElement('strong');
+          headingStrong.textContent = 'Meet Your Computer';
+          heading.append(headingStrong);
 
           const promptList = document.createElement('ol');
           promptList.className = 'orientation-list';
@@ -267,7 +292,8 @@
           buttonRow.className = 'button-row';
           const missionLink = createExternalLink({
             label: 'Start First Mission',
-            url: activeCourse.firstMissionUrl || config.firstMissionDefaultUrl
+            url: activeCourse.firstMissionUrl || config.firstMissionDefaultUrl,
+            className: 'button button-primary button-large'
           });
           buttonRow.append(missionLink);
 
@@ -293,11 +319,17 @@
         setSelectedCourseId(courseId);
         renderHomePage();
       });
-      button.innerHTML = `
-        <h3>${course.name}</h3>
-        <p>${course.description}</p>
-        <div class="course-code">Open ${course.shortLabel}</div>
-      `;
+      const title = document.createElement('h3');
+      title.textContent = course.name;
+
+      const description = document.createElement('p');
+      description.textContent = course.description;
+
+      const courseCode = document.createElement('div');
+      courseCode.className = 'course-code';
+      courseCode.textContent = `Open ${course.shortLabel}`;
+
+      button.append(title, description, courseCode);
       courseGrid.append(button);
     });
   }
@@ -320,15 +352,48 @@
     progressBarFill.style.width = `${percent}%`;
   }
 
+  function initializeHomePageControls() {
+    if (page !== 'home' || homePageControlsInitialized) {
+      return;
+    }
+
+    const changeCourseButton = document.getElementById('change-course-button');
+    const resetProgressButton = document.getElementById('reset-progress-button');
+
+    if (!changeCourseButton || !resetProgressButton) {
+      return;
+    }
+
+    changeCourseButton.addEventListener('click', function () {
+      localStorage.removeItem(config.storageKeys.selectedCourse);
+      renderHomePage();
+      document.getElementById('course-picker')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    resetProgressButton.addEventListener('click', function () {
+      const activeCourseId = getSelectedCourseId();
+      if (!activeCourseId) {
+        return;
+      }
+      resetCourseProgress(activeCourseId);
+      renderHomePage();
+    });
+
+    homePageControlsInitialized = true;
+  }
+
   function renderHomePage() {
     if (page !== 'home') {
       return;
     }
 
     renderCoursePicker();
+    initializeHomePageControls();
 
     const selectedCourseId = getSelectedCourseId();
-    const selectedCourse = config.courses[selectedCourseId];
+    const selectedCourse = Object.prototype.hasOwnProperty.call(config.courses, selectedCourseId)
+      ? config.courses[selectedCourseId]
+      : undefined;
     const picker = document.getElementById('course-picker');
     const dashboard = document.getElementById('dashboard');
     const courseName = document.getElementById('selected-course-name');
@@ -353,23 +418,12 @@
     courseDescription.textContent = selectedCourse.description;
     stepsContainer.innerHTML = '';
 
-    const steps = buildSteps(selectedCourse);
+    const steps = buildSteps(selectedCourseId);
     steps.forEach(function (step) {
-      stepsContainer.append(createStepCard(step, selectedCourseId, selectedCourse));
+      stepsContainer.append(createStepCard(step, selectedCourseId, selectedCourse, steps));
     });
 
     updateProgress(selectedCourseId, steps);
-
-    changeCourseButton.onclick = function () {
-      localStorage.removeItem(config.storageKeys.selectedCourse);
-      renderHomePage();
-      document.getElementById('course-picker')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    };
-
-    resetProgressButton.onclick = function () {
-      resetCourseProgress(selectedCourseId);
-      renderHomePage();
-    };
   }
 
   function renderOrientationPage() {
@@ -379,7 +433,9 @@
 
     const courseIdFromQuery = new URLSearchParams(window.location.search).get('course');
     const selectedCourseId = courseIdFromQuery || getSelectedCourseId();
-    const course = config.courses[selectedCourseId];
+    const course = Object.prototype.hasOwnProperty.call(config.courses, selectedCourseId)
+      ? config.courses[selectedCourseId]
+      : undefined;
     const banner = document.getElementById('orientation-course-banner');
     const launchButton = document.getElementById('orientation-launch-button');
     const syllabusButton = document.getElementById('orientation-syllabus-button');
