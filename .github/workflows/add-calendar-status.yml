@@ -1,0 +1,53 @@
+name: Add calendar availability notice
+
+on:
+  push:
+    paths:
+      - '.github/workflows/add-calendar-status.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  update-page:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Add missing calendar notice
+        shell: bash
+        run: |
+          python <<'PY'
+          from pathlib import Path
+
+          path = Path('No_School_Viewer.html')
+          text = path.read_text(encoding='utf-8')
+
+          css_marker = '/* Calendar availability notice */'
+          if css_marker not in text:
+              css = '''\n    /* Calendar availability notice */\n    .calendar-availability {\n      margin-top: 12px;\n    }\n\n    .calendar-availability h2 {\n      margin: 0 0 6px;\n      font-size: 17px;\n    }\n\n    .calendar-availability-intro {\n      margin: 0 0 12px;\n      color: var(--muted);\n      font-size: 12px;\n    }\n\n    .calendar-availability-list {\n      display: grid;\n      grid-template-columns: 1fr;\n      gap: 8px;\n      margin: 0;\n      padding: 0;\n      list-style: none;\n    }\n\n    @media(min-width:700px) {\n      .calendar-availability-list {\n        grid-template-columns: repeat(2, minmax(0, 1fr));\n      }\n    }\n\n    .calendar-availability-item {\n      border: 1px solid var(--border);\n      border-radius: 10px;\n      padding: 10px;\n      background: #fff;\n    }\n\n    .calendar-availability-item strong {\n      display: block;\n      margin-bottom: 3px;\n    }\n\n    .calendar-availability-status {\n      color: var(--muted);\n      font-size: 12px;\n    }\n\n    .calendar-availability-help {\n      margin: 12px 0 0;\n      padding-top: 10px;\n      border-top: 1px solid var(--border);\n      color: var(--muted);\n      font-size: 12px;\n    }\n'''
+              text = text.replace('  </style>', css + '  </style>', 1)
+
+          section_marker = 'id="calendar-availability"'
+          if section_marker not in text:
+              section = '''\n    <section id="calendar-availability" class="calendar-availability panel p-4" aria-labelledby="calendar-availability-heading">\n      <h2 id="calendar-availability-heading">Calendars Not Yet Publicly Available</h2>\n      <p class="calendar-availability-intro">We are actively tracking 2026–27 school calendars across Genesee County. The schools below do not currently have a complete 2026–27 calendar publicly posted on their website. Where possible, we are using official event feeds, district announcements, and the Genesee County Common Calendar until a full school calendar becomes available.</p>\n      <ul class="calendar-availability-list">\n        <li class="calendar-availability-item">\n          <strong>Genesee Jr/Sr High School</strong>\n          <span class="calendar-availability-status">Partial official calendar available; later 2026–27 dates have not yet been published.</span>\n        </li>\n        <li class="calendar-availability-item">\n          <strong>Genesee Early College</strong>\n          <span class="calendar-availability-status">Full 2026–27 school-specific calendar not publicly posted.</span>\n        </li>\n        <li class="calendar-availability-item">\n          <strong>Michael Hamady High School</strong>\n          <span class="calendar-availability-status">Partial dates posted on the district website; full calendar not publicly posted.</span>\n        </li>\n        <li class="calendar-availability-item">\n          <strong>Academy West Alternative High School</strong>\n          <span class="calendar-availability-status">Full 2026–27 school-specific calendar not publicly posted.</span>\n        </li>\n      </ul>\n      <p class="calendar-availability-help"><strong>Know of a calendar we missed?</strong> If your school has published an official 2026–27 calendar that is not listed here, please send us the link so we can verify and update the schedule.</p>\n    </section>\n\n'''
+              anchor = '    <div id="sticky-nav" class="sticky-nav" role="navigation" aria-label="Week navigation">'
+              if anchor not in text:
+                  raise SystemExit('Could not find insertion anchor in No_School_Viewer.html')
+              text = text.replace(anchor, section + anchor, 1)
+
+          path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Commit page update
+        shell: bash
+        run: |
+          if git diff --quiet -- No_School_Viewer.html; then
+            echo "No page changes needed."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add No_School_Viewer.html
+          git commit -m "Show calendars not yet publicly available"
+          git push
