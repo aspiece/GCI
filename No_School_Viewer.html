@@ -421,6 +421,62 @@
         min-height: 0
       }
     }
+
+    /* Calendar availability notice */
+    .calendar-availability {
+      margin-top: 12px;
+    }
+
+    .calendar-availability h2 {
+      margin: 0 0 6px;
+      font-size: 17px;
+    }
+
+    .calendar-availability-intro {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .calendar-availability-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    @media(min-width:700px) {
+      .calendar-availability-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .calendar-availability-item {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      background: #fff;
+    }
+
+    .calendar-availability-item strong {
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .calendar-availability-status {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .calendar-availability-help {
+      margin: 12px 0 0;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 12px;
+    }
   </style>
   <!-- Libraries (small, reliable CDNs) -->
   <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
@@ -492,6 +548,31 @@
       </div>
       <div id="school-legend" class="legend" style="display:none" aria-live="polite"></div>
     </div>
+
+
+    <section id="calendar-availability" class="calendar-availability panel p-4" aria-labelledby="calendar-availability-heading">
+      <h2 id="calendar-availability-heading">Calendars Not Yet Publicly Available</h2>
+      <p class="calendar-availability-intro">We are actively tracking 2026–27 school calendars across Genesee County. The schools below do not currently have a complete 2026–27 calendar publicly posted on their website. Where possible, we are using official event feeds, district announcements, and the Genesee County Common Calendar until a full school calendar becomes available.</p>
+      <ul class="calendar-availability-list">
+        <li class="calendar-availability-item">
+          <strong>Genesee Jr/Sr High School</strong>
+          <span class="calendar-availability-status">Partial official calendar available; later 2026–27 dates have not yet been published.</span>
+        </li>
+        <li class="calendar-availability-item">
+          <strong>Genesee Early College</strong>
+          <span class="calendar-availability-status">Full 2026–27 school-specific calendar not publicly posted.</span>
+        </li>
+        <li class="calendar-availability-item">
+          <strong>Michael Hamady High School</strong>
+          <span class="calendar-availability-status">Partial dates posted on the district website; full calendar not publicly posted.</span>
+        </li>
+        <li class="calendar-availability-item">
+          <strong>Academy West Alternative High School</strong>
+          <span class="calendar-availability-status">Full 2026–27 school-specific calendar not publicly posted.</span>
+        </li>
+      </ul>
+      <p class="calendar-availability-help"><strong>Know of a calendar we missed?</strong> If your school has published an official 2026–27 calendar that is not listed here, please send us the link so we can verify and update the schedule.</p>
+    </section>
 
     <div id="sticky-nav" class="sticky-nav" role="navigation" aria-label="Week navigation">
       <button id="sn-prev" class="btn" title="Previous week">◀</button>
