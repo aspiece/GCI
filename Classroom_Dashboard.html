@@ -18,6 +18,7 @@
     <ol id="phases"></ol>
     <div class="phase-time"><span id="phase-remaining">—</span><small id="phase-mode">Scheduled transitions</small></div>
   </section>
+  <section id="school-notices" class="school-notices" aria-label="School calendar notices" hidden></section>
   <div id="connection" role="status" class="connection">Connecting to class content…</div>
   <main class="layout">
     <section class="activity">
@@ -31,14 +32,14 @@
     </section>
     <aside class="deadlines" aria-labelledby="due-title">
       <div class="aside-heading"><div><div class="eyebrow">PLAN AHEAD</div><h2 id="due-title">Due This Week</h2><div id="week-label" class="muted"></div></div><button id="refresh" aria-label="Refresh content">↻</button></div>
-      <div id="courses"></div><p class="aside-note">Deadlines from Google Classroom</p>
+      <button id="current-session" class="current-session" hidden>Current session</button><div id="courses"></div><p class="aside-note">Deadlines from Google Classroom</p>
     </aside>
   </main>
   <div id="announcement" class="announcement" role="status" aria-live="polite" aria-atomic="true" hidden><div><span id="announcement-icon" aria-hidden="true"></span><p id="announcement-session"></p><h2 id="announcement-title"></h2><p id="announcement-message"></p><button id="dismiss-announcement">Continue</button></div></div>
   <dialog id="settings">
     <form method="dialog"><div class="dialog-header"><h2>Instructor controls</h2><button aria-label="Close instructor controls">Close</button></div></form>
     <div class="controls-grid">
-      <section><h3>Class transitions</h3><p class="muted">Phase announcements follow the class schedule. Content tabs stay under your control.</p><label for="session-choice">Session for manual controls</label><select id="session-choice"></select><label for="phase-choice">Phase</label><select id="phase-choice"></select><div class="button-row"><button id="set-phase">Start phase</button><button id="repeat-phase">Announce again</button><button id="auto-phase">Resume schedule</button></div><label><input type="checkbox" id="sound"> Play a soft transition chime</label><p class="muted" id="manual-note">Manual overrides expire at the end of the selected session.</p></section>
+      <section><h3>Class transitions</h3><p class="muted">Phase announcements follow the class schedule. Content tabs stay under your control.</p><label for="session-choice">Session for manual controls</label><select id="session-choice"></select><label for="phase-choice">Phase</label><select id="phase-choice"></select><div class="button-row"><button id="set-phase">Start phase</button><button id="repeat-phase">Announce again</button><button id="auto-phase">Resume schedule</button></div><label><input type="checkbox" id="sound"> Play a soft transition chime</label><p class="muted" id="manual-note">Manual overrides expire at the end of the selected session.</p><h3>Assignment view</h3><button id="expand-courses" aria-pressed="false">Expand all sessions</button><p class="muted">Show all five courses, including both careers classes. Choose Current session to return to the class-time view.</p></section>
       <section><h3>Content connection</h3><label for="feed-url">Apps Script feed URL</label><input id="feed-url" type="url" placeholder="https://script.google.com/macros/s/…/exec"><p class="muted">Use the dashboard feed deployment, not the existing dashboard URL.</p><button id="save-feed">Connect</button><p id="settings-message" role="status"></p><button id="demo">Preview with sample content</button><p class="muted">Preview uses fictional assignments and never represents live deadlines.</p></section>
     </div>
   </dialog>

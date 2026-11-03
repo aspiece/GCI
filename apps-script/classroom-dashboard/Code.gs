@@ -29,7 +29,7 @@ function doGet(e) {
     if(properties.getProperty('PUBLIC_FEED_ENABLED')!=='true')throw new Error('Feed disabled');
     const id=properties.getProperty('DASHBOARD_SPREADSHEET_ID');
     if(!id)throw new Error('Missing spreadsheet configuration');
-    const cache=CacheService.getScriptCache(),key='dashboard:v3:'+id+':'+(selectedDate||'today');
+    const cache=CacheService.getScriptCache(),key='dashboard:v4:'+id+':'+(selectedDate||'today');
     const cached=cache.get(key);
     const today=Utilities.formatDate(new Date(),'America/Detroit','yyyy-MM-dd');
     result=cached?JSON.parse(cached):null;
@@ -57,7 +57,8 @@ function dashboardData_(ss,now,selectedDate) {
   const date=selectedDate||today,calendarRows=dashboardRows_(ss,'Calendar');
   const calendar=calendarRows.find(row=>dashboardDate_(row.Date,tz)===date);
   const todayCalendar=calendarRows.find(row=>dashboardDate_(row.Date,tz)===today);
-  const active=!!calendar&&dashboardActive_(calendar.Active);
+  const schoolCalendar=dashboardSchoolCalendar_(date,today,tz);
+  const active=!!calendar&&dashboardActive_(calendar.Active)&&!schoolCalendar.closed;
   const starter=active?dashboardRows_(ss,'Starters').find(row=>Number(row.Week)===Number(calendar.Week)&&String(row.Day).toLowerCase()===String(calendar.Day).toLowerCase()&&dashboardActive_(row.Active)):null;
   const brain=active?dashboardRows_(ss,'Brain Breaks').find(row=>dashboardDate_(row['Date (YYYY-MM-DD)'],tz)===date&&dashboardActive_(row.Active)):null;
   const exitRow=active?dashboardRows_(ss,'Exit Tickets').find(row=>dashboardDate_(row['Date (YYYY-MM-DD)'],tz)===date&&dashboardActive_(row.Active)):null;
@@ -80,7 +81,8 @@ function dashboardData_(ss,now,selectedDate) {
   });
   const mappings=dashboardRows_(ss,'Dashboard Courses');
   return {
-    version:1,date:date,today:today,todayInstructionalDay:!!todayCalendar&&dashboardActive_(todayCalendar.Active),timezone:tz,title:String(settings.appTitle||'CS Daily Starters'),generatedAt:now.toISOString(),instructionalDay:active,
+    version:1,date:date,today:today,todayInstructionalDay:!!todayCalendar&&dashboardActive_(todayCalendar.Active)&&!schoolCalendar.todayClosed,timezone:tz,title:String(settings.appTitle||'CS Daily Starters'),generatedAt:now.toISOString(),instructionalDay:active,
+    schoolCalendar:schoolCalendar,
     sessions:sessions,phases:phases,
     // Only allowlisted student-facing fields leave Apps Script.
     starter:starter?{
@@ -152,6 +154,39 @@ function dashboardUrl_(value){return /^https:\/\//i.test(String(value||''))?Stri
 function dashboardAddDays_(date,days){const d=new Date(date+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+days);return d.toISOString().slice(0,10);}
 function dashboardMonday_(date){const day=new Date(date+'T12:00:00Z').getUTCDay();return dashboardAddDays_(date,-((day+6)%7));}
 function dashboardValidDate_(date){return /^(19|20|21)\d{2}-\d{2}-\d{2}$/.test(String(date))&&String(date)>='1900-01-01'&&String(date)<='2100-12-31'&&!isNaN(Date.parse(date+'T12:00:00Z'))&&new Date(date+'T12:00:00Z').toISOString().slice(0,10)===date?date:'';}
+
+/** Calendar source is the same master used by No_School_Viewer.html. */
+function dashboardSchoolCalendar_(date,today,tz){
+  try{
+    const properties=PropertiesService.getScriptProperties();
+    const id=properties.getProperty('NO_SCHOOL_SPREADSHEET_ID')||'17NPFYooBJlMfn-xQi6KRg0c6GT2W8tiAsW48bn2nf94';
+    const cache=CacheService.getScriptCache(),key='dashboard:schools:v1:'+id+':'+date+':'+today;
+    const cached=cache.get(key);if(cached)return JSON.parse(cached);
+    const sheet=SpreadsheetApp.openById(id).getSheetByName('School_Calendar_Master');
+    if(!sheet)throw new Error('School calendar tab unavailable');
+    const rows=sheet.getRange(1,1,Math.max(1,sheet.getLastRow()),6).getValues();
+    const events=dashboardSchoolEvents_(rows,date,tz),todayEvents=date===today?events:dashboardSchoolEvents_(rows,today,tz);
+    const data={date:date,status:'ready',events:events,closed:events.some(dashboardGciClosed_),todayClosed:todayEvents.some(dashboardGciClosed_)};
+    const encoded=JSON.stringify(data);if(encoded.length<85000)cache.put(key,encoded,900);
+    return data;
+  }catch(error){console.error('School calendar unavailable: '+String(error));return {date:date,status:'error',events:[],closed:false,todayClosed:false};}
+}
+function dashboardSchoolEvents_(rows,date,tz){
+  if(!rows.length)return [];
+  const headers=rows[0].map(h=>String(h).trim().toLowerCase()),column=name=>headers.indexOf(name);
+  const di=column('date'),ei=column('event'),si=column('school'),yi=column('school year');
+  if(di<0||ei<0||si<0)throw new Error('School calendar headers not recognized');
+  const year=Number(date.slice(0,4))-(Number(date.slice(5,7))<7?1:0),schoolYear=year+'-'+String(year+1).slice(-2),seen={};
+  return rows.slice(1).filter(row=>dashboardDate_(row[di],tz)===date&&(!row[yi]||String(row[yi]).trim()===schoolYear)).map(row=>({school:String(row[si]||'').trim(),event:String(row[ei]||'').trim()})).filter(item=>{
+    const key=item.school+'|'+item.event;if(!item.school||!item.event||seen[key])return false;seen[key]=true;return true;
+  }).sort((a,b)=>a.school.localeCompare(b.school));
+}
+function dashboardGciClosed_(item){
+  const school=String(item.school).trim().toLowerCase(),event=String(item.event).toLowerCase();
+  if(!['genesee career institute','gci','all schools'].includes(school))return false;
+  if(/half.?day|early (release|dismissal)|virtual/.test(event))return false;
+  return /no (school|students|regular school)|closed|holiday|winter break|spring break/.test(event);
+}
 
 /** Run once after setting DASHBOARD_SPREADSHEET_ID. Adds missing configuration tabs only.
  * Does not change existing rows, sharing settings, or PUBLIC_FEED_ENABLED.
