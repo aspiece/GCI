@@ -29,7 +29,7 @@ function doGet(e) {
     if(properties.getProperty('PUBLIC_FEED_ENABLED')!=='true')throw new Error('Feed disabled');
     const id=properties.getProperty('DASHBOARD_SPREADSHEET_ID');
     if(!id)throw new Error('Missing spreadsheet configuration');
-    const cache=CacheService.getScriptCache(),key='dashboard:v5:'+id+':'+(selectedDate||'today');
+    const cache=CacheService.getScriptCache(),key='dashboard:v6:'+id+':'+(selectedDate||'today');
     const cached=cache.get(key);
     const today=Utilities.formatDate(new Date(),'America/Detroit','yyyy-MM-dd');
     result=cached?JSON.parse(cached):null;
@@ -84,6 +84,7 @@ function dashboardData_(ss,now,selectedDate) {
     version:1,date:date,today:today,todayInstructionalDay:!!todayCalendar&&dashboardActive_(todayCalendar.Active)&&!schoolCalendar.todayClosed,timezone:tz,title:String(settings.appTitle||'CS Daily Starters'),generatedAt:now.toISOString(),instructionalDay:active,
     schoolCalendar:schoolCalendar,
     learningTarget:active?dashboardLearningTarget_(focus,starter,String(calendar.Day)):'',
+    learningTargets:active?dashboardSessionTargets_(focus,starter,String(calendar.Day)):{shared:'',third:''},
     sessions:sessions,phases:phases,
     // Only allowlisted student-facing fields leave Apps Script.
     starter:starter?{
@@ -163,6 +164,12 @@ function dashboardLearningTarget_(focus,starter,day){
   const match=notes.match(/\b(?:weekly\s+)?target:\s*([^\r\n]*?)(?=\s+(?:Success:|AI starter\b|Visible Learning:|Listen for\b|Exit ticket\b)|$)/i);
   const sentence=match&&match[1].trim().match(/^.*?[.!?](?=\s|$)/);
   return sentence?sentence[0]:'';
+}
+function dashboardSessionTargets_(focus,starter,day){
+  return {
+    shared:dashboardLearningTarget_(focus,starter,day),
+    third:String(focus&&focus[day+' 3rd Session Learning Target']||'').trim()
+  };
 }
 
 /** Calendar source is the same master used by No_School_Viewer.html. */

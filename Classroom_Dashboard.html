@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="dark">
   <title>Classroom Dashboard · GCI</title>
-  <link rel="stylesheet" href="assets/dashboard/dashboard.css?v=20261103-compact-target">
-  <script src="assets/dashboard/dashboard.js?v=20261103-compact-target" defer></script>
+  <link rel="stylesheet" href="assets/dashboard/dashboard.css?v=20261103-session-targets">
+  <script src="assets/dashboard/dashboard.js?v=20261103-session-targets" defer></script>
 </head>
 <body>
   <header class="topbar">
@@ -42,7 +42,7 @@
   <dialog id="settings">
     <form method="dialog"><div class="dialog-header"><h2>Instructor controls</h2><button aria-label="Close instructor controls">Close</button></div></form>
     <div class="controls-grid">
-      <section><h3>Class transitions</h3><p class="muted">Phase announcements follow the class schedule. Content tabs stay under your control.</p><label for="session-choice">Session for manual controls</label><select id="session-choice"></select><label for="phase-choice">Phase</label><select id="phase-choice"></select><div class="button-row"><button id="set-phase">Start phase</button><button id="repeat-phase">Announce again</button><button id="auto-phase">Resume schedule</button></div><label><input type="checkbox" id="sound"> Play a soft transition chime</label><p class="muted" id="manual-note">Manual overrides expire at the end of the selected session.</p><h3>Assignment view</h3><button id="expand-courses" aria-pressed="false">Expand all sessions</button><p class="muted">Show all five courses, including both careers classes. Choose Current session to return to the class-time view.</p></section>
+      <section><h3>Class transitions</h3><p class="muted">Phase announcements follow the class schedule. Content tabs stay under your control.</p><label for="session-choice">Session for manual controls</label><select id="session-choice"></select><label for="phase-choice">Phase</label><select id="phase-choice"></select><div class="button-row"><button id="set-phase">Start phase</button><button id="repeat-phase">Announce again</button><button id="auto-phase">Resume schedule</button></div><label><input type="checkbox" id="sound"> Play a soft transition chime</label><p class="muted" id="manual-note">Manual overrides expire at the end of the selected session.</p><h3>Assignment view</h3><button id="expand-courses" aria-pressed="false">Expand all sessions</button><p class="muted">Show all five courses, including both careers classes. Choose Current session to return to the class-time view.</p><h3>Learning target view</h3><label for="target-group">Target group</label><select id="target-group"><option value="auto">Automatic · current session</option><option value="shared">1st &amp; 2nd Session</option><option value="third">3rd Session</option></select><p class="muted">Automatic follows class times. Choose a group to preview its target when planning.</p></section>
       <section><h3>Content connection</h3><label for="feed-url">Apps Script feed URL</label><input id="feed-url" type="url" placeholder="https://script.google.com/macros/s/…/exec"><p class="muted">Use the dashboard feed deployment, not the existing dashboard URL.</p><button id="save-feed">Connect</button><p id="settings-message" role="status"></p><button id="demo">Preview with sample content</button><p class="muted">Preview uses fictional assignments and never represents live deadlines.</p></section>
     </div>
   </dialog>
