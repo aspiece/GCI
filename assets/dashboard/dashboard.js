@@ -58,6 +58,7 @@ const GCI = (() => {
 if(typeof module!=='undefined')module.exports=GCI;
 if(typeof document!=='undefined'){
   const $=id=>document.getElementById(id),esc=GCI.escape;
+  const defaultFeedUrl='https://script.google.com/macros/s/AKfycbw4Rj6Xqlz61dI8N8jg9v8ehWSgkbLsCLF1ZSUZHk1RzSGf_s5ZDutLj4KfqQYLzQ/exec';
   let data=null,tab='starter',preview=false,feedUrl='',inflight=false,lastKey=null,manual=null,lastSession=null,announcementTimer=null,soundContext=null,generation=0,lastAttempt=0;
   const openCourses=new Map();
   const store={get(key){try{return localStorage.getItem(key)||'';}catch{return '';}},set(key,value){try{localStorage.setItem(key,value);}catch{}}};
@@ -178,6 +179,6 @@ if(typeof document!=='undefined'){
   const tabs=[...document.querySelectorAll('[data-tab]')];
   tabs.forEach((button,i)=>{button.onclick=()=>selectTab(button.dataset.tab);button.onkeydown=event=>{let index;if(event.key==='ArrowRight')index=(i+1)%tabs.length;else if(event.key==='ArrowLeft')index=(i+tabs.length-1)%tabs.length;else if(event.key==='Home')index=0;else if(event.key==='End')index=tabs.length-1;else return;event.preventDefault();tabs[index].focus();selectTab(tabs[index].dataset.tab);};});
   document.addEventListener('visibilitychange',()=>{if(!document.hidden){tick();if(!inflight)refresh();}});
-  feedUrl=GCI.validFeed(store.get('gci.dashboard.feed'));preview=new URLSearchParams(location.search).get('preview')==='1';
+  feedUrl=GCI.validFeed(store.get('gci.dashboard.feed'))||defaultFeedUrl;preview=new URLSearchParams(location.search).get('preview')==='1';
   refresh();tick();setInterval(tick,1000);setInterval(refresh,60000);
 }
