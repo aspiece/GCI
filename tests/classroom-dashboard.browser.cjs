@@ -19,6 +19,19 @@ const base=process.env.DASHBOARD_TEST_URL||'http://127.0.0.1:8765/Classroom_Dash
   assert.equal(await page.locator('[data-course="1st Session"] .submission-count').textContent(),'18 / 24 submitted');
   assert.equal(await page.locator('[data-course="Career Essentials"] .day-group').count(),0);
   assert.equal(await page.locator('#announcement').isVisible(),false);
+  assert.equal(await page.locator('#date-label').textContent(),'Tuesday, November 3, 2026');
+  await page.locator('#date-next').click();
+  assert.equal(await page.locator('#date-picker').inputValue(),'2026-11-04');
+  assert.equal(await page.locator('#date-label').textContent(),'Wednesday, November 4, 2026');
+  assert.equal(await page.locator('#phases [aria-current]').textContent(),'1Daily Starter');
+  assert.equal(await page.locator('#announcement').isVisible(),false);
+  await page.locator('#date-previous').click();
+  await page.locator('#date-picker').fill('2026-11-09');
+  await page.locator('#date-picker').dispatchEvent('change');
+  assert.equal(await page.locator('#date-label').textContent(),'Monday, November 9, 2026');
+  assert.equal(await page.locator('#due-title').textContent(),'Due That Week');
+  await page.locator('#date-today').click();
+  assert.equal(await page.locator('#date-label').textContent(),'Tuesday, November 3, 2026');
   await page.clock.runFor(1500);
   assert.equal(await page.locator('#announcement').isVisible(),true);
   assert.equal(await page.locator('#announcement-title').textContent(),'Focus');
@@ -53,9 +66,10 @@ const base=process.env.DASHBOARD_TEST_URL||'http://127.0.0.1:8765/Classroom_Dash
   let fail=false;
   await live.route('https://script.google.com/**',async route=>{
     if(fail)return route.abort();
-    const data=app.sample(new Date('2026-11-03T12:00:00Z'));
+    const params=new URL(route.request().url()).searchParams;
+    const data=app.sample(new Date('2026-11-03T12:00:00Z'),params.get('date')||'');
     data.starter.prompt='<img src=x onerror=alert(1)>';
-    data.requestId=new URL(route.request().url()).searchParams.get('requestId');
+    data.requestId=params.get('requestId');
     await route.fulfill({contentType:'application/javascript',body:`gciDashboardFeed(${JSON.stringify(data)});`});
   });
   await live.goto(base);await live.waitForFunction(()=>document.getElementById('connection').textContent.startsWith('Connected'));

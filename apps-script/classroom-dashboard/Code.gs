@@ -23,16 +23,18 @@ function doGet(e) {
   const requestId=/^\d{1,10}$/.test(params.requestId||'')?params.requestId:'';
   let result;
   try {
+    const selectedDate=params.date?dashboardValidDate_(params.date):'';
+    if(params.date&&!selectedDate)throw new Error('Invalid requested date');
     const properties=PropertiesService.getScriptProperties();
     if(properties.getProperty('PUBLIC_FEED_ENABLED')!=='true')throw new Error('Feed disabled');
     const id=properties.getProperty('DASHBOARD_SPREADSHEET_ID');
     if(!id)throw new Error('Missing spreadsheet configuration');
-    const cache=CacheService.getScriptCache(),key='dashboard:v2';
+    const cache=CacheService.getScriptCache(),key='dashboard:v3:'+id+':'+(selectedDate||'today');
     const cached=cache.get(key);
     const today=Utilities.formatDate(new Date(),'America/Detroit','yyyy-MM-dd');
     result=cached?JSON.parse(cached):null;
-    if(!result||result.date!==today){
-      result=dashboardData_(SpreadsheetApp.openById(id),new Date());
+    if(!result||result.today!==today){
+      result=dashboardData_(SpreadsheetApp.openById(id),new Date(),selectedDate);
       const encoded=JSON.stringify(result);
       if(encoded.length<85000)cache.put(key,encoded,60);
     }
@@ -46,12 +48,15 @@ function doGet(e) {
     .setMimeType(callback?ContentService.MimeType.JAVASCRIPT:ContentService.MimeType.JSON);
 }
 
-function dashboardData_(ss,now) {
+function dashboardData_(ss,now,selectedDate) {
   const settings={};dashboardRows_(ss,'Settings').forEach(row=>{settings[String(row.Key||'')]=row.Value;});
   // The classroom schedule uses Michigan local time, regardless of workbook timezone.
   const tz=String(settings.timezone||'America/Detroit');
-  const date=Utilities.formatDate(now,tz,'yyyy-MM-dd');
-  const calendar=dashboardRows_(ss,'Calendar').find(row=>dashboardDate_(row.Date,tz)===date);
+  const today=Utilities.formatDate(now,tz,'yyyy-MM-dd');
+  if(selectedDate&&!dashboardValidDate_(selectedDate))throw new Error('Invalid requested date');
+  const date=selectedDate||today,calendarRows=dashboardRows_(ss,'Calendar');
+  const calendar=calendarRows.find(row=>dashboardDate_(row.Date,tz)===date);
+  const todayCalendar=calendarRows.find(row=>dashboardDate_(row.Date,tz)===today);
   const active=!!calendar&&dashboardActive_(calendar.Active);
   const starter=active?dashboardRows_(ss,'Starters').find(row=>Number(row.Week)===Number(calendar.Week)&&String(row.Day).toLowerCase()===String(calendar.Day).toLowerCase()&&dashboardActive_(row.Active)):null;
   const brain=active?dashboardRows_(ss,'Brain Breaks').find(row=>dashboardDate_(row['Date (YYYY-MM-DD)'],tz)===date&&dashboardActive_(row.Active)):null;
@@ -75,7 +80,7 @@ function dashboardData_(ss,now) {
   });
   const mappings=dashboardRows_(ss,'Dashboard Courses');
   return {
-    version:1,date:date,timezone:tz,title:String(settings.appTitle||'CS Daily Starters'),generatedAt:now.toISOString(),instructionalDay:active,
+    version:1,date:date,today:today,todayInstructionalDay:!!todayCalendar&&dashboardActive_(todayCalendar.Active),timezone:tz,title:String(settings.appTitle||'CS Daily Starters'),generatedAt:now.toISOString(),instructionalDay:active,
     sessions:sessions,phases:phases,
     // Only allowlisted student-facing fields leave Apps Script.
     starter:starter?{
@@ -146,6 +151,7 @@ function dashboardTime_(value,tz){return value instanceof Date?Utilities.formatD
 function dashboardUrl_(value){return /^https:\/\//i.test(String(value||''))?String(value):'';}
 function dashboardAddDays_(date,days){const d=new Date(date+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+days);return d.toISOString().slice(0,10);}
 function dashboardMonday_(date){const day=new Date(date+'T12:00:00Z').getUTCDay();return dashboardAddDays_(date,-((day+6)%7));}
+function dashboardValidDate_(date){return /^(19|20|21)\d{2}-\d{2}-\d{2}$/.test(String(date))&&String(date)>='1900-01-01'&&String(date)<='2100-12-31'&&!isNaN(Date.parse(date+'T12:00:00Z'))&&new Date(date+'T12:00:00Z').toISOString().slice(0,10)===date?date:'';}
 
 /** Run once after setting DASHBOARD_SPREADSHEET_ID. Adds missing configuration tabs only.
  * Does not change existing rows, sharing settings, or PUBLIC_FEED_ENABLED.

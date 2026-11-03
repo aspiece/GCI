@@ -21,7 +21,7 @@ test('schedule moves through both focus blocks and cleanup at exact boundaries',
   assert.equal(app.scheduled(new Date('2026-11-03T17:05:00Z'),data).session,'3rd Session');
 });
 test('inactive and stale dates do not trigger phases',()=>{
-  assert.equal(app.scheduled(new Date('2026-11-03T12:00:00Z'),{...fixture(),instructionalDay:false}),null);
+  assert.equal(app.scheduled(new Date('2026-11-03T12:00:00Z'),{...fixture(),instructionalDay:false,todayInstructionalDay:false}),null);
   assert.equal(app.scheduled(new Date('2026-11-04T12:00:00Z'),fixture()),null);
 });
 test('week handling includes Sunday and Michigan time handles DST',()=>{
@@ -30,6 +30,15 @@ test('week handling includes Sunday and Michigan time handles DST',()=>{
   assert.equal(app.localParts(new Date('2026-11-02T00:30:00Z')).date,'2026-11-01');
   assert.equal(app.localParts(new Date('2026-10-30T11:00:00Z')).minute,420);
   assert.equal(app.localParts(new Date('2026-11-03T12:00:00Z')).minute,420);
+});
+test('date browsing uses today for phase timing and validates real calendar dates',()=>{
+  const data={...fixture(),date:'2026-11-04',instructionalDay:false};
+  assert.equal(app.scheduled(new Date('2026-11-03T12:05:00Z'),data).index,1);
+  assert.equal(app.scheduled(new Date('2026-11-03T12:05:00Z'),{...data,todayInstructionalDay:false}),null);
+  for(const date of ['2026-11-04','2028-02-29'])assert.equal(app.validDate(date),true);
+  for(const date of ['2026-02-29','2026-11-31','2026-13-01','2101-01-01','11/04/2026',''])assert.equal(app.validDate(date),false);
+  assert.equal(app.addDays('2026-12-31',1),'2027-01-01');
+  assert.equal(app.sample(new Date('2026-11-03T12:00:00Z'),'2026-11-09').date,'2026-11-09');
 });
 test('only HTTPS links and exact Apps Script deployment endpoints are accepted',()=>{
   assert.equal(app.safeUrl('javascript:alert(1)'),'');
@@ -90,6 +99,15 @@ test('backend reuses Focus Map exit tickets and excludes teacher-only fields',()
   rows.Calendar[1][3]=false;
   const closed=ctx.dashboardData_(ss,new Date('2026-11-03T12:00:00Z'));assert.equal(closed.starter,null);assert.equal(closed.exit,null);assert.equal(closed.brain,null);
 });
+test('backend loads selected date activities while keeping today’s class calendar separate',()=>{
+  const ctx=backend();
+  const rows={Settings:[['Key','Value'],['timezone','America/Detroit']],Calendar:[['Date','Week','Day','Active'],['2026-11-03',11,'Tuesday',false],['2026-11-04',11,'Wednesday',true]],Starters:[['Week','Day','Student Prompt','Active'],[11,'Wednesday','Tomorrow’s starter',true]],'Focus Map':[['Week','Wednesday Exit Ticket'],[11,'Tomorrow’s exit']]};
+  const data=ctx.dashboardData_({getSheetByName:name=>rows[name]?sheet(rows[name]):null},new Date('2026-11-03T12:00:00Z'),'2026-11-04');
+  assert.equal(data.date,'2026-11-04');assert.equal(data.today,'2026-11-03');assert.equal(data.instructionalDay,true);assert.equal(data.todayInstructionalDay,false);
+  assert.equal(data.starter.prompt,'Tomorrow’s starter');assert.equal(data.exit.prompt,'Tomorrow’s exit');
+  assert.throws(()=>ctx.dashboardData_({getSheetByName:()=>null},new Date('2026-11-03T12:00:00Z'),'2026-02-30'));
+  assert.equal(ctx.dashboardValidDate_('2028-02-29'),'2028-02-29');
+});
 test('public feed stays disabled unless explicitly enabled and rejects arbitrary callbacks',()=>{
   const ctx=backend();let access=0;
   ctx.PropertiesService={getScriptProperties:()=>({getProperty:()=>null})};
@@ -98,4 +116,15 @@ test('public feed stays disabled unless explicitly enabled and rejects arbitrary
   const disabled=ctx.doGet({parameter:{callback:'gciDashboardFeed',requestId:'1'}});
   assert.ok(disabled.text.startsWith('gciDashboardFeed('));assert.ok(disabled.text.includes('unavailable'));assert.equal(access,0);
   assert.equal(ctx.doGet({parameter:{callback:'alert'}}).text,'Invalid callback.');
+});
+test('feed caches each selected date independently',()=>{
+  const ctx=backend(),cache=new Map(),requests=[];
+  const today=app.localParts(new Date()).date;
+  ctx.PropertiesService={getScriptProperties:()=>({getProperty:key=>key==='PUBLIC_FEED_ENABLED'?'true':'sheet-id'})};
+  ctx.CacheService={getScriptCache:()=>({get:key=>cache.get(key),put:(key,value)=>cache.set(key,value)})};
+  ctx.SpreadsheetApp={openById:()=>({})};
+  ctx.dashboardData_=(_ss,_now,date)=>{requests.push(date);return {today,date};};
+  ctx.ContentService={MimeType:{JSON:'json',JAVASCRIPT:'js'},createTextOutput:text=>({text,setMimeType(){return this;}})};
+  for(const date of ['2026-11-04','2026-11-05','2026-11-04'])assert.equal(JSON.parse(ctx.doGet({parameter:{date}}).text).date,date);
+  assert.deepEqual(requests,['2026-11-04','2026-11-05']);
 });
