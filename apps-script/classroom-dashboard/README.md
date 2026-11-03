@@ -5,6 +5,7 @@ The new page is `Classroom_Dashboard.html`. It is independent of the current App
 ## What is ready
 
 - Daily Starter, Brain Break, and Exit Ticket content tabs.
+- Previous/Next day, Today, and a date picker. The complete selected date (weekday, month, day, and year) appears at the top right. Activities and deadlines follow the selected date/week; the clock, phase timing, and announcements follow today’s actual class calendar. Navigation includes weekends and inactive dates, which show an empty scheduled-activity message.
 - Compact class progress and countdown: Daily Starter → Focus → Brain Break → Focus → Cleanup.
 - A six-second visual announcement when a phase starts, optional chime, manual phase selection, repeat announcement, and return to scheduled timing.
 - Due This Week: collapsible sections for 1st Session, 2nd Session, 3rd Session, Career Essentials, and Career Exploration. The active session opens automatically when it changes, together with Career Essentials for 1st/2nd Session or Career Exploration for 3rd Session. Instructors can expand or collapse any section.
@@ -33,10 +34,10 @@ GitHub Pages cannot run the Apps Script code. It serves the dashboard page; the 
 
 | Content | Source |
 | --- | --- |
-| Daily Starter | Active `Calendar` row for today → matching `Week` and `Day` in `Starters` |
-| Brain Break | Active row for today in `Brain Breaks`, using its existing column headers |
-| Exit Ticket | Active dated row in `Exit Tickets`, otherwise the current weekday's Exit Ticket column in `Focus Map` |
-| Instructional day | `Calendar` row and `Active`; no phase announcements or activity content on inactive dates |
+| Daily Starter | Active `Calendar` row for the selected date → matching `Week` and `Day` in `Starters` |
+| Brain Break | Active row for the selected date in `Brain Breaks`, using its existing column headers |
+| Exit Ticket | Active dated row in `Exit Tickets`, otherwise the selected weekday's Exit Ticket column in `Focus Map` |
+| Instructional day | Selected date’s `Calendar` row controls activities; today’s row separately controls live phase announcements |
 | Title/timezone | `Settings` keys `appTitle` and `timezone` |
 
 The new `Exit Tickets` tab is optional for daily overrides. Existing Focus Map exit tickets remain the default. Blank or inactive dates do not become sample content.
@@ -87,7 +88,7 @@ node tests/classroom-dashboard.browser.cjs
 
 The unit tests cover phase boundaries, timezone/week handling, no-school behavior, API pagination and individual-assignment exclusion, and feed field allowlisting. The browser test script covers keyboard tab navigation, mobile overflow, transition banners, and feed failure behavior. These use fixtures, not live Google accounts. School authorization, the actual course IDs, and the deployed feed still require a live connection test.
 
-Build verification: all twelve unit tests passed, including submission aggregation, pagination, unsubmitted/returned work, and unavailable totals. Browser verification could not run in the build environment because Chromium was not installed and its download was blocked. The browser script is included for execution in a browser-enabled environment; responsive layout and visual presentation still need that review before classroom use.
+Build verification: all fifteen unit tests passed, including submission aggregation, pagination, unsubmitted/returned work, unavailable totals, selected-date content, date-specific caching, and live timing during date browsing. Browser verification could not run in the build environment because Chromium was not installed and its download was blocked. The browser script is included for execution in a browser-enabled environment; responsive layout and visual presentation still need that review before classroom use.
 
 ## Update an existing feed for submission counts
 
@@ -95,5 +96,11 @@ Build verification: all twelve unit tests passed, including submission aggregati
 2. Run `testDashboardFeed`. For each course with weekly assignments, `submissionCountsReady` should equal `count`. A course with no assignments correctly reports both as zero. If counts fail, review the private execution logs and authorization.
 3. Choose **Deploy → Manage deployments → Edit** (pencil) on the existing web app. Select **New version**, then **Deploy**. Updating the existing deployment preserves the `/exec` URL already configured in the dashboard. Do not create another deployment.
 4. Refresh the dashboard. Counts update with the regular feed refresh and cache, generally within two minutes. Until the feed code is updated, the new dashboard displays “Counts unavailable” beside assignments.
+
+## Update an existing feed for date navigation
+
+Replace `Code.gs` with the current version and update the **existing** web app using Deploy → Manage deployments → Edit → New version → Deploy. Keep the manifest, Script properties, and deployment URL. This also includes submission counts if that earlier update has not yet been installed.
+
+The feed accepts an optional `date=YYYY-MM-DD` query parameter, validates real dates from 1900 through 2100, and caches each requested date separately. A request without a date follows today. `date` identifies the viewed content, while `today` and `todayInstructionalDay` identify the live schedule. Weekday headings show dates from the viewed week, with no empty days. Past-date submission counts remain current totals, not historical snapshots. If the old feed ignores the selected date, the dashboard keeps the loaded content/date and displays an update message rather than mislabeling today’s content.
 
 References: [GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages), [Apps Script Content Service](https://developers.google.com/apps-script/guides/content), [Classroom advanced service](https://developers.google.com/apps-script/advanced/classroom), [Classroom coursework fields](https://developers.google.com/workspace/classroom/reference/rest/v1/courses.courseWork).

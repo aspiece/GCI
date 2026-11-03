@@ -19,11 +19,12 @@ const GCI = (() => {
     return {date:`${parts.year}-${parts.month}-${parts.day}`,minute:Number(parts.hour)*60+Number(parts.minute)+Number(parts.second)/60};
   }
   function addDays(iso,n){const d=new Date(`${iso}T12:00:00Z`);d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10);}
+  function validDate(value){return typeof value==='string'&&/^(19|20|21)\d{2}-\d{2}-\d{2}$/.test(value)&&value>='1900-01-01'&&value<='2100-12-31'&&!isNaN(Date.parse(value+'T12:00:00Z'))&&new Date(value+'T12:00:00Z').toISOString().slice(0,10)===value;}
   function weekDates(iso){const day=new Date(`${iso}T12:00:00Z`).getUTCDay();const monday=addDays(iso,-((day+6)%7));return Array.from({length:7},(_,i)=>addDays(monday,i));}
   function minuteOf(s){const [h,m]=String(s).split(':').map(Number);return h*60+m;}
   function scheduled(now,data){
     const local=localParts(now,data.timezone);
-    if(local.date!==data.date||!data.instructionalDay)return null;
+    if(local.date!==(data.today||data.date)||!(data.todayInstructionalDay??data.instructionalDay))return null;
     for(const session of data.sessions||sessions){
       const start=minuteOf(session.start),end=minuteOf(session.end);
       if(local.minute<start||local.minute>=end)continue;
@@ -50,21 +51,21 @@ const GCI = (() => {
     if(data.phases.some(p=>!Number.isFinite(p.minutes)||p.minutes<=0)||data.sessions.some(s=>!/^\d{2}:\d{2}$/.test(s.start)||!/^\d{2}:\d{2}$/.test(s.end)||minuteOf(s.start)>=minuteOf(s.end)))throw new Error('Check the class schedule in the feed.');
     return data;
   }
-  function sample(now=new Date()){
-    const date=localParts(now).date,week=weekDates(date);
-    return {version:1,date,timezone:'America/Detroit',title:'CS Daily Starters',generatedAt:now.toISOString(),instructionalDay:true,sessions,phases,
+  function sample(now=new Date(),selectedDate=''){
+    const today=localParts(now).date,date=selectedDate||today,week=weekDates(date);
+    return {version:1,date,today,todayInstructionalDay:true,timezone:'America/Detroit',title:'CS Daily Starters',generatedAt:now.toISOString(),instructionalDay:true,sessions,phases,
       starter:{lens:'Design Lab',topic:'Make the next step clear',csFocus:'Conditionals',prompt:'A game needs to explain why a player cannot open a locked door. How could the message help the player decide what to try next?',context:'Think for a moment. Discuss at your table. Be ready to explain one design choice.',goDeeper:'How should the message change when the player has the key but needs more energy?'},
       brain:{title:'Look up & reset',instructions:'Look away from the screen. Stretch gently if comfortable, then share one small win with your table.',alternative:'Stay seated, rest, or choose a comfortable movement.',returnCue:'Choose your next step before returning to your work.',duration:10},
       exit:{title:'Make your thinking visible',prompt:'Describe one conditional you tested today. What input did you try, what happened, and what would you test next?'},
       courses:courses.map((name,i)=>({name,status:'ready',assignments:i<3?[{title:['Conditionals practice','Test a decision','Explain your solution'][i],dueAt:`${week[i+1]}T20:00:00.000Z`,url:'https://classroom.google.com/',submissions:{submitted:[18,21,24][i],total:24}}]:[]}))};
   }
-  return {courses,phases,sessions,sessionCourses,localParts,weekDates,addDays,scheduled,safeUrl,validFeed,escape,submissionBadge,validate,sample};
+  return {courses,phases,sessions,sessionCourses,localParts,weekDates,addDays,validDate,scheduled,safeUrl,validFeed,escape,submissionBadge,validate,sample};
 })();
 if(typeof module!=='undefined')module.exports=GCI;
 if(typeof document!=='undefined'){
   const $=id=>document.getElementById(id),esc=GCI.escape;
   const defaultFeedUrl='https://script.google.com/macros/s/AKfycbw4Rj6Xqlz61dI8N8jg9v8ehWSgkbLsCLF1ZSUZHk1RzSGf_s5ZDutLj4KfqQYLzQ/exec';
-  let data=null,tab='starter',preview=false,feedUrl='',inflight=false,lastKey=null,manual=null,lastSession=null,announcementTimer=null,soundContext=null,generation=0,lastAttempt=0;
+  let data=null,tab='starter',preview=false,feedUrl='',inflight=false,lastKey=null,manual=null,lastSession=null,announcementTimer=null,soundContext=null,generation=0,lastAttempt=0,selectedDate='';
   const openCourses=new Map();
   const store={get(key){try{return localStorage.getItem(key)||'';}catch{return '';}},set(key,value){try{localStorage.setItem(key,value);}catch{}}};
   let sound=store.get('gci.dashboard.sound')==='true';
@@ -80,8 +81,8 @@ if(typeof document!=='undefined'){
     $('deeper').hidden=true;
     if(!data){$('activity-panel').innerHTML='<div class="empty"><div class="eyebrow">WELCOME</div><h1>Your classroom, at a glance.</h1><p>Open Instructor to connect the content feed, or preview the dashboard with sample content.</p></div>';return;}
     const s=data[tab];
-    if(!data.instructionalDay){$('activity-panel').innerHTML='<div class="empty"><div class="eyebrow">CLASS CALENDAR</div><h1>No class scheduled</h1><p>No activity is scheduled for today.</p></div>';return;}
-    if(!s){$('activity-panel').innerHTML=`<div class="empty"><h1>${tab==='brain'?'Brain Break':tab==='exit'?'Exit Ticket':'Daily Starter'}</h1><p>No ${tab==='brain'?'brain break':tab==='exit'?'exit ticket':'starter'} is scheduled for today.</p></div>`;return;}
+    if(!data.instructionalDay){$('activity-panel').innerHTML='<div class="empty"><div class="eyebrow">CLASS CALENDAR</div><h1>No class scheduled</h1><p>No activity is scheduled for this date.</p></div>';return;}
+    if(!s){$('activity-panel').innerHTML=`<div class="empty"><h1>${tab==='brain'?'Brain Break':tab==='exit'?'Exit Ticket':'Daily Starter'}</h1><p>No ${tab==='brain'?'brain break':tab==='exit'?'exit ticket':'starter'} is scheduled for this date.</p></div>`;return;}
     if(tab==='starter'){
       $('activity-panel').innerHTML=`<span class="chip">${esc(s.csFocus||'Computer Science')}</span><div class="eyebrow">${esc(s.lens||'DAILY STARTER')}</div><h1>${esc(s.techIcon||s.topic||'Let’s think together')}</h1>${s.iconRole?`<p class="context">${esc(s.iconRole)}</p>`:''}${s.iconContribution?`<p class="context">${esc(s.iconContribution)}</p>`:''}<div class="prompt">${esc(s.prompt)}</div><div class="context">${esc(s.context||'')}</div><div class="routine"><span>01 THINK</span><span>02 SHARE</span><span>03 BUILD</span></div><div id="deeper-content" class="deeper-content" hidden>${esc(s.goDeeper||'')}</div>`;
       $('deeper').hidden=!s.goDeeper;$('deeper').textContent='Go deeper';
@@ -94,7 +95,7 @@ if(typeof document!=='undefined'){
   function shortDate(date,options={month:'short',day:'numeric'}){return new Date(`${date}T12:00:00Z`).toLocaleDateString('en-US',{...options,timeZone:'UTC'});}
   function renderCourses(){
     if(!data){$('courses').innerHTML=GCI.courses.map(name=>`<details class="course"><summary>${esc(name)}</summary><div class="course-body"><p class="none-due">Connect Classroom to load deadlines.</p></div></details>`).join('');return;}
-    const today=GCI.localParts(new Date(),data.timezone).date,week=GCI.weekDates(today),phase=currentPhase();
+    const today=GCI.localParts(new Date(),data.timezone).date,viewDate=selectedDate||today,week=GCI.weekDates(viewDate),phase=currentPhase();
     const active=phase?.session;
     const activeCourses=GCI.sessionCourses(active);
     if(active&&active!==lastSession){
@@ -103,6 +104,7 @@ if(typeof document!=='undefined'){
       lastSession=active;
     }
     $('week-label').textContent=`${shortDate(week[0])} – ${shortDate(week[6])}`;
+    $('due-title').textContent=week[0]===GCI.weekDates(today)[0]?'Due This Week':'Due That Week';
     $('courses').innerHTML=GCI.courses.map(name=>{
       const course=data.courses.find(c=>c.name===name)||{name,status:'unconfigured',assignments:[]};
       const assignments=(course.assignments||[]).filter(a=>a.dueAt&&week.includes(GCI.localParts(new Date(a.dueAt),data.timezone).date)).sort((a,b)=>new Date(a.dueAt)-new Date(b.dueAt));
@@ -129,15 +131,18 @@ if(typeof document!=='undefined'){
   function tick(){
     const now=new Date(),tz=data?.timezone||'America/Detroit',local=GCI.localParts(now,tz);
     $('clock').textContent=now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',timeZone:tz});
-    $('date-label').textContent=now.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',timeZone:tz});
+    const displayedDate=data?.date||local.date;
+    $('date-label').textContent=shortDate(displayedDate,{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+    if(document.activeElement!==$('date-picker'))$('date-picker').value=displayedDate;
+    $('date-label').title=displayedDate===local.date?'Today':`Viewing ${displayedDate}; class timing still follows today`;
     const phase=currentPhase(now),key=phase?.key||'outside';
     if(lastKey!==null&&lastKey!==key&&phase)announce(phase);
     if(lastKey!==key){lastKey=key;renderCourses();}
-    $('session-label').textContent=phase?.session||(data&&!data.instructionalDay?'No class today':'Outside class');
+    $('session-label').textContent=phase?.session||(data&&!(data.todayInstructionalDay??data.instructionalDay)?'No class today':'Outside class');
     $('phases').innerHTML=(data?.phases||GCI.phases).map((p,i)=>`<li class="${phase?.index===i?'current':phase&&phase.index>i?'past':''}" ${phase?.index===i?'aria-current="step"':''}><span class="phase-number">${i+1}</span>${esc(p.name)}</li>`).join('');
     $('phase-remaining').textContent=phase?`${Math.floor(phase.remaining/60).toString().padStart(2,'0')}:${(phase.remaining%60).toString().padStart(2,'0')}`:'—';
     $('phase-mode').textContent=manual?'Manual · Resume to rejoin schedule':'Scheduled transitions';
-    if(data&&data.date!==local.date&&!inflight&&Date.now()-lastAttempt>60000)refresh();
+    if(data&&(data.today||data.date)!==local.date&&!inflight&&Date.now()-lastAttempt>60000)refresh();
   }
   function apply(next){
     data=GCI.validate(next);$('app-title').textContent=data.title||'Classroom Dashboard';$('content-date').textContent=shortDate(data.date);
@@ -150,20 +155,27 @@ if(typeof document!=='undefined'){
   }
   function refresh(){
     if(inflight)return;
-    if(preview){apply(GCI.sample());status('PREVIEW · Sample activities and fictional assignments. Not connected to live data.','preview');return;}
+    if(preview){apply(GCI.sample(new Date(),selectedDate));status('PREVIEW · Sample activities and fictional assignments. Not connected to live data.','preview');return;}
     if(!feedUrl){status('Not connected · Open Instructor to connect your spreadsheet feed.');renderContent();renderCourses();return;}
-    inflight=true;lastAttempt=Date.now();$('refresh').disabled=true;status('Refreshing class content…');
-    const token=++generation,script=document.createElement('script');let finished=false;
-    function cleanup(){finished=true;clearTimeout(timeout);script.remove();inflight=false;$('refresh').disabled=false;}
-    function fail(){if(finished)return;cleanup();status(data?'Connection unavailable · Showing previously loaded content.':'Could not connect · Check the feed URL and deployment access in Instructor.','error');}
+    inflight=true;lastAttempt=Date.now();$('refresh').disabled=true;setDateBusy(true);status('Refreshing class content…');
+    const token=++generation,requestDate=selectedDate,script=document.createElement('script');let finished=false;
+    function cleanup(){finished=true;clearTimeout(timeout);script.remove();inflight=false;$('refresh').disabled=false;setDateBusy(false);}
+    function fail(message){if(finished)return;cleanup();const today=GCI.localParts(new Date(),data?.timezone||'America/Detroit').date;selectedDate=data?.date&&data.date!==today?data.date:'';$('date-picker').value=data?.date||today;tick();status(typeof message==='string'?message:data?'Connection unavailable · Showing previously loaded content.':'Could not connect · Check the feed URL and deployment access in Instructor.','error');}
     const timeout=setTimeout(fail,20000);
     window.gciDashboardFeed=payload=>{
       if(finished||token!==generation)return;
       if(payload.requestId!==String(token))return;
+      if(requestDate&&payload.date&&payload.date!==requestDate){fail('Update the Apps Script feed for date navigation. Showing the previously loaded date.');return;}
       try{if(payload.error)throw new Error(payload.error);apply(payload);cleanup();const errors=data.courses.some(c=>c.status==='error');status(errors?'Content connected · Some Classroom deadlines are unavailable.':`Connected · Updated ${new Date(data.generatedAt).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',timeZone:data.timezone})}`,errors?'error':'');}catch{fail();}
     };
-    script.onerror=fail;script.src=`${feedUrl}?callback=gciDashboardFeed&requestId=${token}&t=${Date.now()}`;document.head.appendChild(script);
+    script.onerror=fail;script.src=`${feedUrl}?callback=gciDashboardFeed&requestId=${token}${requestDate?'&date='+encodeURIComponent(requestDate):''}&t=${Date.now()}`;document.head.appendChild(script);
   }
+  function setDateBusy(busy){['date-previous','date-next','date-today','date-picker'].forEach(id=>$(id).disabled=busy);}
+  function chooseDate(value){if(inflight||!GCI.validDate(value))return;const today=GCI.localParts(new Date(),data?.timezone||'America/Detroit').date;selectedDate=value===today?'':value;refresh();}
+  $('date-previous').onclick=()=>chooseDate(GCI.addDays(data?.date||GCI.localParts(new Date()).date,-1));
+  $('date-next').onclick=()=>chooseDate(GCI.addDays(data?.date||GCI.localParts(new Date()).date,1));
+  $('date-today').onclick=()=>chooseDate(GCI.localParts(new Date(),data?.timezone||'America/Detroit').date);
+  $('date-picker').onchange=()=>chooseDate($('date-picker').value);
   $('settings-open').onclick=()=>{$('feed-url').value=feedUrl;$('sound').checked=sound;$('settings').showModal();};
   $('save-feed').onclick=()=>{const next=GCI.validFeed($('feed-url').value.trim());if(!next){$('settings-message').textContent='Enter a Google Apps Script /exec deployment URL.';return;}if(inflight){$('settings-message').textContent='Wait for the current refresh to finish.';return;}feedUrl=next;preview=false;data=null;manual=null;lastKey=null;store.set('gci.dashboard.feed',next);$('settings-message').textContent='Connection saved on this browser.';refresh();};
   $('demo').onclick=()=>{if(inflight)return;preview=true;manual=null;lastKey=null;refresh();$('settings').close();};
