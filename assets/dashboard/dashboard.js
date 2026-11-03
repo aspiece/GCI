@@ -100,7 +100,7 @@ if(typeof document!=='undefined'){
     const visibleCourses=showAllCourses?GCI.courses:activeCourses;
     const visible=visibleCourses.length>0;
     document.querySelector('.deadlines').hidden=!visible;
-    document.querySelector('.layout').classList.toggle('no-session',!visible);
+    updateRightColumn();
     $('current-session').hidden=!showAllCourses;
     $('expand-courses').setAttribute('aria-pressed',String(showAllCourses));
     if(active!==lastSession&&!showAllCourses){
@@ -128,16 +128,26 @@ if(typeof document!=='undefined'){
     }).join('');
     document.querySelectorAll('[data-course]').forEach(el=>el.addEventListener('toggle',()=>openCourses.set(el.dataset.course,el.open)));
   }
+  function updateRightColumn(){
+    const hidden=document.querySelector('.deadlines').hidden&&$('school-notices').hidden;
+    document.querySelector('.right-column').hidden=hidden;
+    document.querySelector('.layout').classList.toggle('no-session',hidden);
+  }
   function renderSchoolNotices(){
     const el=$('school-notices'),calendar=data?.schoolCalendar;
-    if(!calendar){el.hidden=true;return;}
+    if(!calendar){el.hidden=true;updateRightColumn();return;}
     const fullLink='<a href="No_School_Viewer.html" target="_blank" rel="noopener noreferrer">Full calendar ↗</a>';
-    if(calendar.status!=='ready'){el.hidden=false;el.innerHTML='<span class="notice-heading">School calendar unavailable</span>'+fullLink;return;}
+    if(calendar.status!=='ready'){el.hidden=false;el.innerHTML='<h3 class="notice-heading">School calendar unavailable</h3>'+fullLink;updateRightColumn();return;}
     const events=calendar.events||[];
-    if(!events.length){el.hidden=true;return;}
-    const gci=events.filter(item=>['gci','genesee career institute','all schools'].includes(String(item.school).toLowerCase()));
+    if(!events.length){el.hidden=true;el.dataset.date='';updateRightColumn();return;}
+    const isNoSchool=item=>/\bno[\s-]+(?:school|students|regular school)\b|\bschools?\s+(?:are\s+)?closed\b/i.test(String(item.event));
+    const noSchool=events.filter(isNoSchool),others=events.filter(item=>!isNoSchool(item));
+    const othersOpen=el.dataset.date===data.date&&el.querySelector('details')?.open;
+    const list=items=>`<ul>${items.map(item=>`<li><strong>${esc(item.school)}</strong><span class="school-event">${esc(item.event)}</span></li>`).join('')}</ul>`;
     el.hidden=false;
-    el.innerHTML=`<span class="notice-heading">School notices · ${shortDate(data.date)}</span>${gci.map(item=>`<span>${esc(item.school)}: ${esc(item.event)}</span>`).join('')}<details><summary>${events.length} school notice${events.length===1?'':'s'} · View affected schools</summary><ul>${events.map(item=>`<li><strong>${esc(item.school)}</strong> — ${esc(item.event)}</li>`).join('')}</ul></details>${fullLink}`;
+    el.dataset.date=data.date;
+    el.innerHTML=`<h3 class="notice-heading">${noSchool.length?'No school':'School notices'} · ${shortDate(data.date)}</h3>${noSchool.length?list(noSchool):''}${others.length?`<details${othersOpen?' open':''}><summary>Other notices (${others.length})</summary>${list(others)}</details>`:''}${fullLink}`;
+    updateRightColumn();
   }
   function announce(phase){
     if(!phase||!data)return;
