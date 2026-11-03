@@ -103,12 +103,14 @@ if(typeof document!=='undefined'){
     const state=countdown.snapshot(),text=`${Math.floor(state.remaining/60).toString().padStart(2,'0')}:${(state.remaining%60).toString().padStart(2,'0')}`;
     if($('timer-value').textContent!==text)$('timer-value').textContent=text;
     $('timer-value').classList.toggle('finished',state.completed);
-    $('timer-toggle').textContent=state.running?'Pause':state.completed?'Restart':state.mode==='paused'?'Resume':'Start';
+    const toggleLabel=state.running?'Pause':state.completed?'Restart':state.mode==='paused'?'Resume':'Start';
+    if($('timer-toggle').textContent!==toggleLabel)$('timer-toggle').textContent=toggleLabel;
     $('timer-minutes').disabled=state.running;
     document.querySelectorAll('[data-minutes]').forEach(button=>button.disabled=state.running);
     const label=state.completed?'Time’s up!':state.running?'Counting down':state.mode==='paused'?'Paused':'Ready';
     if($('timer-status').textContent!==label)$('timer-status').textContent=label;
-    $('timer-open').textContent=state.mode==='ready'?'Timer':state.completed?'Timer · Done':`Timer ${text}`;
+    const headerLabel=state.mode==='ready'?'Timer':state.completed?'Timer · Done':`Timer ${text}`;
+    if($('timer-open').textContent!==headerLabel)$('timer-open').textContent=headerLabel;
     if(state.completed&&!timerNotified){timerNotified=true;openCountdown();playChime();}
   }
   function configureCountdown(minutes){
