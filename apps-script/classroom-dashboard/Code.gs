@@ -1,0 +1,165 @@
+/** Standalone, read-only feed for Classroom_Dashboard.html.
+ * Deploy separately from the existing dashboard. See README.md before enabling.
+ * Script properties: DASHBOARD_SPREADSHEET_ID, PUBLIC_FEED_ENABLED.
+ */
+const DASHBOARD_COURSES = ['1st Session','2nd Session','3rd Session','Career Essentials','Career Exploration'];
+const DASHBOARD_PHASES = [
+  {name:'Daily Starter',minutes:5,icon:'✦',message:'Think, share, and build on an idea.'},
+  {name:'Focus',minutes:40,icon:'◎',message:'Begin your work. Take your next step.'},
+  {name:'Brain Break',minutes:10,icon:'☀',message:'Pause your work and reset your attention.'},
+  {name:'Focus',minutes:40,icon:'◎',message:'Return to your work with a fresh perspective.'},
+  {name:'Cleanup',minutes:10,icon:'✓',message:'Save your work and reset your space.'}
+];
+const DASHBOARD_SESSIONS = [
+  {name:'1st Session',start:'07:00',end:'08:45'},
+  {name:'2nd Session',start:'08:50',end:'10:35'},
+  {name:'3rd Session',start:'12:05',end:'13:50'}
+];
+
+function doGet(e) {
+  const params=e&&e.parameter||{};
+  const callback=params.callback;
+  if(callback&&callback!=='gciDashboardFeed')return ContentService.createTextOutput('Invalid callback.');
+  const requestId=/^\d{1,10}$/.test(params.requestId||'')?params.requestId:'';
+  let result;
+  try {
+    const properties=PropertiesService.getScriptProperties();
+    if(properties.getProperty('PUBLIC_FEED_ENABLED')!=='true')throw new Error('Feed disabled');
+    const id=properties.getProperty('DASHBOARD_SPREADSHEET_ID');
+    if(!id)throw new Error('Missing spreadsheet configuration');
+    const cache=CacheService.getScriptCache(),key='dashboard:v1';
+    const cached=cache.get(key);
+    const today=Utilities.formatDate(new Date(),'America/Detroit','yyyy-MM-dd');
+    result=cached?JSON.parse(cached):null;
+    if(!result||result.date!==today){
+      result=dashboardData_(SpreadsheetApp.openById(id),new Date());
+      const encoded=JSON.stringify(result);
+      if(encoded.length<85000)cache.put(key,encoded,60);
+    }
+  } catch(error) {
+    console.error(error);
+    // Never expose stack traces, spreadsheet IDs, or authorization details.
+    result={error:'Dashboard feed unavailable. Check configuration in Apps Script.'};
+  }
+  const output=JSON.stringify(Object.assign({},result,{requestId:requestId})).replace(/</g,'\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');
+  return ContentService.createTextOutput(callback?callback+'('+output+');':output)
+    .setMimeType(callback?ContentService.MimeType.JAVASCRIPT:ContentService.MimeType.JSON);
+}
+
+function dashboardData_(ss,now) {
+  const settings={};dashboardRows_(ss,'Settings').forEach(row=>{settings[String(row.Key||'')]=row.Value;});
+  // The classroom schedule uses Michigan local time, regardless of workbook timezone.
+  const tz=String(settings.timezone||'America/Detroit');
+  const date=Utilities.formatDate(now,tz,'yyyy-MM-dd');
+  const calendar=dashboardRows_(ss,'Calendar').find(row=>dashboardDate_(row.Date,tz)===date);
+  const active=!!calendar&&dashboardActive_(calendar.Active);
+  const starter=active?dashboardRows_(ss,'Starters').find(row=>Number(row.Week)===Number(calendar.Week)&&String(row.Day).toLowerCase()===String(calendar.Day).toLowerCase()&&dashboardActive_(row.Active)):null;
+  const brain=active?dashboardRows_(ss,'Brain Breaks').find(row=>dashboardDate_(row['Date (YYYY-MM-DD)'],tz)===date&&dashboardActive_(row.Active)):null;
+  const exitRow=active?dashboardRows_(ss,'Exit Tickets').find(row=>dashboardDate_(row['Date (YYYY-MM-DD)'],tz)===date&&dashboardActive_(row.Active)):null;
+  const focus=active?dashboardRows_(ss,'Focus Map').find(row=>Number(row.Week)===Number(calendar.Week)):null;
+  const exitPrompt=exitRow?exitRow['Student Prompt']:focus&&focus[String(calendar.Day)+' Exit Ticket'];
+  const phaseValues=dashboardRows_(ss,'Dashboard Schedule');
+  const phases=DASHBOARD_PHASES.map((phase,i)=>{
+    const row=phaseValues.find(r=>Number(r.Order)===i+1),minutes=row?Number(row['Duration (min)']):phase.minutes;
+    if(!Number.isFinite(minutes)||minutes<=0)throw new Error('Invalid phase duration');
+    return Object.assign({},phase,{minutes:minutes,message:row&&row['Announcement']?String(row.Announcement):phase.message});
+  });
+  const sessionRows=dashboardRows_(ss,'Dashboard Sessions');
+  const sessions=DASHBOARD_SESSIONS.map(session=>{
+    const row=sessionRows.find(r=>r.Course===session.name);
+    const next=row?{name:session.name,start:dashboardTime_(row.Start,tz),end:dashboardTime_(row.End,tz)}:session;
+    if(!/^\d{2}:\d{2}$/.test(next.start)||!/^\d{2}:\d{2}$/.test(next.end))throw new Error('Use HH:mm session times');
+    const minutes=s=>Number(s.slice(0,2))*60+Number(s.slice(3));
+    if(minutes(next.end)-minutes(next.start)!==phases.reduce((n,p)=>n+p.minutes,0))throw new Error('Phase durations must match session duration');
+    return next;
+  });
+  const mappings=dashboardRows_(ss,'Dashboard Courses');
+  return {
+    version:1,date:date,timezone:tz,title:String(settings.appTitle||'CS Daily Starters'),generatedAt:now.toISOString(),instructionalDay:active,
+    sessions:sessions,phases:phases,
+    // Only allowlisted student-facing fields leave Apps Script.
+    starter:starter?{
+      lens:String(starter.Lens||''),topic:String(starter.Topic||''),csFocus:String(starter['CS Focus']||''),prompt:String(starter['Student Prompt']||''),
+      context:String(starter.Context||''),techIcon:String(starter['Tech Icon']||''),iconRole:String(starter['Icon Role']||''),
+      iconContribution:String(starter['Icon Contribution']||''),goDeeper:String(starter['Go Deeper']||'')
+    }:null,
+    brain:brain?{title:String(brain['Activity Title']||''),instructions:String(brain['Student Instructions']||''),returnCue:String(brain['Reflection / Return Cue']||''),duration:Number(brain['Duration (min)'])||10,alternative:String(brain['Accessibility Alternative']||''),resourceUrl:dashboardUrl_(brain['Resource URL'])}:null,
+    exit:exitPrompt?{title:exitRow&&exitRow.Title?String(exitRow.Title):'Exit Ticket',prompt:String(exitPrompt),instructions:String(exitRow&&exitRow.Instructions||''),responseUrl:dashboardUrl_(exitRow&&exitRow['Response URL'])}:null,
+    courses:DASHBOARD_COURSES.map(name=>{
+      const map=mappings.find(row=>row.Course===name);
+      if(!map||!map['Classroom Course ID']||!dashboardActive_(map.Active))return {name:name,status:'unconfigured',assignments:[]};
+      try{return {name:name,status:'ready',assignments:dashboardCoursework_(String(map['Classroom Course ID']),date,tz)};}
+      catch(error){console.error('Classroom retrieval failed for '+name+': '+String(error));return {name:name,status:'error',assignments:[]};}
+    })
+  };
+}
+
+function dashboardCoursework_(courseId,date,tz) {
+  const monday=dashboardMonday_(date),nextMonday=dashboardAddDays_(monday,7),items=[];
+  let pageToken;
+  do{
+    const response=Classroom.Courses.CourseWork.list(courseId,{courseWorkStates:['PUBLISHED'],pageSize:100,pageToken:pageToken,fields:'nextPageToken,courseWork(title,dueDate,dueTime,alternateLink,assigneeMode)'});
+    (response.courseWork||[]).forEach(work=>{
+      // This shared display omits assignments targeted to individual students.
+      if(work.assigneeMode==='INDIVIDUAL_STUDENTS'||!work.dueDate)return;
+      const d=work.dueDate,t=work.dueTime||{};
+      const dueAt=new Date(Date.UTC(d.year,d.month-1,d.day,t.hours||0,t.minutes||0,t.seconds||0));
+      const local=Utilities.formatDate(dueAt,tz,'yyyy-MM-dd');
+      if(local>=monday&&local<nextMonday)items.push({title:String(work.title||'Assignment'),dueAt:dueAt.toISOString(),url:dashboardUrl_(work.alternateLink)});
+    });
+    pageToken=response.nextPageToken;
+  }while(pageToken);
+  return items.sort((a,b)=>a.dueAt.localeCompare(b.dueAt));
+}
+
+function dashboardRows_(ss,name) {
+  const sheet=ss.getSheetByName(name);if(!sheet||sheet.getLastRow()<2)return [];
+  const rows=sheet.getDataRange().getValues(),headers=rows.shift().map(h=>String(h).trim());
+  return rows.filter(row=>row.some(v=>v!==''&&v!==null)).map(row=>{const item={};headers.forEach((h,i)=>{if(h)item[h]=row[i];});return item;});
+}
+function dashboardActive_(value){return !['FALSE','NO','0','N'].includes(String(value==null?'':value).trim().toUpperCase());}
+function dashboardDate_(value,tz){if(value instanceof Date)return Utilities.formatDate(value,tz,'yyyy-MM-dd');return String(value||'').trim();}
+function dashboardTime_(value,tz){return value instanceof Date?Utilities.formatDate(value,tz,'HH:mm'):String(value||'').trim();}
+function dashboardUrl_(value){return /^https:\/\//i.test(String(value||''))?String(value):'';}
+function dashboardAddDays_(date,days){const d=new Date(date+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+days);return d.toISOString().slice(0,10);}
+function dashboardMonday_(date){const day=new Date(date+'T12:00:00Z').getUTCDay();return dashboardAddDays_(date,-((day+6)%7));}
+
+/** Run once after setting DASHBOARD_SPREADSHEET_ID. Adds missing configuration tabs only.
+ * Does not change existing rows, sharing settings, or PUBLIC_FEED_ENABLED.
+ */
+function setupDashboardTabs(){
+  const id=PropertiesService.getScriptProperties().getProperty('DASHBOARD_SPREADSHEET_ID');
+  if(!id)throw new Error('Set DASHBOARD_SPREADSHEET_ID in Project Settings first.');
+  const ss=SpreadsheetApp.openById(id);
+  const definitions=[
+    {name:'Dashboard Courses',headers:['Course','Classroom Course ID','Active'],rows:DASHBOARD_COURSES.map(name=>[name,'',true])},
+    {name:'Dashboard Sessions',headers:['Course','Start','End'],rows:DASHBOARD_SESSIONS.map(s=>[s.name,s.start,s.end])},
+    {name:'Dashboard Schedule',headers:['Order','Phase','Duration (min)','Announcement'],rows:DASHBOARD_PHASES.map((p,i)=>[i+1,p.name,p.minutes,p.message])},
+    {name:'Exit Tickets',headers:['Date (YYYY-MM-DD)','Title','Student Prompt','Instructions','Response URL','Active'],rows:[]}
+  ];
+  definitions.forEach(def=>{
+    if(ss.getSheetByName(def.name))return;
+    const sheet=ss.insertSheet(def.name),values=[def.headers].concat(def.rows);
+    sheet.getRange(1,1,sheet.getMaxRows(),def.headers.length).setNumberFormat('@');
+    sheet.getRange(1,1,values.length,def.headers.length).setValues(values);
+    sheet.setFrozenRows(1);sheet.getRange(1,1,1,def.headers.length).setBackground('#14263a').setFontColor('#ffffff').setFontWeight('bold');
+    sheet.autoResizeColumns(1,def.headers.length);
+  });
+}
+
+/** Run from editor to identify course IDs; output stays in your private execution log. */
+function listDashboardClassroomCourses(){
+  let token;
+  do{
+    const response=Classroom.Courses.list({teacherId:'me',courseStates:['ACTIVE'],pageSize:100,pageToken:token,fields:'nextPageToken,courses(id,name,section)'});
+    (response.courses||[]).forEach(course=>console.log(course.name+' | '+(course.section||'')+' | '+course.id));
+    token=response.nextPageToken;
+  }while(token);
+}
+
+/** Test privately in the editor before enabling the public feed. */
+function testDashboardFeed(){
+  const id=PropertiesService.getScriptProperties().getProperty('DASHBOARD_SPREADSHEET_ID');
+  const data=dashboardData_(SpreadsheetApp.openById(id),new Date());
+  console.log(JSON.stringify({date:data.date,instructionalDay:data.instructionalDay,starter:!!data.starter,brainBreak:!!data.brain,exitTicket:!!data.exit,courses:data.courses.map(c=>({name:c.name,status:c.status,count:c.assignments.length}))},null,2));
+}

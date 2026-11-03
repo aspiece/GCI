@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Classroom Dashboard · GCI</title>
+  <link rel="stylesheet" href="assets/dashboard/dashboard.css">
+  <script src="assets/dashboard/dashboard.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">GCI</span><div><strong id="app-title">Classroom Dashboard</strong><div id="date-label" class="muted"></div></div></div>
+    <div class="header-actions"><span id="clock"></span><button id="fullscreen" title="Toggle full screen">Full screen</button><button id="settings-open">Instructor</button></div>
+  </header>
+  <section class="phase-strip" aria-label="Class progress">
+    <div class="session-label" id="session-label">Outside class</div>
+    <ol id="phases"></ol>
+    <div class="phase-time"><span id="phase-remaining">—</span><small id="phase-mode">Scheduled transitions</small></div>
+  </section>
+  <div id="connection" role="status" class="connection">Connecting to class content…</div>
+  <main class="layout">
+    <section class="activity">
+      <nav class="tabs" role="tablist" aria-label="Activity content">
+        <button role="tab" id="tab-starter" aria-controls="activity-panel" aria-selected="true" tabindex="0" data-tab="starter">Daily Starter</button>
+        <button role="tab" id="tab-brain" aria-controls="activity-panel" aria-selected="false" tabindex="-1" data-tab="brain">Brain Break</button>
+        <button role="tab" id="tab-exit" aria-controls="activity-panel" aria-selected="false" tabindex="-1" data-tab="exit">Exit Ticket</button>
+      </nav>
+      <article id="activity-panel" class="activity-card" role="tabpanel" aria-labelledby="tab-starter" tabindex="0"></article>
+      <footer class="activity-footer"><span>Think · Share · Build</span><button id="deeper" hidden>Go deeper</button><span id="content-date"></span></footer>
+    </section>
+    <aside class="deadlines" aria-labelledby="due-title">
+      <div class="aside-heading"><div><div class="eyebrow">PLAN AHEAD</div><h2 id="due-title">Due This Week</h2><div id="week-label" class="muted"></div></div><button id="refresh" aria-label="Refresh content">↻</button></div>
+      <div id="courses"></div><p class="aside-note">Deadlines from Google Classroom</p>
+    </aside>
+  </main>
+  <div id="announcement" class="announcement" role="status" aria-live="polite" aria-atomic="true" hidden><div><span id="announcement-icon" aria-hidden="true"></span><p id="announcement-session"></p><h2 id="announcement-title"></h2><p id="announcement-message"></p><button id="dismiss-announcement">Continue</button></div></div>
+  <dialog id="settings">
+    <form method="dialog"><div class="dialog-header"><h2>Instructor controls</h2><button aria-label="Close instructor controls">Close</button></div></form>
+    <div class="controls-grid">
+      <section><h3>Class transitions</h3><p class="muted">Phase announcements follow the class schedule. Content tabs stay under your control.</p><label for="session-choice">Session for manual controls</label><select id="session-choice"></select><label for="phase-choice">Phase</label><select id="phase-choice"></select><div class="button-row"><button id="set-phase">Start phase</button><button id="repeat-phase">Announce again</button><button id="auto-phase">Resume schedule</button></div><label><input type="checkbox" id="sound"> Play a soft transition chime</label><p class="muted" id="manual-note">Manual overrides expire at the end of the selected session.</p></section>
+      <section><h3>Content connection</h3><label for="feed-url">Apps Script feed URL</label><input id="feed-url" type="url" placeholder="https://script.google.com/macros/s/…/exec"><p class="muted">Use the dashboard feed deployment, not the existing dashboard URL.</p><button id="save-feed">Connect</button><p id="settings-message" role="status"></p><button id="demo">Preview with sample content</button><p class="muted">Preview uses fictional assignments and never represents live deadlines.</p></section>
+    </div>
+  </dialog>
+</body>
+</html>
