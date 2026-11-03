@@ -52,6 +52,26 @@ const GCI = (() => {
     else if(session==='1st Session'||session==='2nd Session')target=data.learningTargets?.shared??data.learningTarget;
     return typeof target==='string'?target.trim():'';
   }
+  function createCountdown(initialSeconds=300){
+    let duration,remainingMs,deadline=null,mode='ready';
+    function configure(seconds){
+      if(!Number.isInteger(seconds)||seconds<1||seconds>10800)throw new RangeError('Choose a timer duration from 1 second to 180 minutes.');
+      duration=seconds;reset();
+    }
+    function reset(){remainingMs=duration*1000;deadline=null;mode='ready';}
+    function snapshot(now=Date.now()){
+      if(deadline!==null){remainingMs=Math.min(duration*1000,Math.max(0,deadline-now));if(remainingMs===0){deadline=null;mode='done';}}
+      return {duration,remaining:Math.ceil(remainingMs/1000),mode,running:mode==='running',completed:mode==='done'};
+    }
+    function start(now=Date.now()){
+      const state=snapshot(now);if(state.running)return;
+      if(state.completed)reset();
+      deadline=now+remainingMs;mode='running';
+    }
+    function pause(now=Date.now()){if(snapshot(now).running){deadline=null;mode='paused';}}
+    configure(initialSeconds);
+    return {configure,reset,snapshot,start,pause};
+  }
   function validate(data){
     if(!data||data.version!==1||!/^\d{4}-\d{2}-\d{2}$/.test(data.date)||!Array.isArray(data.courses)||!Array.isArray(data.sessions)||!Array.isArray(data.phases)||data.phases.length!==5)throw new Error('The feed is not a dashboard feed.');
     new Intl.DateTimeFormat('en',{timeZone:data.timezone}).format();
@@ -66,7 +86,7 @@ const GCI = (() => {
       exit:{title:'Make your thinking visible',prompt:'Describe one conditional you tested today. What input did you try, what happened, and what would you test next?'},
       courses:courses.map((name,i)=>({name,status:'ready',assignments:i<3?[{title:['Conditionals practice','Test a decision','Explain your solution'][i],dueAt:`${week[i+1]}T20:00:00.000Z`,url:'https://classroom.google.com/',submissions:{submitted:[18,21,24][i],total:24}}]:[]}))};
   }
-  return {courses,phases,sessions,sessionCourses,localParts,weekDates,addDays,validDate,scheduled,safeUrl,validFeed,escape,submissionBadge,learningTargetForSession,validate,sample};
+  return {courses,phases,sessions,sessionCourses,localParts,weekDates,addDays,validDate,scheduled,safeUrl,validFeed,escape,submissionBadge,learningTargetForSession,createCountdown,validate,sample};
 })();
 if(typeof module!=='undefined')module.exports=GCI;
 if(typeof document!=='undefined'){
@@ -76,6 +96,25 @@ if(typeof document!=='undefined'){
   const openCourses=new Map();
   const store={get(key){try{return localStorage.getItem(key)||'';}catch{return '';}},set(key,value){try{localStorage.setItem(key,value);}catch{}}};
   let sound=store.get('gci.dashboard.sound')==='true';
+  const countdown=GCI.createCountdown();
+  let timerNotified=false;
+  function openCountdown(){if(!$('countdown-dialog').open)$('countdown-dialog').showModal();$('timer-open').setAttribute('aria-expanded','true');}
+  function renderCountdown(){
+    const state=countdown.snapshot(),text=`${Math.floor(state.remaining/60).toString().padStart(2,'0')}:${(state.remaining%60).toString().padStart(2,'0')}`;
+    if($('timer-value').textContent!==text)$('timer-value').textContent=text;
+    $('timer-value').classList.toggle('finished',state.completed);
+    $('timer-toggle').textContent=state.running?'Pause':state.completed?'Restart':state.mode==='paused'?'Resume':'Start';
+    $('timer-minutes').disabled=state.running;
+    document.querySelectorAll('[data-minutes]').forEach(button=>button.disabled=state.running);
+    const label=state.completed?'Time’s up!':state.running?'Counting down':state.mode==='paused'?'Paused':'Ready';
+    if($('timer-status').textContent!==label)$('timer-status').textContent=label;
+    $('timer-open').textContent=state.mode==='ready'?'Timer':state.completed?'Timer · Done':`Timer ${text}`;
+    if(state.completed&&!timerNotified){timerNotified=true;openCountdown();playChime();}
+  }
+  function configureCountdown(minutes){
+    if(!Number.isInteger(minutes)||minutes<1||minutes>180){$('timer-minutes').reportValidity();return;}
+    countdown.configure(minutes*60);timerNotified=false;$('timer-minutes').value=minutes;renderCountdown();
+  }
   function status(text,kind=''){$('connection').textContent=text;$('connection').className=`connection ${kind}`;}
   function currentPhase(now=new Date()){
     if(manual&&now.getTime()>=manual.expires){manual=null;lastKey=null;}
@@ -168,7 +207,12 @@ if(typeof document!=='undefined'){
     if(!phase||!data)return;
     const p=data.phases[phase.index];
     $('announcement-title').textContent=p.name;$('announcement-message').textContent=p.message||'';$('announcement-icon').textContent=p.icon||'✦';$('announcement-session').textContent=phase.session;
-    $('announcement').hidden=false;clearTimeout(announcementTimer);announcementTimer=setTimeout(()=>{$('announcement').hidden=true;},6000);
+    $('timer-phase-notice').textContent=`${phase.session} · ${p.name}: ${p.message||''}`;
+    $('timer-phase-notice').hidden=!$('countdown-dialog').open;
+    $('announcement').hidden=false;clearTimeout(announcementTimer);announcementTimer=setTimeout(()=>{$('announcement').hidden=true;$('timer-phase-notice').hidden=true;},6000);
+    playChime();
+  }
+  function playChime(){
     if(sound&&soundContext){try{const oscillator=soundContext.createOscillator(),gain=soundContext.createGain();oscillator.connect(gain);gain.connect(soundContext.destination);oscillator.frequency.value=660;gain.gain.setValueAtTime(.0001,soundContext.currentTime);gain.gain.exponentialRampToValueAtTime(.10,soundContext.currentTime+.03);gain.gain.exponentialRampToValueAtTime(.0001,soundContext.currentTime+.65);oscillator.start();oscillator.stop(soundContext.currentTime+.7);}catch{}}
   }
   function tick(){
@@ -223,6 +267,13 @@ if(typeof document!=='undefined'){
   $('save-feed').onclick=()=>{const next=GCI.validFeed($('feed-url').value.trim());if(!next){$('settings-message').textContent='Enter a Google Apps Script /exec deployment URL.';return;}if(inflight){$('settings-message').textContent='Wait for the current refresh to finish.';return;}feedUrl=next;preview=false;data=null;manual=null;lastKey=null;store.set('gci.dashboard.feed',next);$('settings-message').textContent='Connection saved on this browser.';refresh();};
   $('demo').onclick=()=>{if(inflight)return;preview=true;manual=null;lastKey=null;refresh();$('settings').close();};
   $('refresh').onclick=refresh;
+  $('timer-open').onclick=()=>{renderCountdown();openCountdown();};
+  $('timer-close').onclick=()=>$('countdown-dialog').close();
+  $('countdown-dialog').onclose=()=>{$('timer-open').setAttribute('aria-expanded','false');$('timer-phase-notice').hidden=true;};
+  $('timer-minutes').onchange=()=>configureCountdown(Number($('timer-minutes').value));
+  document.querySelectorAll('[data-minutes]').forEach(button=>button.onclick=()=>configureCountdown(Number(button.dataset.minutes)));
+  $('timer-toggle').onclick=()=>{if(!$('timer-minutes').checkValidity()){$('timer-minutes').reportValidity();return;}if(countdown.snapshot().running)countdown.pause();else{countdown.start();timerNotified=false;}renderCountdown();};
+  $('timer-reset').onclick=()=>{countdown.reset();timerNotified=false;renderCountdown();};
   $('target-group').onchange=()=>{targetGroup=$('target-group').value;renderLearningTarget();};
   $('expand-courses').onclick=()=>{showAllCourses=true;GCI.courses.forEach(name=>openCourses.set(name,true));renderCourses();$('settings').close();};
   $('current-session').onclick=()=>{showAllCourses=false;lastSession=null;renderCourses();};
@@ -235,13 +286,13 @@ if(typeof document!=='undefined'){
   $('auto-phase').onclick=()=>{manual=null;lastKey=null;tick();$('settings').close();};
   $('sound').onchange=async()=>{sound=$('sound').checked;store.set('gci.dashboard.sound',String(sound));if(sound){try{soundContext ||= new (window.AudioContext||window.webkitAudioContext)();await soundContext.resume();}catch{sound=false;$('sound').checked=false;store.set('gci.dashboard.sound','false');}}};
   document.addEventListener('pointerdown',()=>{if(sound&&!soundContext){try{soundContext=new (window.AudioContext||window.webkitAudioContext)();soundContext.resume().catch(()=>{});}catch{}}});
-  $('dismiss-announcement').onclick=()=>{$('announcement').hidden=true;clearTimeout(announcementTimer);};
-  document.addEventListener('keydown',event=>{if(event.key==='Escape'){$('announcement').hidden=true;clearTimeout(announcementTimer);}});
+  $('dismiss-announcement').onclick=()=>{$('announcement').hidden=true;$('timer-phase-notice').hidden=true;clearTimeout(announcementTimer);};
+  document.addEventListener('keydown',event=>{if(event.key==='Escape'){$('announcement').hidden=true;$('timer-phase-notice').hidden=true;clearTimeout(announcementTimer);}});
   $('deeper').onclick=()=>{const content=$('deeper-content');if(content){content.hidden=!content.hidden;$('deeper').textContent=content.hidden?'Go deeper':'Hide deeper question';}};
   $('fullscreen').onclick=async()=>{try{if(!document.fullscreenElement)await document.documentElement.requestFullscreen();else await document.exitFullscreen();}catch{status('Use your browser’s full-screen command if full screen is blocked.','error');}};
   const tabs=[...document.querySelectorAll('[data-tab]')];
   tabs.forEach((button,i)=>{button.onclick=()=>selectTab(button.dataset.tab);button.onkeydown=event=>{let index;if(event.key==='ArrowRight')index=(i+1)%tabs.length;else if(event.key==='ArrowLeft')index=(i+tabs.length-1)%tabs.length;else if(event.key==='Home')index=0;else if(event.key==='End')index=tabs.length-1;else return;event.preventDefault();tabs[index].focus();selectTab(tabs[index].dataset.tab);};});
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden){tick();if(!inflight)refresh();}});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden){tick();renderCountdown();if(!inflight)refresh();}});
   feedUrl=GCI.validFeed(store.get('gci.dashboard.feed'))||defaultFeedUrl;preview=new URLSearchParams(location.search).get('preview')==='1';
-  refresh();tick();setInterval(tick,1000);setInterval(refresh,60000);
+  refresh();tick();renderCountdown();setInterval(tick,1000);setInterval(renderCountdown,250);setInterval(refresh,60000);
 }

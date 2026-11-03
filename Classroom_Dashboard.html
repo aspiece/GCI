@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="dark">
   <title>Classroom Dashboard · GCI</title>
-  <link rel="stylesheet" href="assets/dashboard/dashboard.css?v=20261103-session-targets">
-  <script src="assets/dashboard/dashboard.js?v=20261103-session-targets" defer></script>
+  <link rel="stylesheet" href="assets/dashboard/dashboard.css?v=20261103-popup-timer">
+  <script src="assets/dashboard/dashboard.js?v=20261103-popup-timer" defer></script>
 </head>
 <body>
   <header class="topbar">
     <div class="brand"><span class="brand-mark">GCI</span><strong id="app-title">Classroom Dashboard</strong></div>
-    <div class="header-right"><div id="date-label" class="full-date" aria-live="polite"></div><div class="header-actions"><nav class="date-navigation" aria-label="Browse activity dates"><button id="date-previous" aria-label="Previous day">‹</button><input id="date-picker" type="date" min="1900-01-01" max="2100-12-31" aria-label="Choose activity date"><button id="date-next" aria-label="Next day">›</button><button id="date-today">Today</button></nav><span id="clock" title="Current classroom time"></span><button id="fullscreen" title="Toggle full screen">Full screen</button><button id="settings-open">Instructor</button></div></div>
+    <div class="header-right"><div id="date-label" class="full-date" aria-live="polite"></div><div class="header-actions"><nav class="date-navigation" aria-label="Browse activity dates"><button id="date-previous" aria-label="Previous day">‹</button><input id="date-picker" type="date" min="1900-01-01" max="2100-12-31" aria-label="Choose activity date"><button id="date-next" aria-label="Next day">›</button><button id="date-today">Today</button></nav><span id="clock" title="Current classroom time"></span><button id="timer-open" aria-haspopup="dialog" aria-controls="countdown-dialog" aria-expanded="false">Timer</button><button id="fullscreen" title="Toggle full screen">Full screen</button><button id="settings-open">Instructor</button></div></div>
   </header>
   <section class="phase-strip" aria-label="Class progress">
     <div class="session-label" id="session-label">Outside class</div>
@@ -39,6 +39,15 @@
     </aside>
   </main>
   <div id="announcement" class="announcement" role="status" aria-live="polite" aria-atomic="true" hidden><div><span id="announcement-icon" aria-hidden="true"></span><p id="announcement-session"></p><h2 id="announcement-title"></h2><p id="announcement-message"></p><button id="dismiss-announcement">Continue</button></div></div>
+  <dialog id="countdown-dialog" class="countdown-dialog" aria-labelledby="countdown-title">
+    <div class="dialog-header"><h2 id="countdown-title">Classroom timer</h2><button id="timer-close" aria-label="Close timer">Close</button></div>
+    <p id="timer-phase-notice" class="timer-phase-notice" role="status" hidden></p>
+    <div id="timer-value" class="countdown-value" role="timer" aria-live="off">05:00</div>
+    <p id="timer-status" class="countdown-status" role="status">Ready</p>
+    <div class="countdown-setup"><label for="timer-minutes">Minutes</label><input id="timer-minutes" type="number" min="1" max="180" step="1" value="5" inputmode="numeric"><div class="timer-presets" aria-label="Timer presets"><button data-minutes="1">1 min</button><button data-minutes="3">3 min</button><button data-minutes="5">5 min</button><button data-minutes="10">10 min</button></div></div>
+    <div class="countdown-actions"><button id="timer-toggle">Start</button><button id="timer-reset">Reset</button></div>
+    <p class="muted countdown-hint">Closing this window keeps the timer running. It will pop up when time is up.</p>
+  </dialog>
   <dialog id="settings">
     <form method="dialog"><div class="dialog-header"><h2>Instructor controls</h2><button aria-label="Close instructor controls">Close</button></div></form>
     <div class="controls-grid">

@@ -208,3 +208,27 @@ test('selected-day feed exposes both target groups and blanks both on inactive d
   assert.equal(data.learningTargets.shared,'Shared target');assert.equal(data.learningTargets.third,'Separate third target');
   const inactive=ctx.dashboardData_(ss,new Date('2026-11-03T12:00:00Z'));assert.equal(inactive.learningTargets.shared,'');assert.equal(inactive.learningTargets.third,'');
 });
+test('countdown uses a deadline and keeps its configured duration',()=>{
+  const timer=app.createCountdown(60);assert.equal(timer.snapshot(0).remaining,60);assert.equal(timer.snapshot(0).mode,'ready');
+  timer.start(1000);assert.equal(timer.snapshot(11000).remaining,50);assert.equal(timer.snapshot(21000).remaining,40);
+  timer.start(21000);assert.equal(timer.snapshot(31000).remaining,30);assert.equal(timer.snapshot(31000).running,true);
+});
+test('countdown pause and resume preserve fractional remaining time',()=>{
+  const timer=app.createCountdown(60);timer.start(0);timer.pause(1250);
+  assert.equal(timer.snapshot(500000).remaining,59);assert.equal(timer.snapshot(500000).mode,'paused');
+  timer.start(500000);assert.equal(timer.snapshot(501000).remaining,58);
+  timer.pause(502000);assert.equal(timer.snapshot(900000).remaining,57);
+});
+test('countdown completes after background time, stays complete, and restarts cleanly',()=>{
+  const timer=app.createCountdown(60);timer.start(0);
+  assert.equal(timer.snapshot(200000).remaining,0);assert.equal(timer.snapshot(200000).completed,true);
+  timer.pause(200001);assert.equal(timer.snapshot(300000).mode,'done');
+  timer.start(300000);assert.equal(timer.snapshot(300000).remaining,60);assert.equal(timer.snapshot(300000).running,true);
+});
+test('countdown reset and duration changes stop it and reject invalid durations',()=>{
+  const timer=app.createCountdown(300);timer.start(0);timer.snapshot(1000);timer.reset();
+  assert.equal(timer.snapshot(5000).remaining,300);assert.equal(timer.snapshot(5000).mode,'ready');
+  timer.configure(180);assert.equal(timer.snapshot().remaining,180);
+  for(const seconds of [0,-1,1.5,NaN,Infinity,10801])assert.throws(()=>timer.configure(seconds),RangeError);
+  timer.configure(10800);assert.equal(timer.snapshot().remaining,10800);
+});
