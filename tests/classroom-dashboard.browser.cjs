@@ -12,7 +12,11 @@ const base=process.env.DASHBOARD_TEST_URL||'http://127.0.0.1:8765/Classroom_Dash
   await page.waitForSelector('.prompt');
   assert.match(await page.locator('#connection').textContent(),/PREVIEW/);
   assert.equal(await page.locator('.course').count(),5);
-  assert.equal(await page.locator('.course.active[open]').count(),1);
+  assert.equal(await page.locator('.course.active[open]').count(),2);
+  assert.equal(await page.locator('[data-course="Career Essentials"]').getAttribute('open'),'');
+  assert.equal(await page.locator('[data-course="1st Session"] .day-group').count(),1);
+  assert.equal(await page.locator('[data-course="1st Session"] .day-heading').textContent(),'Tuesday · Today');
+  assert.equal(await page.locator('[data-course="Career Essentials"] .day-group').count(),0);
   assert.equal(await page.locator('#announcement').isVisible(),false);
   await page.clock.runFor(1500);
   assert.equal(await page.locator('#announcement').isVisible(),true);
@@ -25,10 +29,13 @@ const base=process.env.DASHBOARD_TEST_URL||'http://127.0.0.1:8765/Classroom_Dash
   assert.equal(await page.locator('#tab-exit').getAttribute('aria-selected'),'true');
   assert.match(await page.locator('#activity-panel').textContent(),/conditional you tested/);
   await page.locator('#settings-open').click();
+  await page.locator('#session-choice').selectOption('3rd Session');
   await page.locator('#phase-choice').selectOption('4');
   await page.locator('#set-phase').click();
   assert.equal(await page.locator('#announcement-title').textContent(),'Cleanup');
   assert.match(await page.locator('#phase-mode').textContent(),/Manual/);
+  assert.equal(await page.locator('[data-course="Career Exploration"]').getAttribute('open'),'');
+  assert.equal(await page.locator('[data-course="Career Essentials"]').getAttribute('open'),null);
   await page.locator('#dismiss-announcement').click();
   await page.locator('#settings-open').click();await page.locator('#auto-phase').click();
   assert.equal(await page.locator('#phases [aria-current]').textContent(),'2Focus');

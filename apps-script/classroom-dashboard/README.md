@@ -7,8 +7,8 @@ The new page is `Classroom_Dashboard.html`. It is independent of the current App
 - Daily Starter, Brain Break, and Exit Ticket content tabs.
 - Compact class progress and countdown: Daily Starter → Focus → Brain Break → Focus → Cleanup.
 - A six-second visual announcement when a phase starts, optional chime, manual phase selection, repeat announcement, and return to scheduled timing.
-- Due This Week: collapsible sections for 1st Session, 2nd Session, 3rd Session, Career Essentials, and Career Exploration. The active session opens automatically when it changes; instructors can expand or collapse any section.
-- Monday–Friday deadlines, plus a weekend day if an assignment is due then. Times use America/Detroit, including daylight saving changes. Earlier days are muted and today is highlighted.
+- Due This Week: collapsible sections for 1st Session, 2nd Session, 3rd Session, Career Essentials, and Career Exploration. The active session opens automatically when it changes, together with Career Essentials for 1st/2nd Session or Career Exploration for 3rd Session. Instructors can expand or collapse any section.
+- Only days with assignments due are listed, including weekend deadlines. Courses with no deadlines show one “Nothing due this week” message. Times use America/Detroit, including daylight saving changes. Earlier days are muted and today is highlighted.
 - The content tabs remain under instructor control during automatic announcements.
 - Explicit sample preview at `Classroom_Dashboard.html?preview=1`. Fictional assignments never appear as live data.
 
@@ -84,6 +84,6 @@ node tests/classroom-dashboard.browser.cjs
 
 The unit tests cover phase boundaries, timezone/week handling, no-school behavior, API pagination and individual-assignment exclusion, and feed field allowlisting. The browser test script covers keyboard tab navigation, mobile overflow, transition banners, and feed failure behavior. These use fixtures, not live Google accounts. School authorization, the actual course IDs, and the deployed feed still require a live connection test.
 
-Build verification: all eight unit tests passed. Browser verification could not run in the build environment because Chromium was not installed and its download was blocked. The browser script is included for execution in a browser-enabled environment; responsive layout and visual presentation still need that review before classroom use.
+Build verification: all nine unit tests passed. Browser verification could not run in the build environment because Chromium was not installed and its download was blocked. The browser script is included for execution in a browser-enabled environment; responsive layout and visual presentation still need that review before classroom use.
 
 References: [GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages), [Apps Script Content Service](https://developers.google.com/apps-script/guides/content), [Classroom advanced service](https://developers.google.com/apps-script/advanced/classroom), [Classroom coursework fields](https://developers.google.com/workspace/classroom/reference/rest/v1/courses.courseWork).
