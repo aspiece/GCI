@@ -164,3 +164,22 @@ test('a GCI closure suppresses activities and live timing while a feeder notice 
   const open=ctx.dashboardData_(ss,new Date('2026-11-03T12:00:00Z'));
   assert.equal(open.todayInstructionalDay,true);assert.equal(open.starter.prompt,'Prompt');
 });
+test('daily learning targets prefer the selected weekday Focus Map field',()=>{
+  const ctx=backend();
+  assert.equal(ctx.dashboardLearningTarget_({'Wednesday Learning Target':'I can test decisions.'},{'Learning Target':'Other target','Teacher Notes':'Target: Legacy.'},'Wednesday'),'I can test decisions.');
+  assert.equal(ctx.dashboardLearningTarget_({}, {'Learning Target':'Explicit starter target'},'Wednesday'),'Explicit starter target');
+});
+test('legacy target extraction never publishes the surrounding teacher notes',()=>{
+  const ctx=backend();
+  assert.equal(ctx.dashboardLearningTarget_(null,{'Teacher Notes':'Weekly target: I can combine Boolean operators and explain the resulting decisions. AI starter reviews lessons 4-5. Exit ticket on Focus Map tab.'},'Wednesday'),'I can combine Boolean operators and explain the resulting decisions.');
+  assert.equal(ctx.dashboardLearningTarget_(null,{'Teacher Notes':'Target: Explain a conditional. Success: Explain one branch. Listen for PRIVATE CLASS NOTES.'},'Monday'),'Explain a conditional.');
+  assert.equal(ctx.dashboardLearningTarget_(null,{'Teacher Notes':'PRIVATE NOTES WITHOUT A LABELED TARGET'},'Monday'),'');
+  assert.equal(ctx.dashboardLearningTarget_(null,{'Teacher Notes':'Target: Explain a conditional. PRIVATE CLASS NOTES.'},'Monday'),'Explain a conditional.');
+});
+test('selected date determines the learning target and inactive dates hide it',()=>{
+  const ctx=backend();ctx.dashboardSchoolCalendar_=()=>({status:'ready',events:[],closed:false,todayClosed:false});
+  const rows={Settings:[['Key','Value'],['timezone','America/Detroit']],Calendar:[['Date','Week','Day','Active'],['2026-11-03',11,'Tuesday',false],['2026-11-04',11,'Wednesday',true]],'Focus Map':[['Week','Wednesday Learning Target'],[11,'I can explain Boolean decisions.']]};
+  const ss={getSheetByName:name=>rows[name]?sheet(rows[name]):null};
+  assert.equal(ctx.dashboardData_(ss,new Date('2026-11-03T12:00:00Z'),'2026-11-04').learningTarget,'I can explain Boolean decisions.');
+  assert.equal(ctx.dashboardData_(ss,new Date('2026-11-03T12:00:00Z')).learningTarget,'');
+});

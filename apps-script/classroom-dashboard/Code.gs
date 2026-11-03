@@ -29,7 +29,7 @@ function doGet(e) {
     if(properties.getProperty('PUBLIC_FEED_ENABLED')!=='true')throw new Error('Feed disabled');
     const id=properties.getProperty('DASHBOARD_SPREADSHEET_ID');
     if(!id)throw new Error('Missing spreadsheet configuration');
-    const cache=CacheService.getScriptCache(),key='dashboard:v4:'+id+':'+(selectedDate||'today');
+    const cache=CacheService.getScriptCache(),key='dashboard:v5:'+id+':'+(selectedDate||'today');
     const cached=cache.get(key);
     const today=Utilities.formatDate(new Date(),'America/Detroit','yyyy-MM-dd');
     result=cached?JSON.parse(cached):null;
@@ -83,6 +83,7 @@ function dashboardData_(ss,now,selectedDate) {
   return {
     version:1,date:date,today:today,todayInstructionalDay:!!todayCalendar&&dashboardActive_(todayCalendar.Active)&&!schoolCalendar.todayClosed,timezone:tz,title:String(settings.appTitle||'CS Daily Starters'),generatedAt:now.toISOString(),instructionalDay:active,
     schoolCalendar:schoolCalendar,
+    learningTarget:active?dashboardLearningTarget_(focus,starter,String(calendar.Day)):'',
     sessions:sessions,phases:phases,
     // Only allowlisted student-facing fields leave Apps Script.
     starter:starter?{
@@ -154,6 +155,15 @@ function dashboardUrl_(value){return /^https:\/\//i.test(String(value||''))?Stri
 function dashboardAddDays_(date,days){const d=new Date(date+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+days);return d.toISOString().slice(0,10);}
 function dashboardMonday_(date){const day=new Date(date+'T12:00:00Z').getUTCDay();return dashboardAddDays_(date,-((day+6)%7));}
 function dashboardValidDate_(date){return /^(19|20|21)\d{2}-\d{2}-\d{2}$/.test(String(date))&&String(date)>='1900-01-01'&&String(date)<='2100-12-31'&&!isNaN(Date.parse(date+'T12:00:00Z'))&&new Date(date+'T12:00:00Z').toISOString().slice(0,10)===date?date:'';}
+function dashboardLearningTarget_(focus,starter,day){
+  const explicit=focus&&focus[day+' Learning Target']||starter&&starter['Learning Target'];
+  if(explicit&&String(explicit).trim())return String(explicit).trim();
+  // Legacy content: extract the labeled target only, never the rest of Teacher Notes.
+  const notes=String(starter&&starter['Teacher Notes']||'');
+  const match=notes.match(/\b(?:weekly\s+)?target:\s*([^\r\n]*?)(?=\s+(?:Success:|AI starter\b|Visible Learning:|Listen for\b|Exit ticket\b)|$)/i);
+  const sentence=match&&match[1].trim().match(/^.*?[.!?](?=\s|$)/);
+  return sentence?sentence[0]:'';
+}
 
 /** Calendar source is the same master used by No_School_Viewer.html. */
 function dashboardSchoolCalendar_(date,today,tz){

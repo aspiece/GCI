@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="dark">
   <title>Classroom Dashboard · GCI</title>
-  <link rel="stylesheet" href="assets/dashboard/dashboard.css?v=20261103-right-panel">
-  <script src="assets/dashboard/dashboard.js?v=20261103-right-panel" defer></script>
+  <link rel="stylesheet" href="assets/dashboard/dashboard.css?v=20261103-compact-target">
+  <script src="assets/dashboard/dashboard.js?v=20261103-compact-target" defer></script>
 </head>
 <body>
   <header class="topbar">
-    <div class="brand"><span class="brand-mark">GCI</span><div><strong id="app-title">Classroom Dashboard</strong><div class="muted">Think · Share · Build</div></div></div>
+    <div class="brand"><span class="brand-mark">GCI</span><strong id="app-title">Classroom Dashboard</strong></div>
     <div class="header-right"><div id="date-label" class="full-date" aria-live="polite"></div><div class="header-actions"><nav class="date-navigation" aria-label="Browse activity dates"><button id="date-previous" aria-label="Previous day">‹</button><input id="date-picker" type="date" min="1900-01-01" max="2100-12-31" aria-label="Choose activity date"><button id="date-next" aria-label="Next day">›</button><button id="date-today">Today</button></nav><span id="clock" title="Current classroom time"></span><button id="fullscreen" title="Toggle full screen">Full screen</button><button id="settings-open">Instructor</button></div></div>
   </header>
   <section class="phase-strip" aria-label="Class progress">
@@ -26,6 +26,7 @@
         <button role="tab" id="tab-brain" aria-controls="activity-panel" aria-selected="false" tabindex="-1" data-tab="brain">Brain Break</button>
         <button role="tab" id="tab-exit" aria-controls="activity-panel" aria-selected="false" tabindex="-1" data-tab="exit">Exit Ticket</button>
       </nav>
+      <section id="learning-target" class="learning-target" aria-labelledby="target-label" hidden><h2 id="target-label">Learning target</h2><p id="target-text"></p></section>
       <article id="activity-panel" class="activity-card" role="tabpanel" aria-labelledby="tab-starter" tabindex="0"></article>
       <footer class="activity-footer"><span>Think · Share · Build</span><button id="deeper" hidden>Go deeper</button><span id="content-date"></span></footer>
     </section>

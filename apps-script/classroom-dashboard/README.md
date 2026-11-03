@@ -5,6 +5,7 @@ The new page is `Classroom_Dashboard.html`. It is independent of the current App
 ## What is ready
 
 - Daily Starter, Brain Break, and Exit Ticket content tabs.
+- Compact desktop header with date and controls on one line, smaller phase strip and tabs, and a slim learning-target strip above the activity. The target remains visible across all three activity tabs and follows the selected date. Blank targets and noninstructional dates hide the strip.
 - Previous/Next day, Today, and a date picker. The complete selected date (weekday, month, day, and year) appears at the top right. Activities and deadlines follow the selected date/week; the clock, phase timing, and announcements follow today’s actual class calendar. Navigation includes weekends and inactive dates, which show an empty scheduled-activity message.
 - Compact class progress and countdown: Daily Starter → Focus → Brain Break → Focus → Cleanup.
 - A six-second visual announcement when a phase starts, optional chime, manual phase selection, repeat announcement, and return to scheduled timing.
@@ -41,6 +42,7 @@ GitHub Pages cannot run the Apps Script code. It serves the dashboard page; the 
 | Exit Ticket | Active dated row in `Exit Tickets`, otherwise the selected weekday's Exit Ticket column in `Focus Map` |
 | Instructional day | Selected date’s `Calendar` row controls activities; today’s row separately controls live phase announcements |
 | Title/timezone | `Settings` keys `appTitle` and `timezone` |
+| Daily learning target | Matching weekday’s Learning Target column in `Focus Map` (N:R); optional starter `Learning Target` field, then an explicitly labeled Target sentence from legacy starter notes |
 
 The new `Exit Tickets` tab is optional for daily overrides. Existing Focus Map exit tickets remain the default. Blank or inactive dates do not become sample content.
 
@@ -90,7 +92,13 @@ node tests/classroom-dashboard.browser.cjs
 
 The unit tests cover phase boundaries, timezone/week handling, no-school behavior, API pagination and individual-assignment exclusion, and feed field allowlisting. The browser test script covers keyboard tab navigation, mobile overflow, transition banners, and feed failure behavior. These use fixtures, not live Google accounts. School authorization, the actual course IDs, and the deployed feed still require a live connection test.
 
-Build verification: all nineteen unit tests passed, including submission aggregation, date navigation, school-calendar year/date filtering and caching, and distinguishing GCI closures from feeder-school, half-day, and virtual-day notices. Browser verification could not run in the build environment because Chromium was not installed and its download was blocked. The browser script includes current-session visibility, instructor expansion, and school-notice assertions for execution in a browser-enabled environment; responsive layout and visual presentation still need that review before classroom use.
+Build verification: all twenty-two unit tests passed, including target priority, privacy of legacy teacher notes, selected-date targets, submission aggregation, date navigation, school-calendar filtering and caching, and closure semantics. Browser verification could not run in the build environment because Chromium was not installed and its download was blocked. The browser script includes target visibility across tabs, current-session visibility, instructor expansion, and school-notice assertions for execution in a browser-enabled environment; responsive layout and visual presentation still need that review before classroom use.
+
+## Daily learning targets
+
+Edit the matching instructional week's Monday–Friday Learning Target fields in `Focus Map`, columns N:R. Week 11's targets have been copied from the existing starter notes. Explicit Focus Map targets take precedence over starter fields and legacy labeled target text. The feed never sends the rest of Teacher Notes. The target stays independent of the Daily Starter’s discussion topic, so AI-literacy review can accompany a conditionals learning target.
+
+Replace `Code.gs` in the existing feed project with this version and use Deploy → Manage deployments → Edit → New version → Deploy. Keep the existing deployment URL, properties, and manifest. The updated response adds `learningTarget`; older feed versions simply leave the new strip hidden. Noninstructional dates do not display a target.
 
 ## Update an existing feed for submission counts
 

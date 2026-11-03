@@ -11,6 +11,8 @@ const base=process.env.DASHBOARD_TEST_URL||'http://127.0.0.1:8765/Classroom_Dash
   await page.goto(base+'?preview=1');
   await page.waitForSelector('.prompt');
   assert.match(await page.locator('#connection').textContent(),/PREVIEW/);
+  assert.equal(await page.locator('#learning-target').isVisible(),true);
+  assert.match(await page.locator('#target-text').textContent(),/I can test boundary cases/);
   assert.equal(await page.locator('.course').count(),2);
   assert.equal(await page.locator('.course.active[open]').count(),2);
   assert.equal(await page.locator('[data-course="Career Essentials"]').getAttribute('open'),'');
@@ -39,6 +41,7 @@ const base=process.env.DASHBOARD_TEST_URL||'http://127.0.0.1:8765/Classroom_Dash
   await page.locator('#dismiss-announcement').click();
   await page.locator('#tab-brain').click();
   assert.match(await page.locator('#activity-panel').textContent(),/Look up & reset/);
+  assert.equal(await page.locator('#learning-target').isVisible(),true);
   await page.locator('#tab-brain').press('ArrowRight');
   assert.equal(await page.locator('#tab-exit').getAttribute('aria-selected'),'true');
   assert.match(await page.locator('#activity-panel').textContent(),/conditional you tested/);
