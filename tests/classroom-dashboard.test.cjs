@@ -39,6 +39,13 @@ test('only HTTPS links and exact Apps Script deployment endpoints are accepted',
   assert.equal(app.escape('<img src=x onerror=alert(1)>'),'&lt;img src=x onerror=alert(1)&gt;');
 });
 test('malformed feed is rejected',()=>{assert.throws(()=>app.validate({}));assert.equal(app.validate(fixture()).version,1);});
+test('submission badges distinguish unavailable totals from zero and completion',()=>{
+  assert.match(app.submissionBadge({submitted:18,total:24}),/18 \/ 24 submitted/);
+  assert.match(app.submissionBadge({submitted:0,total:24}),/0 \/ 24 submitted/);
+  assert.match(app.submissionBadge({submitted:24,total:24}),/submission-count complete/);
+  assert.doesNotMatch(app.submissionBadge({submitted:0,total:0}),/submission-count complete/);
+  for(const counts of [null,undefined,{submitted:25,total:24},{submitted:-1,total:24},{submitted:1,total:'24'}])assert.match(app.submissionBadge(counts),/Counts unavailable/);
+});
 
 function backend(){
   const context=vm.createContext({console,Date,JSON,Number,String,Object,Array,Math,Error,Utilities:{formatDate(date,tz,format){const p=app.localParts(date,tz);if(format==='yyyy-MM-dd')return p.date;throw new Error(format);}}});
@@ -50,6 +57,27 @@ test('backend paginates, filters whole-class work, and selects week in local tim
   ctx.Classroom={Courses:{CourseWork:{list:(id,options)=>{calls.push(options);return options.pageToken?{courseWork:[{title:'Sunday local',dueDate:{year:2026,month:11,day:9},dueTime:{hours:1},assigneeMode:'ALL_STUDENTS'}]}:{nextPageToken:'next',courseWork:[{title:'Monday',dueDate:{year:2026,month:11,day:3},dueTime:{hours:1}},{title:'Individual',dueDate:{year:2026,month:11,day:3},assigneeMode:'INDIVIDUAL_STUDENTS'},{title:'No due date'},{title:'Previous Sunday',dueDate:{year:2026,month:11,day:2},dueTime:{hours:1}},{title:'Next week',dueDate:{year:2026,month:11,day:9},dueTime:{hours:15}}]};}}}};
   const rows=ctx.dashboardCoursework_('123','2026-11-03','America/Detroit');
   assert.deepEqual(Array.from(rows,r=>r.title),['Monday','Sunday local']);assert.equal(calls.length,2);assert.equal(calls[1].pageToken,'next');
+});
+test('submission totals paginate and include only current submitted work or returned work with turn-in history',()=>{
+  const ctx=backend(),calls=[];
+  ctx.Classroom={Courses:{CourseWork:{StudentSubmissions:{list:(course,id,options)=>{
+    calls.push({course,id,options});
+    return options.pageToken?{studentSubmissions:[{state:'TURNED_IN'},{state:'RETURNED',submissionHistory:[{stateHistory:{state:'CREATED'}}]}]}:{nextPageToken:'next',studentSubmissions:[{state:'NEW'},{state:'CREATED'},{state:'TURNED_IN'},{state:'RETURNED',submissionHistory:[{stateHistory:{state:'TURNED_IN'}},{stateHistory:{state:'RETURNED'}}]},{state:'RECLAIMED_BY_STUDENT',submissionHistory:[{stateHistory:{state:'TURNED_IN'}}]}]};
+  }}}}};
+  const counts=ctx.dashboardSubmissionCounts_('course','work');
+  assert.equal(counts.submitted,3);assert.equal(counts.total,7);
+  assert.deepEqual(Object.keys(counts).sort(),['submitted','total']);
+  assert.equal(calls.length,2);assert.equal(calls[1].options.pageToken,'next');
+  assert.equal(calls[0].course,'course');assert.equal(calls[0].id,'work');
+  assert.equal(calls[0].options.fields,'nextPageToken,studentSubmissions(state,submissionHistory(stateHistory(state)))');
+});
+test('empty submissions produce zero totals and failed counts keep deadlines available',()=>{
+  const ctx=backend();
+  ctx.Classroom={Courses:{CourseWork:{list:()=>({courseWork:[{id:'work',title:'Keep this assignment',dueDate:{year:2026,month:11,day:4},dueTime:{hours:15}}]}),StudentSubmissions:{list:()=>({})}}}};
+  assert.equal(ctx.dashboardSubmissionCounts_('course','work').total,0);
+  ctx.Classroom.Courses.CourseWork.StudentSubmissions.list=()=>{throw new Error('Permission denied');};
+  const work=ctx.dashboardCoursework_('course','2026-11-03','America/Detroit');
+  assert.equal(work.length,1);assert.equal(work[0].title,'Keep this assignment');assert.equal(work[0].submissions,null);
 });
 test('backend reuses Focus Map exit tickets and excludes teacher-only fields',()=>{
   const ctx=backend();

@@ -9,6 +9,7 @@ The new page is `Classroom_Dashboard.html`. It is independent of the current App
 - A six-second visual announcement when a phase starts, optional chime, manual phase selection, repeat announcement, and return to scheduled timing.
 - Due This Week: collapsible sections for 1st Session, 2nd Session, 3rd Session, Career Essentials, and Career Exploration. The active session opens automatically when it changes, together with Career Essentials for 1st/2nd Session or Career Exploration for 3rd Session. Instructors can expand or collapse any section.
 - Only days with assignments due are listed, including weekend deadlines. Courses with no deadlines show one “Nothing due this week” message. Times use America/Detroit, including daylight saving changes. Earlier days are muted and today is highlighted.
+- Each assignment shows aggregate progress, such as **18 / 24 submitted**, beside its title. The denominator is the number of student submission records for that assignment (assigned students). Fully submitted assignments receive a green badge. Missing or failed counts display “Counts unavailable,” never a false zero.
 - The content tabs remain under instructor control during automatic announcements.
 - Explicit sample preview at `Classroom_Dashboard.html?preview=1`. Fictional assignments never appear as live data.
 
@@ -60,7 +61,9 @@ The automatic sequence does not switch the content tabs. Exit Ticket is availabl
 
 ## Data boundaries
 
-The feed deliberately omits teacher notes, grades, rosters, student submissions, individual student IDs, and assignments targeted to individual students. Only published whole-class assignments with a due date appear. It makes no submission-state calls. “Nothing due” means the connected course has no matching whole-class deadlines for that day; failed or missing connections have their own messages.
+The public feed deliberately omits teacher notes, grades, rosters, individual submission records, student IDs, and assignments targeted to individual students. Only published whole-class assignments with a due date appear. The backend reads only submission states and state-history fields and reduces them to `{submitted,total}` before creating the public response. “Nothing due” means the connected course has no matching whole-class deadlines for that day; failed or missing connections have their own messages.
+
+Submitted includes current `TURNED_IN` work and current `RETURNED` work whose history contains `TURNED_IN`. New, in-progress, reclaimed/unsubmitted work, and returned work without a recorded turn-in are excluded from the numerator. The total includes all submission records, including students who have not opened the assignment. This is the assigned-student count rather than an independently fetched live roster count. Both coursework and submission queries are paginated; a failure on any submission page yields unavailable counts for that assignment without removing its deadline. No individual state, history, name, grade, or identifier is sent to the dashboard.
 
 Due dates arrive from Classroom in UTC and are converted to Michigan time before selecting the current Monday–Sunday week. A Sunday UTC deadline can be a Saturday local deadline. Assignments without due dates are omitted. Each course's API results are paginated.
 
@@ -84,6 +87,13 @@ node tests/classroom-dashboard.browser.cjs
 
 The unit tests cover phase boundaries, timezone/week handling, no-school behavior, API pagination and individual-assignment exclusion, and feed field allowlisting. The browser test script covers keyboard tab navigation, mobile overflow, transition banners, and feed failure behavior. These use fixtures, not live Google accounts. School authorization, the actual course IDs, and the deployed feed still require a live connection test.
 
-Build verification: all nine unit tests passed. Browser verification could not run in the build environment because Chromium was not installed and its download was blocked. The browser script is included for execution in a browser-enabled environment; responsive layout and visual presentation still need that review before classroom use.
+Build verification: all twelve unit tests passed, including submission aggregation, pagination, unsubmitted/returned work, and unavailable totals. Browser verification could not run in the build environment because Chromium was not installed and its download was blocked. The browser script is included for execution in a browser-enabled environment; responsive layout and visual presentation still need that review before classroom use.
+
+## Update an existing feed for submission counts
+
+1. Replace the existing standalone feed project's `Code.gs` with the updated file in this folder. Keep the current manifest and Script properties; the existing coursework read-only permission covers submission queries.
+2. Run `testDashboardFeed`. For each course with weekly assignments, `submissionCountsReady` should equal `count`. A course with no assignments correctly reports both as zero. If counts fail, review the private execution logs and authorization.
+3. Choose **Deploy → Manage deployments → Edit** (pencil) on the existing web app. Select **New version**, then **Deploy**. Updating the existing deployment preserves the `/exec` URL already configured in the dashboard. Do not create another deployment.
+4. Refresh the dashboard. Counts update with the regular feed refresh and cache, generally within two minutes. Until the feed code is updated, the new dashboard displays “Counts unavailable” beside assignments.
 
 References: [GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages), [Apps Script Content Service](https://developers.google.com/apps-script/guides/content), [Classroom advanced service](https://developers.google.com/apps-script/advanced/classroom), [Classroom coursework fields](https://developers.google.com/workspace/classroom/reference/rest/v1/courses.courseWork).
