@@ -16,6 +16,7 @@ const base=process.env.DASHBOARD_TEST_URL||'http://127.0.0.1:8765/Classroom_Dash
   assert.equal(await page.locator('[data-course="Career Essentials"]').getAttribute('open'),'');
   assert.equal(await page.locator('[data-course="1st Session"] .day-group').count(),1);
   assert.equal(await page.locator('[data-course="1st Session"] .day-heading').textContent(),'Tuesday · Today');
+  assert.equal(await page.locator('[data-course="1st Session"] .submission-count').textContent(),'18 / 24 submitted');
   assert.equal(await page.locator('[data-course="Career Essentials"] .day-group').count(),0);
   assert.equal(await page.locator('#announcement').isVisible(),false);
   await page.clock.runFor(1500);
@@ -59,6 +60,7 @@ const base=process.env.DASHBOARD_TEST_URL||'http://127.0.0.1:8765/Classroom_Dash
   });
   await live.goto(base);await live.waitForFunction(()=>document.getElementById('connection').textContent.startsWith('Connected'));
   assert.equal(await live.locator('#activity-panel img').count(),0);
+  assert.equal(await live.locator('[data-course="1st Session"] .submission-count').textContent(),'18 / 24 submitted');
   fail=true;await live.locator('#refresh').click();await live.waitForFunction(()=>document.getElementById('connection').textContent.includes('previously loaded'));
   assert.equal(await live.locator('.prompt').textContent(),'<img src=x onerror=alert(1)>');
   await browser.close();console.log('Browser checks passed: transitions, tabs, manual controls, mobile layout, feed rendering, safe text, and offline retention.');

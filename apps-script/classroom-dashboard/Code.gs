@@ -27,7 +27,7 @@ function doGet(e) {
     if(properties.getProperty('PUBLIC_FEED_ENABLED')!=='true')throw new Error('Feed disabled');
     const id=properties.getProperty('DASHBOARD_SPREADSHEET_ID');
     if(!id)throw new Error('Missing spreadsheet configuration');
-    const cache=CacheService.getScriptCache(),key='dashboard:v1';
+    const cache=CacheService.getScriptCache(),key='dashboard:v2';
     const cached=cache.get(key);
     const today=Utilities.formatDate(new Date(),'America/Detroit','yyyy-MM-dd');
     result=cached?JSON.parse(cached):null;
@@ -98,18 +98,41 @@ function dashboardCoursework_(courseId,date,tz) {
   const monday=dashboardMonday_(date),nextMonday=dashboardAddDays_(monday,7),items=[];
   let pageToken;
   do{
-    const response=Classroom.Courses.CourseWork.list(courseId,{courseWorkStates:['PUBLISHED'],pageSize:100,pageToken:pageToken,fields:'nextPageToken,courseWork(title,dueDate,dueTime,alternateLink,assigneeMode)'});
+    const response=Classroom.Courses.CourseWork.list(courseId,{courseWorkStates:['PUBLISHED'],pageSize:100,pageToken:pageToken,fields:'nextPageToken,courseWork(id,title,dueDate,dueTime,alternateLink,assigneeMode)'});
     (response.courseWork||[]).forEach(work=>{
       // This shared display omits assignments targeted to individual students.
       if(work.assigneeMode==='INDIVIDUAL_STUDENTS'||!work.dueDate)return;
       const d=work.dueDate,t=work.dueTime||{};
       const dueAt=new Date(Date.UTC(d.year,d.month-1,d.day,t.hours||0,t.minutes||0,t.seconds||0));
       const local=Utilities.formatDate(dueAt,tz,'yyyy-MM-dd');
-      if(local>=monday&&local<nextMonday)items.push({title:String(work.title||'Assignment'),dueAt:dueAt.toISOString(),url:dashboardUrl_(work.alternateLink)});
+      if(local>=monday&&local<nextMonday){
+        let submissions=null;
+        try{submissions=dashboardSubmissionCounts_(courseId,work.id);}
+        catch(error){console.error('Submission totals unavailable for a weekly assignment: '+String(error));}
+        items.push({title:String(work.title||'Assignment'),dueAt:dueAt.toISOString(),url:dashboardUrl_(work.alternateLink),submissions:submissions});
+      }
     });
     pageToken=response.nextPageToken;
   }while(pageToken);
   return items.sort((a,b)=>a.dueAt.localeCompare(b.dueAt));
+}
+
+/** Read states only, then return aggregate totals. No student records leave this function. */
+function dashboardSubmissionCounts_(courseId,workId){
+  let submitted=0,total=0,pageToken;
+  do{
+    const response=Classroom.Courses.CourseWork.StudentSubmissions.list(courseId,workId,{
+      pageSize:100,pageToken:pageToken,
+      fields:'nextPageToken,studentSubmissions(state,submissionHistory(stateHistory(state)))'
+    });
+    (response.studentSubmissions||[]).forEach(record=>{
+      total++;
+      const previouslySubmitted=(record.submissionHistory||[]).some(event=>event.stateHistory&&event.stateHistory.state==='TURNED_IN');
+      if(record.state==='TURNED_IN'||record.state==='RETURNED'&&previouslySubmitted)submitted++;
+    });
+    pageToken=response.nextPageToken;
+  }while(pageToken);
+  return {submitted:submitted,total:total};
 }
 
 function dashboardRows_(ss,name) {
@@ -161,5 +184,5 @@ function listDashboardClassroomCourses(){
 function testDashboardFeed(){
   const id=PropertiesService.getScriptProperties().getProperty('DASHBOARD_SPREADSHEET_ID');
   const data=dashboardData_(SpreadsheetApp.openById(id),new Date());
-  console.log(JSON.stringify({date:data.date,instructionalDay:data.instructionalDay,starter:!!data.starter,brainBreak:!!data.brain,exitTicket:!!data.exit,courses:data.courses.map(c=>({name:c.name,status:c.status,count:c.assignments.length}))},null,2));
+  console.log(JSON.stringify({date:data.date,instructionalDay:data.instructionalDay,starter:!!data.starter,brainBreak:!!data.brain,exitTicket:!!data.exit,courses:data.courses.map(c=>({name:c.name,status:c.status,count:c.assignments.length,submissionCountsReady:c.assignments.filter(a=>a.submissions!==null).length}))},null,2));
 }

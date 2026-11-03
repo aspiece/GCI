@@ -39,6 +39,11 @@ const GCI = (() => {
   function safeUrl(value){try{const u=new URL(value);return u.protocol==='https:'?u.href:'';}catch{return '';}}
   function validFeed(value){try{const u=new URL(value);return u.origin==='https://script.google.com'&&/^\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(u.pathname)&&!u.search&&!u.hash?u.href:'';}catch{return '';}}
   function escape(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+  function submissionBadge(counts){
+    if(!counts||!Number.isInteger(counts.submitted)||!Number.isInteger(counts.total)||counts.total<0||counts.submitted<0||counts.submitted>counts.total)return '<span class="submission-count unavailable">Counts unavailable</span>';
+    const complete=counts.total>0&&counts.submitted===counts.total;
+    return `<span class="submission-count${complete?' complete':''}" aria-label="${counts.submitted} of ${counts.total} assigned students submitted">${counts.submitted} / ${counts.total} submitted</span>`;
+  }
   function validate(data){
     if(!data||data.version!==1||!/^\d{4}-\d{2}-\d{2}$/.test(data.date)||!Array.isArray(data.courses)||!Array.isArray(data.sessions)||!Array.isArray(data.phases)||data.phases.length!==5)throw new Error('The feed is not a dashboard feed.');
     new Intl.DateTimeFormat('en',{timeZone:data.timezone}).format();
@@ -51,9 +56,9 @@ const GCI = (() => {
       starter:{lens:'Design Lab',topic:'Make the next step clear',csFocus:'Conditionals',prompt:'A game needs to explain why a player cannot open a locked door. How could the message help the player decide what to try next?',context:'Think for a moment. Discuss at your table. Be ready to explain one design choice.',goDeeper:'How should the message change when the player has the key but needs more energy?'},
       brain:{title:'Look up & reset',instructions:'Look away from the screen. Stretch gently if comfortable, then share one small win with your table.',alternative:'Stay seated, rest, or choose a comfortable movement.',returnCue:'Choose your next step before returning to your work.',duration:10},
       exit:{title:'Make your thinking visible',prompt:'Describe one conditional you tested today. What input did you try, what happened, and what would you test next?'},
-      courses:courses.map((name,i)=>({name,status:'ready',assignments:i<3?[{title:['Conditionals practice','Test a decision','Explain your solution'][i],dueAt:`${week[i+1]}T20:00:00.000Z`,url:'https://classroom.google.com/'}]:[]}))};
+      courses:courses.map((name,i)=>({name,status:'ready',assignments:i<3?[{title:['Conditionals practice','Test a decision','Explain your solution'][i],dueAt:`${week[i+1]}T20:00:00.000Z`,url:'https://classroom.google.com/',submissions:{submitted:[18,21,24][i],total:24}}]:[]}))};
   }
-  return {courses,phases,sessions,sessionCourses,localParts,weekDates,addDays,scheduled,safeUrl,validFeed,escape,validate,sample};
+  return {courses,phases,sessions,sessionCourses,localParts,weekDates,addDays,scheduled,safeUrl,validFeed,escape,submissionBadge,validate,sample};
 })();
 if(typeof module!=='undefined')module.exports=GCI;
 if(typeof document!=='undefined'){
@@ -108,7 +113,7 @@ if(typeof document!=='undefined'){
       else if(course.status!=='ready')body=`<p class="none-due">${course.status==='error'?'Deadlines unavailable. Try Refresh.':'Classroom connection not configured.'}</p>`;
       else body=days.map(date=>{
         const items=assignments.filter(a=>GCI.localParts(new Date(a.dueAt),data.timezone).date===date);
-        return `<section class="day-group ${date===today?'today':date<today?'past':''}"><div class="day-heading">${shortDate(date,{weekday:'long'})}${date===today?' · Today':''}</div>${items.map(a=>`<div class="assignment">${GCI.safeUrl(a.url)?link(a.url,a.title):esc(a.title)}<time datetime="${esc(a.dueAt)}">${new Date(a.dueAt).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',timeZone:data.timezone})}</time></div>`).join('')}</section>`;
+        return `<section class="day-group ${date===today?'today':date<today?'past':''}"><div class="day-heading">${shortDate(date,{weekday:'long'})}${date===today?' · Today':''}</div>${items.map(a=>`<div class="assignment"><div class="assignment-heading"><span class="assignment-title">${GCI.safeUrl(a.url)?link(a.url,a.title):esc(a.title)}</span>${GCI.submissionBadge(a.submissions)}</div><time datetime="${esc(a.dueAt)}">${new Date(a.dueAt).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',timeZone:data.timezone})}</time></div>`).join('')}</section>`;
       }).join('')||'<p class="none-due">Nothing due this week.</p>';
       return `<details class="course ${activeCourses.includes(name)?'active':''}" data-course="${esc(name)}" ${openCourses.get(name)?'open':''}><summary>${esc(name)}<span class="course-count">${course.status==='ready'&&!staleWeek?assignments.length:'—'}</span></summary><div class="course-body">${body}</div></details>`;
     }).join('');
