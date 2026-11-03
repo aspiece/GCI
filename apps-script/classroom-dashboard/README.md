@@ -42,7 +42,7 @@ GitHub Pages cannot run the Apps Script code. It serves the dashboard page; the 
 | Exit Ticket | Active dated row in `Exit Tickets`, otherwise the selected weekday's Exit Ticket column in `Focus Map` |
 | Instructional day | Selected date’s `Calendar` row controls activities; today’s row separately controls live phase announcements |
 | Title/timezone | `Settings` keys `appTitle` and `timezone` |
-| Daily learning target | Matching weekday’s Learning Target column in `Focus Map` (N:R); optional starter `Learning Target` field, then an explicitly labeled Target sentence from legacy starter notes |
+| Daily learning target | 1st/2nd Session share the matching weekday’s Learning Target column in `Focus Map` (N:R); 3rd Session uses its own weekday fields (S:W) |
 
 The new `Exit Tickets` tab is optional for daily overrides. Existing Focus Map exit tickets remain the default. Blank or inactive dates do not become sample content.
 
@@ -92,11 +92,20 @@ node tests/classroom-dashboard.browser.cjs
 
 The unit tests cover phase boundaries, timezone/week handling, no-school behavior, API pagination and individual-assignment exclusion, and feed field allowlisting. The browser test script covers keyboard tab navigation, mobile overflow, transition banners, and feed failure behavior. These use fixtures, not live Google accounts. School authorization, the actual course IDs, and the deployed feed still require a live connection test.
 
-Build verification: all twenty-two unit tests passed, including target priority, privacy of legacy teacher notes, selected-date targets, submission aggregation, date navigation, school-calendar filtering and caching, and closure semantics. Browser verification could not run in the build environment because Chromium was not installed and its download was blocked. The browser script includes target visibility across tabs, current-session visibility, instructor expansion, and school-notice assertions for execution in a browser-enabled environment; responsive layout and visual presentation still need that review before classroom use.
+Build verification: all twenty-five unit tests passed, including separate target groups, no shared-target fallback for 3rd Session, privacy of legacy notes, selected-date targets, submission aggregation, date navigation, and school-calendar handling. Browser verification could not run in the build environment because Chromium was not installed and its download was blocked. The browser script includes automatic target switching and instructor group preview for execution in a browser-enabled environment; responsive layout and visual presentation still need that review before classroom use.
 
 ## Daily learning targets
 
-Edit the matching instructional week's Monday–Friday Learning Target fields in `Focus Map`, columns N:R. Week 11's targets have been copied from the existing starter notes. Explicit Focus Map targets take precedence over starter fields and legacy labeled target text. The feed never sends the rest of Teacher Notes. The target stays independent of the Daily Starter’s discussion topic, so AI-literacy review can accompany a conditionals learning target.
+Edit the matching instructional week's targets in `Focus Map`:
+
+| Group | Monday–Friday fields |
+| --- | --- |
+| 1st and 2nd Session (shared) | N:R, existing weekday Learning Target fields |
+| 3rd Session (separate) | S:W, weekday 3rd Session Learning Target fields |
+
+Week 11's existing targets remain in N:R. The new 3rd Session fields are blank until its own targets are entered. Third Session never inherits a shared target. For the shared group only, an explicit Focus Map target takes precedence over a starter Learning Target field or the first legacy labeled target sentence; the rest of Teacher Notes is never sent.
+
+By default the target follows the session currently meeting, using the real class schedule independently of manual phase overrides. During 1st/2nd Session it shows the same shared target; during 3rd Session it shows that group’s target. Outside class hours the automatic target hides. Instructor → Learning target view → Target group lets the instructor preview either group for the selected date, including outside class hours. Select Automatic to resume schedule-based selection. The preview resets on page reload. The target remains independent of the starter’s discussion topic and persists across activity tabs.
 
 Replace `Code.gs` in the existing feed project with this version and use Deploy → Manage deployments → Edit → New version → Deploy. Keep the existing deployment URL, properties, and manifest. The updated response adds `learningTarget`; older feed versions simply leave the new strip hidden. Noninstructional dates do not display a target.
 

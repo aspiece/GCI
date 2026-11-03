@@ -183,3 +183,28 @@ test('selected date determines the learning target and inactive dates hide it',(
   assert.equal(ctx.dashboardData_(ss,new Date('2026-11-03T12:00:00Z'),'2026-11-04').learningTarget,'I can explain Boolean decisions.');
   assert.equal(ctx.dashboardData_(ss,new Date('2026-11-03T12:00:00Z')).learningTarget,'');
 });
+test('1st and 2nd share a target and 3rd never falls back to the shared target',()=>{
+  const data={instructionalDay:true,learningTarget:'Legacy shared',learningTargets:{shared:'Shared target',third:'Third target'}};
+  assert.equal(app.learningTargetForSession(data,'1st Session'),'Shared target');
+  assert.equal(app.learningTargetForSession(data,'2nd Session'),'Shared target');
+  assert.equal(app.learningTargetForSession(data,'3rd Session'),'Third target');
+  assert.equal(app.learningTargetForSession({...data,learningTargets:{shared:'Shared target',third:''}},'3rd Session'),'');
+  assert.equal(app.learningTargetForSession({instructionalDay:true,learningTarget:'Legacy shared'},'3rd Session'),'');
+  assert.equal(app.learningTargetForSession(data,undefined),'');
+  assert.equal(app.learningTargetForSession({...data,instructionalDay:false},'3rd Session'),'');
+});
+test('feed keeps separate weekday targets for the shared and third groups',()=>{
+  const ctx=backend(),focus={'Wednesday Learning Target':'Shared conditionals target','Wednesday 3rd Session Learning Target':'Third session target'};
+  const targets=ctx.dashboardSessionTargets_(focus,null,'Wednesday');
+  assert.equal(targets.shared,'Shared conditionals target');assert.equal(targets.third,'Third session target');
+  const legacy=ctx.dashboardSessionTargets_({}, {'Teacher Notes':'Target: Shared legacy target.'},'Wednesday');
+  assert.equal(legacy.shared,'Shared legacy target.');assert.equal(legacy.third,'');
+});
+test('selected-day feed exposes both target groups and blanks both on inactive days',()=>{
+  const ctx=backend();ctx.dashboardSchoolCalendar_=()=>({status:'ready',events:[],closed:false,todayClosed:false});
+  const rows={Settings:[['Key','Value'],['timezone','America/Detroit']],Calendar:[['Date','Week','Day','Active'],['2026-11-03',11,'Tuesday',false],['2026-11-04',11,'Wednesday',true]],'Focus Map':[['Week','Wednesday Learning Target','Wednesday 3rd Session Learning Target'],[11,'Shared target','Separate third target']]};
+  const ss={getSheetByName:name=>rows[name]?sheet(rows[name]):null};
+  const data=ctx.dashboardData_(ss,new Date('2026-11-03T12:00:00Z'),'2026-11-04');
+  assert.equal(data.learningTargets.shared,'Shared target');assert.equal(data.learningTargets.third,'Separate third target');
+  const inactive=ctx.dashboardData_(ss,new Date('2026-11-03T12:00:00Z'));assert.equal(inactive.learningTargets.shared,'');assert.equal(inactive.learningTargets.third,'');
+});
