@@ -5,6 +5,12 @@ const vm=require('node:vm');
 const path=require('node:path');
 const app=require('../assets/dashboard/dashboard.js');
 const fixture=()=>({...app.sample(new Date('2026-11-03T12:00:00Z')),instructionalDay:true});
+test('sessions open the matching career course',()=>{
+  assert.deepEqual(app.sessionCourses('1st Session'),['1st Session','Career Essentials']);
+  assert.deepEqual(app.sessionCourses('2nd Session'),['2nd Session','Career Essentials']);
+  assert.deepEqual(app.sessionCourses('3rd Session'),['3rd Session','Career Exploration']);
+  assert.deepEqual(app.sessionCourses(null),[]);
+});
 test('schedule moves through both focus blocks and cleanup at exact boundaries',()=>{
   const data=fixture();
   for(const [time,index]of [['12:00:00',0],['12:05:00',1],['12:45:00',2],['12:55:00',3],['13:35:00',4]]){

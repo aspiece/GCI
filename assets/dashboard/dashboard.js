@@ -9,6 +9,11 @@ const GCI = (() => {
     {name:'Cleanup', minutes:10, icon:'✓', message:'Save your work and reset your space.'}
   ];
   const sessions = courses.slice(0,3).map((name,i)=>({name,start:['07:00','08:50','12:05'][i],end:['08:45','10:35','13:50'][i]}));
+  function sessionCourses(session){
+    if(session==='1st Session'||session==='2nd Session')return [session,'Career Essentials'];
+    if(session==='3rd Session')return [session,'Career Exploration'];
+    return [];
+  }
   function localParts(now, tz='America/Detroit') {
     const parts = Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:tz,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).formatToParts(now).map(p=>[p.type,p.value]));
     return {date:`${parts.year}-${parts.month}-${parts.day}`,minute:Number(parts.hour)*60+Number(parts.minute)+Number(parts.second)/60};
@@ -48,7 +53,7 @@ const GCI = (() => {
       exit:{title:'Make your thinking visible',prompt:'Describe one conditional you tested today. What input did you try, what happened, and what would you test next?'},
       courses:courses.map((name,i)=>({name,status:'ready',assignments:i<3?[{title:['Conditionals practice','Test a decision','Explain your solution'][i],dueAt:`${week[i+1]}T20:00:00.000Z`,url:'https://classroom.google.com/'}]:[]}))};
   }
-  return {courses,phases,sessions,localParts,weekDates,addDays,scheduled,safeUrl,validFeed,escape,validate,sample};
+  return {courses,phases,sessions,sessionCourses,localParts,weekDates,addDays,scheduled,safeUrl,validFeed,escape,validate,sample};
 })();
 if(typeof module!=='undefined')module.exports=GCI;
 if(typeof document!=='undefined'){
@@ -85,21 +90,26 @@ if(typeof document!=='undefined'){
     if(!data){$('courses').innerHTML=GCI.courses.map(name=>`<details class="course"><summary>${esc(name)}</summary><div class="course-body"><p class="none-due">Connect Classroom to load deadlines.</p></div></details>`).join('');return;}
     const today=GCI.localParts(new Date(),data.timezone).date,week=GCI.weekDates(today),phase=currentPhase();
     const active=phase?.session;
-    if(active&&active!==lastSession){openCourses.set(active,true);if(lastSession)openCourses.set(lastSession,false);lastSession=active;}
+    const activeCourses=GCI.sessionCourses(active);
+    if(active&&active!==lastSession){
+      GCI.sessionCourses(lastSession).forEach(name=>openCourses.set(name,false));
+      activeCourses.forEach(name=>openCourses.set(name,true));
+      lastSession=active;
+    }
     $('week-label').textContent=`${shortDate(week[0])} – ${shortDate(week[6])}`;
     $('courses').innerHTML=GCI.courses.map(name=>{
       const course=data.courses.find(c=>c.name===name)||{name,status:'unconfigured',assignments:[]};
       const assignments=(course.assignments||[]).filter(a=>a.dueAt&&week.includes(GCI.localParts(new Date(a.dueAt),data.timezone).date)).sort((a,b)=>new Date(a.dueAt)-new Date(b.dueAt));
-      const days=week.slice(0,5).concat(week.slice(5).filter(date=>assignments.some(a=>GCI.localParts(new Date(a.dueAt),data.timezone).date===date)));
+      const days=week.filter(date=>assignments.some(a=>GCI.localParts(new Date(a.dueAt),data.timezone).date===date));
       let body='';
       const staleWeek=GCI.weekDates(data.date)[0]!==week[0];
       if(staleWeek)body='<p class="none-due">This week’s deadlines are unavailable until the connection refreshes.</p>';
       else if(course.status!=='ready')body=`<p class="none-due">${course.status==='error'?'Deadlines unavailable. Try Refresh.':'Classroom connection not configured.'}</p>`;
       else body=days.map(date=>{
         const items=assignments.filter(a=>GCI.localParts(new Date(a.dueAt),data.timezone).date===date);
-        return `<section class="day-group ${date===today?'today':date<today?'past':''}"><div class="day-heading">${shortDate(date,{weekday:'long'})}${date===today?' · Today':''}</div>${items.length?items.map(a=>`<div class="assignment">${GCI.safeUrl(a.url)?link(a.url,a.title):esc(a.title)}<time datetime="${esc(a.dueAt)}">${new Date(a.dueAt).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',timeZone:data.timezone})}</time></div>`).join(''):'<div class="none-due">Nothing due</div>'}</section>`;
-      }).join('');
-      return `<details class="course ${active===name?'active':''}" data-course="${esc(name)}" ${openCourses.get(name)?'open':''}><summary>${esc(name)}<span class="course-count">${course.status==='ready'&&!staleWeek?assignments.length:'—'}</span></summary><div class="course-body">${body}</div></details>`;
+        return `<section class="day-group ${date===today?'today':date<today?'past':''}"><div class="day-heading">${shortDate(date,{weekday:'long'})}${date===today?' · Today':''}</div>${items.map(a=>`<div class="assignment">${GCI.safeUrl(a.url)?link(a.url,a.title):esc(a.title)}<time datetime="${esc(a.dueAt)}">${new Date(a.dueAt).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',timeZone:data.timezone})}</time></div>`).join('')}</section>`;
+      }).join('')||'<p class="none-due">Nothing due this week.</p>';
+      return `<details class="course ${activeCourses.includes(name)?'active':''}" data-course="${esc(name)}" ${openCourses.get(name)?'open':''}><summary>${esc(name)}<span class="course-count">${course.status==='ready'&&!staleWeek?assignments.length:'—'}</span></summary><div class="course-body">${body}</div></details>`;
     }).join('');
     document.querySelectorAll('[data-course]').forEach(el=>el.addEventListener('toggle',()=>openCourses.set(el.dataset.course,el.open)));
   }
