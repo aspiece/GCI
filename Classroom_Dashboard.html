@@ -18,7 +18,6 @@
     <ol id="phases"></ol>
     <div class="phase-time"><span id="phase-remaining">—</span><small id="phase-mode">Scheduled transitions</small></div>
   </section>
-  <section id="school-notices" class="school-notices" aria-label="School calendar notices" hidden></section>
   <div id="connection" role="status" class="connection">Connecting to class content…</div>
   <main class="layout">
     <section class="activity">
@@ -30,9 +29,12 @@
       <article id="activity-panel" class="activity-card" role="tabpanel" aria-labelledby="tab-starter" tabindex="0"></article>
       <footer class="activity-footer"><span>Think · Share · Build</span><button id="deeper" hidden>Go deeper</button><span id="content-date"></span></footer>
     </section>
-    <aside class="deadlines" aria-labelledby="due-title">
+    <aside class="right-column" aria-label="Assignments and school notices">
+    <section class="deadlines" aria-labelledby="due-title">
       <div class="aside-heading"><div><div class="eyebrow">PLAN AHEAD</div><h2 id="due-title">Due This Week</h2><div id="week-label" class="muted"></div></div><button id="refresh" aria-label="Refresh content">↻</button></div>
       <button id="current-session" class="current-session" hidden>Current session</button><div id="courses"></div><p class="aside-note">Deadlines from Google Classroom</p>
+    </section>
+    <section id="school-notices" class="school-notices" aria-label="School calendar notices" hidden></section>
     </aside>
   </main>
   <div id="announcement" class="announcement" role="status" aria-live="polite" aria-atomic="true" hidden><div><span id="announcement-icon" aria-hidden="true"></span><p id="announcement-session"></p><h2 id="announcement-title"></h2><p id="announcement-message"></p><button id="dismiss-announcement">Continue</button></div></div>
