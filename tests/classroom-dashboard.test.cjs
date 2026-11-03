@@ -57,7 +57,7 @@ test('submission badges distinguish unavailable totals from zero and completion'
 });
 
 function backend(){
-  const context=vm.createContext({console,Date,JSON,Number,String,Object,Array,Math,Error,Utilities:{formatDate(date,tz,format){const p=app.localParts(date,tz);if(format==='yyyy-MM-dd')return p.date;throw new Error(format);}}});
+  const context=vm.createContext({console:{...console,error(){}},Date,JSON,Number,String,Object,Array,Math,Error,Utilities:{formatDate(date,tz,format){const p=app.localParts(date,tz);if(format==='yyyy-MM-dd')return p.date;throw new Error(format);}}});
   vm.runInContext(fs.readFileSync(path.join(__dirname,'../apps-script/classroom-dashboard/Code.gs'),'utf8'),context);return context;
 }
 function sheet(rows){return {getLastRow:()=>rows.length,getDataRange:()=>({getValues:()=>rows.map(r=>r.slice())})};}
@@ -127,4 +127,40 @@ test('feed caches each selected date independently',()=>{
   ctx.ContentService={MimeType:{JSON:'json',JAVASCRIPT:'js'},createTextOutput:text=>({text,setMimeType(){return this;}})};
   for(const date of ['2026-11-04','2026-11-05','2026-11-04'])assert.equal(JSON.parse(ctx.doGet({parameter:{date}}).text).date,date);
   assert.deepEqual(requests,['2026-11-04','2026-11-05']);
+});
+test('school calendar filters date/year, removes duplicates, and excludes private/source columns',()=>{
+  const ctx=backend();
+  const rows=[['Date','Event','School','school year','source','last verified'],['2026-11-03','No School','School A','2026-27','PRIVATE SOURCE','2026-08-01'],['2026-11-03','No School','School A','2026-27'],['2026-11-04','No School','School B','2026-27'],['2026-11-03','No School','School C','2025-26']];
+  const events=ctx.dashboardSchoolEvents_(rows,'2026-11-03','America/Detroit');
+  assert.equal(events.length,1);assert.equal(events[0].school,'School A');assert.deepEqual(Object.keys(events[0]).sort(),['event','school']);
+  assert.ok(!JSON.stringify(events).includes('PRIVATE SOURCE'));
+});
+test('only explicit GCI/all-school full closures pause timing, not feeder closures, virtual, or half days',()=>{
+  const ctx=backend();
+  for(const event of ['No School - Professional Development','PD - No Students','Holiday'])assert.equal(ctx.dashboardGciClosed_({school:'Genesee Career Institute',event}),true);
+  for(const event of ['Virtual Day - 10th Grade Showcase','Half Day','Early Dismissal'])assert.equal(ctx.dashboardGciClosed_({school:'Genesee Career Institute',event}),false);
+  assert.equal(ctx.dashboardGciClosed_({school:'Fenton High School',event:'No School - GCI students must attend'}),false);
+  assert.equal(ctx.dashboardGciClosed_({school:'All Schools',event:'No School'}),true);
+});
+test('school calendar reads shared master, caches notices, and isolates failure',()=>{
+  const ctx=backend(),cache=new Map();let reads=0;
+  ctx.PropertiesService={getScriptProperties:()=>({getProperty:()=>null})};
+  ctx.CacheService={getScriptCache:()=>({get:key=>cache.get(key),put:(key,value)=>cache.set(key,value)})};
+  ctx.SpreadsheetApp={openById:id=>{assert.equal(id,'17NPFYooBJlMfn-xQi6KRg0c6GT2W8tiAsW48bn2nf94');reads++;return {getSheetByName:()=>({getLastRow:()=>3,getRange:()=>({getValues:()=>[['Date','Event','School','school year'],['2026-11-03','No School','Genesee Career Institute','2026-27'],['2026-11-04','Half Day','School A','2026-27']]})})};}};
+  const a=ctx.dashboardSchoolCalendar_('2026-11-04','2026-11-03','America/Detroit');
+  assert.equal(a.closed,false);assert.equal(a.todayClosed,true);assert.equal(a.events[0].school,'School A');
+  ctx.dashboardSchoolCalendar_('2026-11-04','2026-11-03','America/Detroit');assert.equal(reads,1);
+  ctx.SpreadsheetApp.openById=()=>{throw new Error('No access');};
+  assert.equal(ctx.dashboardSchoolCalendar_('2026-11-05','2026-11-03','America/Detroit').status,'error');
+});
+test('a GCI closure suppresses activities and live timing while a feeder notice does not',()=>{
+  const ctx=backend();
+  const rows={Settings:[['Key','Value'],['timezone','America/Detroit']],Calendar:[['Date','Week','Day','Active'],['2026-11-03',11,'Tuesday',true]],Starters:[['Week','Day','Student Prompt','Active'],[11,'Tuesday','Prompt',true]]};
+  const ss={getSheetByName:name=>rows[name]?sheet(rows[name]):null};
+  ctx.dashboardSchoolCalendar_=()=>({status:'ready',events:[],closed:true,todayClosed:true});
+  const closed=ctx.dashboardData_(ss,new Date('2026-11-03T12:00:00Z'));
+  assert.equal(closed.instructionalDay,false);assert.equal(closed.todayInstructionalDay,false);assert.equal(closed.starter,null);
+  ctx.dashboardSchoolCalendar_=()=>({status:'ready',events:[{school:'Fenton High School',event:'No School'}],closed:false,todayClosed:false});
+  const open=ctx.dashboardData_(ss,new Date('2026-11-03T12:00:00Z'));
+  assert.equal(open.todayInstructionalDay,true);assert.equal(open.starter.prompt,'Prompt');
 });

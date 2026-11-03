@@ -65,7 +65,7 @@ if(typeof module!=='undefined')module.exports=GCI;
 if(typeof document!=='undefined'){
   const $=id=>document.getElementById(id),esc=GCI.escape;
   const defaultFeedUrl='https://script.google.com/macros/s/AKfycbw4Rj6Xqlz61dI8N8jg9v8ehWSgkbLsCLF1ZSUZHk1RzSGf_s5ZDutLj4KfqQYLzQ/exec';
-  let data=null,tab='starter',preview=false,feedUrl='',inflight=false,lastKey=null,manual=null,lastSession=null,announcementTimer=null,soundContext=null,generation=0,lastAttempt=0,selectedDate='';
+  let data=null,tab='starter',preview=false,feedUrl='',inflight=false,lastKey=null,manual=null,lastSession=null,announcementTimer=null,soundContext=null,generation=0,lastAttempt=0,selectedDate='',showAllCourses=false;
   const openCourses=new Map();
   const store={get(key){try{return localStorage.getItem(key)||'';}catch{return '';}},set(key,value){try{localStorage.setItem(key,value);}catch{}}};
   let sound=store.get('gci.dashboard.sound')==='true';
@@ -94,18 +94,25 @@ if(typeof document!=='undefined'){
   }
   function shortDate(date,options={month:'short',day:'numeric'}){return new Date(`${date}T12:00:00Z`).toLocaleDateString('en-US',{...options,timeZone:'UTC'});}
   function renderCourses(){
-    if(!data){$('courses').innerHTML=GCI.courses.map(name=>`<details class="course"><summary>${esc(name)}</summary><div class="course-body"><p class="none-due">Connect Classroom to load deadlines.</p></div></details>`).join('');return;}
-    const today=GCI.localParts(new Date(),data.timezone).date,viewDate=selectedDate||today,week=GCI.weekDates(viewDate),phase=currentPhase();
+    const phase=data?GCI.scheduled(new Date(),data):null;
     const active=phase?.session;
     const activeCourses=GCI.sessionCourses(active);
-    if(active&&active!==lastSession){
-      GCI.sessionCourses(lastSession).forEach(name=>openCourses.set(name,false));
+    const visibleCourses=showAllCourses?GCI.courses:activeCourses;
+    const visible=visibleCourses.length>0;
+    document.querySelector('.deadlines').hidden=!visible;
+    document.querySelector('.layout').classList.toggle('no-session',!visible);
+    $('current-session').hidden=!showAllCourses;
+    $('expand-courses').setAttribute('aria-pressed',String(showAllCourses));
+    if(active!==lastSession&&!showAllCourses){
+      openCourses.clear();
       activeCourses.forEach(name=>openCourses.set(name,true));
-      lastSession=active;
     }
+    lastSession=active;
+    if(!data){$('courses').innerHTML=visibleCourses.map(name=>`<details class="course" open><summary>${esc(name)}</summary><div class="course-body"><p class="none-due">Connect Classroom to load deadlines.</p></div></details>`).join('');return;}
+    const today=GCI.localParts(new Date(),data.timezone).date,viewDate=selectedDate||today,week=GCI.weekDates(viewDate);
     $('week-label').textContent=`${shortDate(week[0])} – ${shortDate(week[6])}`;
     $('due-title').textContent=week[0]===GCI.weekDates(today)[0]?'Due This Week':'Due That Week';
-    $('courses').innerHTML=GCI.courses.map(name=>{
+    $('courses').innerHTML=visibleCourses.map(name=>{
       const course=data.courses.find(c=>c.name===name)||{name,status:'unconfigured',assignments:[]};
       const assignments=(course.assignments||[]).filter(a=>a.dueAt&&week.includes(GCI.localParts(new Date(a.dueAt),data.timezone).date)).sort((a,b)=>new Date(a.dueAt)-new Date(b.dueAt));
       const days=week.filter(date=>assignments.some(a=>GCI.localParts(new Date(a.dueAt),data.timezone).date===date));
@@ -120,6 +127,17 @@ if(typeof document!=='undefined'){
       return `<details class="course ${activeCourses.includes(name)?'active':''}" data-course="${esc(name)}" ${openCourses.get(name)?'open':''}><summary>${esc(name)}<span class="course-count">${course.status==='ready'&&!staleWeek?assignments.length:'—'}</span></summary><div class="course-body">${body}</div></details>`;
     }).join('');
     document.querySelectorAll('[data-course]').forEach(el=>el.addEventListener('toggle',()=>openCourses.set(el.dataset.course,el.open)));
+  }
+  function renderSchoolNotices(){
+    const el=$('school-notices'),calendar=data?.schoolCalendar;
+    if(!calendar){el.hidden=true;return;}
+    const fullLink='<a href="No_School_Viewer.html" target="_blank" rel="noopener noreferrer">Full calendar ↗</a>';
+    if(calendar.status!=='ready'){el.hidden=false;el.innerHTML='<span class="notice-heading">School calendar unavailable</span>'+fullLink;return;}
+    const events=calendar.events||[];
+    if(!events.length){el.hidden=true;return;}
+    const gci=events.filter(item=>['gci','genesee career institute','all schools'].includes(String(item.school).toLowerCase()));
+    el.hidden=false;
+    el.innerHTML=`<span class="notice-heading">School notices · ${shortDate(data.date)}</span>${gci.map(item=>`<span>${esc(item.school)}: ${esc(item.event)}</span>`).join('')}<details><summary>${events.length} school notice${events.length===1?'':'s'} · View affected schools</summary><ul>${events.map(item=>`<li><strong>${esc(item.school)}</strong> — ${esc(item.event)}</li>`).join('')}</ul></details>${fullLink}`;
   }
   function announce(phase){
     if(!phase||!data)return;
@@ -137,7 +155,7 @@ if(typeof document!=='undefined'){
     $('date-label').title=displayedDate===local.date?'Today':`Viewing ${displayedDate}; class timing still follows today`;
     const phase=currentPhase(now),key=phase?.key||'outside';
     if(lastKey!==null&&lastKey!==key&&phase)announce(phase);
-    if(lastKey!==key){lastKey=key;renderCourses();}
+    if(lastKey!==key||lastSession!==(data?GCI.scheduled(now,data)?.session:undefined)){lastKey=key;renderCourses();}
     $('session-label').textContent=phase?.session||(data&&!(data.todayInstructionalDay??data.instructionalDay)?'No class today':'Outside class');
     $('phases').innerHTML=(data?.phases||GCI.phases).map((p,i)=>`<li class="${phase?.index===i?'current':phase&&phase.index>i?'past':''}" ${phase?.index===i?'aria-current="step"':''}><span class="phase-number">${i+1}</span>${esc(p.name)}</li>`).join('');
     $('phase-remaining').textContent=phase?`${Math.floor(phase.remaining/60).toString().padStart(2,'0')}:${(phase.remaining%60).toString().padStart(2,'0')}`:'—';
@@ -151,7 +169,7 @@ if(typeof document!=='undefined'){
     $('session-choice').value=selectedSession||currentPhase()?.session||data.sessions[0]?.name||'';
     $('phase-choice').innerHTML=data.phases.map((p,i)=>`<option value="${i}">${esc(p.name)}${i===1?' · first work block':i===3?' · second work block':''}</option>`).join('');
     $('phase-choice').value=selectedPhase||'0';
-    renderContent();renderCourses();tick();
+    renderContent();renderCourses();renderSchoolNotices();tick();
   }
   function refresh(){
     if(inflight)return;
@@ -180,6 +198,8 @@ if(typeof document!=='undefined'){
   $('save-feed').onclick=()=>{const next=GCI.validFeed($('feed-url').value.trim());if(!next){$('settings-message').textContent='Enter a Google Apps Script /exec deployment URL.';return;}if(inflight){$('settings-message').textContent='Wait for the current refresh to finish.';return;}feedUrl=next;preview=false;data=null;manual=null;lastKey=null;store.set('gci.dashboard.feed',next);$('settings-message').textContent='Connection saved on this browser.';refresh();};
   $('demo').onclick=()=>{if(inflight)return;preview=true;manual=null;lastKey=null;refresh();$('settings').close();};
   $('refresh').onclick=refresh;
+  $('expand-courses').onclick=()=>{showAllCourses=true;GCI.courses.forEach(name=>openCourses.set(name,true));renderCourses();$('settings').close();};
+  $('current-session').onclick=()=>{showAllCourses=false;lastSession=null;renderCourses();};
   $('set-phase').onclick=()=>{
     if(!data)return;const now=new Date(),scheduled=GCI.scheduled(now,data),session=$('session-choice').value,index=Number($('phase-choice').value),duration=data.phases[index].minutes*60000;
     manual={session,index,key:`manual:${Date.now()}`,ends:now.getTime()+duration,expires:scheduled?.session===session?scheduled.sessionEnd:now.getTime()+duration};
