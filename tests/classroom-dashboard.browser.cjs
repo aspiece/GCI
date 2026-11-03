@@ -104,5 +104,18 @@ const base=process.env.DASHBOARD_TEST_URL||'http://127.0.0.1:8765/Classroom_Dash
   assert.match(await live.locator('#school-notices summary').textContent(),/Other notices \(1\)/);
   fail=true;await live.locator('#refresh').click();await live.waitForFunction(()=>document.getElementById('connection').textContent.includes('previously loaded'));
   assert.equal(await live.locator('.prompt').textContent(),'<img src=x onerror=alert(1)>');
+  await live.locator('#timer-open').click();
+  assert.equal(await live.locator('#countdown-dialog').isVisible(),true);
+  await live.locator('[data-minutes="1"]').click();await live.locator('#timer-toggle').click();
+  assert.equal(await live.locator('#timer-minutes').isDisabled(),true);
+  await live.clock.runFor(10500);assert.equal(await live.locator('#timer-value').textContent(),'00:50');
+  await live.locator('#timer-toggle').click();const paused=await live.locator('#timer-value').textContent();
+  await live.clock.runFor(20000);assert.equal(await live.locator('#timer-value').textContent(),paused);
+  await live.locator('#timer-toggle').click();await live.locator('#timer-close').click();
+  await live.clock.runFor(50000);
+  assert.equal(await live.locator('#countdown-dialog').isVisible(),true);assert.equal(await live.locator('#timer-value').textContent(),'00:00');
+  assert.equal(await live.locator('#timer-status').textContent(),'Time’s up!');
+  await live.locator('#timer-close').click();await live.clock.runFor(1000);assert.equal(await live.locator('#countdown-dialog').isVisible(),false);
+  await live.locator('#timer-open').click();await live.locator('#timer-reset').click();assert.equal(await live.locator('#timer-value').textContent(),'01:00');
   await browser.close();console.log('Browser checks passed: transitions, tabs, manual controls, mobile layout, feed rendering, safe text, and offline retention.');
 })().catch(error=>{console.error(error);process.exit(1);});
