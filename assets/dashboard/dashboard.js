@@ -46,11 +46,16 @@ const GCI = (() => {
     return `<span class="submission-count${complete?' complete':''}" aria-label="${counts.submitted} of ${counts.total} assigned students submitted">${counts.submitted} / ${counts.total} submitted</span>`;
   }
   function learningTargetForSession(data,session){
-    if(!data?.instructionalDay)return '';
+    if(!data)return '';
     let target='';
     if(session==='3rd Session')target=data.learningTargets?.third;
     else if(session==='1st Session'||session==='2nd Session')target=data.learningTargets?.shared??data.learningTarget;
     return typeof target==='string'?target.trim():'';
+  }
+  function contentSession(data,group='auto',now=new Date()){
+    if(group==='third')return '3rd Session';
+    if(group==='shared')return '1st Session';
+    return data&&scheduled(now,data)?.session||'1st Session';
   }
   function focusPlanForSession(data,session){
     if(!data?.instructionalDay)return null;
@@ -103,7 +108,7 @@ const GCI = (() => {
       exit:{title:'Make your thinking visible',prompt:'Describe one conditional you tested today. What input did you try, what happened, and what would you test next?'},
       courses:courses.map((name,i)=>({name,status:'ready',assignments:i<3?[{title:['Conditionals practice','Test a decision','Explain your solution'][i],dueAt:`${week[i+1]}T20:00:00.000Z`,url:'https://classroom.google.com/',submissions:{submitted:[18,21,24][i],total:24}}]:[]}))};
   }
-  return {courses,phases,sessions,sessionCourses,localParts,weekDates,addDays,validDate,scheduled,safeUrl,validFeed,escape,submissionBadge,learningTargetForSession,focusPlanForSession,createCountdown,timerPosition,validate,sample};
+  return {courses,phases,sessions,sessionCourses,localParts,weekDates,addDays,validDate,scheduled,safeUrl,validFeed,escape,submissionBadge,learningTargetForSession,contentSession,focusPlanForSession,createCountdown,timerPosition,validate,sample};
 })();
 if(typeof module!=='undefined')module.exports=GCI;
 if(typeof document!=='undefined'){
@@ -156,13 +161,14 @@ if(typeof document!=='undefined'){
   }
   function selectTab(next){tab=next;if(next==='focus')focusPanel='task';document.querySelectorAll('[data-tab]').forEach(b=>{const selected=b.dataset.tab===tab;b.setAttribute('aria-selected',String(selected));b.tabIndex=selected?0:-1;});$('activity-panel').setAttribute('aria-labelledby',`tab-${tab}`);renderContent();}
   function link(url,label){const safe=GCI.safeUrl(url);return safe?`<a href="${esc(safe)}" target="_blank" rel="noopener noreferrer">${esc(label)} ↗</a>`:'';}
-  function viewedSession(){return targetGroup==='third'?'3rd Session':targetGroup==='shared'?'1st Session':data?GCI.scheduled(new Date(),data)?.session:undefined;}
+  function viewedSession(){return GCI.contentSession(data,targetGroup);}
   function renderLearningTarget(){
     const session=viewedSession();
     const target=GCI.learningTargetForSession(data,session);
-    $('learning-target').hidden=!target;
-    $('target-text').textContent=target;
-    $('target-course').textContent=session==='3rd Session'?'AP':'Intro';
+    const course=session==='3rd Session'?'AP':'Intro';
+    $('learning-target').hidden=!data;
+    $('target-text').textContent=target||`No ${course} learning target is available for this date.`;
+    $('target-course').textContent=course;
   }
   function renderFocus(){
     const session=viewedSession(),plan=GCI.focusPlanForSession(data,session),context=data.date+'|'+(session==='3rd Session'?'third':session?'shared':'none');

@@ -176,12 +176,13 @@ test('legacy target extraction never publishes the surrounding teacher notes',()
   assert.equal(ctx.dashboardLearningTarget_(null,{'Teacher Notes':'PRIVATE NOTES WITHOUT A LABELED TARGET'},'Monday'),'');
   assert.equal(ctx.dashboardLearningTarget_(null,{'Teacher Notes':'Target: Explain a conditional. PRIVATE CLASS NOTES.'},'Monday'),'Explain a conditional.');
 });
-test('selected date determines the learning target and inactive dates hide it',()=>{
+test('selected date determines the planned target even on a no-class day',()=>{
   const ctx=backend();ctx.dashboardSchoolCalendar_=()=>({status:'ready',events:[],closed:false,todayClosed:false});
-  const rows={Settings:[['Key','Value'],['timezone','America/Detroit']],Calendar:[['Date','Week','Day','Active'],['2026-11-03',11,'Tuesday',false],['2026-11-04',11,'Wednesday',true]],'Focus Map':[['Week','Wednesday Learning Target'],[11,'I can explain Boolean decisions.']]};
+  const rows={Settings:[['Key','Value'],['timezone','America/Detroit']],Calendar:[['Date','Week','Day','Active'],['2026-11-03',11,'Tuesday',false],['2026-11-04',11,'Wednesday',true]],'Focus Map':[['Week','Tuesday Learning Target','Wednesday Learning Target'],[11,'I can use conditionals.','I can explain Boolean decisions.']]};
   const ss={getSheetByName:name=>rows[name]?sheet(rows[name]):null};
   assert.equal(ctx.dashboardData_(ss,new Date('2026-11-03T12:00:00Z'),'2026-11-04').learningTarget,'I can explain Boolean decisions.');
-  assert.equal(ctx.dashboardData_(ss,new Date('2026-11-03T12:00:00Z')).learningTarget,'');
+  const noClass=ctx.dashboardData_(ss,new Date('2026-11-03T12:00:00Z'));
+  assert.equal(noClass.learningTarget,'I can use conditionals.');assert.equal(noClass.instructionalDay,false);assert.equal(noClass.starter,null);assert.equal(noClass.exit,null);
 });
 test('1st and 2nd share a target and 3rd never falls back to the shared target',()=>{
   const data={instructionalDay:true,learningTarget:'Legacy shared',learningTargets:{shared:'Shared target',third:'Third target'}};
@@ -191,7 +192,7 @@ test('1st and 2nd share a target and 3rd never falls back to the shared target',
   assert.equal(app.learningTargetForSession({...data,learningTargets:{shared:'Shared target',third:''}},'3rd Session'),'');
   assert.equal(app.learningTargetForSession({instructionalDay:true,learningTarget:'Legacy shared'},'3rd Session'),'');
   assert.equal(app.learningTargetForSession(data,undefined),'');
-  assert.equal(app.learningTargetForSession({...data,instructionalDay:false},'3rd Session'),'');
+  assert.equal(app.learningTargetForSession({...data,instructionalDay:false},'3rd Session'),'Third target');
 });
 test('feed keeps separate weekday targets for the shared and third groups',()=>{
   const ctx=backend(),focus={'Wednesday Learning Target':'Shared conditionals target','Wednesday 3rd Session Learning Target':'Third session target'};
@@ -200,13 +201,21 @@ test('feed keeps separate weekday targets for the shared and third groups',()=>{
   const legacy=ctx.dashboardSessionTargets_({}, {'Teacher Notes':'Target: Shared legacy target.'},'Wednesday');
   assert.equal(legacy.shared,'Shared legacy target.');assert.equal(legacy.third,'');
 });
-test('selected-day feed exposes both target groups and blanks both on inactive days',()=>{
+test('selected-day feed keeps both planned targets available without enabling class activities',()=>{
   const ctx=backend();ctx.dashboardSchoolCalendar_=()=>({status:'ready',events:[],closed:false,todayClosed:false});
-  const rows={Settings:[['Key','Value'],['timezone','America/Detroit']],Calendar:[['Date','Week','Day','Active'],['2026-11-03',11,'Tuesday',false],['2026-11-04',11,'Wednesday',true]],'Focus Map':[['Week','Wednesday Learning Target','Wednesday 3rd Session Learning Target'],[11,'Shared target','Separate third target']]};
+  const rows={Settings:[['Key','Value'],['timezone','America/Detroit']],Calendar:[['Date','Week','Day','Active'],['2026-11-03',11,'Tuesday',false],['2026-11-04',11,'Wednesday',true]],'Focus Map':[['Week','Wednesday Learning Target','Wednesday 3rd Session Learning Target','Tuesday Learning Target','Tuesday 3rd Session Learning Target'],[11,'Shared target','Separate third target','Tuesday Intro','Tuesday AP']]};
   const ss={getSheetByName:name=>rows[name]?sheet(rows[name]):null};
   const data=ctx.dashboardData_(ss,new Date('2026-11-03T12:00:00Z'),'2026-11-04');
   assert.equal(data.learningTargets.shared,'Shared target');assert.equal(data.learningTargets.third,'Separate third target');
-  const inactive=ctx.dashboardData_(ss,new Date('2026-11-03T12:00:00Z'));assert.equal(inactive.learningTargets.shared,'');assert.equal(inactive.learningTargets.third,'');
+  const inactive=ctx.dashboardData_(ss,new Date('2026-11-03T12:00:00Z'));assert.equal(inactive.learningTargets.shared,'Tuesday Intro');assert.equal(inactive.learningTargets.third,'Tuesday AP');assert.equal(inactive.todayInstructionalDay,false);assert.equal(inactive.focusPlans.shared,null);
+});
+test('content defaults to Intro outside class hours and honors active AP and manual previews',()=>{
+  const data=fixture();
+  assert.equal(app.contentSession(data,'auto',new Date('2026-11-03T23:00:00Z')),'1st Session');
+  assert.equal(app.contentSession(data,'auto',new Date('2026-11-03T17:10:00Z')),'3rd Session');
+  assert.equal(app.contentSession(data,'third',new Date('2026-11-03T23:00:00Z')),'3rd Session');
+  assert.equal(app.contentSession(data,'shared',new Date('2026-11-03T17:10:00Z')),'1st Session');
+  assert.equal(app.contentSession({...data,todayInstructionalDay:false},'auto',new Date('2026-11-03T17:10:00Z')),'1st Session');
 });
 test('countdown uses a deadline and keeps its configured duration',()=>{
   const timer=app.createCountdown(60);assert.equal(timer.snapshot(0).remaining,60);assert.equal(timer.snapshot(0).mode,'ready');

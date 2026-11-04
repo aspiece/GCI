@@ -80,6 +80,8 @@ const base=process.env.DASHBOARD_TEST_URL||'http://127.0.0.1:8765/Classroom_Dash
   await page.clock.setSystemTime(new Date('2026-11-03T15:36:00Z'));await page.clock.runFor(1000);
   assert.equal(await page.locator('.deadlines').isVisible(),false);
   assert.equal(await page.locator('.layout.no-session').count(),1);
+  assert.equal(await page.locator('#learning-target').isVisible(),true);
+  assert.equal(await page.locator('#target-course').textContent(),'Intro');
   await page.clock.setSystemTime(new Date('2026-11-03T17:06:00Z'));await page.clock.runFor(1000);
   assert.equal(await page.locator('.course').count(),2);
   assert.equal(await page.locator('[data-course="3rd Session"]').count(),1);
