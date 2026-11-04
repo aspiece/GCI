@@ -6,7 +6,7 @@ The new page is `Classroom_Dashboard.html`. It is independent of the current App
 
 - Daily Starter, Brain Break, and Exit Ticket content tabs.
 - Compact desktop header with date and controls on one line, smaller phase strip and tabs, and a slim learning-target strip above the activity. The target remains visible across all three activity tabs and follows the selected date. Blank targets and noninstructional dates hide the strip.
-- A Timer button opens a large countdown popup with 1/3/5/10-minute presets, a custom 1–180-minute duration, Start/Pause/Resume, and Reset. Closing it keeps the countdown running; the popup reopens once when time is up. It runs independently of the scheduled class phases.
+- A Timer button opens a movable countdown window with 1/3/5/10-minute presets, a custom 1–180-minute duration, Start/Pause/Resume, Reset, +30 sec, and +1 min. Drag its title or use arrow keys when the title is focused; Center restores its position. Closing it keeps the countdown running; the window reopens once when time is up. It runs independently of scheduled class phases and leaves the dashboard usable while open.
 - Previous/Next day, Today, and a date picker. The complete selected date (weekday, month, day, and year) appears at the top right. Activities and deadlines follow the selected date/week; the clock, phase timing, and announcements follow today’s actual class calendar. Navigation includes weekends and inactive dates, which show an empty scheduled-activity message.
 - Compact class progress and countdown: Daily Starter → Focus → Brain Break → Focus → Cleanup.
 - A six-second visual announcement when a phase starts, optional chime, manual phase selection, repeat announcement, and return to scheduled timing.
@@ -93,7 +93,7 @@ node tests/classroom-dashboard.browser.cjs
 
 The unit tests cover phase boundaries, timezone/week handling, no-school behavior, API pagination and individual-assignment exclusion, and feed field allowlisting. The browser test script covers keyboard tab navigation, mobile overflow, transition banners, and feed failure behavior. These use fixtures, not live Google accounts. School authorization, the actual course IDs, and the deployed feed still require a live connection test.
 
-Build verification: all twenty-nine unit tests passed, including countdown deadlines, pause/resume, background-time completion, reset/restart, duration validation, target groups, and existing feed behavior. Browser verification could not run in the build environment because Chromium was not installed and its download was blocked. The browser script includes popup controls, close-and-continue, completion reopening, automatic target switching, and instructor group preview for execution in a browser-enabled environment; responsive layout and visual presentation still need that review before classroom use.
+Build verification: all thirty-three unit tests passed, including time extensions while running/paused/complete, reset-duration preservation, viewport position bounds, countdown deadlines, and existing feed behavior. Browser verification could not run in the build environment because Chromium was not installed and its download was blocked. Browser assertions include dragging, keyboard movement, centering, time-extension buttons, close-and-continue, and completion reopening for execution in a browser-enabled environment; responsive layout and visual presentation still need that review before classroom use.
 
 ## Daily learning targets
 
@@ -112,7 +112,11 @@ Replace `Code.gs` in the existing feed project with this version and use Deploy 
 
 ## Popup timer
 
-Select **Timer** in the header, choose a preset or enter minutes, then select Start. The same button becomes Pause/Resume. Reset stops the countdown and restores the selected duration. Closing the popup or pressing Escape keeps it running; reopen it using the header button, which shows the remaining time. At zero, the popup opens once with “Time’s up!” and an optional soft chime when sound is enabled. Phase transitions also appear inside an open timer popup so their visual cue is not lost.
+Select **Timer** in the header, choose a preset or enter minutes, then select Start. The same button becomes Pause/Resume. **+30 sec** and **+1 min** extend the remaining time without changing whether the timer is running or paused. After completion, adding time leaves it paused until Resume is selected. Reset stops the countdown and restores the original selected duration, excluding extensions. Time additions are limited to 180 minutes remaining.
+
+Drag the timer's title with a mouse or touch. With the title focused, arrow keys move by 10 pixels, Shift+arrow by 30 pixels, and Home recenters it. **Center** also restores the middle position. The window stays within the viewport, keeps its position when closed/reopened, and is constrained again after resizing. Position resets on page reload. The timer is a floating nonmodal window, so the dashboard remains usable while it is open.
+
+Closing the window or pressing Escape keeps it running; reopen it using the header button, which shows the remaining time. At zero, it opens once with “Time’s up!” and an optional soft chime when sound is enabled. Class phase announcements remain available while the timer is open.
 
 Countdowns use a deadline, so delayed browser updates do not extend the duration. Browser/device suspension can delay the completion notification until the page runs again. Reloading the page resets the timer. No Apps Script update is needed for the popup timer or for changing existing target cells.
 
