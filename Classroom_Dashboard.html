@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="dark">
   <title>Classroom Dashboard · GCI</title>
-  <link rel="stylesheet" href="assets/dashboard/dashboard.css?v=20261103-popup-timer">
-  <script src="assets/dashboard/dashboard.js?v=20261103-popup-timer" defer></script>
+  <link rel="stylesheet" href="assets/dashboard/dashboard.css?v=20261103-movable-timer">
+  <script src="assets/dashboard/dashboard.js?v=20261103-movable-timer" defer></script>
 </head>
 <body>
   <header class="topbar">
@@ -39,13 +39,15 @@
     </aside>
   </main>
   <div id="announcement" class="announcement" role="status" aria-live="polite" aria-atomic="true" hidden><div><span id="announcement-icon" aria-hidden="true"></span><p id="announcement-session"></p><h2 id="announcement-title"></h2><p id="announcement-message"></p><button id="dismiss-announcement">Continue</button></div></div>
-  <dialog id="countdown-dialog" class="countdown-dialog" aria-labelledby="countdown-title">
-    <div class="dialog-header"><h2 id="countdown-title">Classroom timer</h2><button id="timer-close" aria-label="Close timer">Close</button></div>
+  <dialog id="countdown-dialog" class="countdown-dialog" aria-labelledby="countdown-title" aria-modal="false">
+    <div class="dialog-header"><button id="timer-drag-handle" class="timer-drag-handle" aria-describedby="timer-move-help"><span aria-hidden="true">⠿</span> <span id="countdown-title">Classroom timer</span></button><div class="countdown-window-actions"><button id="timer-center">Center</button><button id="timer-close" aria-label="Close timer">Close</button></div></div>
+    <p id="timer-move-help" class="muted timer-move-help">Drag the title to move. When focused, use arrow keys to move or Home to center.</p>
     <p id="timer-phase-notice" class="timer-phase-notice" role="status" hidden></p>
     <div id="timer-value" class="countdown-value" role="timer" aria-live="off">05:00</div>
     <p id="timer-status" class="countdown-status" role="status">Ready</p>
     <div class="countdown-setup"><label for="timer-minutes">Minutes</label><input id="timer-minutes" type="number" min="1" max="180" step="1" value="5" inputmode="numeric"><div class="timer-presets" aria-label="Timer presets"><button data-minutes="1">1 min</button><button data-minutes="3">3 min</button><button data-minutes="5">5 min</button><button data-minutes="10">10 min</button></div></div>
     <div class="countdown-actions"><button id="timer-toggle">Start</button><button id="timer-reset">Reset</button></div>
+    <div class="countdown-add-time" aria-label="Add time"><button data-add-seconds="30">+30 sec</button><button data-add-seconds="60">+1 min</button></div>
     <p class="muted countdown-hint">Closing this window keeps the timer running. It will pop up when time is up.</p>
   </dialog>
   <dialog id="settings">

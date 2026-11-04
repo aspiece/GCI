@@ -60,7 +60,7 @@ const GCI = (() => {
     }
     function reset(){remainingMs=duration*1000;deadline=null;mode='ready';}
     function snapshot(now=Date.now()){
-      if(deadline!==null){remainingMs=Math.min(duration*1000,Math.max(0,deadline-now));if(remainingMs===0){deadline=null;mode='done';}}
+      if(deadline!==null){remainingMs=Math.max(0,deadline-now);if(remainingMs===0){deadline=null;mode='done';}}
       return {duration,remaining:Math.ceil(remainingMs/1000),mode,running:mode==='running',completed:mode==='done'};
     }
     function start(now=Date.now()){
@@ -69,8 +69,19 @@ const GCI = (() => {
       deadline=now+remainingMs;mode='running';
     }
     function pause(now=Date.now()){if(snapshot(now).running){deadline=null;mode='paused';}}
+    function add(seconds,now=Date.now()){
+      if(!Number.isInteger(seconds)||seconds<1)throw new RangeError('Added time must be a positive number of seconds.');
+      const state=snapshot(now);
+      if(remainingMs+seconds*1000>10800000)throw new RangeError('Timer cannot exceed 180 minutes.');
+      remainingMs+=seconds*1000;
+      if(state.running)deadline=now+remainingMs;
+      else if(state.completed)mode='paused';
+    }
     configure(initialSeconds);
-    return {configure,reset,snapshot,start,pause};
+    return {configure,reset,snapshot,start,pause,add};
+  }
+  function timerPosition(x,y,width,height,viewportWidth,viewportHeight){
+    return {x:Math.max(8,Math.min(x,Math.max(8,viewportWidth-width-8))),y:Math.max(8,Math.min(y,Math.max(8,viewportHeight-height-8)))};
   }
   function validate(data){
     if(!data||data.version!==1||!/^\d{4}-\d{2}-\d{2}$/.test(data.date)||!Array.isArray(data.courses)||!Array.isArray(data.sessions)||!Array.isArray(data.phases)||data.phases.length!==5)throw new Error('The feed is not a dashboard feed.');
@@ -86,7 +97,7 @@ const GCI = (() => {
       exit:{title:'Make your thinking visible',prompt:'Describe one conditional you tested today. What input did you try, what happened, and what would you test next?'},
       courses:courses.map((name,i)=>({name,status:'ready',assignments:i<3?[{title:['Conditionals practice','Test a decision','Explain your solution'][i],dueAt:`${week[i+1]}T20:00:00.000Z`,url:'https://classroom.google.com/',submissions:{submitted:[18,21,24][i],total:24}}]:[]}))};
   }
-  return {courses,phases,sessions,sessionCourses,localParts,weekDates,addDays,validDate,scheduled,safeUrl,validFeed,escape,submissionBadge,learningTargetForSession,createCountdown,validate,sample};
+  return {courses,phases,sessions,sessionCourses,localParts,weekDates,addDays,validDate,scheduled,safeUrl,validFeed,escape,submissionBadge,learningTargetForSession,createCountdown,timerPosition,validate,sample};
 })();
 if(typeof module!=='undefined')module.exports=GCI;
 if(typeof document!=='undefined'){
@@ -97,8 +108,21 @@ if(typeof document!=='undefined'){
   const store={get(key){try{return localStorage.getItem(key)||'';}catch{return '';}},set(key,value){try{localStorage.setItem(key,value);}catch{}}};
   let sound=store.get('gci.dashboard.sound')==='true';
   const countdown=GCI.createCountdown();
-  let timerNotified=false;
-  function openCountdown(){if(!$('countdown-dialog').open)$('countdown-dialog').showModal();$('timer-open').setAttribute('aria-expanded','true');}
+  let timerNotified=false,timerLocation=null,timerDrag=null;
+  function positionCountdown(x,y){
+    const dialog=$('countdown-dialog'),rect=dialog.getBoundingClientRect();
+    timerLocation=GCI.timerPosition(x,y,rect.width,rect.height,window.innerWidth,window.innerHeight);
+    Object.assign(dialog.style,{left:timerLocation.x+'px',top:timerLocation.y+'px',right:'auto',bottom:'auto',margin:'0'});
+  }
+  function centerCountdown(){
+    timerLocation=null;
+    ['left','top','right','bottom','margin'].forEach(property=>$('countdown-dialog').style.removeProperty(property));
+  }
+  function stopTimerDrag(){
+    const handle=$('timer-drag-handle'),id=timerDrag?.id;timerDrag=null;handle.classList.remove('dragging');
+    if(id!==undefined&&handle.hasPointerCapture(id))handle.releasePointerCapture(id);
+  }
+  function openCountdown(){if(!$('countdown-dialog').open)$('countdown-dialog').show();if(timerLocation)positionCountdown(timerLocation.x,timerLocation.y);$('timer-open').setAttribute('aria-expanded','true');}
   function renderCountdown(){
     const state=countdown.snapshot(),text=`${Math.floor(state.remaining/60).toString().padStart(2,'0')}:${(state.remaining%60).toString().padStart(2,'0')}`;
     if($('timer-value').textContent!==text)$('timer-value').textContent=text;
@@ -107,6 +131,7 @@ if(typeof document!=='undefined'){
     if($('timer-toggle').textContent!==toggleLabel)$('timer-toggle').textContent=toggleLabel;
     $('timer-minutes').disabled=state.running;
     document.querySelectorAll('[data-minutes]').forEach(button=>button.disabled=state.running);
+    document.querySelectorAll('[data-add-seconds]').forEach(button=>button.disabled=state.remaining+Number(button.dataset.addSeconds)>10800);
     const label=state.completed?'Time’s up!':state.running?'Counting down':state.mode==='paused'?'Paused':'Ready';
     if($('timer-status').textContent!==label)$('timer-status').textContent=label;
     const headerLabel=state.mode==='ready'?'Timer':state.completed?'Timer · Done':`Timer ${text}`;
@@ -211,6 +236,7 @@ if(typeof document!=='undefined'){
     $('announcement-title').textContent=p.name;$('announcement-message').textContent=p.message||'';$('announcement-icon').textContent=p.icon||'✦';$('announcement-session').textContent=phase.session;
     $('timer-phase-notice').textContent=`${phase.session} · ${p.name}: ${p.message||''}`;
     $('timer-phase-notice').hidden=!$('countdown-dialog').open;
+    if(timerLocation&&$('countdown-dialog').open)positionCountdown(timerLocation.x,timerLocation.y);
     $('announcement').hidden=false;clearTimeout(announcementTimer);announcementTimer=setTimeout(()=>{$('announcement').hidden=true;$('timer-phase-notice').hidden=true;},6000);
     playChime();
   }
@@ -271,7 +297,29 @@ if(typeof document!=='undefined'){
   $('refresh').onclick=refresh;
   $('timer-open').onclick=()=>{renderCountdown();openCountdown();};
   $('timer-close').onclick=()=>$('countdown-dialog').close();
-  $('countdown-dialog').onclose=()=>{$('timer-open').setAttribute('aria-expanded','false');$('timer-phase-notice').hidden=true;};
+  $('countdown-dialog').onclose=()=>{stopTimerDrag();$('timer-open').setAttribute('aria-expanded','false');$('timer-phase-notice').hidden=true;};
+  $('timer-center').onclick=centerCountdown;
+  $('timer-drag-handle').onpointerdown=event=>{
+    if(event.button!==0||event.isPrimary===false)return;
+    const rect=$('countdown-dialog').getBoundingClientRect();
+    timerDrag={id:event.pointerId,x:event.clientX,y:event.clientY,left:rect.left,top:rect.top};
+    event.preventDefault();event.currentTarget.focus();event.currentTarget.setPointerCapture(event.pointerId);event.currentTarget.classList.add('dragging');
+  };
+  $('timer-drag-handle').onpointermove=event=>{if(timerDrag?.id===event.pointerId)positionCountdown(timerDrag.left+event.clientX-timerDrag.x,timerDrag.top+event.clientY-timerDrag.y);};
+  ['pointerup','pointercancel','lostpointercapture'].forEach(name=>$('timer-drag-handle').addEventListener(name,stopTimerDrag));
+  $('timer-drag-handle').onkeydown=event=>{
+    if(event.key==='Home'){event.preventDefault();centerCountdown();return;}
+    const directions={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]},direction=directions[event.key];
+    if(!direction)return;event.preventDefault();
+    const rect=$('countdown-dialog').getBoundingClientRect(),step=event.shiftKey?30:10;
+    positionCountdown(rect.left+direction[0]*step,rect.top+direction[1]*step);
+  };
+  window.addEventListener('resize',()=>{if(timerLocation&&$('countdown-dialog').open)positionCountdown(timerLocation.x,timerLocation.y);});
+  document.querySelectorAll('[data-add-seconds]').forEach(button=>button.onclick=()=>{
+    const seconds=Number(button.dataset.addSeconds);
+    if(countdown.snapshot().remaining+seconds>10800)return;
+    countdown.add(seconds);timerNotified=false;renderCountdown();
+  });
   $('timer-minutes').onchange=()=>configureCountdown(Number($('timer-minutes').value));
   document.querySelectorAll('[data-minutes]').forEach(button=>button.onclick=()=>configureCountdown(Number(button.dataset.minutes)));
   $('timer-toggle').onclick=()=>{if(!$('timer-minutes').checkValidity()){$('timer-minutes').reportValidity();return;}if(countdown.snapshot().running)countdown.pause();else{countdown.start();timerNotified=false;}renderCountdown();};
@@ -289,7 +337,7 @@ if(typeof document!=='undefined'){
   $('sound').onchange=async()=>{sound=$('sound').checked;store.set('gci.dashboard.sound',String(sound));if(sound){try{soundContext ||= new (window.AudioContext||window.webkitAudioContext)();await soundContext.resume();}catch{sound=false;$('sound').checked=false;store.set('gci.dashboard.sound','false');}}};
   document.addEventListener('pointerdown',()=>{if(sound&&!soundContext){try{soundContext=new (window.AudioContext||window.webkitAudioContext)();soundContext.resume().catch(()=>{});}catch{}}});
   $('dismiss-announcement').onclick=()=>{$('announcement').hidden=true;$('timer-phase-notice').hidden=true;clearTimeout(announcementTimer);};
-  document.addEventListener('keydown',event=>{if(event.key==='Escape'){$('announcement').hidden=true;$('timer-phase-notice').hidden=true;clearTimeout(announcementTimer);}});
+  document.addEventListener('keydown',event=>{if(event.key==='Escape'){const announcementVisible=!$('announcement').hidden;$('announcement').hidden=true;$('timer-phase-notice').hidden=true;clearTimeout(announcementTimer);if(!announcementVisible&&$('countdown-dialog').open&&!$('settings').open)$('countdown-dialog').close();}});
   $('deeper').onclick=()=>{const content=$('deeper-content');if(content){content.hidden=!content.hidden;$('deeper').textContent=content.hidden?'Go deeper':'Hide deeper question';}};
   $('fullscreen').onclick=async()=>{try{if(!document.fullscreenElement)await document.documentElement.requestFullscreen();else await document.exitFullscreen();}catch{status('Use your browser’s full-screen command if full screen is blocked.','error');}};
   const tabs=[...document.querySelectorAll('[data-tab]')];

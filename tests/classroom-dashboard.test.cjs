@@ -232,3 +232,28 @@ test('countdown reset and duration changes stop it and reject invalid durations'
   for(const seconds of [0,-1,1.5,NaN,Infinity,10801])assert.throws(()=>timer.configure(seconds),RangeError);
   timer.configure(10800);assert.equal(timer.snapshot().remaining,10800);
 });
+test('adding time extends the deadline without pausing or changing the reset duration',()=>{
+  const timer=app.createCountdown(60);timer.start(0);timer.add(30,10000);
+  assert.equal(timer.snapshot(10000).remaining,80);assert.equal(timer.snapshot(10000).running,true);
+  timer.add(60,20000);assert.equal(timer.snapshot(20000).remaining,130);
+  assert.equal(timer.snapshot(30000).remaining,120);assert.equal(timer.snapshot(30000).duration,60);
+  timer.reset();assert.equal(timer.snapshot(40000).remaining,60);
+});
+test('adding time preserves ready or paused state and makes completed timers resumable',()=>{
+  const timer=app.createCountdown(60);timer.add(30,0);assert.equal(timer.snapshot(0).mode,'ready');assert.equal(timer.snapshot(0).remaining,90);
+  timer.start(0);timer.pause(10000);timer.add(60,20000);
+  assert.equal(timer.snapshot(500000).remaining,140);assert.equal(timer.snapshot(500000).mode,'paused');
+  timer.start(500000);timer.snapshot(1000000);timer.add(30,1000000);
+  assert.equal(timer.snapshot(1001000).remaining,30);assert.equal(timer.snapshot(1001000).mode,'paused');
+});
+test('time extensions validate input and respect the 180-minute limit',()=>{
+  const timer=app.createCountdown(10770);timer.add(30,0);assert.equal(timer.snapshot(0).remaining,10800);
+  assert.throws(()=>timer.add(1,0),RangeError);
+  for(const seconds of [0,-30,0.5,NaN,Infinity])assert.throws(()=>timer.add(seconds,0),RangeError);
+});
+test('timer dragging stays within the available viewport',()=>{
+  assert.deepEqual(app.timerPosition(300,100,620,500,1280,800),{x:300,y:100});
+  assert.deepEqual(app.timerPosition(-100,-100,620,500,1280,800),{x:8,y:8});
+  assert.deepEqual(app.timerPosition(5000,5000,620,500,1280,800),{x:652,y:292});
+  assert.deepEqual(app.timerPosition(300,100,358,600,390,650),{x:24,y:42});
+});
