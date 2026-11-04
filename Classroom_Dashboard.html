@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="dark">
   <title>Classroom Dashboard · GCI</title>
-  <link rel="stylesheet" href="assets/dashboard/dashboard.css?v=20261103-target-visible">
-  <script src="assets/dashboard/dashboard.js?v=20261103-target-visible" defer></script>
+  <link rel="stylesheet" href="assets/dashboard/dashboard.css?v=20261104-reminders">
+  <script src="assets/dashboard/dashboard.js?v=20261104-reminders" defer></script>
 </head>
 <body>
   <header class="topbar">
@@ -31,11 +31,12 @@
       <article id="activity-panel" class="activity-card" role="tabpanel" aria-labelledby="tab-starter" tabindex="0"></article>
       <footer class="activity-footer"><span>Think · Share · Build</span><button id="deeper" hidden>Go deeper</button><span id="content-date"></span></footer>
     </section>
-    <aside class="right-column" aria-label="Assignments and school notices">
+    <aside class="right-column" aria-label="Assignments, announcements, and school notices">
     <section class="deadlines" aria-labelledby="due-title">
       <div class="aside-heading"><div><div class="eyebrow">PLAN AHEAD</div><h2 id="due-title">Due This Week</h2><div id="week-label" class="muted"></div></div><button id="refresh" aria-label="Refresh content">↻</button></div>
       <button id="current-session" class="current-session" hidden>Current session</button><div id="courses"></div><p class="aside-note">Deadlines from Google Classroom</p>
     </section>
+    <section id="reminders" class="reminders" aria-labelledby="reminders-title" hidden></section>
     <section id="school-notices" class="school-notices" aria-label="School calendar notices" hidden></section>
     </aside>
   </main>

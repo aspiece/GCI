@@ -29,7 +29,7 @@ function doGet(e) {
     if(properties.getProperty('PUBLIC_FEED_ENABLED')!=='true')throw new Error('Feed disabled');
     const id=properties.getProperty('DASHBOARD_SPREADSHEET_ID');
     if(!id)throw new Error('Missing spreadsheet configuration');
-    const cache=CacheService.getScriptCache(),key='dashboard:v8:'+id+':'+(selectedDate||'today');
+    const cache=CacheService.getScriptCache(),key='dashboard:v9:'+id+':'+(selectedDate||'today');
     const cached=cache.get(key);
     const today=Utilities.formatDate(new Date(),'America/Detroit','yyyy-MM-dd');
     result=cached?JSON.parse(cached):null;
@@ -85,6 +85,7 @@ function dashboardData_(ss,now,selectedDate) {
   return {
     version:1,date:date,today:today,todayInstructionalDay:!!todayCalendar&&dashboardActive_(todayCalendar.Active)&&!schoolCalendar.todayClosed,timezone:tz,title:String(settings.appTitle||'CS Daily Starters'),generatedAt:now.toISOString(),instructionalDay:active,
     schoolCalendar:schoolCalendar,
+    reminders:dashboardReminders_(dashboardRows_(ss,'Reminders'),calendarRows,date,tz),
     learningTarget:calendar?dashboardLearningTarget_(focus,plannedStarter,String(calendar.Day)):'',
     learningTargets:calendar?dashboardSessionTargets_(focus,plannedStarter,String(calendar.Day)):{shared:'',third:''},
     focusPlans:active?{shared:dashboardFocusPlan_(focusPlans,date,'1st/2nd Session',tz),third:dashboardFocusPlan_(focusPlans,date,'3rd Session',tz)}:{shared:null,third:null},
@@ -145,6 +146,20 @@ function dashboardSubmissionCounts_(courseId,workId){
     pageToken=response.nextPageToken;
   }while(pageToken);
   return {submitted:submitted,total:total};
+}
+
+/** Publish only active, date-matched announcement text from the existing Reminders tab. */
+function dashboardReminders_(rows,calendarRows,date,tz){
+  const monday=dashboardMonday_(date),nextMonday=dashboardAddDays_(monday,7);
+  const schoolDays=calendarRows.filter(row=>dashboardActive_(row.Active)).map(row=>dashboardDate_(row.Date,tz)).filter(day=>day>=monday&&day<nextMonday).sort();
+  return rows.filter(row=>{
+    if(!dashboardActive_(row.Active)||!String(row.Title||row.Message||'').trim())return false;
+    const type=String(row.Type||'').trim().toLowerCase();
+    if(type==='date')return dashboardDate_(row.Date,tz)===date;
+    if(type==='weekly first day')return schoolDays[0]===date;
+    if(type==='weekly last day')return schoolDays[schoolDays.length-1]===date;
+    return false;
+  }).map(row=>({title:String(row.Title||'Reminder').trim(),message:String(row.Message||'').trim()}));
 }
 
 function dashboardRows_(ss,name) {

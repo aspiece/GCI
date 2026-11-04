@@ -290,3 +290,32 @@ test('selected-date feed includes Focus plans and suppresses them on no-class da
   assert.equal(data.focusPlans.shared.task,'Shared task');assert.equal(data.focusPlans.third.task,'Third task');
   const closed=ctx.dashboardData_(ss,new Date('2026-11-03T12:00:00Z'));assert.equal(closed.focusPlans.shared,null);assert.equal(closed.focusPlans.third,null);
 });
+
+test('reminders follow the viewed date, omit inactive rows, and publish text only',()=>{
+  const ctx=backend();
+  const rows=[{Type:'Date',Date:'2026-11-12',Title:'Blood Drive',Message:'November 12–13 · 7 AM–1 PM',Active:true,Private:'not published'},
+    {Type:'Date',Date:'2026-11-13',Title:'Blood Drive',Message:'7 AM–1 PM',Active:'TRUE'},
+    {Type:'Date',Date:'2026-11-12',Title:'Hidden',Active:'FALSE'},
+    {Type:'Unknown',Title:'Never show',Active:true}];
+  const result=ctx.dashboardReminders_(rows,[],'2026-11-12','America/Detroit');
+  assert.equal(result.length,1);assert.equal(result[0].title,'Blood Drive');
+  assert.deepEqual(Object.keys(result[0]).sort(),['message','title']);
+  assert.equal(ctx.dashboardReminders_(rows,[],'2026-11-13','America/Detroit').length,1);
+  assert.equal(ctx.dashboardReminders_(rows,[],'2026-11-14','America/Detroit').length,0);
+});
+test('weekly reminders use the first and last instructional dates of the viewed week',()=>{
+  const ctx=backend(),rows=[{Type:'Weekly First Day',Title:'Grade Check',Active:true},{Type:'Weekly Last Day',Title:'Due Today',Active:true}];
+  const days=[{Date:'2026-11-09',Active:false},{Date:'2026-11-10',Active:true},{Date:'2026-11-12',Active:true},{Date:'2026-11-13',Active:false}];
+  assert.equal(ctx.dashboardReminders_(rows,days,'2026-11-10','America/Detroit')[0].title,'Grade Check');
+  assert.equal(ctx.dashboardReminders_(rows,days,'2026-11-12','America/Detroit')[0].title,'Due Today');
+  for(const date of ['2026-11-09','2026-11-11','2026-11-13','2026-11-17'])assert.equal(ctx.dashboardReminders_(rows,days,date,'America/Detroit').length,0);
+});
+test('feed includes dated reminders on a viewed no-class date and tolerates a missing Reminders tab',()=>{
+  const ctx=backend();ctx.dashboardSchoolCalendar_=()=>({status:'ready',events:[],closed:false,todayClosed:false});
+  const rows={Calendar:[['Date','Week','Day','Active'],['2026-11-12',12,'Thursday',false]],Reminders:[['Type','Date','Title','Message','Active'],['Date','2026-11-12','Blood Drive','7 AM–1 PM',true]]};
+  const ss={getSheetByName:name=>rows[name]?sheet(rows[name]):null};
+  const data=ctx.dashboardData_(ss,new Date('2026-11-04T12:00:00Z'),'2026-11-12');
+  assert.equal(data.reminders[0].title,'Blood Drive');assert.equal(data.instructionalDay,false);
+  delete rows.Reminders;
+  assert.equal(ctx.dashboardData_(ss,new Date('2026-11-04T12:00:00Z'),'2026-11-12').reminders.length,0);
+});
