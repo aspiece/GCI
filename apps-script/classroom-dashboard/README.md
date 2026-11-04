@@ -155,3 +155,11 @@ The latest `Code.gs` connects by default to the existing School_Calendar_Master 
 Only date-matched school/event text is exposed, with duplicates removed and the matching July–June school year applied. Source URLs and verification columns do not enter the feed. Notices cache for fifteen minutes, plus the regular feed refresh delay. A calendar read failure shows Calendar unavailable and preserves the Daily Starters Calendar’s normal schedule instead of pretending no schools are closed. The existing No School viewer and source spreadsheet are not modified.
 
 References: [GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages), [Apps Script Content Service](https://developers.google.com/apps-script/guides/content), [Classroom advanced service](https://developers.google.com/apps-script/advanced/classroom), [Classroom coursework fields](https://developers.google.com/workspace/classroom/reference/rest/v1/courses.courseWork).
+
+### Announcements from Reminders
+
+The right column displays assignments, **Announcements**, then school notices. Announcements stay expanded and the section hides when the viewed date has no reminders. They remain available between sessions and on no-class dates without activating class timing. The existing `Reminders` tab is reused; only active matching rows' Title and Message are published. Messages are plain text with line breaks preserved.
+
+Supported Type values are `Date`, `Weekly First Day`, and `Weekly Last Day`. Date rows use ISO dates (`YYYY-MM-DD`); weekly rows use the first/last active date in the selected week's Calendar rows. Existing Active rules apply. Missing Reminders tabs produce an empty section, and older feed versions remain compatible (no announcements shown).
+
+To activate after this update, replace Code.gs and deploy a **New version** of the existing web app through **Manage deployments**. Keep its URL and Script properties. No manifest changes are required. The existing November 12 and 13 Blood Drive rows will display on those dates with their 7 AM–1 PM message.

@@ -238,9 +238,15 @@ if(typeof document!=='undefined'){
     document.querySelectorAll('[data-course]').forEach(el=>el.addEventListener('toggle',()=>openCourses.set(el.dataset.course,el.open)));
   }
   function updateRightColumn(){
-    const hidden=document.querySelector('.deadlines').hidden&&$('school-notices').hidden;
+    const hidden=document.querySelector('.deadlines').hidden&&$('reminders').hidden&&$('school-notices').hidden;
     document.querySelector('.right-column').hidden=hidden;
     document.querySelector('.layout').classList.toggle('no-session',hidden);
+  }
+  function renderReminders(){
+    const el=$('reminders'),items=Array.isArray(data?.reminders)?data.reminders:[];
+    el.hidden=!items.length;
+    el.innerHTML=items.length?`<h3 id="reminders-title">Announcements</h3><ul>${items.map(item=>`<li><strong>${esc(item.title)}</strong>${item.message?`<p>${esc(item.message)}</p>`:''}</li>`).join('')}</ul>`:'';
+    updateRightColumn();
   }
   function renderSchoolNotices(){
     const el=$('school-notices'),calendar=data?.schoolCalendar;
@@ -295,7 +301,7 @@ if(typeof document!=='undefined'){
     $('session-choice').value=selectedSession||currentPhase()?.session||data.sessions[0]?.name||'';
     $('phase-choice').innerHTML=data.phases.map((p,i)=>`<option value="${i}">${esc(p.name)}${i===1?' · first work block':i===3?' · second work block':''}</option>`).join('');
     $('phase-choice').value=selectedPhase||'0';
-    renderContent();renderCourses();renderSchoolNotices();tick();
+    renderContent();renderCourses();renderReminders();renderSchoolNotices();tick();
   }
   function refresh(){
     if(inflight)return;
