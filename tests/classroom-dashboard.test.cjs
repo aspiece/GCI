@@ -257,3 +257,27 @@ test('timer dragging stays within the available viewport',()=>{
   assert.deepEqual(app.timerPosition(5000,5000,620,500,1280,800),{x:652,y:292});
   assert.deepEqual(app.timerPosition(300,100,358,600,390,650),{x:24,y:42});
 });
+test('Focus plans share 1st/2nd content and keep 3rd separate',()=>{
+  const shared={task:'Shared task'},third={task:'Third task'},data={instructionalDay:true,focusPlans:{shared,third}};
+  assert.equal(app.focusPlanForSession(data,'1st Session'),shared);assert.equal(app.focusPlanForSession(data,'2nd Session'),shared);
+  assert.equal(app.focusPlanForSession(data,'3rd Session'),third);
+  assert.equal(app.focusPlanForSession({...data,focusPlans:{shared,third:null}},'3rd Session'),null);
+  assert.equal(app.focusPlanForSession(data,undefined),null);assert.equal(app.focusPlanForSession({...data,instructionalDay:false},'1st Session'),null);
+});
+test('Focus plan lookup selects active dated group rows and exposes only student-facing fields',()=>{
+  const ctx=backend();
+  const base={'Date (YYYY-MM-DD)':'2026-11-04',Group:'1st/2nd Session',Task:'Use conditionals',Title:'Focus','Step 1':'First','Step 2':'Second','Step 3':'Third','Step 4':'Never exposed','Success Criteria':'One\nTwo\nThree\nFour',Hint:'Try a boundary','Teacher Notes':'PRIVATE','Resource URL':'javascript:alert(1)',Active:true};
+  const rows=[{...base,Active:false,Task:'Inactive'},{...base,'Date (YYYY-MM-DD)':'2026-11-05',Task:'Other date'},{...base,Group:'3rd Session',Task:'Third task'},base];
+  const plan=ctx.dashboardFocusPlan_(rows,'2026-11-04','1st/2nd Session','America/Detroit');
+  assert.equal(plan.task,'Use conditionals');assert.deepEqual(Array.from(plan.steps),['First','Second','Third']);assert.equal(plan.criteria.length,3);
+  assert.equal(plan.resourceUrl,'');assert.match(plan.helpRoutine,/I expected/);assert.ok(!JSON.stringify(plan).includes('PRIVATE'));assert.ok(!JSON.stringify(plan).includes('Never exposed'));
+  assert.equal(ctx.dashboardFocusPlan_([{...base,Task:''}],'2026-11-04','1st/2nd Session','America/Detroit'),null);
+});
+test('selected-date feed includes Focus plans and suppresses them on no-class days',()=>{
+  const ctx=backend();ctx.dashboardSchoolCalendar_=()=>({status:'ready',events:[],closed:false,todayClosed:false});
+  const rows={Settings:[['Key','Value'],['timezone','America/Detroit']],Calendar:[['Date','Week','Day','Active'],['2026-11-03',11,'Tuesday',false],['2026-11-04',11,'Wednesday',true]],'Focus Plans':[['Date (YYYY-MM-DD)','Group','Task','Active'],['2026-11-04','1st/2nd Session','Shared task',true],['2026-11-04','3rd Session','Third task',true]]};
+  const ss={getSheetByName:name=>rows[name]?sheet(rows[name]):null};
+  const data=ctx.dashboardData_(ss,new Date('2026-11-03T12:00:00Z'),'2026-11-04');
+  assert.equal(data.focusPlans.shared.task,'Shared task');assert.equal(data.focusPlans.third.task,'Third task');
+  const closed=ctx.dashboardData_(ss,new Date('2026-11-03T12:00:00Z'));assert.equal(closed.focusPlans.shared,null);assert.equal(closed.focusPlans.third,null);
+});

@@ -29,7 +29,7 @@ function doGet(e) {
     if(properties.getProperty('PUBLIC_FEED_ENABLED')!=='true')throw new Error('Feed disabled');
     const id=properties.getProperty('DASHBOARD_SPREADSHEET_ID');
     if(!id)throw new Error('Missing spreadsheet configuration');
-    const cache=CacheService.getScriptCache(),key='dashboard:v6:'+id+':'+(selectedDate||'today');
+    const cache=CacheService.getScriptCache(),key='dashboard:v7:'+id+':'+(selectedDate||'today');
     const cached=cache.get(key);
     const today=Utilities.formatDate(new Date(),'America/Detroit','yyyy-MM-dd');
     result=cached?JSON.parse(cached):null;
@@ -63,6 +63,7 @@ function dashboardData_(ss,now,selectedDate) {
   const brain=active?dashboardRows_(ss,'Brain Breaks').find(row=>dashboardDate_(row['Date (YYYY-MM-DD)'],tz)===date&&dashboardActive_(row.Active)):null;
   const exitRow=active?dashboardRows_(ss,'Exit Tickets').find(row=>dashboardDate_(row['Date (YYYY-MM-DD)'],tz)===date&&dashboardActive_(row.Active)):null;
   const focus=active?dashboardRows_(ss,'Focus Map').find(row=>Number(row.Week)===Number(calendar.Week)):null;
+  const focusPlans=active?dashboardRows_(ss,'Focus Plans'):[];
   const exitPrompt=exitRow?exitRow['Student Prompt']:focus&&focus[String(calendar.Day)+' Exit Ticket'];
   const phaseValues=dashboardRows_(ss,'Dashboard Schedule');
   const phases=DASHBOARD_PHASES.map((phase,i)=>{
@@ -85,6 +86,7 @@ function dashboardData_(ss,now,selectedDate) {
     schoolCalendar:schoolCalendar,
     learningTarget:active?dashboardLearningTarget_(focus,starter,String(calendar.Day)):'',
     learningTargets:active?dashboardSessionTargets_(focus,starter,String(calendar.Day)):{shared:'',third:''},
+    focusPlans:active?{shared:dashboardFocusPlan_(focusPlans,date,'1st/2nd Session',tz),third:dashboardFocusPlan_(focusPlans,date,'3rd Session',tz)}:{shared:null,third:null},
     sessions:sessions,phases:phases,
     // Only allowlisted student-facing fields leave Apps Script.
     starter:starter?{
@@ -171,6 +173,18 @@ function dashboardSessionTargets_(focus,starter,day){
     third:String(focus&&focus[day+' 3rd Session Learning Target']||'').trim()
   };
 }
+function dashboardFocusPlan_(rows,date,group,tz){
+  const row=rows.find(item=>dashboardDate_(item['Date (YYYY-MM-DD)'],tz)===date&&String(item.Group||'').trim()===group&&dashboardActive_(item.Active)&&String(item.Task||'').trim());
+  if(!row)return null;
+  const text=name=>String(row[name]||'').trim();
+  return {
+    title:text('Title')||'Focus',task:text('Task'),
+    steps:['Step 1','Step 2','Step 3'].map(text).filter(Boolean),
+    criteria:text('Success Criteria').split(/\r?\n/).map(item=>item.trim()).filter(Boolean).slice(0,3),
+    hint:text('Hint'),helpRoutine:text('Help Routine')||'I expected ___.\nInstead, ___.\nI tried ___.',
+    resourceUrl:dashboardUrl_(text('Resource URL')),resourceLabel:text('Resource Label')||'Open work'
+  };
+}
 
 /** Calendar source is the same master used by No_School_Viewer.html. */
 function dashboardSchoolCalendar_(date,today,tz){
@@ -216,7 +230,8 @@ function setupDashboardTabs(){
     {name:'Dashboard Courses',headers:['Course','Classroom Course ID','Active'],rows:DASHBOARD_COURSES.map(name=>[name,'',true])},
     {name:'Dashboard Sessions',headers:['Course','Start','End'],rows:DASHBOARD_SESSIONS.map(s=>[s.name,s.start,s.end])},
     {name:'Dashboard Schedule',headers:['Order','Phase','Duration (min)','Announcement'],rows:DASHBOARD_PHASES.map((p,i)=>[i+1,p.name,p.minutes,p.message])},
-    {name:'Exit Tickets',headers:['Date (YYYY-MM-DD)','Title','Student Prompt','Instructions','Response URL','Active'],rows:[]}
+    {name:'Exit Tickets',headers:['Date (YYYY-MM-DD)','Title','Student Prompt','Instructions','Response URL','Active'],rows:[]},
+    {name:'Focus Plans',headers:['Date (YYYY-MM-DD)','Group','Title','Task','Step 1','Step 2','Step 3','Success Criteria','Hint','Help Routine','Resource URL','Resource Label','Active'],rows:[]}
   ];
   definitions.forEach(def=>{
     if(ss.getSheetByName(def.name))return;

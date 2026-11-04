@@ -4,7 +4,7 @@ The new page is `Classroom_Dashboard.html`. It is independent of the current App
 
 ## What is ready
 
-- Daily Starter, Brain Break, and Exit Ticket content tabs.
+- Daily Starter, Focus, Brain Break, and Exit Ticket content tabs. Focus replaces the main activity rather than adding another permanent panel. It shows one task and up to three steps in large text for the classroom TVs. Success criteria, Hint, and Help buttons temporarily replace that view; Back to task restores it.
 - Compact desktop header with date and controls on one line, smaller phase strip and tabs, and a slim learning-target strip above the activity. The target remains visible across all three activity tabs and follows the selected date. Blank targets and noninstructional dates hide the strip.
 - A Timer button opens a movable countdown window with 1/3/5/10-minute presets, a custom 1–180-minute duration, Start/Pause/Resume, Reset, +30 sec, and +1 min. Drag its title or use arrow keys when the title is focused; Center restores its position. Closing it keeps the countdown running; the window reopens once when time is up. It runs independently of scheduled class phases and leaves the dashboard usable while open.
 - Previous/Next day, Today, and a date picker. The complete selected date (weekday, month, day, and year) appears at the top right. Activities and deadlines follow the selected date/week; the clock, phase timing, and announcements follow today’s actual class calendar. Navigation includes weekends and inactive dates, which show an empty scheduled-activity message.
@@ -44,6 +44,7 @@ GitHub Pages cannot run the Apps Script code. It serves the dashboard page; the 
 | Instructional day | Selected date’s `Calendar` row controls activities; today’s row separately controls live phase announcements |
 | Title/timezone | `Settings` keys `appTitle` and `timezone` |
 | Daily learning target | 1st/2nd Session share the matching weekday’s Learning Target column in `Focus Map` (N:R); 3rd Session uses its own weekday fields (S:W) |
+| Focus plan and on-demand supports | Active dated row for the selected session group in `Focus Plans` |
 
 The new `Exit Tickets` tab is optional for daily overrides. Existing Focus Map exit tickets remain the default. Blank or inactive dates do not become sample content.
 
@@ -93,7 +94,19 @@ node tests/classroom-dashboard.browser.cjs
 
 The unit tests cover phase boundaries, timezone/week handling, no-school behavior, API pagination and individual-assignment exclusion, and feed field allowlisting. The browser test script covers keyboard tab navigation, mobile overflow, transition banners, and feed failure behavior. These use fixtures, not live Google accounts. School authorization, the actual course IDs, and the deployed feed still require a live connection test.
 
-Build verification: all thirty-three unit tests passed, including time extensions while running/paused/complete, reset-duration preservation, viewport position bounds, countdown deadlines, and existing feed behavior. Browser verification could not run in the build environment because Chromium was not installed and its download was blocked. Browser assertions include dragging, keyboard movement, centering, time-extension buttons, close-and-continue, and completion reopening for execution in a browser-enabled environment; responsive layout and visual presentation still need that review before classroom use.
+Build verification: all thirty-six unit tests passed, including Focus plan date/group selection, active-day behavior, student-facing field allowlisting, target groups, countdowns, and existing feed behavior. Browser verification could not run in the build environment because Chromium was not installed and its download was blocked. Browser assertions include Focus task/support replacement and persistent target visibility, plus timer behavior, for execution in a browser-enabled environment; responsive layout and visual presentation still need that review before classroom use.
+
+## Focus view for the classroom TVs
+
+Choose **Focus** to present the current session’s work plan in the existing large content area. Only the current task and up to three short steps are shown by default. The learning target remains visible above the card. Success criteria, Hint, and Help display one support view at a time; **Back to task** restores the instructions. These controls do not expand the layout or add student-facing columns. Switching class phases continues to announce the transition without automatically changing content tabs.
+
+Edit **Focus Plans** in the existing Daily Starters spreadsheet. Each dated row belongs to either `1st/2nd Session` (shared) or `3rd Session` (separate). The source fields are Date, Group, Title, Task, Step 1–3, Success Criteria, Hint, Help Routine, Resource URL, Resource Label, and Active. Put no more than three short success criteria on separate lines. Keep task/step text brief rather than reducing display fonts. A blank Task or inactive row does not produce a plan.
+
+This week’s active dates have been seeded with the shared CS50P Problem Set 1 work routine, three conditionals criteria, a boundary-test hint, and the “I expected / Instead / I tried” help frame. Third-session rows are ready for their own plans and do not inherit the shared plan. The existing weekday targets and exit tickets are unchanged.
+
+Instructor → **Session content → Session group** previews the chosen group’s Focus plan and learning target for the viewed date. Automatic uses the current class schedule. Moving to a different date/group resets support views to the task; routine feed refreshes keep the support currently being presented. Missing plans and no-class days have explicit empty states.
+
+To activate, replace the existing feed project’s Code.gs with the current version, then use **Deploy → Manage deployments → Edit → New version → Deploy**. Keep the URL, manifest, and Script properties. The new Focus Plans tab has already been added to the live workbook; setupDashboardTabs also creates it for future installations. Until the updated feed is deployed, the Focus tab shows no scheduled plan.
 
 ## Daily learning targets
 

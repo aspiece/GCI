@@ -52,6 +52,12 @@ const GCI = (() => {
     else if(session==='1st Session'||session==='2nd Session')target=data.learningTargets?.shared??data.learningTarget;
     return typeof target==='string'?target.trim():'';
   }
+  function focusPlanForSession(data,session){
+    if(!data?.instructionalDay)return null;
+    const group=session==='3rd Session'?'third':session==='1st Session'||session==='2nd Session'?'shared':null;
+    const plan=group&&data.focusPlans?.[group];
+    return plan&&typeof plan.task==='string'&&plan.task.trim()?plan:null;
+  }
   function createCountdown(initialSeconds=300){
     let duration,remainingMs,deadline=null,mode='ready';
     function configure(seconds){
@@ -91,19 +97,19 @@ const GCI = (() => {
   }
   function sample(now=new Date(),selectedDate=''){
     const today=localParts(now).date,date=selectedDate||today,week=weekDates(date);
-    return {version:1,date,today,todayInstructionalDay:true,timezone:'America/Detroit',title:'CS Daily Starters',generatedAt:now.toISOString(),instructionalDay:true,learningTarget:'I can test boundary cases and explain how a conditional selects a path.',learningTargets:{shared:'I can test boundary cases and explain how a conditional selects a path.',third:'I can explain and test a method’s behavior.'},sessions,phases,
+    return {version:1,date,today,todayInstructionalDay:true,timezone:'America/Detroit',title:'CS Daily Starters',generatedAt:now.toISOString(),instructionalDay:true,learningTarget:'I can test boundary cases and explain how a conditional selects a path.',learningTargets:{shared:'I can test boundary cases and explain how a conditional selects a path.',third:'I can explain and test a method’s behavior.'},focusPlans:{shared:{title:'Build and test your decisions',task:'Use conditionals to complete your current Python task.',steps:['Identify the inputs and decision rules.','Write your conditionals and test each branch.','Explain a boundary test and its result.'],criteria:['I can choose if, elif, and else.','I can explain which branch runs.','I can test a boundary value.'],hint:'Write the decision in plain language. Test a value below, at, and above the boundary.',helpRoutine:'I expected ___.\nInstead, ___.\nI tried ___.',resourceUrl:'https://cs50.dev/',resourceLabel:'Open workspace'},third:{title:'Explain and test a method',task:'Complete the method task assigned by your instructor.',steps:['Identify its inputs and expected result.','Build and test one method.','Explain a test to a partner.'],criteria:['I can explain the method’s behavior.','I can test an expected result.'],hint:'Start with one concrete input and expected result.',helpRoutine:'I expected ___.\nInstead, ___.\nI tried ___.'}},sessions,phases,
       starter:{lens:'Design Lab',topic:'Make the next step clear',csFocus:'Conditionals',prompt:'A game needs to explain why a player cannot open a locked door. How could the message help the player decide what to try next?',context:'Think for a moment. Discuss at your table. Be ready to explain one design choice.',goDeeper:'How should the message change when the player has the key but needs more energy?'},
       brain:{title:'Look up & reset',instructions:'Look away from the screen. Stretch gently if comfortable, then share one small win with your table.',alternative:'Stay seated, rest, or choose a comfortable movement.',returnCue:'Choose your next step before returning to your work.',duration:10},
       exit:{title:'Make your thinking visible',prompt:'Describe one conditional you tested today. What input did you try, what happened, and what would you test next?'},
       courses:courses.map((name,i)=>({name,status:'ready',assignments:i<3?[{title:['Conditionals practice','Test a decision','Explain your solution'][i],dueAt:`${week[i+1]}T20:00:00.000Z`,url:'https://classroom.google.com/',submissions:{submitted:[18,21,24][i],total:24}}]:[]}))};
   }
-  return {courses,phases,sessions,sessionCourses,localParts,weekDates,addDays,validDate,scheduled,safeUrl,validFeed,escape,submissionBadge,learningTargetForSession,createCountdown,timerPosition,validate,sample};
+  return {courses,phases,sessions,sessionCourses,localParts,weekDates,addDays,validDate,scheduled,safeUrl,validFeed,escape,submissionBadge,learningTargetForSession,focusPlanForSession,createCountdown,timerPosition,validate,sample};
 })();
 if(typeof module!=='undefined')module.exports=GCI;
 if(typeof document!=='undefined'){
   const $=id=>document.getElementById(id),esc=GCI.escape;
   const defaultFeedUrl='https://script.google.com/macros/s/AKfycbw4Rj6Xqlz61dI8N8jg9v8ehWSgkbLsCLF1ZSUZHk1RzSGf_s5ZDutLj4KfqQYLzQ/exec';
-  let data=null,tab='starter',preview=false,feedUrl='',inflight=false,lastKey=null,manual=null,lastSession=null,announcementTimer=null,soundContext=null,generation=0,lastAttempt=0,selectedDate='',showAllCourses=false,targetGroup='auto';
+  let data=null,tab='starter',preview=false,feedUrl='',inflight=false,lastKey=null,manual=null,lastSession=null,announcementTimer=null,soundContext=null,generation=0,lastAttempt=0,selectedDate='',showAllCourses=false,targetGroup='auto',focusPanel='task',focusContext='';
   const openCourses=new Map();
   const store={get(key){try{return localStorage.getItem(key)||'';}catch{return '';}},set(key,value){try{localStorage.setItem(key,value);}catch{}}};
   let sound=store.get('gci.dashboard.sound')==='true';
@@ -148,14 +154,29 @@ if(typeof document!=='undefined'){
     if(manual)return {...manual,remaining:Math.max(0,Math.ceil((manual.ends-now.getTime())/1000))};
     return data?GCI.scheduled(now,data):null;
   }
-  function selectTab(next){tab=next;document.querySelectorAll('[data-tab]').forEach(b=>{const selected=b.dataset.tab===tab;b.setAttribute('aria-selected',String(selected));b.tabIndex=selected?0:-1;});$('activity-panel').setAttribute('aria-labelledby',`tab-${tab}`);renderContent();}
+  function selectTab(next){tab=next;if(next==='focus')focusPanel='task';document.querySelectorAll('[data-tab]').forEach(b=>{const selected=b.dataset.tab===tab;b.setAttribute('aria-selected',String(selected));b.tabIndex=selected?0:-1;});$('activity-panel').setAttribute('aria-labelledby',`tab-${tab}`);renderContent();}
   function link(url,label){const safe=GCI.safeUrl(url);return safe?`<a href="${esc(safe)}" target="_blank" rel="noopener noreferrer">${esc(label)} ↗</a>`:'';}
+  function viewedSession(){return targetGroup==='third'?'3rd Session':targetGroup==='shared'?'1st Session':data?GCI.scheduled(new Date(),data)?.session:undefined;}
   function renderLearningTarget(){
-    const session=targetGroup==='third'?'3rd Session':targetGroup==='shared'?'1st Session':data?GCI.scheduled(new Date(),data)?.session:undefined;
+    const session=viewedSession();
     const target=GCI.learningTargetForSession(data,session);
     $('learning-target').hidden=!target;
     $('target-text').textContent=target;
     $('target-label').textContent=session==='3rd Session'?'3rd Session target':'1st & 2nd target';
+  }
+  function renderFocus(){
+    const session=viewedSession(),plan=GCI.focusPlanForSession(data,session),context=data.date+'|'+(session==='3rd Session'?'third':session?'shared':'none');
+    if(context!==focusContext){focusContext=context;focusPanel='task';}
+    if(!plan){$('activity-panel').innerHTML=`<div class="empty"><div class="eyebrow">FOCUS</div><h1>Focus plan</h1><p>${session?'No Focus plan is scheduled for this date and session.':'Choose a session group in Instructor to preview its Focus plan.'}</p></div>`;return;}
+    const steps=Array.isArray(plan.steps)?plan.steps.slice(0,3):[],criteria=Array.isArray(plan.criteria)?plan.criteria.slice(0,3):[];
+    if(focusPanel==='criteria'&&!criteria.length||focusPanel==='hint'&&!plan.hint)focusPanel='task';
+    const controls=[['task',focusPanel==='task'?'Task':'← Back to task'],...(criteria.length?[['criteria','Success criteria']]:[]),...(plan.hint?[['hint','Hint']]:[]),['help','Help']];
+    let content='';
+    if(focusPanel==='criteria')content=`<h1>Success criteria</h1><ul class="focus-criteria">${criteria.map(item=>`<li>${esc(item)}</li>`).join('')}</ul>`;
+    else if(focusPanel==='hint')content=`<h1>Try this next</h1><div class="focus-support">${esc(plan.hint)}</div>`;
+    else if(focusPanel==='help')content=`<h1>Explain where you’re stuck</h1><div class="focus-support">${esc(plan.helpRoutine||'I expected ___.\nInstead, ___.\nI tried ___.')}</div>`;
+    else content=`<h1>${esc(plan.title||'Focus')}</h1><div class="focus-task">${esc(plan.task)}</div>${steps.length?`<ol class="focus-steps">${steps.map(item=>`<li>${esc(item)}</li>`).join('')}</ol>`:''}${GCI.safeUrl(plan.resourceUrl)?`<div class="focus-resource">${link(plan.resourceUrl,plan.resourceLabel||'Open work')}</div>`:''}`;
+    $('activity-panel').innerHTML=`<div class="focus-topline"><div class="eyebrow">FOCUS</div><div class="focus-controls" role="group" aria-label="Focus supports">${controls.map(([key,label])=>`<button data-focus-panel="${key}" aria-pressed="${focusPanel===key}">${esc(label)}</button>`).join('')}</div></div><div class="focus-view">${content}</div>`;
   }
   function renderContent(){
     $('deeper').hidden=true;
@@ -163,6 +184,7 @@ if(typeof document!=='undefined'){
     if(!data){$('activity-panel').innerHTML='<div class="empty"><div class="eyebrow">WELCOME</div><h1>Your classroom, at a glance.</h1><p>Open Instructor to connect the content feed, or preview the dashboard with sample content.</p></div>';return;}
     const s=data[tab];
     if(!data.instructionalDay){$('activity-panel').innerHTML='<div class="empty"><div class="eyebrow">CLASS CALENDAR</div><h1>No class scheduled</h1><p>No activity is scheduled for this date.</p></div>';return;}
+    if(tab==='focus'){renderFocus();return;}
     if(!s){$('activity-panel').innerHTML=`<div class="empty"><h1>${tab==='brain'?'Brain Break':tab==='exit'?'Exit Ticket':'Daily Starter'}</h1><p>No ${tab==='brain'?'brain break':tab==='exit'?'exit ticket':'starter'} is scheduled for this date.</p></div>`;return;}
     if(tab==='starter'){
       $('activity-panel').innerHTML=`<span class="chip">${esc(s.csFocus||'Computer Science')}</span><div class="eyebrow">${esc(s.lens||'DAILY STARTER')}</div><h1>${esc(s.techIcon||s.topic||'Let’s think together')}</h1>${s.iconRole?`<p class="context">${esc(s.iconRole)}</p>`:''}${s.iconContribution?`<p class="context">${esc(s.iconContribution)}</p>`:''}<div class="prompt">${esc(s.prompt)}</div><div class="context">${esc(s.context||'')}</div><div class="routine"><span>01 THINK</span><span>02 SHARE</span><span>03 BUILD</span></div><div id="deeper-content" class="deeper-content" hidden>${esc(s.goDeeper||'')}</div>`;
@@ -252,7 +274,8 @@ if(typeof document!=='undefined'){
     $('date-label').title=displayedDate===local.date?'Today':`Viewing ${displayedDate}; class timing still follows today`;
     const phase=currentPhase(now),key=phase?.key||'outside';
     if(lastKey!==null&&lastKey!==key&&phase)announce(phase);
-    if(lastKey!==key||lastSession!==(data?GCI.scheduled(now,data)?.session:undefined)){lastKey=key;renderCourses();renderLearningTarget();}
+    const sessionChanged=lastSession!==(data?GCI.scheduled(now,data)?.session:undefined);
+    if(lastKey!==key||sessionChanged){lastKey=key;renderCourses();renderLearningTarget();if(tab==='focus'&&sessionChanged)renderContent();}
     $('session-label').textContent=phase?.session||(data&&!(data.todayInstructionalDay??data.instructionalDay)?'No class today':'Outside class');
     $('phases').innerHTML=(data?.phases||GCI.phases).map((p,i)=>`<li class="${phase?.index===i?'current':phase&&phase.index>i?'past':''}" ${phase?.index===i?'aria-current="step"':''}><span class="phase-number">${i+1}</span>${esc(p.name)}</li>`).join('');
     $('phase-remaining').textContent=phase?`${Math.floor(phase.remaining/60).toString().padStart(2,'0')}:${(phase.remaining%60).toString().padStart(2,'0')}`:'—';
@@ -324,7 +347,13 @@ if(typeof document!=='undefined'){
   document.querySelectorAll('[data-minutes]').forEach(button=>button.onclick=()=>configureCountdown(Number(button.dataset.minutes)));
   $('timer-toggle').onclick=()=>{if(!$('timer-minutes').checkValidity()){$('timer-minutes').reportValidity();return;}if(countdown.snapshot().running)countdown.pause();else{countdown.start();timerNotified=false;}renderCountdown();};
   $('timer-reset').onclick=()=>{countdown.reset();timerNotified=false;renderCountdown();};
-  $('target-group').onchange=()=>{targetGroup=$('target-group').value;renderLearningTarget();};
+  $('target-group').onchange=()=>{targetGroup=$('target-group').value;if(tab==='focus')renderContent();else renderLearningTarget();};
+  $('activity-panel').addEventListener('click',event=>{
+    const button=event.target.closest?.('[data-focus-panel]');
+    if(!button||!['task','criteria','hint','help'].includes(button.dataset.focusPanel))return;
+    focusPanel=button.dataset.focusPanel;renderContent();
+    $('activity-panel').querySelector(`[data-focus-panel="${focusPanel}"]`)?.focus();
+  });
   $('expand-courses').onclick=()=>{showAllCourses=true;GCI.courses.forEach(name=>openCourses.set(name,true));renderCourses();$('settings').close();};
   $('current-session').onclick=()=>{showAllCourses=false;lastSession=null;renderCourses();};
   $('set-phase').onclick=()=>{
