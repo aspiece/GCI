@@ -7,13 +7,24 @@ const base=process.env.DASHBOARD_TEST_URL||'http://127.0.0.1:8765/Classroom_Dash
   const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
   const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];
   page.on('pageerror',error=>errors.push(error.message));
-  await page.clock.install({time:new Date('2026-11-03T12:04:59Z')});
+  await page.clock.install({time:new Date('2026-11-03T12:04:58Z')});
+  await page.clock.pauseAt(new Date('2026-11-03T12:04:59Z'));
   await page.goto(base+'?preview=1');
   await page.waitForSelector('.prompt');
   assert.match(await page.locator('#connection').textContent(),/PREVIEW/);
   assert.equal(await page.locator('#learning-target').isVisible(),true);
   assert.match(await page.locator('#target-text').textContent(),/I can test boundary cases/);
   assert.equal(await page.locator('#target-label').textContent(),'1st & 2nd target');
+  await page.locator('#tab-focus').click();
+  assert.equal(await page.locator('.focus-steps li').count(),3);
+  assert.equal(await page.locator('.activity-card').count(),1);
+  await page.locator('[data-focus-panel="criteria"]').click();
+  assert.equal(await page.locator('.focus-criteria li').count(),3);assert.equal(await page.locator('.focus-steps').count(),0);
+  assert.equal(await page.locator('#learning-target').isVisible(),true);
+  await page.locator('[data-focus-panel="hint"]').click();assert.match(await page.locator('.focus-support').textContent(),/plain language/);
+  await page.locator('[data-focus-panel="help"]').click();assert.match(await page.locator('.focus-support').textContent(),/I expected/);
+  await page.locator('[data-focus-panel="task"]').click();assert.equal(await page.locator('.focus-steps li').count(),3);
+  await page.locator('#tab-starter').click();
   assert.equal(await page.locator('.course').count(),2);
   assert.equal(await page.locator('.course.active[open]').count(),2);
   assert.equal(await page.locator('[data-course="Career Essentials"]').getAttribute('open'),'');
@@ -82,7 +93,8 @@ const base=process.env.DASHBOARD_TEST_URL||'http://127.0.0.1:8765/Classroom_Dash
   assert.deepEqual(errors,[]);
 
   const live=await browser.newPage();
-  await live.clock.install({time:new Date('2026-11-03T12:00:00Z')});
+  await live.clock.install({time:new Date('2026-11-03T11:59:59Z')});
+  await live.clock.pauseAt(new Date('2026-11-03T12:00:00Z'));
   await live.addInitScript(()=>localStorage.setItem('gci.dashboard.feed','https://script.google.com/macros/s/test/exec'));
   let fail=false;
   await live.route('https://script.google.com/**',async route=>{
