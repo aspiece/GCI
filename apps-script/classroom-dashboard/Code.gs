@@ -29,7 +29,7 @@ function doGet(e) {
     if(properties.getProperty('PUBLIC_FEED_ENABLED')!=='true')throw new Error('Feed disabled');
     const id=properties.getProperty('DASHBOARD_SPREADSHEET_ID');
     if(!id)throw new Error('Missing spreadsheet configuration');
-    const cache=CacheService.getScriptCache(),key='dashboard:v7:'+id+':'+(selectedDate||'today');
+    const cache=CacheService.getScriptCache(),key='dashboard:v8:'+id+':'+(selectedDate||'today');
     const cached=cache.get(key);
     const today=Utilities.formatDate(new Date(),'America/Detroit','yyyy-MM-dd');
     result=cached?JSON.parse(cached):null;
@@ -59,10 +59,11 @@ function dashboardData_(ss,now,selectedDate) {
   const todayCalendar=calendarRows.find(row=>dashboardDate_(row.Date,tz)===today);
   const schoolCalendar=dashboardSchoolCalendar_(date,today,tz);
   const active=!!calendar&&dashboardActive_(calendar.Active)&&!schoolCalendar.closed;
-  const starter=active?dashboardRows_(ss,'Starters').find(row=>Number(row.Week)===Number(calendar.Week)&&String(row.Day).toLowerCase()===String(calendar.Day).toLowerCase()&&dashboardActive_(row.Active)):null;
+  const plannedStarter=calendar?dashboardRows_(ss,'Starters').find(row=>Number(row.Week)===Number(calendar.Week)&&String(row.Day).toLowerCase()===String(calendar.Day).toLowerCase()&&dashboardActive_(row.Active)):null;
+  const starter=active?plannedStarter:null;
   const brain=active?dashboardRows_(ss,'Brain Breaks').find(row=>dashboardDate_(row['Date (YYYY-MM-DD)'],tz)===date&&dashboardActive_(row.Active)):null;
   const exitRow=active?dashboardRows_(ss,'Exit Tickets').find(row=>dashboardDate_(row['Date (YYYY-MM-DD)'],tz)===date&&dashboardActive_(row.Active)):null;
-  const focus=active?dashboardRows_(ss,'Focus Map').find(row=>Number(row.Week)===Number(calendar.Week)):null;
+  const focus=calendar?dashboardRows_(ss,'Focus Map').find(row=>Number(row.Week)===Number(calendar.Week)):null;
   const focusPlans=active?dashboardRows_(ss,'Focus Plans'):[];
   const exitPrompt=exitRow?exitRow['Student Prompt']:focus&&focus[String(calendar.Day)+' Exit Ticket'];
   const phaseValues=dashboardRows_(ss,'Dashboard Schedule');
@@ -84,8 +85,8 @@ function dashboardData_(ss,now,selectedDate) {
   return {
     version:1,date:date,today:today,todayInstructionalDay:!!todayCalendar&&dashboardActive_(todayCalendar.Active)&&!schoolCalendar.todayClosed,timezone:tz,title:String(settings.appTitle||'CS Daily Starters'),generatedAt:now.toISOString(),instructionalDay:active,
     schoolCalendar:schoolCalendar,
-    learningTarget:active?dashboardLearningTarget_(focus,starter,String(calendar.Day)):'',
-    learningTargets:active?dashboardSessionTargets_(focus,starter,String(calendar.Day)):{shared:'',third:''},
+    learningTarget:calendar?dashboardLearningTarget_(focus,plannedStarter,String(calendar.Day)):'',
+    learningTargets:calendar?dashboardSessionTargets_(focus,plannedStarter,String(calendar.Day)):{shared:'',third:''},
     focusPlans:active?{shared:dashboardFocusPlan_(focusPlans,date,'1st/2nd Session',tz),third:dashboardFocusPlan_(focusPlans,date,'3rd Session',tz)}:{shared:null,third:null},
     sessions:sessions,phases:phases,
     // Only allowlisted student-facing fields leave Apps Script.
@@ -95,7 +96,7 @@ function dashboardData_(ss,now,selectedDate) {
       iconContribution:String(starter['Icon Contribution']||''),goDeeper:String(starter['Go Deeper']||'')
     }:null,
     brain:brain?{title:String(brain['Activity Title']||''),instructions:String(brain['Student Instructions']||''),returnCue:String(brain['Reflection / Return Cue']||''),duration:Number(brain['Duration (min)'])||10,alternative:String(brain['Accessibility Alternative']||''),resourceUrl:dashboardUrl_(brain['Resource URL'])}:null,
-    exit:exitPrompt?{title:exitRow&&exitRow.Title?String(exitRow.Title):'Exit Ticket',prompt:String(exitPrompt),instructions:String(exitRow&&exitRow.Instructions||''),responseUrl:dashboardUrl_(exitRow&&exitRow['Response URL'])}:null,
+    exit:active&&exitPrompt?{title:exitRow&&exitRow.Title?String(exitRow.Title):'Exit Ticket',prompt:String(exitPrompt),instructions:String(exitRow&&exitRow.Instructions||''),responseUrl:dashboardUrl_(exitRow&&exitRow['Response URL'])}:null,
     courses:DASHBOARD_COURSES.map(name=>{
       const map=mappings.find(row=>row.Course===name);
       if(!map||!map['Classroom Course ID']||!dashboardActive_(map.Active))return {name:name,status:'unconfigured',assignments:[]};
