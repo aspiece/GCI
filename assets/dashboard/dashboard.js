@@ -162,7 +162,7 @@ if(typeof document!=='undefined'){
     const target=GCI.learningTargetForSession(data,session);
     $('learning-target').hidden=!target;
     $('target-text').textContent=target;
-    $('target-label').textContent=session==='3rd Session'?'3rd Session target':'1st & 2nd target';
+    $('target-course').textContent=session==='3rd Session'?'AP':'Intro';
   }
   function renderFocus(){
     const session=viewedSession(),plan=GCI.focusPlanForSession(data,session),context=data.date+'|'+(session==='3rd Session'?'third':session?'shared':'none');
