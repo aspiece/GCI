@@ -14,7 +14,8 @@ const base=process.env.DASHBOARD_TEST_URL||'http://127.0.0.1:8765/Classroom_Dash
   assert.match(await page.locator('#connection').textContent(),/PREVIEW/);
   assert.equal(await page.locator('#learning-target').isVisible(),true);
   assert.match(await page.locator('#target-text').textContent(),/I can test boundary cases/);
-  assert.equal(await page.locator('#target-label').textContent(),'1st & 2nd target');
+  assert.equal(await page.locator('#target-course').textContent(),'Intro');
+  assert.equal(await page.locator('#target-label').textContent(),'Learning target');
   await page.locator('#tab-focus').click();
   assert.equal(await page.locator('.focus-steps li').count(),3);
   assert.equal(await page.locator('.activity-card').count(),1);
@@ -83,7 +84,8 @@ const base=process.env.DASHBOARD_TEST_URL||'http://127.0.0.1:8765/Classroom_Dash
   assert.equal(await page.locator('.course').count(),2);
   assert.equal(await page.locator('[data-course="3rd Session"]').count(),1);
   assert.equal(await page.locator('[data-course="Career Exploration"]').count(),1);
-  assert.equal(await page.locator('#target-label').textContent(),'3rd Session target');
+  assert.equal(await page.locator('#target-course').textContent(),'AP');
+  assert.equal(await page.locator('#target-label').textContent(),'Learning target');
   assert.match(await page.locator('#target-text').textContent(),/method’s behavior/);
   await page.locator('#dismiss-announcement').click();
   await page.locator('#settings-open').click();await page.locator('#target-group').selectOption('shared');
