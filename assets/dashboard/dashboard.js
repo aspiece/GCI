@@ -159,7 +159,8 @@ if(typeof document!=='undefined'){
     if(manual)return {...manual,remaining:Math.max(0,Math.ceil((manual.ends-now.getTime())/1000))};
     return data?GCI.scheduled(now,data):null;
   }
-  function selectTab(next){tab=next;if(next==='focus')focusPanel='task';document.querySelectorAll('[data-tab]').forEach(b=>{const selected=b.dataset.tab===tab;b.setAttribute('aria-selected',String(selected));b.tabIndex=selected?0:-1;});$('activity-panel').setAttribute('aria-labelledby',`tab-${tab}`);renderContent();}
+  let brainAuto=false,brainPrevious='focus',brainDismissedKey='';
+  function selectTab(next){if(next!=='brain'&&brainAuto){brainAuto=false;brainDismissedKey=currentPhase()?.key||'';}tab=next;if(next==='focus')focusPanel='task';document.querySelectorAll('[data-tab]').forEach(b=>{const selected=b.dataset.tab===tab;b.setAttribute('aria-selected',String(selected));b.tabIndex=selected?0:-1;});$('activity-panel').setAttribute('aria-labelledby',`tab-${tab}`);renderContent();}
   function link(url,label){const safe=GCI.safeUrl(url);return safe?`<a href="${esc(safe)}" target="_blank" rel="noopener noreferrer">${esc(label)} ↗</a>`:'';}
   function viewedSession(){return GCI.contentSession(data,targetGroup);}
   function renderLearningTarget(){
@@ -196,7 +197,10 @@ if(typeof document!=='undefined'){
       $('activity-panel').innerHTML=`<span class="chip">${esc(s.csFocus||'Computer Science')}</span><div class="eyebrow">${esc(s.lens||'DAILY STARTER')}</div><h1>${esc(s.techIcon||s.topic||'Let’s think together')}</h1>${s.iconRole?`<p class="context">${esc(s.iconRole)}</p>`:''}${s.iconContribution?`<p class="context">${esc(s.iconContribution)}</p>`:''}<div class="prompt">${esc(s.prompt)}</div><div class="context">${esc(s.context||'')}</div><div class="routine"><span>01 THINK</span><span>02 SHARE</span><span>03 BUILD</span></div><div id="deeper-content" class="deeper-content" hidden>${esc(s.goDeeper||'')}</div>`;
       $('deeper').hidden=!s.goDeeper;$('deeper').textContent='Go deeper';
     }else if(tab==='brain'){
-      $('activity-panel').innerHTML=`<span class="chip">${esc(s.duration||10)} minutes</span><div class="eyebrow">RESET & RECHARGE</div><h1>${esc(s.title||'Brain Break')}</h1><div class="prompt">${esc(s.instructions)}</div>${s.alternative?`<p class="context">Your choice: ${esc(s.alternative)}</p>`:''}${s.returnCue?`<p class="context">${esc(s.returnCue)}</p>`:''}${link(s.resourceUrl,'Open activity')}`;
+      const category=String(s.category||'Creative'),theme=/movement/i.test(category)?'movement':/social|teamwork/i.test(category)?'social':/unplugged|CS/i.test(category)?'cs':'creative';
+      const instructions=String(s.instructions||'').split(/(?<=[.!?])\\s+/).filter(Boolean);
+      $('activity-panel').innerHTML=`<div class="arcade-mission arcade-${theme}"><div class="arcade-top"><span class="arcade-category">${esc(category)}</span><span>⚡ BRAIN BREAK LIVE</span></div><div class="arcade-icon" aria-hidden="true">${({movement:'↗',social:'✦',cs:'⌘',creative:'★'})[theme]}</div><h1>${esc(s.title||'Brain Break')}</h1><div class="arcade-label">YOUR MISSION</div><ol class="arcade-steps">${instructions.map(step=>`<li>${esc(step)}</li>`).join('')}</ol><div class="arcade-timing"><span>CHALLENGE TIME</span><strong id="arcade-clock">--:--</strong></div><div class="arcade-track"><div id="arcade-progress"></div></div><p class="arcade-return" id="arcade-return" hidden>${esc(s.returnCue||'Return to your workstation ready to learn.')}</p>${s.alternative?`<details class="arcade-alternative"><summary>Alternative way to participate</summary><p>${esc(s.alternative)}</p></details>`:''}${link(s.resourceUrl,'Open activity')}</div>`;
+      updateArcade();
     }else{
       $('activity-panel').innerHTML=`<div class="eyebrow">REFLECT & CONNECT</div><h1>${esc(s.title||'Exit Ticket')}</h1><div class="prompt">${esc(s.prompt)}</div>${s.instructions?`<p class="context">${esc(s.instructions)}</p>`:''}${link(s.responseUrl,'Open response form')}`;
     }
@@ -277,6 +281,17 @@ if(typeof document!=='undefined'){
   function playChime(){
     if(sound&&soundContext){try{const oscillator=soundContext.createOscillator(),gain=soundContext.createGain();oscillator.connect(gain);gain.connect(soundContext.destination);oscillator.frequency.value=660;gain.gain.setValueAtTime(.0001,soundContext.currentTime);gain.gain.exponentialRampToValueAtTime(.10,soundContext.currentTime+.03);gain.gain.exponentialRampToValueAtTime(.0001,soundContext.currentTime+.65);oscillator.start();oscillator.stop(soundContext.currentTime+.7);}catch{}}
   }
+  function updateArcade(){
+    if(tab!=='brain'||!data?.brain)return;
+    const phase=currentPhase(),isBreak=phase?.index===2,seconds=Math.max(0,Math.round(phase?.remaining||0));
+    const duration=Math.max(1,Number(data.brain.duration)||5)*60;
+    const elapsed=isBreak?Math.max(0,(data.phases?.[2]?.minutes||10)*60-seconds):0;
+    const left=isBreak?Math.max(0,duration-elapsed):duration;
+    const clock=$('arcade-clock'),progress=$('arcade-progress'),cue=$('arcade-return');
+    if(clock)clock.textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');
+    if(progress)progress.style.width=(100*left/duration)+'%';
+    if(cue)cue.hidden=left>0;
+  }
   function tick(){
     const now=new Date(),tz=data?.timezone||'America/Detroit',local=GCI.localParts(now,tz);
     $('clock').textContent=now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',timeZone:tz});
@@ -285,6 +300,9 @@ if(typeof document!=='undefined'){
     if(document.activeElement!==$('date-picker'))$('date-picker').value=displayedDate;
     $('date-label').title=displayedDate===local.date?'Today':`Viewing ${displayedDate}; class timing still follows today`;
     const phase=currentPhase(now),key=phase?.key||'outside';
+    if(phase?.index===2&&data?.brain&&data?.date===local.date&&!brainAuto&&brainDismissedKey!==key){brainPrevious=tab;brainAuto=true;selectTab('brain');}
+    else if(brainAuto&&(!phase||phase.index!==2)){brainAuto=false;selectTab(brainPrevious);}
+    updateArcade();
     if(lastKey!==null&&lastKey!==key&&phase)announce(phase);
     const sessionChanged=lastSession!==(data?GCI.scheduled(now,data)?.session:undefined);
     if(lastKey!==key||sessionChanged){lastKey=key;renderCourses();renderLearningTarget();if(tab==='focus'&&sessionChanged)renderContent();}
