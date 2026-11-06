@@ -96,7 +96,7 @@ function dashboardData_(ss,now,selectedDate) {
       context:String(starter.Context||''),techIcon:String(starter['Tech Icon']||''),iconRole:String(starter['Icon Role']||''),
       iconContribution:String(starter['Icon Contribution']||''),goDeeper:String(starter['Go Deeper']||'')
     }:null,
-    brain:brain?{title:String(brain['Activity Title']||''),instructions:String(brain['Student Instructions']||''),returnCue:String(brain['Reflection / Return Cue']||''),duration:Number(brain['Duration (min)'])||10,alternative:String(brain['Accessibility Alternative']||''),resourceUrl:dashboardUrl_(brain['Resource URL'])}:null,
+    brain:brain?{title:String(brain['Activity Title']||''),category:String(brain['Category']||''),instructions:String(brain['Student Instructions']||''),returnCue:String(brain['Reflection / Return Cue']||''),duration:Number(brain['Duration (min)'])||10,alternative:String(brain['Accessibility Alternative']||''),resourceUrl:dashboardUrl_(brain['Resource URL'])}:null,
     exit:active&&exitPrompt?{title:exitRow&&exitRow.Title?String(exitRow.Title):'Exit Ticket',prompt:String(exitPrompt),instructions:String(exitRow&&exitRow.Instructions||''),responseUrl:dashboardUrl_(exitRow&&exitRow['Response URL'])}:null,
     courses:DASHBOARD_COURSES.map(name=>{
       const map=mappings.find(row=>row.Course===name);
