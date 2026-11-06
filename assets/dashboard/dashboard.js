@@ -198,7 +198,7 @@ if(typeof document!=='undefined'){
       $('deeper').hidden=!s.goDeeper;$('deeper').textContent='Go deeper';
     }else if(tab==='brain'){
       const category=String(s.category||'Creative'),theme=/movement/i.test(category)?'movement':/social|teamwork/i.test(category)?'social':/unplugged|CS/i.test(category)?'cs':'creative';
-      const instructions=String(s.instructions||'').split(/(?<=[.!?])\\s+/).filter(Boolean);
+      const instructions=String(s.instructions||'').split(/(?<=[.!?])\s+/).filter(Boolean);
       $('activity-panel').innerHTML=`<div class="arcade-mission arcade-${theme}"><div class="arcade-top"><span class="arcade-category">${esc(category)}</span><span>⚡ BRAIN BREAK LIVE</span></div><div class="arcade-icon" aria-hidden="true">${({movement:'↗',social:'✦',cs:'⌘',creative:'★'})[theme]}</div><h1>${esc(s.title||'Brain Break')}</h1><div class="arcade-label">YOUR MISSION</div><ol class="arcade-steps">${instructions.map(step=>`<li>${esc(step)}</li>`).join('')}</ol><div class="arcade-timing"><span>CHALLENGE TIME</span><strong id="arcade-clock">--:--</strong></div><div class="arcade-track"><div id="arcade-progress"></div></div><p class="arcade-return" id="arcade-return" hidden>${esc(s.returnCue||'Return to your workstation ready to learn.')}</p>${s.alternative?`<details class="arcade-alternative"><summary>Alternative way to participate</summary><p>${esc(s.alternative)}</p></details>`:''}${link(s.resourceUrl,'Open activity')}</div>`;
       updateArcade();
     }else{
