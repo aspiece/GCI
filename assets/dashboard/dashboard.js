@@ -207,6 +207,11 @@ if(typeof document!=='undefined'){
       renderQotd({...data.qotd,sourceUrl:data.qotd.sourceUrl||qotdUrl});
       return;
     }
+    if(tab==='starter'&&data.instructionalDay&&!data.qotd){
+      const legacy=!data.feedRevision;
+      $('activity-panel').innerHTML=`<div class="empty"><div class="eyebrow">DAILY STARTER · PYTHON REVIEW</div><h1>Review question unavailable</h1><p>${legacy?'The connected Apps Script feed is an older version or a different deployment.':'No active QOTD question was returned for '+esc(data.date)+'.'}</p><p class="context">Open Instructor to verify the configured feed URL. The previous discussion starter is temporarily unavailable to avoid showing the wrong lesson.</p></div>`;
+      return;
+    }
     if(!s){$('activity-panel').innerHTML=`<div class="empty"><h1>${tab==='brain'?'Brain Break':tab==='exit'?'Exit Ticket':'Daily Starter'}</h1><p>No ${tab==='brain'?'brain break':tab==='exit'?'exit ticket':'starter'} is scheduled for this date.</p></div>`;return;}
     if(tab==='starter'){
       $('activity-panel').innerHTML=`<span class="chip">${esc(s.csFocus||'Computer Science')}</span><div class="eyebrow">${esc(s.lens||'DAILY STARTER')}</div><h1>${esc(s.techIcon||s.topic||'Let’s think together')}</h1>${s.iconRole?`<p class="context">${esc(s.iconRole)}</p>`:''}${s.iconContribution?`<p class="context">${esc(s.iconContribution)}</p>`:''}<div class="prompt">${esc(s.prompt)}</div><div class="context">${esc(s.context||'')}</div><div class="routine"><span>01 THINK</span><span>02 SHARE</span><span>03 BUILD</span></div><div id="deeper-content" class="deeper-content" hidden>${esc(s.goDeeper||'')}</div>`;
