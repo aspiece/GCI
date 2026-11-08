@@ -110,9 +110,10 @@ function dashboardData_(ss,now,selectedDate) {
 }
 
 function dashboardCoursework_(courseId,date,tz) {
-  // Include every published whole-class assignment with a due date.
-  // No weekly filtering: the frontend sorts and groups upcoming/overdue work.
+  // Include published whole-class assignments due in the next 14 calendar days.
   const items=[];
+  const start=date;
+  const end=dashboardAddDays_(start,14);
   let pageToken;
   do {
     const response=Classroom.Courses.CourseWork.list(courseId,{
@@ -125,6 +126,7 @@ function dashboardCoursework_(courseId,date,tz) {
       // Classroom dueDate is a calendar date. Keep it separate from dueAt
       // so timezone conversion cannot shift the date shown to students.
       const dueDate=[d.year,String(d.month).padStart(2,'0'),String(d.day).padStart(2,'0')].join('-');
+      if(dueDate<start||dueDate>=end)return;
       const dueAt=new Date(Date.UTC(d.year,d.month-1,d.day,t.hours||0,t.minutes||0,t.seconds||0)).toISOString();
       items.push({title:String(work.title||'Assignment'),dueDate:dueDate,dueAt:dueAt,url:dashboardUrl_(work.alternateLink),submissions:null});
     });
