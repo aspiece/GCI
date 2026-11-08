@@ -202,10 +202,9 @@ if(typeof document!=='undefined'){
     const s=data[tab];
     if(!data.instructionalDay){$('activity-panel').innerHTML='<div class="empty"><div class="eyebrow">CLASS CALENDAR</div><h1>No class scheduled</h1><p>No activity is scheduled for this date.</p></div>';return;}
     if(tab==='focus'){renderFocus();return;}
-    if(tab==='starter'){
+    if(tab==='starter'&&data.qotd){
       const qotdUrl='https://codehs.com/qotd/python/'+data.date+'/';
-      if(data.qotd){renderQotd({...data.qotd,sourceUrl:data.qotd.sourceUrl||qotdUrl});return;}
-      $('activity-panel').innerHTML=`<div class="qotd qotd-embed"><div class="eyebrow">DAILY STARTER · CODEHS PYTHON</div><h1>Today's Question of the Day</h1><p class="qotd-prompt">THINK: Predict independently. PAIR: Explain your reasoning. SHARE: Show your whiteboard.</p><div class="qotd-frame-wrap"><iframe class="qotd-frame" title="CodeHS Python Question of the Day" src="${esc(qotdUrl)}" loading="eager" referrerpolicy="strict-origin-when-cross-origin"></iframe></div><div class="qotd-actions">${link(qotdUrl,'Open CodeHS in a separate tab')}<span class="muted">If CodeHS blocks embedding, use Open CodeHS.</span></div></div>`;
+      renderQotd({...data.qotd,sourceUrl:data.qotd.sourceUrl||qotdUrl});
       return;
     }
     if(!s){$('activity-panel').innerHTML=`<div class="empty"><h1>${tab==='brain'?'Brain Break':tab==='exit'?'Exit Ticket':'Daily Starter'}</h1><p>No ${tab==='brain'?'brain break':tab==='exit'?'exit ticket':'starter'} is scheduled for this date.</p></div>`;return;}
