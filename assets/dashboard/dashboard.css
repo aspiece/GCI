@@ -34,3 +34,22 @@ dialog{background:#101e30;color:var(--ink);border:1px solid var(--line);border-r
 
 /* CodeHS iframe trial; fallback link remains visible if framing is blocked. */
 .activity-card:has(.qotd-embed){padding:clamp(18px,2vw,30px)}.qotd-embed h1{font-size:clamp(28px,2.8vw,44px);margin:8px 0}.qotd-embed .qotd-prompt{font-size:clamp(17px,1.4vw,23px);margin:10px 0 16px}.qotd-frame-wrap{height:clamp(440px,57vh,780px);border:1px solid #47617c;border-radius:14px;overflow:hidden;background:#fff}.qotd-frame{display:block;width:100%;height:100%;border:0;background:#fff}.qotd-embed .qotd-actions{flex-wrap:wrap}
+
+/* Compact QOTD layout for classroom TVs: fit question, code, choices and controls. */
+.activity-card:has(.qotd){padding:clamp(10px,1.2vw,18px)}
+.qotd{max-width:none;width:100%;display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,1fr);grid-template-areas:"eyebrow eyebrow" "heading heading" "question question" "code choices" "stages stages" "prompt prompt" "answer answer" "actions actions";column-gap:clamp(10px,1.4vw,22px);row-gap:clamp(5px,.7vh,10px);align-items:start}
+.qotd>.eyebrow{grid-area:eyebrow;margin:0;font-size:clamp(11px,.85vw,15px)}
+.qotd h1{grid-area:heading;margin:0;font-size:clamp(25px,2.5vw,42px);line-height:1.08}
+.qotd-question{grid-area:question;margin:0;font-size:clamp(18px,1.65vw,27px);line-height:1.2}
+.qotd-code{grid-area:code;margin:0;padding:clamp(12px,1.2vw,20px);font-size:clamp(16px,1.4vw,23px);line-height:1.35;min-width:0;max-height:34vh;overflow:auto}
+.qotd-choices{grid-area:choices;grid-template-columns:1fr;gap:clamp(5px,.65vh,9px);font-size:clamp(16px,1.3vw,22px)}
+.qotd-choices>div{padding:clamp(8px,.85vw,13px);line-height:1.25}
+.qotd-stages{grid-area:stages;flex-wrap:nowrap;margin:2px 0 0;gap:6px}
+.qotd-stages button{padding:clamp(7px,.7vw,11px);min-width:0;font-size:clamp(12px,.9vw,16px)}
+.qotd-prompt{grid-area:prompt;margin:0;font-size:clamp(16px,1.3vw,22px);line-height:1.25}
+.qotd-answer{grid-area:answer;padding:clamp(10px,1vw,16px);font-size:clamp(16px,1.25vw,21px)}
+.qotd-answer p{margin:5px 0 0}
+.qotd-actions{grid-area:actions;display:flex;gap:12px;margin:0;flex-wrap:wrap}
+.qotd-actions button{padding:8px 15px}
+@media(max-width:820px){.qotd{grid-template-columns:minmax(0,1fr);grid-template-areas:"eyebrow" "heading" "question" "code" "choices" "stages" "prompt" "answer" "actions"}.qotd-code{max-height:30vh}.qotd-choices{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-height:760px) and (min-width:821px){.qotd{row-gap:4px}.qotd-code{font-size:clamp(15px,1.2vw,20px);max-height:28vh;padding:10px}.qotd h1{font-size:clamp(24px,2.1vw,34px)}.qotd-choices>div{padding:7px}.qotd-prompt{font-size:17px}}
