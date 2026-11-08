@@ -29,7 +29,7 @@ function doGet(e) {
     if(properties.getProperty('PUBLIC_FEED_ENABLED')!=='true')throw new Error('Feed disabled');
     const id=properties.getProperty('DASHBOARD_SPREADSHEET_ID');
     if(!id)throw new Error('Missing spreadsheet configuration');
-    const cache=CacheService.getScriptCache(),key='dashboard:v9:'+id+':'+(selectedDate||'today');
+    const cache=CacheService.getScriptCache(),key='dashboard:v10:qotd:'+id+':'+(selectedDate||'today');
     const cached=cache.get(key);
     const today=Utilities.formatDate(new Date(),'America/Detroit','yyyy-MM-dd');
     result=cached?JSON.parse(cached):null;
@@ -86,6 +86,8 @@ function dashboardData_(ss,now,selectedDate) {
   return {
     version:1,date:date,today:today,todayInstructionalDay:!!todayCalendar&&dashboardActive_(todayCalendar.Active)&&!schoolCalendar.todayClosed,timezone:tz,title:String(settings.appTitle||'CS Daily Starters'),generatedAt:now.toISOString(),instructionalDay:active,
     schoolCalendar:schoolCalendar,
+    feedRevision:'qotd-v2',
+    qotdStatus:!active?'non_instructional_day':qotd?'ready':'missing_row',
     reminders:dashboardReminders_(dashboardRows_(ss,'Reminders'),calendarRows,date,tz),
     learningTarget:calendar?dashboardLearningTarget_(focus,plannedStarter,String(calendar.Day)):'',
     learningTargets:calendar?dashboardSessionTargets_(focus,plannedStarter,String(calendar.Day)):{shared:'',third:''},
