@@ -202,7 +202,8 @@ if(typeof document!=='undefined'){
     renderLearningTarget();
     if(!data){$('activity-panel').innerHTML='<div class="empty"><div class="eyebrow">WELCOME</div><h1>Your classroom, at a glance.</h1><p>Open Instructor to connect the content feed, or preview the dashboard with sample content.</p></div>';return;}
     if(qotdDate!==data.date){qotdStage=0;qotdDate=data.date;}
-    const s=data[tab];
+    if(tab==='brain'&&brainContext!==data.date){brainContext=data.date;brainOverride=null;brainTimer=null;brainLastAlternate=-1;}
+    const s=tab==='brain'?currentBrain():data[tab];
     if(!data.instructionalDay){$('activity-panel').innerHTML='<div class="empty"><div class="eyebrow">CLASS CALENDAR</div><h1>No class scheduled</h1><p>No activity is scheduled for this date.</p></div>';return;}
     if(tab==='focus'){renderFocus();return;}
     if(tab==='starter'&&data.qotd){
@@ -222,7 +223,11 @@ if(typeof document!=='undefined'){
     }else if(tab==='brain'){
       const category=String(s.category||'Creative'),theme=/movement/i.test(category)?'movement':/social|teamwork/i.test(category)?'social':/unplugged|CS/i.test(category)?'cs':'creative';
       const instructions=String(s.instructions||'').split(/(?<=[.!?])\s+/).filter(Boolean);
-      $('activity-panel').innerHTML=`<div class="arcade-mission arcade-${theme}"><div class="arcade-top"><span class="arcade-category">${esc(category)}</span><span>⚡ BRAIN BREAK LIVE</span></div><div class="arcade-icon" aria-hidden="true">${({movement:'↗',social:'✦',cs:'⌘',creative:'★'})[theme]}</div><h1>${esc(s.title||'Brain Break')}</h1><div class="arcade-label">YOUR MISSION</div><ol class="arcade-steps">${instructions.map(step=>`<li>${esc(step)}</li>`).join('')}</ol><div class="arcade-timing"><span>CHALLENGE TIME</span><strong id="arcade-clock">--:--</strong></div><div class="arcade-track"><div id="arcade-progress"></div></div><p class="arcade-return" id="arcade-return" hidden>${esc(s.returnCue||'Return to your workstation ready to learn.')}</p>${s.alternative?`<details class="arcade-alternative"><summary>Alternative way to participate</summary><p>${esc(s.alternative)}</p></details>`:''}${link(s.resourceUrl,'Open activity')}</div>`;
+      $('activity-panel').innerHTML=`<div class="arcade-mission arcade-${theme}"><div class="arcade-top"><span class="arcade-category">${esc(category)}</span><span>⚡ BRAIN BREAK LIVE</span></div><div class="arcade-icon" aria-hidden="true">${({movement:'↗',social:'✦',cs:'⌘',creative:'★'})[theme]}</div><h1>${esc(s.title||'Brain Break')}</h1><div class="arcade-label">YOUR MISSION</div><ol class="arcade-steps">${instructions.map(step=>`<li>${esc(step)}</li>`).join('')}</ol><div class="arcade-timing"><span>CHALLENGE TIME</span><strong id="arcade-clock">--:--</strong></div><div class="arcade-track"><div id="arcade-progress"></div></div><p class="arcade-return" id="arcade-return" hidden>${esc(s.returnCue||'Return to your workstation ready to learn.')}</p>${s.alternative?`<details class="arcade-alternative"><summary>Alternative way to participate</summary><p>${esc(s.alternative)}</p></details>`:''}<div class="arcade-controls"><button type="button" id="arcade-shuffle">Shuffle activity</button><button type="button" id="arcade-start">Start timer</button><button type="button" id="arcade-plus">+1 minute</button><button type="button" id="arcade-reset">Today's activity</button></div>${link(s.resourceUrl,'Open activity')}</div>`;
+      $('arcade-shuffle').onclick=()=>{const pool=Array.isArray(data?.brainPool)&&data.brainPool.length?data.brainPool:brainAlternates;const next=pool.length===1?0:(brainLastAlternate+1+Math.floor(Math.random()*(pool.length-1)))%pool.length;brainLastAlternate=next;brainOverride=pool[next];brainTimer=null;renderContent();};
+      $('arcade-start').onclick=()=>{const duration=Math.max(1,Number(s.duration)||5)*60;brainTimer={duration,ends:Date.now()+duration*1000};updateArcade();};
+      $('arcade-plus').onclick=()=>{if(!brainTimer){const duration=Math.max(1,Number(s.duration)||5)*60;brainTimer={duration,ends:Date.now()+duration*1000};}brainTimer.duration+=60;brainTimer.ends+=60000;updateArcade();};
+      $('arcade-reset').onclick=()=>{brainOverride=null;brainTimer=null;renderContent();};
       updateArcade();
     }else{
       $('activity-panel').innerHTML=`<div class="eyebrow">REFLECT & CONNECT</div><h1>${esc(s.title||'Exit Ticket')}</h1><div class="prompt">${esc(s.prompt)}</div>${s.instructions?`<p class="context">${esc(s.instructions)}</p>`:''}${link(s.responseUrl,'Open response form')}`;
@@ -307,16 +312,25 @@ if(typeof document!=='undefined'){
   function playChime(){
     if(sound&&soundContext){try{const oscillator=soundContext.createOscillator(),gain=soundContext.createGain();oscillator.connect(gain);gain.connect(soundContext.destination);oscillator.frequency.value=660;gain.gain.setValueAtTime(.0001,soundContext.currentTime);gain.gain.exponentialRampToValueAtTime(.10,soundContext.currentTime+.03);gain.gain.exponentialRampToValueAtTime(.0001,soundContext.currentTime+.65);oscillator.start();oscillator.stop(soundContext.currentTime+.7);}catch{}}
   }
+  const brainAlternates=[
+    {title:'Binary Mirror',category:'Movement',instructions:'With a partner, create one gesture for 0 and one for 1. Take turns showing a four-bit pattern. Mirror the sequence, then switch.',returnCue:'Reset your posture and name your next task.',duration:3,alternative:'Use finger signals while seated.'},
+    {title:'Human Debugger',category:'CS Unplugged',instructions:'Partner A describes three steps to draw a simple shape. Partner B follows exactly. Find and correct one ambiguous instruction.',returnCue:'Bring one clearer instruction back to your code.',duration:4,alternative:'Describe or draw the steps from your seat.'},
+    {title:'Compliment Packet',category:'Social',instructions:'Share one specific appreciation with a partner. Pass a new encouraging message to another classmate.',returnCue:'Thank your partner and return to your work.',duration:3,alternative:'Write or silently signal your appreciation.'},
+    {title:'Screen-Free Reset',category:'Movement',instructions:'Look away from the screen. Gently stretch hands and shoulders if comfortable. Notice three objects around you.',returnCue:'Choose one small next step.',duration:3,alternative:'Rest quietly or observe from your seat.'}
+  ];
+  let brainOverride=null,brainTimer=null,brainLastAlternate=-1,brainContext='';
+  function currentBrain(){return brainOverride||data?.brain;}
   function updateArcade(){
-    if(tab!=='brain'||!data?.brain)return;
+    if(tab!=='brain'||!currentBrain())return;
     const phase=currentPhase(),isBreak=phase?.index===2,seconds=Math.max(0,Math.round(phase?.remaining||0));
-    const duration=Math.max(1,Number(data.brain.duration)||5)*60;
+    const duration=brainTimer?.duration||Math.max(1,Number(currentBrain().duration)||5)*60;
     const elapsed=isBreak?Math.max(0,(data.phases?.[2]?.minutes||10)*60-seconds):0;
-    const left=isBreak?Math.max(0,duration-elapsed):duration;
+    const left=brainTimer?Math.max(0,Math.ceil((brainTimer.ends-Date.now())/1000)):(isBreak?Math.max(0,duration-elapsed):duration);
     const clock=$('arcade-clock'),progress=$('arcade-progress'),cue=$('arcade-return');
     if(clock)clock.textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');
     if(progress)progress.style.width=(100*left/duration)+'%';
     if(cue)cue.hidden=left>0;
+    const btn=$('arcade-start');if(btn)btn.textContent=brainTimer?'Restart timer':'Start timer';
   }
   function tick(){
     const now=new Date(),tz=data?.timezone||'America/Detroit',local=GCI.localParts(now,tz);

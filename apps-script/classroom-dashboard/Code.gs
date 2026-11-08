@@ -100,7 +100,11 @@ function dashboardData_(ss,now,selectedDate) {
       context:String(starter.Context||''),techIcon:String(starter['Tech Icon']||''),iconRole:String(starter['Icon Role']||''),
       iconContribution:String(starter['Icon Contribution']||''),goDeeper:String(starter['Go Deeper']||'')
     }:null,
-    brain:brain?{title:String(brain['Activity Title']||''),category:String(brain['Category']||''),instructions:String(brain['Student Instructions']||''),returnCue:String(brain['Reflection / Return Cue']||''),duration:Number(brain['Duration (min)'])||10,alternative:String(brain['Accessibility Alternative']||''),resourceUrl:dashboardUrl_(brain['Resource URL'])}:null,
+    brain:brain?dashboardBrainPublic_(brain):null,
+    brainPool:active?dashboardRows_(ss,'Brain Breaks')
+      .filter(row=>dashboardActive_(row.Active)&&String(row['Activity Title']||'').trim()&&String(row['Student Instructions']||'').trim())
+      .filter(row=>dashboardDate_(row['Date (YYYY-MM-DD)'],tz)!==date)
+      .slice(-24).map(dashboardBrainPublic_):[],
     exit:active&&exitPrompt?{title:exitRow&&exitRow.Title?String(exitRow.Title):'Exit Ticket',prompt:String(exitPrompt),instructions:String(exitRow&&exitRow.Instructions||''),responseUrl:dashboardUrl_(exitRow&&exitRow['Response URL'])}:null,
     courses:DASHBOARD_COURSES.map(name=>{
       const map=mappings.find(row=>row.Course===name);
@@ -301,4 +305,12 @@ function testDashboardFeed(){
   const id=PropertiesService.getScriptProperties().getProperty('DASHBOARD_SPREADSHEET_ID');
   const data=dashboardData_(SpreadsheetApp.openById(id),new Date());
   console.log(JSON.stringify({date:data.date,instructionalDay:data.instructionalDay,starter:!!data.starter,brainBreak:!!data.brain,exitTicket:!!data.exit,courses:data.courses.map(c=>({name:c.name,status:c.status,count:c.assignments.length,submissionCountsReady:c.assignments.filter(a=>a.submissions!==null).length}))},null,2));
+}
+
+/** Public, student-facing Brain Break fields only. */
+function dashboardBrainPublic_(row){
+  return {title:String(row['Activity Title']||''),category:String(row.Category||''),
+    instructions:String(row['Student Instructions']||''),returnCue:String(row['Reflection / Return Cue']||''),
+    duration:Number(row['Duration (min)'])||5,alternative:String(row['Accessibility Alternative']||''),
+    resourceUrl:dashboardUrl_(row['Resource URL'])};
 }
