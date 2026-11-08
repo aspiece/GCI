@@ -3,14 +3,22 @@
  * NOT an official CodeHS API. Do not deploy as a public feed or copy
  * content into the classroom dashboard without verifying reuse permission.
  * Run testCodeHSQotdParserPoC from the Apps Script editor.
- * Compares three dates and fingerprints choices without logging their content.
+ * Compares three dates and fingerprints prompt and choices without logging their content.
+ * CONTENT_UNVERIFIED is intentional until a teacher compares against CodeHS.
  */
 function testCodeHSQotdParserPoC() {
   const dates = ['2026-11-04', '2026-11-05', '2026-11-06'];
-  dates.forEach(date => {
-    const result = inspectCodeHSQotdPage_(date);
+  const results = dates.map(inspectCodeHSQotdPage_);
+  const complete = results.filter(x => x.status === 200 && x.questionFingerprint);
+  const samePrompt = complete.length > 1 && new Set(complete.map(x => x.questionFingerprint)).size === 1;
+  const sameChoices = complete.length > 1 && new Set(complete.map(x => x.choiceFingerprints.join('|'))).size === 1;
+  results.forEach(result => {
+    result.crossDateSamePrompt = samePrompt;
+    result.crossDateSameChoices = sameChoices;
+    if (result.state === 'STRUCTURE_CANDIDATE') result.state = 'CONTENT_UNVERIFIED';
     console.log(JSON.stringify(result, null, 2));
   });
+  if (samePrompt && sameChoices) console.log('WARNING: Same extracted prompt and choices across dates; compare against CodeHS visually.');
 }
 
 function inspectCodeHSQotdPage_(date) {
@@ -45,10 +53,14 @@ function inspectCodeHSQotdPage_(date) {
   const promptText = clean(promptHtml);
   const choices = labels.map(x => clean(x[1]));
   const uniqueChoices = new Set(choices.map(x => x.trim().toLowerCase())).size;
-  const fingerprints = choices.map(x => Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, x).slice(0, 8).map(b => ('0'+(b & 255).toString(16)).slice(-2)).join(''));
+  const fingerprint = x => Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, x)
+    .slice(0, 8).map(b => ('0' + (b & 255).toString(16)).slice(-2)).join('');
+  const fingerprints = choices.map(fingerprint);
   const result = {
     date,status,source:url,
     questionTextLength:promptText.length,
+    questionFingerprint:fingerprint(promptText),
+    promptHasNestedMarkup:/<span\\b/i.test(promptHtml),
     choiceCount:choices.length,
     choiceTextLengths:choices.map(x=>x.length),
     distinctChoiceCount:uniqueChoices,
