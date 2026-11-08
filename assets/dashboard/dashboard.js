@@ -239,15 +239,17 @@ if(typeof document!=='undefined'){
     lastSession=active;
     if(!data){$('courses').innerHTML=visibleCourses.map(name=>`<details class="course" open><summary>${esc(name)}</summary><div class="course-body"><p class="none-due">Connect Classroom to load deadlines.</p></div></details>`).join('');return;}
     const today=GCI.localParts(new Date(),data.timezone).date;
-    $('week-label').textContent='All dated coursework';
+    $('week-label').textContent='Next 14 days';
     $('due-title').textContent='Upcoming Due Dates';
     $('courses').innerHTML=visibleCourses.map(name=>{
       const course=data.courses.find(c=>c.name===name)||{name,status:'unconfigured',assignments:[]};
       const assignments=(course.assignments||[]).filter(a=>a.dueDate||a.dueAt)
         .map(a=>({...a,displayDate:a.dueDate||GCI.localParts(new Date(a.dueAt),data.timezone).date}))
         .sort((a,b)=>a.displayDate.localeCompare(b.displayDate)||a.title.localeCompare(b.title));
-      const upcoming=assignments.filter(a=>a.displayDate>=today);
-      const overdue=assignments.filter(a=>a.displayDate<today);
+      const endDate=new Date(today+'T12:00:00Z');endDate.setUTCDate(endDate.getUTCDate()+14);
+      const end=endDate.toISOString().slice(0,10);
+      const upcoming=assignments.filter(a=>a.displayDate>=today&&a.displayDate<end);
+      const overdue=[];
       const renderItems=items=>items.map(a=>`<div class="assignment"><div class="assignment-heading"><span class="assignment-title">${GCI.safeUrl(a.url)?link(a.url,a.title):esc(a.title)}</span>${GCI.submissionBadge(a.submissions)}</div><time datetime="${esc(a.displayDate)}">${shortDate(a.displayDate,{month:'short',day:'numeric',year:'numeric'})}</time></div>`).join('');
       const renderGroups=items=>[...new Set(items.map(a=>a.displayDate))].map(date=>`<section class="day-group"><div class="day-heading">${shortDate(date,{weekday:'short',month:'short',day:'numeric'})}</div>${renderItems(items.filter(a=>a.displayDate===date))}</section>`).join('');
       let body='';
