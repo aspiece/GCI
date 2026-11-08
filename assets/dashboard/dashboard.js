@@ -355,6 +355,15 @@ if(typeof document!=='undefined'){
     $('phases').innerHTML=(data?.phases||GCI.phases).map((p,i)=>`<li class="${phase?.index===i?'current':phase&&phase.index>i?'past':''}" ${phase?.index===i?'aria-current="step"':''}><span class="phase-number">${i+1}</span>${esc(p.name)}</li>`).join('');
     $('phase-remaining').textContent=phase?`${Math.floor(phase.remaining/60).toString().padStart(2,'0')}:${(phase.remaining%60).toString().padStart(2,'0')}`:'—';
     $('phase-mode').textContent=manual?'Manual · Resume to rejoin schedule':'Scheduled transitions';
+    const cue=$('presentation-phase-cue');
+    if(cue){
+      if(phase&&data?.phases){
+        const next=data.phases[phase.index+1];
+        const remain=Math.max(0,Math.ceil(phase.remaining));
+        const clock=String(Math.floor(remain/60)).padStart(2,'0')+':'+String(remain%60).padStart(2,'0');
+        cue.textContent=next?'Next: '+next.name+' · '+clock:phase.session+' · Cleanup · '+clock;
+      }else cue.textContent='Presentation mode';
+    }
     if(data&&(data.today||data.date)!==local.date&&!inflight&&Date.now()-lastAttempt>60000)refresh();
   }
   function apply(next){
