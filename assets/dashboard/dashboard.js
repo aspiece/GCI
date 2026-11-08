@@ -396,7 +396,7 @@ if(typeof document!=='undefined'){
     let finished=false;
     const timeout=setTimeout(()=>{if(!finished){finished=true;script.remove();status('Activity ready · Classroom deadlines are taking longer to load.');}},20000);
     window.gciDashboardCoursesFeed=payload=>{
-      if(finished||token!==courseGeneration)return;
+      if(finished||token!==courseGeneration||payload.requestId!==String(token))return;
       finished=true;clearTimeout(timeout);script.remove();
       if(!data||payload.error||payload.date!==data.date||!Array.isArray(payload.courses)){
         status('Activity ready · Classroom deadlines unavailable.','error');return;
