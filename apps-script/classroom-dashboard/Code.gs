@@ -110,26 +110,29 @@ function dashboardData_(ss,now,selectedDate) {
 }
 
 function dashboardCoursework_(courseId,date,tz) {
-  const monday=dashboardMonday_(date),nextMonday=dashboardAddDays_(monday,7),items=[];
+  // Include every published whole-class assignment with a due date.
+  // No weekly filtering: the frontend sorts and groups upcoming/overdue work.
+  const items=[];
   let pageToken;
-  do{
-    const response=Classroom.Courses.CourseWork.list(courseId,{courseWorkStates:['PUBLISHED'],pageSize:100,pageToken:pageToken,fields:'nextPageToken,courseWork(id,title,dueDate,dueTime,alternateLink,assigneeMode)'});
+  do {
+    const response=Classroom.Courses.CourseWork.list(courseId,{
+      courseWorkStates:['PUBLISHED'],pageSize:100,pageToken:pageToken,
+      fields:'nextPageToken,courseWork(id,title,dueDate,dueTime,alternateLink,assigneeMode)'
+    });
     (response.courseWork||[]).forEach(work=>{
-      // This shared display omits assignments targeted to individual students.
       if(work.assigneeMode==='INDIVIDUAL_STUDENTS'||!work.dueDate)return;
       const d=work.dueDate,t=work.dueTime||{};
-      const dueAt=new Date(Date.UTC(d.year,d.month-1,d.day,t.hours||0,t.minutes||0,t.seconds||0));
-      const local=Utilities.formatDate(dueAt,tz,'yyyy-MM-dd');
-      if(local>=monday&&local<nextMonday){
-        let submissions=null;
-        try{submissions=dashboardSubmissionCounts_(courseId,work.id);}
-        catch(error){console.error('Submission totals unavailable for a weekly assignment: '+String(error));}
-        items.push({title:String(work.title||'Assignment'),dueAt:dueAt.toISOString(),url:dashboardUrl_(work.alternateLink),submissions:submissions});
-      }
+      // Classroom dueDate is a calendar date. Keep it separate from dueAt
+      // so timezone conversion cannot shift the date shown to students.
+      const dueDate=[d.year,String(d.month).padStart(2,'0'),String(d.day).padStart(2,'0')].join('-');
+      const dueAt=new Date(Date.UTC(d.year,d.month-1,d.day,t.hours||0,t.minutes||0,t.seconds||0)).toISOString();
+      items.push({title:String(work.title||'Assignment'),dueDate:dueDate,dueAt:dueAt,url:dashboardUrl_(work.alternateLink),submissions:null});
     });
     pageToken=response.nextPageToken;
   }while(pageToken);
-  return items.sort((a,b)=>a.dueAt.localeCompare(b.dueAt));
+  // Submission counts are intentionally not fetched for every historical item;
+  // doing so could cause excessive Classroom API requests.
+  return items.sort((a,b)=>a.dueDate.localeCompare(b.dueDate)||a.title.localeCompare(b.title));
 }
 
 /** Read states only, then return aggregate totals. No student records leave this function. */
