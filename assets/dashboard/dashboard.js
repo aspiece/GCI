@@ -190,7 +190,7 @@ if(typeof document!=='undefined'){
     const labels=['THINK','PAIR','SHARE','REVEAL'];
     const prompts=['Predict the answer on your whiteboard.','Compare with your partner and explain why.','Raise your whiteboards together.','Review the correct answer and reasoning.'];
     const steps=labels.map((label,i)=>`<button type="button" data-qotd-stage="${i}" aria-pressed="${qotdStage===i}">${label}</button>`).join('');
-    $('activity-panel').innerHTML=`<div class="qotd"><div class="eyebrow">PYTHON · QUESTION OF THE DAY</div><h1>${esc(q.title||'Daily Python Challenge')}</h1><p class="qotd-question">${esc(q.question)}</p>${q.code?`<pre class="qotd-code"><code>${esc(q.code)}</code></pre>`:''}${q.choices?.length?`<div class="qotd-choices">${q.choices.map((c,i)=>`<div>${String.fromCharCode(65+i)}. ${esc(c)}</div>`).join('')}</div>`:''}<div class="qotd-stages">${steps}</div><p class="qotd-prompt">${prompts[qotdStage]}</p>${qotdStage===3?`<div class="qotd-answer"><strong>Answer: ${esc(q.answer||'Discuss as a class')}</strong><p>${esc(q.explanation)}</p></div>`:''}<div class="qotd-actions"><button type="button" id="qotd-next">${qotdStage===3?'Restart':'Next stage'}</button>${link(q.sourceUrl,'CodeHS source')}</div></div>`;
+    $('activity-panel').innerHTML=`<div class="qotd"><div class="eyebrow">PYTHON · QUESTION OF THE DAY</div><h1>${esc(q.title||'Daily Python Challenge')}</h1><p class="qotd-question">${esc(q.question)}</p>${q.code?`<pre class="qotd-code"><code>${esc(q.code)}</code></pre>`:''}${q.choices?.length?`<div class="qotd-choices">${q.choices.map((c,i)=>`<div>${String.fromCharCode(65+i)}. ${esc(c)}</div>`).join('')}</div>`:''}<div class="qotd-stages">${steps}</div><p class="qotd-prompt">${prompts[qotdStage]}</p>${qotdStage===3?`<div class="qotd-answer"><strong>${q.answer?'Answer: '+esc(q.answer):'Review the answer together'}</strong><p>${esc(q.explanation||'Answer details will be available after the live content refreshes.')}</p></div>`:''}<div class="qotd-actions"><button type="button" id="qotd-next">${qotdStage===3?'Restart':'Next stage'}</button>${link(q.sourceUrl,'CodeHS source')}</div></div>`;
     $('activity-panel').querySelectorAll('[data-qotd-stage]').forEach(b=>b.onclick=()=>{qotdStage=Number(b.dataset.qotdStage);renderQotd(q);});
     $('qotd-next').onclick=()=>{qotdStage=(qotdStage+1)%4;renderQotd(q);};
   }
@@ -351,6 +351,8 @@ if(typeof document!=='undefined'){
       const saved=JSON.parse(store.get(snapshotKey));
       const today=GCI.localParts(new Date(),'America/Detroit').date;
       if(!saved||saved.feed!==feedUrl||saved.date!==today||Date.now()-saved.savedAt>15*60*1000)return false;
+      // Cached content is a preview, not an authoritative answer source.
+      if(saved.payload?.qotd){saved.payload.qotd.answer='';saved.payload.qotd.explanation='';}
       apply(saved.payload);
       status('Showing recent classroom content · Checking for updates…');
       return true;
@@ -360,7 +362,10 @@ if(typeof document!=='undefined'){
     try{
       const today=GCI.localParts(new Date(),'America/Detroit').date;
       if(payload.date!==today||JSON.stringify(payload).length>200000)return;
-      store.set(snapshotKey,JSON.stringify({feed:feedUrl,date:today,savedAt:Date.now(),payload}));
+      // Never persist the answer key or explanations in browser storage.
+      const snapshot={...payload};
+      if(snapshot.qotd)snapshot.qotd={...snapshot.qotd,answer:'',explanation:''};
+      store.set(snapshotKey,JSON.stringify({feed:feedUrl,date:today,savedAt:Date.now(),payload:snapshot}));
     }catch{}
   }
   function refresh(){
