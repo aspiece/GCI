@@ -13,7 +13,7 @@ function testCodeHSQotdParserPoC() {
 }
 
 function inspectCodeHSQotdPage_(date) {
-  if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(date)) throw new Error('Invalid date');
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error('Invalid date');
   const url = 'https://codehs.com/qotd/python/' + date + '/';
   const response = UrlFetchApp.fetch(url, {
     muteHttpExceptions: true,
@@ -22,25 +22,25 @@ function inspectCodeHSQotdPage_(date) {
   const status = response.getResponseCode();
   if (status !== 200) return {date, status, state:'HTTP_ERROR'};
   const html = response.getContentText();
-  const match = html.match(/<ol\\b[^>]*class=["'][^"']*quiz-questions[^"']*["'][^>]*>([\\s\\S]*?)<\\/ol>/i);
+  const match = html.match(/<ol\b[^>]*class=["'][^"']*quiz-questions[^"']*["'][^>]*>([\s\S]*?)<\/ol>/i);
   if (!match) return {date,status,state:'QUESTION_CONTAINER_MISSING'};
   const section = match[1];
-  const answerList = section.search(/<ol\\b[^>]*class=["'][^"']*quiz-question-answers/i);
+  const answerList = section.search(/<ol\b[^>]*class=["'][^"']*quiz-question-answers/i);
   if (answerList < 0) return {date,status,state:'CHOICE_CONTAINER_MISSING'};
   const promptHtml = section.slice(0, answerList);
   const choicesHtml = section.slice(answerList);
   // Structural probe only: do not log or redistribute question text.
-  const labels = [...choicesHtml.matchAll(/<label\\b[^>]*>([\\s\\S]*?)<\\/label>/gi)];
+  const labels = [...choicesHtml.matchAll(/<label\b[^>]*>([\s\S]*?)<\/label>/gi)];
   const clean = markup => markup
-    .replace(/<script\\b[^>]*>[\\s\\S]*?<\\/script>/gi,'')
-    .replace(/<style\\b[^>]*>[\\s\\S]*?<\\/style>/gi,'')
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'')
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi,'')
     .replace(/<[^>]*>/g,' ')
     .replace(/&nbsp;|&#160;/gi,' ')
     .replace(/&amp;/gi,'&')
     .replace(/&lt;/gi,'<')
     .replace(/&gt;/gi,'>')
     .replace(/&quot;/gi,'"')
-    .replace(/\\s+/g,' ').trim();
+    .replace(/\s+/g,' ').trim();
   const promptText = clean(promptHtml);
   const choices = labels.map(x => clean(x[1]));
   const result = {
