@@ -467,7 +467,15 @@ if(typeof document!=='undefined'){
   $('dismiss-announcement').onclick=()=>{$('announcement').hidden=true;$('timer-phase-notice').hidden=true;clearTimeout(announcementTimer);};
   document.addEventListener('keydown',event=>{if(event.key==='Escape'){const announcementVisible=!$('announcement').hidden;$('announcement').hidden=true;$('timer-phase-notice').hidden=true;clearTimeout(announcementTimer);if(!announcementVisible&&$('countdown-dialog').open&&!$('settings').open)$('countdown-dialog').close();}});
   $('deeper').onclick=()=>{const content=$('deeper-content');if(content){content.hidden=!content.hidden;$('deeper').textContent=content.hidden?'Go deeper':'Hide deeper question';}};
+  function syncPresentationControls(){
+    const active=!!document.fullscreenElement;
+    $('presentation-controls').hidden=!active;
+    $('fullscreen').textContent=active?'Exit full screen':'Full screen';
+  }
   $('fullscreen').onclick=async()=>{try{if(!document.fullscreenElement)await document.documentElement.requestFullscreen();else await document.exitFullscreen();}catch{status('Use your browser’s full-screen command if full screen is blocked.','error');}};
+  $('presentation-timer').onclick=()=>{renderCountdown();openCountdown();};
+  $('presentation-exit').onclick=()=>{if(document.fullscreenElement)document.exitFullscreen();};
+  document.addEventListener('fullscreenchange',syncPresentationControls);
   const tabs=[...document.querySelectorAll('[data-tab]')];
   tabs.forEach((button,i)=>{button.onclick=()=>{manualTabPhaseKey=currentPhase()?.key||'outside';selectTab(button.dataset.tab);};button.onkeydown=event=>{let index;if(event.key==='ArrowRight')index=(i+1)%tabs.length;else if(event.key==='ArrowLeft')index=(i+tabs.length-1)%tabs.length;else if(event.key==='Home')index=0;else if(event.key==='End')index=tabs.length-1;else return;event.preventDefault();tabs[index].focus();manualTabPhaseKey=currentPhase()?.key||'outside';selectTab(tabs[index].dataset.tab);};});
   document.addEventListener('visibilitychange',()=>{if(!document.hidden){tick();renderCountdown();if(!inflight)refresh();}});
