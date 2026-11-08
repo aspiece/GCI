@@ -34,7 +34,7 @@ function doGet(e) {
     const cached=cache.get(key);
     const today=Utilities.formatDate(new Date(),'America/Detroit','yyyy-MM-dd');
     result=cached?JSON.parse(cached):null;
-    if(!result||result.today!==today){
+    if(!result||(mode==='courses'?result.date!==(selectedDate||today):result.today!==today)){
       const ss=SpreadsheetApp.openById(id),now=new Date();
       if(mode==='courses'){
         const date=selectedDate||Utilities.formatDate(now,'America/Detroit','yyyy-MM-dd');
