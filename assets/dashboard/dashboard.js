@@ -238,22 +238,23 @@ if(typeof document!=='undefined'){
     }
     lastSession=active;
     if(!data){$('courses').innerHTML=visibleCourses.map(name=>`<details class="course" open><summary>${esc(name)}</summary><div class="course-body"><p class="none-due">Connect Classroom to load deadlines.</p></div></details>`).join('');return;}
-    const today=GCI.localParts(new Date(),data.timezone).date,viewDate=selectedDate||today,week=GCI.weekDates(viewDate);
-    $('week-label').textContent=`${shortDate(week[0])} – ${shortDate(week[6])}`;
-    $('due-title').textContent=week[0]===GCI.weekDates(today)[0]?'Due This Week':'Due That Week';
+    const today=GCI.localParts(new Date(),data.timezone).date;
+    $('week-label').textContent='All dated coursework';
+    $('due-title').textContent='Upcoming Due Dates';
     $('courses').innerHTML=visibleCourses.map(name=>{
       const course=data.courses.find(c=>c.name===name)||{name,status:'unconfigured',assignments:[]};
-      const assignments=(course.assignments||[]).filter(a=>a.dueAt&&week.includes(GCI.localParts(new Date(a.dueAt),data.timezone).date)).sort((a,b)=>new Date(a.dueAt)-new Date(b.dueAt));
-      const days=week.filter(date=>assignments.some(a=>GCI.localParts(new Date(a.dueAt),data.timezone).date===date));
+      const assignments=(course.assignments||[]).filter(a=>a.dueDate||a.dueAt)
+        .map(a=>({...a,displayDate:a.dueDate||GCI.localParts(new Date(a.dueAt),data.timezone).date}))
+        .sort((a,b)=>a.displayDate.localeCompare(b.displayDate)||a.title.localeCompare(b.title));
+      const upcoming=assignments.filter(a=>a.displayDate>=today);
+      const overdue=assignments.filter(a=>a.displayDate<today);
+      const renderItems=items=>items.map(a=>`<div class="assignment"><div class="assignment-heading"><span class="assignment-title">${GCI.safeUrl(a.url)?link(a.url,a.title):esc(a.title)}</span>${GCI.submissionBadge(a.submissions)}</div><time datetime="${esc(a.displayDate)}">${shortDate(a.displayDate,{month:'short',day:'numeric',year:'numeric'})}</time></div>`).join('');
+      const renderGroups=items=>[...new Set(items.map(a=>a.displayDate))].map(date=>`<section class="day-group"><div class="day-heading">${shortDate(date,{weekday:'short',month:'short',day:'numeric'})}</div>${renderItems(items.filter(a=>a.displayDate===date))}</section>`).join('');
       let body='';
-      const staleWeek=GCI.weekDates(data.date)[0]!==week[0];
-      if(staleWeek)body='<p class="none-due">This week’s deadlines are unavailable until the connection refreshes.</p>';
-      else if(course.status!=='ready')body=`<p class="none-due">${course.status==='error'?'Deadlines unavailable. Try Refresh.':'Classroom connection not configured.'}</p>`;
-      else body=days.map(date=>{
-        const items=assignments.filter(a=>GCI.localParts(new Date(a.dueAt),data.timezone).date===date);
-        return `<section class="day-group ${date===today?'today':date<today?'past':''}"><div class="day-heading">${shortDate(date,{weekday:'long'})}${date===today?' · Today':''}</div>${items.map(a=>`<div class="assignment"><div class="assignment-heading"><span class="assignment-title">${GCI.safeUrl(a.url)?link(a.url,a.title):esc(a.title)}</span>${GCI.submissionBadge(a.submissions)}</div><time datetime="${esc(a.dueAt)}">${new Date(a.dueAt).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',timeZone:data.timezone})}</time></div>`).join('')}</section>`;
-      }).join('')||'<p class="none-due">Nothing due this week.</p>';
-      return `<details class="course ${activeCourses.includes(name)?'active':''}" data-course="${esc(name)}" ${openCourses.get(name)?'open':''}><summary>${esc(name)}<span class="course-count">${course.status==='ready'&&!staleWeek?assignments.length:'—'}</span></summary><div class="course-body">${body}</div></details>`;
+      if(course.status!=='ready')body=`<p class="none-due">${course.status==='error'?'Deadlines unavailable. Try Refresh.':'Classroom connection not configured.'}</p>`;
+      else body=(upcoming.length?renderGroups(upcoming):'<p class="none-due">No upcoming dated assignments.</p>')
+        +(overdue.length?`<details class="overdue-assignments"><summary>Past due dates (${overdue.length})</summary>${renderGroups(overdue)}</details>`:'');
+      return `<details class="course ${activeCourses.includes(name)?'active':''}" data-course="${esc(name)}" ${openCourses.get(name)?'open':''}><summary>${esc(name)}<span class="course-count">${course.status==='ready'?upcoming.length:'—'}</span></summary><div class="course-body">${body}</div></details>`;
     }).join('');
     document.querySelectorAll('[data-course]').forEach(el=>el.addEventListener('toggle',()=>openCourses.set(el.dataset.course,el.open)));
   }
