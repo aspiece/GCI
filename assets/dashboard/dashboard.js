@@ -202,7 +202,12 @@ if(typeof document!=='undefined'){
     const s=data[tab];
     if(!data.instructionalDay){$('activity-panel').innerHTML='<div class="empty"><div class="eyebrow">CLASS CALENDAR</div><h1>No class scheduled</h1><p>No activity is scheduled for this date.</p></div>';return;}
     if(tab==='focus'){renderFocus();return;}
-    if(tab==='starter'&&data.qotd){renderQotd(data.qotd);return;}
+    if(tab==='starter'){
+      const qotdUrl='https://codehs.com/qotd/python/'+data.date+'/';
+      if(data.qotd){renderQotd({...data.qotd,sourceUrl:data.qotd.sourceUrl||qotdUrl});return;}
+      $('activity-panel').innerHTML=`<div class="qotd"><div class="eyebrow">DAILY STARTER · CODEHS PYTHON</div><h1>Today's Question of the Day</h1><p class="qotd-question">Open today's original CodeHS question on the classroom display.</p><div class="qotd-stages"><span>01 THINK</span><span>02 PAIR</span><span>03 SHARE</span><span>04 DISCUSS</span></div><p class="qotd-prompt">Predict on your whiteboard, compare with a partner, then explain your reasoning.</p><div class="qotd-actions">${link(qotdUrl,'Open CodeHS question for '+data.date)}</div><p class="context">The question and answer are not copied into this dashboard. If CodeHS has no question for this date, use a previous published question or the existing starter.</p></div>`;
+      return;
+    }
     if(!s){$('activity-panel').innerHTML=`<div class="empty"><h1>${tab==='brain'?'Brain Break':tab==='exit'?'Exit Ticket':'Daily Starter'}</h1><p>No ${tab==='brain'?'brain break':tab==='exit'?'exit ticket':'starter'} is scheduled for this date.</p></div>`;return;}
     if(tab==='starter'){
       $('activity-panel').innerHTML=`<span class="chip">${esc(s.csFocus||'Computer Science')}</span><div class="eyebrow">${esc(s.lens||'DAILY STARTER')}</div><h1>${esc(s.techIcon||s.topic||'Let’s think together')}</h1>${s.iconRole?`<p class="context">${esc(s.iconRole)}</p>`:''}${s.iconContribution?`<p class="context">${esc(s.iconContribution)}</p>`:''}<div class="prompt">${esc(s.prompt)}</div><div class="context">${esc(s.context||'')}</div><div class="routine"><span>01 THINK</span><span>02 SHARE</span><span>03 BUILD</span></div><div id="deeper-content" class="deeper-content" hidden>${esc(s.goDeeper||'')}</div>`;
