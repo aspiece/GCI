@@ -54,31 +54,40 @@ function doGet(e) {
 }
 
 function dashboardData_(ss,now,selectedDate,skipCourses) {
-  const settings={};dashboardRows_(ss,'Settings').forEach(row=>{settings[String(row.Key||'')]=row.Value;});
+  const profileStart=Date.now(),readTimes={},rowCache={};
+  const read=name=>{
+    if(Object.prototype.hasOwnProperty.call(rowCache,name))return rowCache[name];
+    const start=Date.now();
+    const rows=dashboardRows_(ss,name);
+    readTimes[name]=Date.now()-start;
+    rowCache[name]=rows;
+    return rows;
+  };
+  const settings={};read('Settings').forEach(row=>{settings[String(row.Key||'')]=row.Value;});
   // The classroom schedule uses Michigan local time, regardless of workbook timezone.
   const tz=String(settings.timezone||'America/Detroit');
   const today=Utilities.formatDate(now,tz,'yyyy-MM-dd');
   if(selectedDate&&!dashboardValidDate_(selectedDate))throw new Error('Invalid requested date');
-  const date=selectedDate||today,calendarRows=dashboardRows_(ss,'Calendar');
+  const date=selectedDate||today,calendarRows=read('Calendar');
   const calendar=calendarRows.find(row=>dashboardDate_(row.Date,tz)===date);
   const todayCalendar=calendarRows.find(row=>dashboardDate_(row.Date,tz)===today);
   const schoolCalendar=dashboardSchoolCalendar_(date,today,tz);
   const active=!!calendar&&dashboardActive_(calendar.Active)&&!schoolCalendar.closed;
-  const plannedStarter=calendar?dashboardRows_(ss,'Starters').find(row=>Number(row.Week)===Number(calendar.Week)&&String(row.Day).toLowerCase()===String(calendar.Day).toLowerCase()&&dashboardActive_(row.Active)):null;
+  const plannedStarter=calendar?read('Starters').find(row=>Number(row.Week)===Number(calendar.Week)&&String(row.Day).toLowerCase()===String(calendar.Day).toLowerCase()&&dashboardActive_(row.Active)):null;
   const starter=active?plannedStarter:null;
-  const qotd=active?dashboardRows_(ss,'Daily Starter QOTD').find(row=>dashboardDate_(row['Date (YYYY-MM-DD)'],tz)===date&&dashboardActive_(row.Active)):null;
-  const brain=active?dashboardRows_(ss,'Brain Breaks').find(row=>dashboardDate_(row['Date (YYYY-MM-DD)'],tz)===date&&dashboardActive_(row.Active)):null;
-  const exitRow=active?dashboardRows_(ss,'Exit Tickets').find(row=>dashboardDate_(row['Date (YYYY-MM-DD)'],tz)===date&&dashboardActive_(row.Active)):null;
-  const focus=calendar?dashboardRows_(ss,'Focus Map').find(row=>Number(row.Week)===Number(calendar.Week)):null;
-  const focusPlans=active?dashboardRows_(ss,'Focus Plans'):[];
+  const qotd=active?read('Daily Starter QOTD').find(row=>dashboardDate_(row['Date (YYYY-MM-DD)'],tz)===date&&dashboardActive_(row.Active)):null;
+  const brain=active?read('Brain Breaks').find(row=>dashboardDate_(row['Date (YYYY-MM-DD)'],tz)===date&&dashboardActive_(row.Active)):null;
+  const exitRow=active?read('Exit Tickets').find(row=>dashboardDate_(row['Date (YYYY-MM-DD)'],tz)===date&&dashboardActive_(row.Active)):null;
+  const focus=calendar?read('Focus Map').find(row=>Number(row.Week)===Number(calendar.Week)):null;
+  const focusPlans=active?read('Focus Plans'):[];
   const exitPrompt=exitRow?exitRow['Student Prompt']:focus&&focus[String(calendar.Day)+' Exit Ticket'];
-  const phaseValues=dashboardRows_(ss,'Dashboard Schedule');
+  const phaseValues=read('Dashboard Schedule');
   const phases=DASHBOARD_PHASES.map((phase,i)=>{
     const row=phaseValues.find(r=>Number(r.Order)===i+1),minutes=row?Number(row['Duration (min)']):phase.minutes;
     if(!Number.isFinite(minutes)||minutes<=0)throw new Error('Invalid phase duration');
     return Object.assign({},phase,{minutes:minutes,message:row&&row['Announcement']?String(row.Announcement):phase.message});
   });
-  const sessionRows=dashboardRows_(ss,'Dashboard Sessions');
+  const sessionRows=read('Dashboard Sessions');
   const sessions=DASHBOARD_SESSIONS.map(session=>{
     const row=sessionRows.find(r=>r.Course===session.name);
     const next=row?{name:session.name,start:dashboardTime_(row.Start,tz),end:dashboardTime_(row.End,tz)}:session;
@@ -87,12 +96,12 @@ function dashboardData_(ss,now,selectedDate,skipCourses) {
     if(minutes(next.end)-minutes(next.start)!==phases.reduce((n,p)=>n+p.minutes,0))throw new Error('Phase durations must match session duration');
     return next;
   });
-  return {
+  const payload={
     version:1,date:date,today:today,todayInstructionalDay:!!todayCalendar&&dashboardActive_(todayCalendar.Active)&&!schoolCalendar.todayClosed,timezone:tz,title:String(settings.appTitle||'CS Daily Starters'),generatedAt:now.toISOString(),instructionalDay:active,
     schoolCalendar:schoolCalendar,
     feedRevision:'qotd-v2',
     qotdStatus:!active?'non_instructional_day':qotd?'ready':'missing_row',
-    reminders:dashboardReminders_(dashboardRows_(ss,'Reminders'),calendarRows,date,tz),
+    reminders:dashboardReminders_(read('Reminders'),calendarRows,date,tz),
     learningTarget:calendar?dashboardLearningTarget_(focus,plannedStarter,String(calendar.Day)):'',
     learningTargets:calendar?dashboardSessionTargets_(focus,plannedStarter,String(calendar.Day)):{shared:'',third:''},
     focusPlans:active?{shared:dashboardFocusPlan_(focusPlans,date,'1st/2nd Session',tz),third:dashboardFocusPlan_(focusPlans,date,'3rd Session',tz)}:{shared:null,third:null},
@@ -105,13 +114,15 @@ function dashboardData_(ss,now,selectedDate,skipCourses) {
       iconContribution:String(starter['Icon Contribution']||''),goDeeper:String(starter['Go Deeper']||'')
     }:null,
     brain:brain?dashboardBrainPublic_(brain):null,
-    brainPool:active?dashboardRows_(ss,'Brain Breaks')
+    brainPool:active?read('Brain Breaks')
       .filter(row=>dashboardActive_(row.Active)&&String(row['Activity Title']||'').trim()&&String(row['Student Instructions']||'').trim())
       .filter(row=>dashboardDate_(row['Date (YYYY-MM-DD)'],tz)!==date)
       .slice(-24).map(dashboardBrainPublic_):[],
     exit:active&&exitPrompt?{title:exitRow&&exitRow.Title?String(exitRow.Title):'Exit Ticket',prompt:String(exitPrompt),instructions:String(exitRow&&exitRow.Instructions||''),responseUrl:dashboardUrl_(exitRow&&exitRow['Response URL'])}:null,
     courses:skipCourses?DASHBOARD_COURSES.map(name=>({name:name,status:'loading',assignments:[]})):dashboardCourseSummaries_(ss,date,tz)
   };
+  console.log('Dashboard content profile '+JSON.stringify({date:date,elapsedMs:Date.now()-profileStart,readMs:readTimes,skipCourses:!!skipCourses}));
+  return payload;
 }
 
 function dashboardCourseSummaries_(ss,date,tz){
