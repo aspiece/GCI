@@ -3,9 +3,10 @@
  * NOT an official CodeHS API. Do not deploy as a public feed or copy
  * content into the classroom dashboard without verifying reuse permission.
  * Run testCodeHSQotdParserPoC from the Apps Script editor.
+ * Compares three dates and fingerprints choices without logging their content.
  */
 function testCodeHSQotdParserPoC() {
-  const dates = ['2026-11-06'];
+  const dates = ['2026-11-04', '2026-11-05', '2026-11-06'];
   dates.forEach(date => {
     const result = inspectCodeHSQotdPage_(date);
     console.log(JSON.stringify(result, null, 2));
@@ -43,13 +44,18 @@ function inspectCodeHSQotdPage_(date) {
     .replace(/\s+/g,' ').trim();
   const promptText = clean(promptHtml);
   const choices = labels.map(x => clean(x[1]));
+  const uniqueChoices = new Set(choices.map(x => x.trim().toLowerCase())).size;
+  const fingerprints = choices.map(x => Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, x).slice(0, 8).map(b => ('0'+(b & 255).toString(16)).slice(-2)).join(''));
   const result = {
     date,status,source:url,
     questionTextLength:promptText.length,
     choiceCount:choices.length,
     choiceTextLengths:choices.map(x=>x.length),
+    distinctChoiceCount:uniqueChoices,
+    choiceFingerprints:fingerprints,
+    likelyRepeatedInterfaceText:uniqueChoices<choices.length,
     hasSyntaxHighlighting:/prism-highlight|token/i.test(section),
-    state:promptText.length>0 && choices.length===4 && choices.every(x=>x.length>0)
+    state:promptText.length>0 && choices.length===4 && choices.every(x=>x.length>0) && uniqueChoices===4
       ? 'STRUCTURE_CANDIDATE' : 'NEEDS_PARSER_REFINEMENT'
   };
   return result;
