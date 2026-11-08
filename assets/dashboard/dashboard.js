@@ -329,7 +329,13 @@ if(typeof document!=='undefined'){
     const clock=$('arcade-clock'),progress=$('arcade-progress'),cue=$('arcade-return');
     if(clock)clock.textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');
     if(progress)progress.style.width=(100*left/duration)+'%';
-    if(cue)cue.hidden=left>0;
+    if(cue){
+      const wrapping=left<=30;
+      cue.hidden=!wrapping;
+      cue.textContent=left===0
+        ?(currentBrain().returnCue||'Return to your workstation ready to learn.')
+        :'Wrapping up · '+(currentBrain().returnCue||'Choose your next step before returning to work.');
+    }
     const btn=$('arcade-start');if(btn)btn.textContent=brainTimer?'Restart timer':'Start timer';
   }
   function tick(){
