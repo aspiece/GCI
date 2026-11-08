@@ -202,7 +202,7 @@ if(typeof document!=='undefined'){
     renderLearningTarget();
     if(!data){$('activity-panel').innerHTML='<div class="empty"><div class="eyebrow">WELCOME</div><h1>Your classroom, at a glance.</h1><p>Open Instructor to connect the content feed, or preview the dashboard with sample content.</p></div>';return;}
     if(qotdDate!==data.date){qotdStage=0;qotdDate=data.date;}
-    if(tab==='brain'&&brainContext!==data.date){brainContext=data.date;brainOverride=null;brainTimer=null;}
+    if(tab==='brain'&&brainContext!==data.date){brainContext=data.date;brainOverride=null;brainTimer=null;brainLastAlternate=-1;}
     const s=tab==='brain'?currentBrain():data[tab];
     if(!data.instructionalDay){$('activity-panel').innerHTML='<div class="empty"><div class="eyebrow">CLASS CALENDAR</div><h1>No class scheduled</h1><p>No activity is scheduled for this date.</p></div>';return;}
     if(tab==='focus'){renderFocus();return;}
@@ -224,7 +224,7 @@ if(typeof document!=='undefined'){
       const category=String(s.category||'Creative'),theme=/movement/i.test(category)?'movement':/social|teamwork/i.test(category)?'social':/unplugged|CS/i.test(category)?'cs':'creative';
       const instructions=String(s.instructions||'').split(/(?<=[.!?])\s+/).filter(Boolean);
       $('activity-panel').innerHTML=`<div class="arcade-mission arcade-${theme}"><div class="arcade-top"><span class="arcade-category">${esc(category)}</span><span>⚡ BRAIN BREAK LIVE</span></div><div class="arcade-icon" aria-hidden="true">${({movement:'↗',social:'✦',cs:'⌘',creative:'★'})[theme]}</div><h1>${esc(s.title||'Brain Break')}</h1><div class="arcade-label">YOUR MISSION</div><ol class="arcade-steps">${instructions.map(step=>`<li>${esc(step)}</li>`).join('')}</ol><div class="arcade-timing"><span>CHALLENGE TIME</span><strong id="arcade-clock">--:--</strong></div><div class="arcade-track"><div id="arcade-progress"></div></div><p class="arcade-return" id="arcade-return" hidden>${esc(s.returnCue||'Return to your workstation ready to learn.')}</p>${s.alternative?`<details class="arcade-alternative"><summary>Alternative way to participate</summary><p>${esc(s.alternative)}</p></details>`:''}<div class="arcade-controls"><button type="button" id="arcade-shuffle">Shuffle activity</button><button type="button" id="arcade-start">Start timer</button><button type="button" id="arcade-plus">+1 minute</button><button type="button" id="arcade-reset">Today's activity</button></div>${link(s.resourceUrl,'Open activity')}</div>`;
-      $('arcade-shuffle').onclick=()=>{const pool=Array.isArray(data?.brainPool)&&data.brainPool.length?data.brainPool:brainAlternates;brainLastAlternate=(brainLastAlternate+1)%pool.length;brainOverride=pool[brainLastAlternate];brainTimer=null;renderContent();};
+      $('arcade-shuffle').onclick=()=>{const pool=Array.isArray(data?.brainPool)&&data.brainPool.length?data.brainPool:brainAlternates;const next=pool.length===1?0:(brainLastAlternate+1+Math.floor(Math.random()*(pool.length-1)))%pool.length;brainLastAlternate=next;brainOverride=pool[next];brainTimer=null;renderContent();};
       $('arcade-start').onclick=()=>{const duration=Math.max(1,Number(s.duration)||5)*60;brainTimer={duration,ends:Date.now()+duration*1000};updateArcade();};
       $('arcade-plus').onclick=()=>{if(!brainTimer){const duration=Math.max(1,Number(s.duration)||5)*60;brainTimer={duration,ends:Date.now()+duration*1000};}brainTimer.duration+=60;brainTimer.ends+=60000;updateArcade();};
       $('arcade-reset').onclick=()=>{brainOverride=null;brainTimer=null;renderContent();};
