@@ -19,7 +19,7 @@ const DASHBOARD_SESSIONS = [
 function doGet(e) {
   const params=e&&e.parameter||{};
   const callback=params.callback;
-  if(callback&&callback!=='gciDashboardFeed')return ContentService.createTextOutput('Invalid callback.');
+  if(callback&&!['gciDashboardFeed','gciDashboardCoursesFeed'].includes(callback))return ContentService.createTextOutput('Invalid callback.');
   const requestId=/^\d{1,10}$/.test(params.requestId||'')?params.requestId:'';
   let result;
   try {
@@ -29,12 +29,17 @@ function doGet(e) {
     if(properties.getProperty('PUBLIC_FEED_ENABLED')!=='true')throw new Error('Feed disabled');
     const id=properties.getProperty('DASHBOARD_SPREADSHEET_ID');
     if(!id)throw new Error('Missing spreadsheet configuration');
-    const cache=CacheService.getScriptCache(),key='dashboard:v10:qotd:'+id+':'+(selectedDate||'today');
+    const mode=params.mode==='content'?'content':params.mode==='courses'?'courses':'full';
+    const cache=CacheService.getScriptCache(),key='dashboard:v11:split:'+mode+':'+id+':'+(selectedDate||'today');
     const cached=cache.get(key);
     const today=Utilities.formatDate(new Date(),'America/Detroit','yyyy-MM-dd');
     result=cached?JSON.parse(cached):null;
     if(!result||result.today!==today){
-      result=dashboardData_(SpreadsheetApp.openById(id),new Date(),selectedDate);
+      const ss=SpreadsheetApp.openById(id),now=new Date();
+      if(mode==='courses'){
+        const date=selectedDate||Utilities.formatDate(now,'America/Detroit','yyyy-MM-dd');
+        result={date:date,courses:dashboardCourseSummaries_(ss,date,'America/Detroit')};
+      }else result=dashboardData_(ss,now,selectedDate,mode==='content');
       const encoded=JSON.stringify(result);
       if(encoded.length<85000)cache.put(key,encoded,60);
     }
@@ -48,7 +53,7 @@ function doGet(e) {
     .setMimeType(callback?ContentService.MimeType.JAVASCRIPT:ContentService.MimeType.JSON);
 }
 
-function dashboardData_(ss,now,selectedDate) {
+function dashboardData_(ss,now,selectedDate,skipCourses) {
   const settings={};dashboardRows_(ss,'Settings').forEach(row=>{settings[String(row.Key||'')]=row.Value;});
   // The classroom schedule uses Michigan local time, regardless of workbook timezone.
   const tz=String(settings.timezone||'America/Detroit');
@@ -82,7 +87,6 @@ function dashboardData_(ss,now,selectedDate) {
     if(minutes(next.end)-minutes(next.start)!==phases.reduce((n,p)=>n+p.minutes,0))throw new Error('Phase durations must match session duration');
     return next;
   });
-  const mappings=dashboardRows_(ss,'Dashboard Courses');
   return {
     version:1,date:date,today:today,todayInstructionalDay:!!todayCalendar&&dashboardActive_(todayCalendar.Active)&&!schoolCalendar.todayClosed,timezone:tz,title:String(settings.appTitle||'CS Daily Starters'),generatedAt:now.toISOString(),instructionalDay:active,
     schoolCalendar:schoolCalendar,
@@ -106,13 +110,18 @@ function dashboardData_(ss,now,selectedDate) {
       .filter(row=>dashboardDate_(row['Date (YYYY-MM-DD)'],tz)!==date)
       .slice(-24).map(dashboardBrainPublic_):[],
     exit:active&&exitPrompt?{title:exitRow&&exitRow.Title?String(exitRow.Title):'Exit Ticket',prompt:String(exitPrompt),instructions:String(exitRow&&exitRow.Instructions||''),responseUrl:dashboardUrl_(exitRow&&exitRow['Response URL'])}:null,
-    courses:DASHBOARD_COURSES.map(name=>{
-      const map=mappings.find(row=>row.Course===name);
-      if(!map||!map['Classroom Course ID']||!dashboardActive_(map.Active))return {name:name,status:'unconfigured',assignments:[]};
-      try{return {name:name,status:'ready',assignments:dashboardCachedCoursework_(String(map['Classroom Course ID']),date,tz)};}
-      catch(error){console.error('Classroom retrieval failed for '+name+': '+String(error));return {name:name,status:'error',assignments:[]};}
-    })
+    courses:skipCourses?DASHBOARD_COURSES.map(name=>({name:name,status:'loading',assignments:[]})):dashboardCourseSummaries_(ss,date,tz)
   };
+}
+
+function dashboardCourseSummaries_(ss,date,tz){
+  const mappings=dashboardRows_(ss,'Dashboard Courses');
+  return DASHBOARD_COURSES.map(name=>{
+    const map=mappings.find(row=>row.Course===name);
+    if(!map||!map['Classroom Course ID']||!dashboardActive_(map.Active))return {name:name,status:'unconfigured',assignments:[]};
+    try{return {name:name,status:'ready',assignments:dashboardCachedCoursework_(String(map['Classroom Course ID']),date,tz)};}
+    catch(error){console.error('Classroom retrieval failed for '+name+': '+String(error));return {name:name,status:'error',assignments:[]};}
+  });
 }
 
 /**
