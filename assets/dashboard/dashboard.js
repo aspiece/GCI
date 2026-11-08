@@ -344,6 +344,25 @@ if(typeof document!=='undefined'){
     $('phase-choice').value=selectedPhase||'0';
     renderContent();renderCourses();renderReminders();renderSchoolNotices();tick();
   }
+  // Show a recent validated snapshot immediately while the live feed refreshes.
+  const snapshotKey='gci.dashboard.snapshot.v1';
+  function restoreSnapshot(){
+    try{
+      const saved=JSON.parse(store.get(snapshotKey));
+      const today=GCI.localParts(new Date(),'America/Detroit').date;
+      if(!saved||saved.feed!==feedUrl||saved.date!==today||Date.now()-saved.savedAt>15*60*1000)return false;
+      apply(saved.payload);
+      status('Showing recent classroom content · Checking for updates…');
+      return true;
+    }catch{return false;}
+  }
+  function saveSnapshot(payload){
+    try{
+      const today=GCI.localParts(new Date(),'America/Detroit').date;
+      if(payload.date!==today||JSON.stringify(payload).length>200000)return;
+      store.set(snapshotKey,JSON.stringify({feed:feedUrl,date:today,savedAt:Date.now(),payload}));
+    }catch{}
+  }
   function refresh(){
     if(inflight)return;
     if(preview){apply(GCI.sample(new Date(),selectedDate));status('PREVIEW · Sample activities and fictional assignments. Not connected to live data.','preview');return;}
@@ -357,7 +376,7 @@ if(typeof document!=='undefined'){
       if(finished||token!==generation)return;
       if(payload.requestId!==String(token))return;
       if(requestDate&&payload.date&&payload.date!==requestDate){fail('Update the Apps Script feed for date navigation. Showing the previously loaded date.');return;}
-      try{if(payload.error)throw new Error(payload.error);apply(payload);cleanup();const errors=data.courses.some(c=>c.status==='error');status(errors?'Content connected · Some Classroom deadlines are unavailable.':`Connected · Updated ${new Date(data.generatedAt).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',timeZone:data.timezone})}`,errors?'error':'');}catch{fail();}
+      try{if(payload.error)throw new Error(payload.error);apply(payload);saveSnapshot(payload);cleanup();const errors=data.courses.some(c=>c.status==='error');status(errors?'Content connected · Some Classroom deadlines are unavailable.':`Connected · Updated ${new Date(data.generatedAt).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',timeZone:data.timezone})}`,errors?'error':'');}catch{fail();}
     };
     script.onerror=fail;script.src=`${feedUrl}?callback=gciDashboardFeed&requestId=${token}${requestDate?'&date='+encodeURIComponent(requestDate):''}&t=${Date.now()}`;document.head.appendChild(script);
   }
@@ -426,5 +445,6 @@ if(typeof document!=='undefined'){
   tabs.forEach((button,i)=>{button.onclick=()=>{manualTabPhaseKey=currentPhase()?.key||'outside';selectTab(button.dataset.tab);};button.onkeydown=event=>{let index;if(event.key==='ArrowRight')index=(i+1)%tabs.length;else if(event.key==='ArrowLeft')index=(i+tabs.length-1)%tabs.length;else if(event.key==='Home')index=0;else if(event.key==='End')index=tabs.length-1;else return;event.preventDefault();tabs[index].focus();manualTabPhaseKey=currentPhase()?.key||'outside';selectTab(tabs[index].dataset.tab);};});
   document.addEventListener('visibilitychange',()=>{if(!document.hidden){tick();renderCountdown();if(!inflight)refresh();}});
   feedUrl=GCI.validFeed(store.get('gci.dashboard.feed'))||defaultFeedUrl;preview=new URLSearchParams(location.search).get('preview')==='1';
-  refresh();tick();renderCountdown();setInterval(tick,1000);setInterval(renderCountdown,250);setInterval(refresh,60000);
+  if(!preview)restoreSnapshot();
+  refresh();tick();renderCountdown();setInterval(tick,1000);setInterval(renderCountdown,250);setInterval(refresh,300000);
 }
