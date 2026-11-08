@@ -58,7 +58,7 @@ function dashboardData_(ss,now,selectedDate,skipCourses) {
   const read=name=>{
     if(Object.prototype.hasOwnProperty.call(rowCache,name))return rowCache[name];
     const start=Date.now();
-    const rows=dashboardRows_(ss,name);
+    const rows=dashboardCachedRows_(ss,name);
     readTimes[name]=Date.now()-start;
     rowCache[name]=rows;
     return rows;
@@ -211,6 +211,35 @@ function dashboardReminders_(rows,calendarRows,date,tz){
     if(type==='weekly last day')return schoolDays[schoolDays.length-1]===date;
     return false;
   }).map(row=>({title:String(row.Title||'Reminder').trim(),message:String(row.Message||'').trim()}));
+}
+
+/**
+ * Cache non-student-facing dashboard tab rows with explicit Date preservation.
+ * Dates are encoded as tagged values and restored to Date objects before use.
+ * Cache entries are short-lived and isolated by spreadsheet and tab.
+ */
+function dashboardCachedRows_(ss,name) {
+  const ttl=/^(Settings|Dashboard Schedule|Dashboard Sessions)$/.test(name)?900:300;
+  const cache=CacheService.getScriptCache();
+  const key='dashboard:tab:v1:'+ss.getId()+':'+name;
+  const cached=cache.get(key);
+  if(cached){
+    try{
+      const rows=JSON.parse(cached,(k,v)=>v&&typeof v==='object'&&v.__gciDateMs!==undefined?new Date(v.__gciDateMs):v);
+      if(Array.isArray(rows))return rows;
+    }catch(error){console.warn('Tab cache invalid for '+name);}
+  }
+  const rows=dashboardRows_(ss,name);
+  // JSON.stringify calls Date.toJSON before the replacer; walk the values
+  // explicitly to avoid converting sheet Date objects into plain strings.
+  const packed=rows.map(row=>{
+    const out={};
+    Object.keys(row).forEach(k=>{const v=row[k];out[k]=v instanceof Date?{__gciDateMs:v.getTime()}:v;});
+    return out;
+  });
+  const encoded=JSON.stringify(packed);
+  if(encoded.length<85000)cache.put(key,encoded,ttl);
+  return rows;
 }
 
 function dashboardRows_(ss,name) {
