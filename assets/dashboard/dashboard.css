@@ -63,3 +63,17 @@ dialog{background:#101e30;color:var(--ink);border:1px solid var(--line);border-r
 .arcade-controls{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:12px}
 .arcade-controls button{border:1px solid #7bacc0;border-radius:9px;background:#183d54;color:#fff;padding:8px 13px;font-weight:700;font-size:clamp(12px,1vw,16px)}
 .arcade-controls button:focus-visible{outline:3px solid #fbd16b;outline-offset:2px}
+
+/* Card-only presentation: no header, tabs, learning target, sidebar or footer. */
+.presentation-controls{display:none;position:fixed;right:18px;top:14px;z-index:1000;gap:9px}
+:root:fullscreen .presentation-controls:not([hidden]){display:flex}
+:root:fullscreen .topbar,:root:fullscreen .phase-strip,:root:fullscreen .connection,:root:fullscreen .tabs,:root:fullscreen .learning-target,:root:fullscreen .activity-footer,:root:fullscreen .right-column{display:none!important}
+:root:fullscreen body{height:100vh;overflow:hidden;background:#091321}
+:root:fullscreen .layout{display:block;max-width:none;width:100%;height:100vh;padding:12px;margin:0}
+:root:fullscreen .activity{height:100%;width:100%;min-width:0}
+:root:fullscreen .activity-card{height:100%;min-height:0;overflow:auto;padding:clamp(18px,2.3vw,36px);border-radius:14px}
+:root:fullscreen .activity-card:has(.arcade-mission){padding:0}
+:root:fullscreen .qotd{padding-top:24px;max-width:1600px}
+:root:fullscreen .presentation-controls button{background:#24455b;color:#fff;border:1px solid #79a9bc;font-weight:700}
+:root:fullscreen .countdown-dialog{z-index:1100}
+@media(max-height:800px){:root:fullscreen .qotd{padding-top:8px}:root:fullscreen .qotd-code{max-height:37vh}}
