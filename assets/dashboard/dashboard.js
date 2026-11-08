@@ -367,7 +367,7 @@ if(typeof document!=='undefined'){
         const next=data.phases[phase.index+1];
         const remain=Math.max(0,Math.ceil(phase.remaining));
         const clock=String(Math.floor(remain/60)).padStart(2,'0')+':'+String(remain%60).padStart(2,'0');
-        cue.textContent=next?'Next: '+next.name+' · '+clock:phase.session+' · Cleanup · '+clock;
+        cue.textContent=data.date!==local.date?'Preview date · '+clock:next?'Next: '+next.name+' · '+clock:'Session ends · '+clock;
       }else cue.textContent='Presentation mode';
     }
     if(data&&(data.today||data.date)!==local.date&&!inflight&&Date.now()-lastAttempt>60000)refresh();
