@@ -12,3 +12,22 @@ function profileDashboardInstructionalLoad() {
     console.log("Instructional load "+attempt+": "+(Date.now()-started)+" ms");
   }
 }
+
+/** Validate cached tab data retains date values and matches the raw sheet. */
+function verifyDashboardTabCache() {
+  const id=PropertiesService.getScriptProperties().getProperty("DASHBOARD_SPREADSHEET_ID");
+  const ss=SpreadsheetApp.openById(id);
+  ["Calendar","Daily Starter QOTD","Brain Breaks","Focus Plans"].forEach(name=>{
+    const raw=dashboardRows_(ss,name);
+    const cached=dashboardCachedRows_(ss,name);
+    if(raw.length!==cached.length)throw new Error(name+": row count differs");
+    const dateField=Object.keys(raw[0]||{}).find(k=>/date/i.test(k));
+    if(dateField&&raw.length){
+      const a=raw[0][dateField],b=cached[0][dateField];
+      const normalize=v=>v instanceof Date?v.getTime():String(v);
+      if(normalize(a)!==normalize(b))throw new Error(name+": date changed in cache");
+      if((a instanceof Date)!==(b instanceof Date))throw new Error(name+": Date type not preserved");
+    }
+    console.log(name+": PASS ("+cached.length+" rows)");
+  });
+}
