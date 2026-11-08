@@ -61,6 +61,7 @@ function dashboardData_(ss,now,selectedDate) {
   const active=!!calendar&&dashboardActive_(calendar.Active)&&!schoolCalendar.closed;
   const plannedStarter=calendar?dashboardRows_(ss,'Starters').find(row=>Number(row.Week)===Number(calendar.Week)&&String(row.Day).toLowerCase()===String(calendar.Day).toLowerCase()&&dashboardActive_(row.Active)):null;
   const starter=active?plannedStarter:null;
+  const qotd=active?dashboardRows_(ss,'Daily Starter QOTD').find(row=>dashboardDate_(row['Date (YYYY-MM-DD)'],tz)===date&&dashboardActive_(row.Active)):null;
   const brain=active?dashboardRows_(ss,'Brain Breaks').find(row=>dashboardDate_(row['Date (YYYY-MM-DD)'],tz)===date&&dashboardActive_(row.Active)):null;
   const exitRow=active?dashboardRows_(ss,'Exit Tickets').find(row=>dashboardDate_(row['Date (YYYY-MM-DD)'],tz)===date&&dashboardActive_(row.Active)):null;
   const focus=calendar?dashboardRows_(ss,'Focus Map').find(row=>Number(row.Week)===Number(calendar.Week)):null;
@@ -91,6 +92,7 @@ function dashboardData_(ss,now,selectedDate) {
     focusPlans:active?{shared:dashboardFocusPlan_(focusPlans,date,'1st/2nd Session',tz),third:dashboardFocusPlan_(focusPlans,date,'3rd Session',tz)}:{shared:null,third:null},
     sessions:sessions,phases:phases,
     // Only allowlisted student-facing fields leave Apps Script.
+    qotd:qotd?{title:String(qotd['Challenge Title']||''),question:String(qotd.Question||''),code:String(qotd.Code||''),choices:['Choice A','Choice B','Choice C','Choice D'].map(k=>String(qotd[k]||'')).filter(Boolean),answer:String(qotd['Correct Answer']||''),explanation:String(qotd.Explanation||''),discussion:String(qotd['Discussion Prompt']||''),sourceUrl:dashboardUrl_(qotd['Source URL']||'')}:null,
     starter:starter?{
       lens:String(starter.Lens||''),topic:String(starter.Topic||''),csFocus:String(starter['CS Focus']||''),prompt:String(starter['Student Prompt']||''),
       context:String(starter.Context||''),techIcon:String(starter['Tech Icon']||''),iconRole:String(starter['Icon Role']||''),

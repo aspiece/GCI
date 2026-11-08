@@ -185,13 +185,29 @@ if(typeof document!=='undefined'){
     else content=`<h1>${esc(plan.title||'Focus')}</h1><div class="focus-task">${esc(plan.task)}</div>${steps.length?`<ol class="focus-steps">${steps.map(item=>`<li>${esc(item)}</li>`).join('')}</ol>`:''}${GCI.safeUrl(plan.resourceUrl)?`<div class="focus-resource">${link(plan.resourceUrl,plan.resourceLabel||'Open work')}</div>`:''}`;
     $('activity-panel').innerHTML=`<div class="focus-topline"><div class="eyebrow">FOCUS</div><div class="focus-controls" role="group" aria-label="Focus supports">${controls.map(([key,label])=>`<button data-focus-panel="${key}" aria-pressed="${focusPanel===key}">${esc(label)}</button>`).join('')}</div></div><div class="focus-view">${content}</div>`;
   }
+  let qotdStage=0,qotdDate='';
+  function renderQotd(q){
+    const labels=['THINK','PAIR','SHARE','REVEAL'];
+    const prompts=['Predict the answer on your whiteboard.','Compare with your partner and explain why.','Raise your whiteboards together.','Review the correct answer and reasoning.'];
+    const steps=labels.map((label,i)=>`<button type="button" data-qotd-stage="${i}" aria-pressed="${qotdStage===i}">${label}</button>`).join('');
+    $('activity-panel').innerHTML=`<div class="qotd"><div class="eyebrow">PYTHON · QUESTION OF THE DAY</div><h1>${esc(q.title||'Daily Python Challenge')}</h1><p class="qotd-question">${esc(q.question)}</p>${q.code?`<pre class="qotd-code"><code>${esc(q.code)}</code></pre>`:''}${q.choices?.length?`<div class="qotd-choices">${q.choices.map((c,i)=>`<div>${String.fromCharCode(65+i)}. ${esc(c)}</div>`).join('')}</div>`:''}<div class="qotd-stages">${steps}</div><p class="qotd-prompt">${prompts[qotdStage]}</p>${qotdStage===3?`<div class="qotd-answer"><strong>Answer: ${esc(q.answer||'Discuss as a class')}</strong><p>${esc(q.explanation)}</p></div>`:''}<div class="qotd-actions"><button type="button" id="qotd-next">${qotdStage===3?'Restart':'Next stage'}</button>${link(q.sourceUrl,'CodeHS source')}</div></div>`;
+    $('activity-panel').querySelectorAll('[data-qotd-stage]').forEach(b=>b.onclick=()=>{qotdStage=Number(b.dataset.qotdStage);renderQotd(q);});
+    $('qotd-next').onclick=()=>{qotdStage=(qotdStage+1)%4;renderQotd(q);};
+  }
   function renderContent(){
     $('deeper').hidden=true;
     renderLearningTarget();
     if(!data){$('activity-panel').innerHTML='<div class="empty"><div class="eyebrow">WELCOME</div><h1>Your classroom, at a glance.</h1><p>Open Instructor to connect the content feed, or preview the dashboard with sample content.</p></div>';return;}
+    if(qotdDate!==data.date){qotdStage=0;qotdDate=data.date;}
     const s=data[tab];
     if(!data.instructionalDay){$('activity-panel').innerHTML='<div class="empty"><div class="eyebrow">CLASS CALENDAR</div><h1>No class scheduled</h1><p>No activity is scheduled for this date.</p></div>';return;}
     if(tab==='focus'){renderFocus();return;}
+    if(tab==='starter'){
+      const qotdUrl='https://codehs.com/qotd/python/'+data.date+'/';
+      if(data.qotd){renderQotd({...data.qotd,sourceUrl:data.qotd.sourceUrl||qotdUrl});return;}
+      $('activity-panel').innerHTML=`<div class="qotd qotd-embed"><div class="eyebrow">DAILY STARTER · CODEHS PYTHON</div><h1>Today's Question of the Day</h1><p class="qotd-prompt">THINK: Predict independently. PAIR: Explain your reasoning. SHARE: Show your whiteboard.</p><div class="qotd-frame-wrap"><iframe class="qotd-frame" title="CodeHS Python Question of the Day" src="${esc(qotdUrl)}" loading="eager" referrerpolicy="strict-origin-when-cross-origin"></iframe></div><div class="qotd-actions">${link(qotdUrl,'Open CodeHS in a separate tab')}<span class="muted">If CodeHS blocks embedding, use Open CodeHS.</span></div></div>`;
+      return;
+    }
     if(!s){$('activity-panel').innerHTML=`<div class="empty"><h1>${tab==='brain'?'Brain Break':tab==='exit'?'Exit Ticket':'Daily Starter'}</h1><p>No ${tab==='brain'?'brain break':tab==='exit'?'exit ticket':'starter'} is scheduled for this date.</p></div>`;return;}
     if(tab==='starter'){
       $('activity-panel').innerHTML=`<span class="chip">${esc(s.csFocus||'Computer Science')}</span><div class="eyebrow">${esc(s.lens||'DAILY STARTER')}</div><h1>${esc(s.techIcon||s.topic||'Let’s think together')}</h1>${s.iconRole?`<p class="context">${esc(s.iconRole)}</p>`:''}${s.iconContribution?`<p class="context">${esc(s.iconContribution)}</p>`:''}<div class="prompt">${esc(s.prompt)}</div><div class="context">${esc(s.context||'')}</div><div class="routine"><span>01 THINK</span><span>02 SHARE</span><span>03 BUILD</span></div><div id="deeper-content" class="deeper-content" hidden>${esc(s.goDeeper||'')}</div>`;
