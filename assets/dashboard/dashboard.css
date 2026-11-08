@@ -90,3 +90,7 @@ dialog{background:#101e30;color:var(--ink);border:1px solid var(--line);border-r
 :root:fullscreen .qotd-actions{margin-top:0}
 :root:fullscreen .qotd-stages{margin-top:0}
 @media(max-height:760px){:root:fullscreen .learning-target:not([hidden]){padding:6px 12px;margin-bottom:6px}:root:fullscreen .activity-footer{min-height:30px}}
+
+/* Compact schedule cue, visible only in card presentation mode. */
+.presentation-phase-cue{align-self:center;color:#e0f3fb;background:#12283b;border:1px solid #476c81;border-radius:9px;padding:8px 12px;font-size:clamp(12px,.95vw,16px);font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+@media(max-width:680px){.presentation-controls{left:10px;right:10px;top:8px;justify-content:flex-end;flex-wrap:wrap}.presentation-phase-cue{margin-right:auto;font-size:12px;padding:7px}}
