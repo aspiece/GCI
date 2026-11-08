@@ -103,10 +103,28 @@ function dashboardData_(ss,now,selectedDate) {
     courses:DASHBOARD_COURSES.map(name=>{
       const map=mappings.find(row=>row.Course===name);
       if(!map||!map['Classroom Course ID']||!dashboardActive_(map.Active))return {name:name,status:'unconfigured',assignments:[]};
-      try{return {name:name,status:'ready',assignments:dashboardCoursework_(String(map['Classroom Course ID']),date,tz)};}
+      try{return {name:name,status:'ready',assignments:dashboardCachedCoursework_(String(map['Classroom Course ID']),date,tz)};}
       catch(error){console.error('Classroom retrieval failed for '+name+': '+String(error));return {name:name,status:'error',assignments:[]};}
     })
   };
+}
+
+/**
+ * Cache public, whole-class deadline summaries independently by course and
+ * requested date. Avoid repeated Classroom API pagination on every reload.
+ * Cache only the already-filtered, non-student-specific assignment data.
+ */
+function dashboardCachedCoursework_(courseId,date,tz) {
+  const cache=CacheService.getScriptCache();
+  const key='coursework:v2:'+courseId+':'+date;
+  const cached=cache.get(key);
+  if(cached){
+    try{return JSON.parse(cached);}catch(error){console.warn('Invalid coursework cache; refreshing.');}
+  }
+  const items=dashboardCoursework_(courseId,date,tz);
+  const encoded=JSON.stringify(items);
+  if(encoded.length<85000)cache.put(key,encoded,300);
+  return items;
 }
 
 function dashboardCoursework_(courseId,date,tz) {
