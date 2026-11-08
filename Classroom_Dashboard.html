@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="dark">
   <title>Classroom Dashboard · GCI</title>
-  <link rel="stylesheet" href="assets/dashboard/dashboard.css?v=20261107-brain-controls">
-  <script src="assets/dashboard/dashboard.js?v=20261107-brain-controls" defer></script>
+  <link rel="stylesheet" href="assets/dashboard/dashboard.css?v=20261107-card-presentation">
+  <script src="assets/dashboard/dashboard.js?v=20261107-card-presentation" defer></script>
 </head>
 <body>
   <header class="topbar">
@@ -40,6 +40,7 @@
     <section id="school-notices" class="school-notices" aria-label="School calendar notices" hidden></section>
     </aside>
   </main>
+  <div id="presentation-controls" class="presentation-controls" hidden><button id="presentation-timer" type="button">Timer</button><button id="presentation-exit" type="button">Exit full screen</button></div>
   <div id="announcement" class="announcement" role="status" aria-live="polite" aria-atomic="true" hidden><div><span id="announcement-icon" aria-hidden="true"></span><p id="announcement-session"></p><h2 id="announcement-title"></h2><p id="announcement-message"></p><button id="dismiss-announcement">Continue</button></div></div>
   <dialog id="countdown-dialog" class="countdown-dialog" aria-labelledby="countdown-title" aria-modal="false">
     <div class="dialog-header"><button id="timer-drag-handle" class="timer-drag-handle" aria-describedby="timer-move-help"><span aria-hidden="true">⠿</span> <span id="countdown-title">Classroom timer</span></button><div class="countdown-window-actions"><button id="timer-center">Center</button><button id="timer-close" aria-label="Close timer">Close</button></div></div>
