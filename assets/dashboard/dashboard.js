@@ -159,8 +159,8 @@ if(typeof document!=='undefined'){
     if(manual)return {...manual,remaining:Math.max(0,Math.ceil((manual.ends-now.getTime())/1000))};
     return data?GCI.scheduled(now,data):null;
   }
-  let brainAuto=false,brainPrevious='focus',brainDismissedKey='';
-  function selectTab(next){if(next!=='brain'&&brainAuto){brainAuto=false;brainDismissedKey=currentPhase()?.key||'';}tab=next;if(next==='focus')focusPanel='task';document.querySelectorAll('[data-tab]').forEach(b=>{const selected=b.dataset.tab===tab;b.setAttribute('aria-selected',String(selected));b.tabIndex=selected?0:-1;});$('activity-panel').setAttribute('aria-labelledby',`tab-${tab}`);renderContent();}
+  let lastAutoPhaseKey='',manualTabPhaseKey='';
+  function selectTab(next){tab=next;if(next==='focus')focusPanel='task';document.querySelectorAll('[data-tab]').forEach(b=>{const selected=b.dataset.tab===tab;b.setAttribute('aria-selected',String(selected));b.tabIndex=selected?0:-1;});$('activity-panel').setAttribute('aria-labelledby',`tab-${tab}`);renderContent();}
   function link(url,label){const safe=GCI.safeUrl(url);return safe?`<a href="${esc(safe)}" target="_blank" rel="noopener noreferrer">${esc(label)} ↗</a>`:'';}
   function viewedSession(){return GCI.contentSession(data,targetGroup);}
   function renderLearningTarget(){
@@ -238,22 +238,25 @@ if(typeof document!=='undefined'){
     }
     lastSession=active;
     if(!data){$('courses').innerHTML=visibleCourses.map(name=>`<details class="course" open><summary>${esc(name)}</summary><div class="course-body"><p class="none-due">Connect Classroom to load deadlines.</p></div></details>`).join('');return;}
-    const today=GCI.localParts(new Date(),data.timezone).date,viewDate=selectedDate||today,week=GCI.weekDates(viewDate);
-    $('week-label').textContent=`${shortDate(week[0])} – ${shortDate(week[6])}`;
-    $('due-title').textContent=week[0]===GCI.weekDates(today)[0]?'Due This Week':'Due That Week';
+    const today=GCI.localParts(new Date(),data.timezone).date;
+    $('week-label').textContent='Next 14 days';
+    $('due-title').textContent='Upcoming Due Dates';
     $('courses').innerHTML=visibleCourses.map(name=>{
       const course=data.courses.find(c=>c.name===name)||{name,status:'unconfigured',assignments:[]};
-      const assignments=(course.assignments||[]).filter(a=>a.dueAt&&week.includes(GCI.localParts(new Date(a.dueAt),data.timezone).date)).sort((a,b)=>new Date(a.dueAt)-new Date(b.dueAt));
-      const days=week.filter(date=>assignments.some(a=>GCI.localParts(new Date(a.dueAt),data.timezone).date===date));
+      const assignments=(course.assignments||[]).filter(a=>a.dueDate||a.dueAt)
+        .map(a=>({...a,displayDate:a.dueDate||GCI.localParts(new Date(a.dueAt),data.timezone).date}))
+        .sort((a,b)=>a.displayDate.localeCompare(b.displayDate)||a.title.localeCompare(b.title));
+      const endDate=new Date(today+'T12:00:00Z');endDate.setUTCDate(endDate.getUTCDate()+14);
+      const end=endDate.toISOString().slice(0,10);
+      const upcoming=assignments.filter(a=>a.displayDate>=today&&a.displayDate<end);
+      const overdue=[];
+      const renderItems=items=>items.map(a=>`<div class="assignment"><div class="assignment-heading"><span class="assignment-title">${GCI.safeUrl(a.url)?link(a.url,a.title):esc(a.title)}</span>${GCI.submissionBadge(a.submissions)}</div><time datetime="${esc(a.displayDate)}">${shortDate(a.displayDate,{month:'short',day:'numeric',year:'numeric'})}</time></div>`).join('');
+      const renderGroups=items=>[...new Set(items.map(a=>a.displayDate))].map(date=>`<section class="day-group"><div class="day-heading">${shortDate(date,{weekday:'short',month:'short',day:'numeric'})}</div>${renderItems(items.filter(a=>a.displayDate===date))}</section>`).join('');
       let body='';
-      const staleWeek=GCI.weekDates(data.date)[0]!==week[0];
-      if(staleWeek)body='<p class="none-due">This week’s deadlines are unavailable until the connection refreshes.</p>';
-      else if(course.status!=='ready')body=`<p class="none-due">${course.status==='error'?'Deadlines unavailable. Try Refresh.':'Classroom connection not configured.'}</p>`;
-      else body=days.map(date=>{
-        const items=assignments.filter(a=>GCI.localParts(new Date(a.dueAt),data.timezone).date===date);
-        return `<section class="day-group ${date===today?'today':date<today?'past':''}"><div class="day-heading">${shortDate(date,{weekday:'long'})}${date===today?' · Today':''}</div>${items.map(a=>`<div class="assignment"><div class="assignment-heading"><span class="assignment-title">${GCI.safeUrl(a.url)?link(a.url,a.title):esc(a.title)}</span>${GCI.submissionBadge(a.submissions)}</div><time datetime="${esc(a.dueAt)}">${new Date(a.dueAt).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',timeZone:data.timezone})}</time></div>`).join('')}</section>`;
-      }).join('')||'<p class="none-due">Nothing due this week.</p>';
-      return `<details class="course ${activeCourses.includes(name)?'active':''}" data-course="${esc(name)}" ${openCourses.get(name)?'open':''}><summary>${esc(name)}<span class="course-count">${course.status==='ready'&&!staleWeek?assignments.length:'—'}</span></summary><div class="course-body">${body}</div></details>`;
+      if(course.status!=='ready')body=`<p class="none-due">${course.status==='error'?'Deadlines unavailable. Try Refresh.':'Classroom connection not configured.'}</p>`;
+      else body=(upcoming.length?renderGroups(upcoming):'<p class="none-due">No upcoming dated assignments.</p>')
+        +(overdue.length?`<details class="overdue-assignments"><summary>Past due dates (${overdue.length})</summary>${renderGroups(overdue)}</details>`:'');
+      return `<details class="course ${activeCourses.includes(name)?'active':''}" data-course="${esc(name)}" ${openCourses.get(name)?'open':''}><summary>${esc(name)}<span class="course-count">${course.status==='ready'?upcoming.length:'—'}</span></summary><div class="course-body">${body}</div></details>`;
     }).join('');
     document.querySelectorAll('[data-course]').forEach(el=>el.addEventListener('toggle',()=>openCourses.set(el.dataset.course,el.open)));
   }
@@ -316,8 +319,13 @@ if(typeof document!=='undefined'){
     if(document.activeElement!==$('date-picker'))$('date-picker').value=displayedDate;
     $('date-label').title=displayedDate===local.date?'Today':`Viewing ${displayedDate}; class timing still follows today`;
     const phase=currentPhase(now),key=phase?.key||'outside';
-    if(phase?.index===2&&data?.brain&&data?.date===local.date&&!brainAuto&&brainDismissedKey!==key){brainPrevious=tab;brainAuto=true;selectTab('brain');}
-    else if(brainAuto&&(!phase||phase.index!==2)){brainAuto=false;selectTab(brainPrevious);}
+    if(key!==lastAutoPhaseKey){
+      lastAutoPhaseKey=key;
+      if(phase&&data?.date===local.date&&manualTabPhaseKey!==key){
+        const desired=['starter','focus','brain','focus','exit'][phase.index];
+        if(desired&&tab!==desired)selectTab(desired);
+      }
+    }
     updateArcade();
     if(lastKey!==null&&lastKey!==key&&phase)announce(phase);
     const sessionChanged=lastSession!==(data?GCI.scheduled(now,data)?.session:undefined);
@@ -416,7 +424,7 @@ if(typeof document!=='undefined'){
   $('deeper').onclick=()=>{const content=$('deeper-content');if(content){content.hidden=!content.hidden;$('deeper').textContent=content.hidden?'Go deeper':'Hide deeper question';}};
   $('fullscreen').onclick=async()=>{try{if(!document.fullscreenElement)await document.documentElement.requestFullscreen();else await document.exitFullscreen();}catch{status('Use your browser’s full-screen command if full screen is blocked.','error');}};
   const tabs=[...document.querySelectorAll('[data-tab]')];
-  tabs.forEach((button,i)=>{button.onclick=()=>selectTab(button.dataset.tab);button.onkeydown=event=>{let index;if(event.key==='ArrowRight')index=(i+1)%tabs.length;else if(event.key==='ArrowLeft')index=(i+tabs.length-1)%tabs.length;else if(event.key==='Home')index=0;else if(event.key==='End')index=tabs.length-1;else return;event.preventDefault();tabs[index].focus();selectTab(tabs[index].dataset.tab);};});
+  tabs.forEach((button,i)=>{button.onclick=()=>{manualTabPhaseKey=currentPhase()?.key||'outside';selectTab(button.dataset.tab);};button.onkeydown=event=>{let index;if(event.key==='ArrowRight')index=(i+1)%tabs.length;else if(event.key==='ArrowLeft')index=(i+tabs.length-1)%tabs.length;else if(event.key==='Home')index=0;else if(event.key==='End')index=tabs.length-1;else return;event.preventDefault();tabs[index].focus();manualTabPhaseKey=currentPhase()?.key||'outside';selectTab(tabs[index].dataset.tab);};});
   document.addEventListener('visibilitychange',()=>{if(!document.hidden){tick();renderCountdown();if(!inflight)refresh();}});
   feedUrl=GCI.validFeed(store.get('gci.dashboard.feed'))||defaultFeedUrl;preview=new URLSearchParams(location.search).get('preview')==='1';
   refresh();tick();renderCountdown();setInterval(tick,1000);setInterval(renderCountdown,250);setInterval(refresh,60000);
