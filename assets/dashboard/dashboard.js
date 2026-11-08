@@ -390,12 +390,33 @@ if(typeof document!=='undefined'){
       store.set(snapshotKey,JSON.stringify({feed:feedUrl,date:today,savedAt:Date.now(),payload:snapshot}));
     }catch{}
   }
+  let courseGeneration=0;
+  function refreshCoursework(date){
+    const token=++courseGeneration,script=document.createElement('script');
+    let finished=false;
+    const timeout=setTimeout(()=>{if(!finished){finished=true;script.remove();status('Activity ready · Classroom deadlines are taking longer to load.');}},20000);
+    window.gciDashboardCoursesFeed=payload=>{
+      if(finished||token!==courseGeneration)return;
+      finished=true;clearTimeout(timeout);script.remove();
+      if(!data||payload.error||payload.date!==data.date||!Array.isArray(payload.courses)){
+        status('Activity ready · Classroom deadlines unavailable.','error');return;
+      }
+      data.courses=payload.courses;
+      renderCourses();saveSnapshot(data);
+      const errors=payload.courses.some(c=>c.status==='error');
+      status(errors?'Activity ready · Some Classroom deadlines are unavailable.':'Connected · Activity and deadlines updated',errors?'error':'');
+    };
+    script.onerror=()=>{if(!finished){finished=true;clearTimeout(timeout);script.remove();status('Activity ready · Classroom deadlines unavailable.','error');}};
+    script.src=`${feedUrl}?callback=gciDashboardCoursesFeed&mode=courses&requestId=${token}&date=${encodeURIComponent(date)}&t=${Date.now()}`;
+    document.head.appendChild(script);
+  }
   function refresh(){
     if(inflight)return;
     if(preview){apply(GCI.sample(new Date(),selectedDate));status('PREVIEW · Sample activities and fictional assignments. Not connected to live data.','preview');return;}
     if(!feedUrl){status('Not connected · Open Instructor to connect your spreadsheet feed.');renderContent();renderCourses();return;}
     inflight=true;lastAttempt=Date.now();$('refresh').disabled=true;setDateBusy(true);status('Refreshing class content…');
-    const token=++generation,requestDate=selectedDate,script=document.createElement('script');let finished=false;
+    const token=++generation,requestDate=selectedDate,script=document.createElement('script');
+    ++courseGeneration;let finished=false;
     function cleanup(){finished=true;clearTimeout(timeout);script.remove();inflight=false;$('refresh').disabled=false;setDateBusy(false);}
     function fail(message){if(finished)return;cleanup();const today=GCI.localParts(new Date(),data?.timezone||'America/Detroit').date;selectedDate=data?.date&&data.date!==today?data.date:'';$('date-picker').value=data?.date||today;tick();status(typeof message==='string'?message:data?'Connection unavailable · Showing previously loaded content.':'Could not connect · Check the feed URL and deployment access in Instructor.','error');}
     const timeout=setTimeout(fail,20000);
@@ -403,9 +424,9 @@ if(typeof document!=='undefined'){
       if(finished||token!==generation)return;
       if(payload.requestId!==String(token))return;
       if(requestDate&&payload.date&&payload.date!==requestDate){fail('Update the Apps Script feed for date navigation. Showing the previously loaded date.');return;}
-      try{if(payload.error)throw new Error(payload.error);apply(payload);saveSnapshot(payload);cleanup();const errors=data.courses.some(c=>c.status==='error');status(errors?'Content connected · Some Classroom deadlines are unavailable.':`Connected · Updated ${new Date(data.generatedAt).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',timeZone:data.timezone})}`,errors?'error':'');}catch{fail();}
+      try{if(payload.error)throw new Error(payload.error);apply(payload);saveSnapshot(payload);cleanup();status('Activity ready · Loading Classroom deadlines…');refreshCoursework(data.date);}catch{fail();}
     };
-    script.onerror=fail;script.src=`${feedUrl}?callback=gciDashboardFeed&requestId=${token}${requestDate?'&date='+encodeURIComponent(requestDate):''}&t=${Date.now()}`;document.head.appendChild(script);
+    script.onerror=fail;script.src=`${feedUrl}?callback=gciDashboardFeed&mode=content&requestId=${token}${requestDate?'&date='+encodeURIComponent(requestDate):''}&t=${Date.now()}`;document.head.appendChild(script);
   }
   function setDateBusy(busy){['date-previous','date-next','date-today','date-picker'].forEach(id=>$(id).disabled=busy);}
   function chooseDate(value){if(inflight||!GCI.validDate(value))return;const today=GCI.localParts(new Date(),data?.timezone||'America/Detroit').date;selectedDate=value===today?'':value;refresh();}
