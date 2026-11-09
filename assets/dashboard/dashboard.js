@@ -40,11 +40,6 @@ const GCI = (() => {
   function safeUrl(value){try{const u=new URL(value);return u.protocol==='https:'?u.href:'';}catch{return '';}}
   function validFeed(value){try{const u=new URL(value);return u.origin==='https://script.google.com'&&/^\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(u.pathname)&&!u.search&&!u.hash?u.href:'';}catch{return '';}}
   function escape(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-  function submissionBadge(counts){
-    if(!counts||!Number.isInteger(counts.submitted)||!Number.isInteger(counts.total)||counts.total<0||counts.submitted<0||counts.submitted>counts.total)return '<span class="submission-count unavailable">Counts unavailable</span>';
-    const complete=counts.total>0&&counts.submitted===counts.total;
-    return `<span class="submission-count${complete?' complete':''}" aria-label="${counts.submitted} of ${counts.total} assigned students submitted">${counts.submitted} / ${counts.total} submitted</span>`;
-  }
   function learningTargetForSession(data,session){
     if(!data)return '';
     let target='';
@@ -108,7 +103,7 @@ const GCI = (() => {
       exit:{title:'Make your thinking visible',prompt:'Describe one conditional you tested today. What input did you try, what happened, and what would you test next?'},
       courses:courses.map((name,i)=>({name,status:'ready',assignments:i<3?[{title:['Conditionals practice','Test a decision','Explain your solution'][i],dueAt:`${week[i+1]}T20:00:00.000Z`,url:'https://classroom.google.com/',submissions:{submitted:[18,21,24][i],total:24}}]:[]}))};
   }
-  return {courses,phases,sessions,sessionCourses,localParts,weekDates,addDays,validDate,scheduled,safeUrl,validFeed,escape,submissionBadge,learningTargetForSession,contentSession,focusPlanForSession,createCountdown,timerPosition,validate,sample};
+  return {courses,phases,sessions,sessionCourses,localParts,weekDates,addDays,validDate,scheduled,safeUrl,validFeed,escape,learningTargetForSession,contentSession,focusPlanForSession,createCountdown,timerPosition,validate,sample};
 })();
 if(typeof module!=='undefined')module.exports=GCI;
 if(typeof document!=='undefined'){
