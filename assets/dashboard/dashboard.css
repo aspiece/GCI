@@ -102,3 +102,6 @@ dialog{background:#101e30;color:var(--ink);border:1px solid var(--line);border-r
 .assignment-heading{display:block!important}
 .assignment-title{display:block;line-height:1.35}
 .course-body{padding-top:8px!important;padding-bottom:12px!important}
+
+/* Defensive fallback: old submission count markup must never occupy TV space. */
+.deadlines .submission-count,.deadlines .submission-count.unavailable{display:none!important}
