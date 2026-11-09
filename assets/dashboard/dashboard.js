@@ -270,7 +270,7 @@ if(typeof document!=='undefined'){
       const end=endDate.toISOString().slice(0,10);
       const upcoming=assignments.filter(a=>a.displayDate>=today&&a.displayDate<end);
       const overdue=[];
-      const renderItems=items=>items.map(a=>`<div class="assignment"><div class="assignment-heading"><span class="assignment-title">${GCI.safeUrl(a.url)?link(a.url,a.title):esc(a.title)}</span>${GCI.submissionBadge(a.submissions)}</div><time datetime="${esc(a.displayDate)}">${shortDate(a.displayDate,{month:'short',day:'numeric',year:'numeric'})}</time></div>`).join('');
+      const renderItems=items=>items.map(a=>`<div class="assignment"><div class="assignment-heading"><span class="assignment-title">${GCI.safeUrl(a.url)?link(a.url,a.title):esc(a.title)}</span></div></div>`).join('');
       const renderGroups=items=>[...new Set(items.map(a=>a.displayDate))].map(date=>`<section class="day-group"><div class="day-heading">${shortDate(date,{weekday:'short',month:'short',day:'numeric'})}</div>${renderItems(items.filter(a=>a.displayDate===date))}</section>`).join('');
       let body='';
       if(course.status!=='ready')body=`<p class="none-due">${course.status==='error'?'Deadlines unavailable. Try Refresh.':'Classroom connection not configured.'}</p>`;
