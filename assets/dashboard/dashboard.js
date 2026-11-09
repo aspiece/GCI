@@ -204,7 +204,15 @@ if(typeof document!=='undefined'){
     if(qotdDate!==data.date){qotdStage=0;qotdDate=data.date;}
     if(tab==='brain'&&brainContext!==data.date){brainContext=data.date;brainOverride=null;brainTimer=null;brainLastAlternate=-1;}
     const s=tab==='brain'?currentBrain():data[tab];
-    if(!data.instructionalDay){$('activity-panel').innerHTML='<div class="empty"><div class="eyebrow">CLASS CALENDAR</div><h1>No class scheduled</h1><p>No activity is scheduled for this date.</p></div>';return;}
+    if(!data.instructionalDay){
+      const today=GCI.localParts(new Date(),data.timezone||'America/Detroit').date;
+      const day=new Date(data.date+'T12:00:00Z').getUTCDay();
+      const offset=day===6?2:day===0?1:1;
+      const next=GCI.addDays(data.date,offset);
+      $('activity-panel').innerHTML=`<div class="empty"><div class="eyebrow">CLASS CALENDAR</div><h1>No class scheduled for ${esc(shortDate(data.date,{weekday:'long',month:'long',day:'numeric'}))}</h1><p>The instructional activities are hidden because this date is marked as a non-instructional day.</p><p class="context">You can preview another date without changing the class schedule.</p><button type="button" id="preview-next-day">Preview ${esc(shortDate(next,{weekday:'long',month:'short',day:'numeric'}))}</button></div>`;
+      $('preview-next-day').onclick=()=>chooseDate(next);
+      return;
+    }
     if(tab==='focus'){renderFocus();return;}
     if(tab==='starter'&&data.qotd){
       const qotdUrl='https://codehs.com/qotd/python/'+data.date+'/';
