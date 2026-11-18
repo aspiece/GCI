@@ -189,15 +189,13 @@ if(typeof document!=='undefined'){
   }
   let qotdStage=0,qotdDate='';
   function renderQotd(q){
-    const labels=['THINK','PAIR','SHARE','REVEAL'];
-    const prompts=['Predict the answer on your whiteboard.','Compare with your partner and explain why.','Raise your whiteboards together.','Review the correct answer and reasoning.'];
+    const revealed=qotdStage===1,mode=q.mode==='codehs'?'codehs':'debug';
     const correctIndex=/^[A-D]$/i.test(String(q.answer||'').trim())?String(q.answer).trim().toUpperCase().charCodeAt(0)-65:-1;
-    const revealed=qotdStage===3;
-    const extensionUrl='https://codehs.com/qotd/python/'+data.date+'/';
-    const steps=labels.map((label,i)=>`<button type="button" data-qotd-stage="${i}" aria-pressed="${qotdStage===i}">${label}</button>`).join('');
-    $('activity-panel').innerHTML=`<div class="qotd"><div class="eyebrow">PYTHON · QUESTION OF THE DAY</div><h1>${esc(q.title||'Daily Python Challenge')}</h1><p class="qotd-question">${esc(q.question)}</p>${q.code?`<pre class="qotd-code"><code>${esc(q.code)}</code></pre>`:''}${q.choices?.length?`<div class="qotd-choices">${q.choices.map((c,i)=>`<div class="${revealed&&i===correctIndex?'qotd-choice-correct':''}">${String.fromCharCode(65+i)}. ${esc(c)}${revealed&&i===correctIndex?' ✓':''}</div>`).join('')}</div>`:''}<div class="qotd-stages">${steps}</div><p class="qotd-prompt">${prompts[qotdStage]}</p>${qotdStage===3?`<div class="qotd-answer"><strong>${q.answer?'Answer: '+esc(q.answer):'Review the answer together'}</strong><p>${esc(q.explanation||'Answer details will be available after the live content refreshes.')}</p></div>`:''}<div class="qotd-actions"><button type="button" id="qotd-next">${qotdStage===3?'Restart':'Next stage'}</button>${link(extensionUrl,'Open today’s CodeHS QOTD')}</div><div class="qotd-extension"><strong>Finished early?</strong> Open today’s CodeHS Python Question of the Day on your laptop. Solve it independently and be ready to explain your reasoning.</div></div>`;
-    $('activity-panel').querySelectorAll('[data-qotd-stage]').forEach(b=>b.onclick=()=>{qotdStage=Number(b.dataset.qotdStage);renderQotd(q);});
-    $('qotd-next').onclick=()=>{qotdStage=(qotdStage+1)%4;renderQotd(q);};
+    const sourceUrl=GCI.safeUrl(q.sourceUrl);
+    const title=mode==='codehs'?'CODEHS · QUESTION OF THE DAY':'PYTHON · DEBUGGING CHALLENGE';
+    const choices=Array.isArray(q.choices)?q.choices:[];
+    $('activity-panel').innerHTML=`<div class="qotd"><div class="eyebrow">${title}</div><h1>${esc(q.title||'Daily Python Challenge')}</h1><p class="qotd-question">${esc(q.question)}</p>${q.code?`<pre class="qotd-code"><code>${esc(q.code)}</code></pre>`:''}${choices.length?`<div class="qotd-choices">${choices.map((choice,i)=>`<div class="${revealed&&i===correctIndex?'qotd-choice-correct':''}">${String.fromCharCode(65+i)}. ${esc(choice)}${revealed&&i===correctIndex?' ✓':''}</div>`).join('')}</div>`:''}<div class="qotd-stages"><button type="button" data-qotd-stage="0" aria-pressed="${!revealed}">Predict</button><button type="button" data-qotd-stage="1" aria-pressed="${revealed}">Reveal</button></div><p class="qotd-prompt">${revealed?'Compare your prediction, explain the bug or behavior, and discuss the correction.':'Predict the behavior on your whiteboard. Discuss possible errors and fixes with your table.'}</p>${revealed?`<div class="qotd-answer"><strong>${q.answer?'Answer: '+esc(q.answer):'Solution'}</strong><p>${esc(q.explanation||'Explain the result and how you would verify it.')}</p></div>`:''}${sourceUrl&&mode==='codehs'?`<div class="qotd-actions">${link(sourceUrl,'Open CodeHS QOTD')}</div>`:''}</div>`;
+    $('activity-panel').querySelectorAll('[data-qotd-stage]').forEach(button=>button.onclick=()=>{qotdStage=Number(button.dataset.qotdStage);renderQotd(q);});
   }
   function renderContent(){
     $('deeper').hidden=true;
@@ -217,8 +215,7 @@ if(typeof document!=='undefined'){
     }
     if(tab==='focus'){renderFocus();return;}
     if(tab==='starter'&&data.qotd){
-      const qotdUrl='https://codehs.com/qotd/python/'+data.date+'/';
-      renderQotd({...data.qotd,sourceUrl:data.qotd.sourceUrl||qotdUrl});
+      renderQotd(data.qotd);
       return;
     }
     if(tab==='starter'&&data.instructionalDay&&!data.qotd){
