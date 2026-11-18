@@ -176,13 +176,15 @@ if(typeof document!=='undefined'){
     if(context!==focusContext){focusContext=context;focusPanel='task';}
     if(!plan){$('activity-panel').innerHTML=`<div class="empty"><div class="eyebrow">FOCUS</div><h1>Focus plan</h1><p>${session?'No Focus plan is scheduled for this date and session.':'Choose a session group in Instructor to preview its Focus plan.'}</p></div>`;return;}
     const steps=Array.isArray(plan.steps)?plan.steps.slice(0,3):[],criteria=Array.isArray(plan.criteria)?plan.criteria.slice(0,3):[];
-    if(focusPanel==='criteria'&&!criteria.length||focusPanel==='hint'&&!plan.hint)focusPanel='task';
-    const controls=[['task',focusPanel==='task'?'Task':'← Back to task'],...(criteria.length?[['criteria','Success criteria']]:[]),...(plan.hint?[['hint','Hint']]:[]),['help','Help']];
+    if(focusPanel==='criteria'&&!criteria.length)focusPanel='task';
+    if(focusPanel==='hint')focusPanel='support';
+    const controls=[['task',focusPanel==='task'?'Today's checklist':'Back to checklist'],...(criteria.length?[['criteria','Success criteria']]:[]),['support','Stuck? Start here']];
+    const resources=[{url:plan.resourceUrl,label:plan.resourceLabel||'Open work'},...(Array.isArray(plan.resources)?plan.resources:[])].filter((item,index,all)=>GCI.safeUrl(item.url)&&all.findIndex(other=>other.url===item.url)===index).slice(0,3);
+    const resourceHtml=resources.length?`<nav class="focus-resource" aria-label="Today's resources"><strong>RESOURCES</strong>${resources.map(item=>link(item.url,item.label||'Open resource')).join('')}</nav>`:'';
     let content='';
     if(focusPanel==='criteria')content=`<h1>Success criteria</h1><ul class="focus-criteria">${criteria.map(item=>`<li>${esc(item)}</li>`).join('')}</ul>`;
-    else if(focusPanel==='hint')content=`<h1>Try this next</h1><div class="focus-support">${esc(plan.hint)}</div>`;
-    else if(focusPanel==='help')content=`<h1>Explain where you’re stuck</h1><div class="focus-support">${esc(plan.helpRoutine||'I expected ___.\nInstead, ___.\nI tried ___.')}</div>`;
-    else content=`<h1>${esc(plan.title||'Focus')}</h1><div class="focus-task">${esc(plan.task)}</div>${steps.length?`<ol class="focus-steps">${steps.map(item=>`<li>${esc(item)}</li>`).join('')}</ol>`:''}${GCI.safeUrl(plan.resourceUrl)?`<div class="focus-resource">${link(plan.resourceUrl,plan.resourceLabel||'Open work')}</div>`:''}`;
+    else if(focusPanel==='support')content=`<h1>Stuck? Start here</h1><ol class="focus-criteria"><li>Reread the instructions and error message.</li><li>Trace your code or test one input.</li><li>Explain what you tried to a partner.</li><li>Ask your instructor with your expected and actual results.</li></ol>${plan.hint?`<p class="focus-hint"><strong>Lesson hint:</strong> ${esc(plan.hint)}</p>`:''}${plan.helpRoutine?`<p class="focus-hint">${esc(plan.helpRoutine)}</p>`:''}`;
+    else content=`<h1>${esc(plan.title||'Focus')}</h1>${plan.task?`<p class="focus-task">${esc(plan.task)}</p>`:''}${steps.length?`<h2 class="focus-subheading">Today's checklist</h2><ul class="focus-steps focus-checklist">${steps.map(item=>`<li>${esc(item)}</li>`).join('')}</ul>`:''}${resourceHtml}`;
     $('activity-panel').innerHTML=`<div class="focus-topline"><div class="eyebrow">FOCUS</div><div class="focus-controls" role="group" aria-label="Focus supports">${controls.map(([key,label])=>`<button data-focus-panel="${key}" aria-pressed="${focusPanel===key}">${esc(label)}</button>`).join('')}</div></div><div class="focus-view">${content}</div>`;
   }
   let qotdStage=0,qotdDate='';
@@ -493,7 +495,7 @@ if(typeof document!=='undefined'){
   $('target-group').onchange=()=>{targetGroup=$('target-group').value;if(tab==='focus')renderContent();else renderLearningTarget();};
   $('activity-panel').addEventListener('click',event=>{
     const button=event.target.closest?.('[data-focus-panel]');
-    if(!button||!['task','criteria','hint','help'].includes(button.dataset.focusPanel))return;
+    if(!button||!['task','criteria','support'].includes(button.dataset.focusPanel))return;
     focusPanel=button.dataset.focusPanel;renderContent();
     $('activity-panel').querySelector(`[data-focus-panel="${focusPanel}"]`)?.focus();
   });
