@@ -278,7 +278,8 @@ function dashboardFocusPlan_(rows,date,group,tz){
     steps:['Step 1','Step 2','Step 3'].map(text).filter(Boolean),
     criteria:text('Success Criteria').split(/\r?\n/).map(item=>item.trim()).filter(Boolean).slice(0,3),
     hint:text('Hint'),helpRoutine:text('Help Routine')||'I expected ___.\nInstead, ___.\nI tried ___.',
-    resourceUrl:dashboardUrl_(text('Resource URL')),resourceLabel:text('Resource Label')||'Open work'
+    resourceUrl:dashboardUrl_(text('Resource URL')),resourceLabel:text('Resource Label')||'Open work',
+    resources:[['Resource 2 URL','Resource 2 Label'],['Resource 3 URL','Resource 3 Label']].map(([url,label])=>({url:dashboardUrl_(text(url)),label:text(label)||'Open resource'})).filter(item=>item.url)
   };
 }
 
