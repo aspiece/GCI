@@ -178,7 +178,7 @@ if(typeof document!=='undefined'){
     const steps=Array.isArray(plan.steps)?plan.steps.slice(0,3):[],criteria=Array.isArray(plan.criteria)?plan.criteria.slice(0,3):[];
     if(focusPanel==='criteria'&&!criteria.length)focusPanel='task';
     if(focusPanel==='hint')focusPanel='support';
-    const controls=[['task',focusPanel==='task'?'Today's checklist':'Back to checklist'],...(criteria.length?[['criteria','Success criteria']]:[]),['support','Stuck? Start here']];
+    const controls=[['task',focusPanel==='task'?"Today's checklist":'Back to checklist'],...(criteria.length?[['criteria','Success criteria']]:[]),['support','Stuck? Start here']];
     const resources=[{url:plan.resourceUrl,label:plan.resourceLabel||'Open work'},...(Array.isArray(plan.resources)?plan.resources:[])].filter((item,index,all)=>GCI.safeUrl(item.url)&&all.findIndex(other=>other.url===item.url)===index).slice(0,3);
     const resourceHtml=resources.length?`<nav class="focus-resource" aria-label="Today's resources"><strong>RESOURCES</strong>${resources.map(item=>link(item.url,item.label||'Open resource')).join('')}</nav>`:'';
     let content='';
