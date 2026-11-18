@@ -102,3 +102,15 @@ dialog{background:#101e30;color:var(--ink);border:1px solid var(--line);border-r
 .assignment-heading{display:block!important}
 .assignment-title{display:block;line-height:1.35}
 .course-body{padding-top:8px!important;padding-bottom:12px!important}
+
+/* Compact classroom Focus presentation */
+.focus-view h1{margin:12px 0;font-size:clamp(27px,2.5vw,42px)}
+.focus-task{font-size:clamp(18px,1.65vw,27px);line-height:1.35;margin:8px 0 12px}
+.focus-subheading{font-size:clamp(18px,1.45vw,24px);margin:12px 0 6px}
+.focus-steps.focus-checklist{list-style:none;padding-left:0;margin:6px 0 10px;font-size:clamp(19px,1.65vw,27px);line-height:1.3}
+.focus-checklist li{position:relative;padding-left:34px;margin:10px 0}
+.focus-checklist li::before{content:'□';position:absolute;left:0;color:#a8d9d2}
+.focus-resource{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px;font-size:14px}
+.focus-resource a{padding:6px 10px;border:1px solid #648d91;border-radius:7px}
+.focus-criteria{font-size:clamp(20px,1.7vw,28px);line-height:1.35;margin:12px 0}
+.focus-hint{white-space:pre-wrap;font-size:clamp(17px,1.4vw,22px);line-height:1.35}
