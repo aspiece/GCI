@@ -650,6 +650,19 @@
       .month-nav-hint{display:none}
     }
 
+
+    /* Compact, optional category key beneath the filter fields. */
+    .category-guide{margin-top:8px;padding:0;border:0;background:transparent}
+    .category-guide>summary{display:inline-flex;align-items:center;gap:7px;min-height:30px;padding:2px 0;color:#244b5e;font:650 12px/1.4 "Segoe UI",Arial,sans-serif;text-decoration:underline;text-underline-offset:3px;cursor:pointer;list-style:none}
+    .category-guide>summary::-webkit-details-marker{display:none}
+    .category-guide>summary::before{content:"+";display:inline-grid;place-items:center;width:16px;height:16px;border:1px solid #6b8590;border-radius:50%;font-size:13px;line-height:1;text-decoration:none}
+    .category-guide[open]>summary::before{content:"−"}
+    .category-guide>summary:focus-visible{outline:3px solid #ac8257;outline-offset:2px}
+    .category-guide-content{margin:8px 0 5px;padding:12px 0 4px;border-top:1px solid var(--border)}
+    .category-guide .legend{display:flex;flex-wrap:wrap;gap:7px}
+    .category-guide .legend .badge{font-size:11px}
+    .category-guide .legend-help{margin:0 0 10px}
+
   </style>
   <!-- Libraries (small, reliable CDNs) -->
   <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
@@ -725,24 +738,27 @@
           <select id="eventSel"></select>
         </label>
       </div>
+      <details id="legend-section" class="category-guide">
+        <summary>Event category key</summary>
+        <div class="category-guide-content">
+          <p class="legend-help">Calendar dates are grouped by category. Open a group to see schools, then select a school for the original details.</p>
+          <div class="legend" aria-label="Calendar event color key">
+            <span class="badge red">No School</span>
+            <span class="badge yellow">Early Release</span>
+            <span class="badge yellow">Half Day</span>
+            <span class="badge indigo">Late Start</span>
+            <span class="badge green">Holiday / Break</span>
+            <span class="badge indigo">Staff / PD Day</span>
+            <span class="badge green">First / Last Day</span>
+            <span class="badge indigo">Conferences</span>
+            <span class="badge indigo">Testing / Exams</span>
+            <span class="badge neutral">Other Events</span>
+          </div>
+        </div>
+      </details>
     </div>
 
-    <section id="legend-section" class="legend-section panel p-4" aria-labelledby="legend-heading">
-      <h2 id="legend-heading">Event categories</h2>
-      <p class="legend-help">Select a category to see schools. Select a school for its original schedule details.</p>
-      <div class="legend" aria-label="Calendar event color key">
-        <span class="badge red">No School</span>
-        <span class="badge yellow">Early Release</span>
-        <span class="badge yellow">Half Day</span>
-        <span class="badge indigo">Late Start</span>
-        <span class="badge green">Holiday / Break</span>
-        <span class="badge indigo">Staff / PD Day</span>
-        <span class="badge green">First / Last Day</span>
-        <span class="badge indigo">Conferences</span>
-        <span class="badge indigo">Testing / Exams</span>
-        <span class="badge neutral">Other Events</span>
-      </div>
-    </section>
+
 
     <div id="sticky-nav" class="sticky-nav" role="navigation" aria-label="Calendar date navigation">
       <button id="sn-prev" type="button" class="btn" title="Previous day" aria-label="Previous day">◀</button>
