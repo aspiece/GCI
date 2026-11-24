@@ -1,0 +1,45 @@
+name: Project feedback
+description: Report an issue or suggest an improvement for a Genesee Learning Lab project
+title: "Project feedback: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping us improve these learning tools. **GitHub sign-in is required, and this report will be public.**
+        **Do not include students' names, grades, email addresses, student work, passwords, or other private information.**
+        If you are a student without a GitHub account, share your feedback with your teacher instead.
+  - type: input
+    id: project
+    attributes:
+      label: Project or app
+      description: Which tool, activity, or module is this feedback about?
+      placeholder: e.g. Classroom Group Generator
+    validations:
+      required: true
+  - type: dropdown
+    id: feedback-type
+    attributes:
+      label: Feedback type
+      options:
+        - Bug or broken link
+        - Usability or accessibility
+        - Instructional content
+        - Feature suggestion
+        - General feedback
+    validations:
+      required: true
+  - type: textarea
+    id: feedback
+    attributes:
+      label: What happened or what would you improve?
+      description: Describe the issue or idea without including private student information.
+      placeholder: I tried to... I expected... Instead...
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Browser or device (optional)
+      placeholder: e.g. Chrome on a Chromebook
+    validations:
+      required: false
