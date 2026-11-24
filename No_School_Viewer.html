@@ -477,6 +477,94 @@
       color: var(--muted);
       font-size: 12px;
     }
+
+    /* Classic school calendar layout: preserve event-type colors, not school-specific pastels. */
+    :root{
+      --bg:#f6f4ef;--panel:#fffdf9;--muted:#53616b;--text:#24343d;--border:#d4d0c7;
+      --blue:#274c61;--blue-50:#e9efee;--blue-200:#c7d8d8;--blue-300:#9eb8bb;
+      --red-100:#f4e4df;--red-800:#7d3329;--red-200:#dec4bb;
+      --yellow-100:#f3ead5;--yellow-800:#745528;--yellow-200:#d9c8a2;
+      --green-100:#e4ede4;--green-800:#31543b;--green-200:#c6d6c7;
+      --indigo-100:#e6e7f0;--indigo-800:#454c6e;--indigo-200:#c7c9d9;
+    }
+    body{font:15px/1.6 "Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text)}
+    .container{max-width:1200px;padding:24px 22px 48px}
+    .page-title-row{margin:12px 0 19px;padding-bottom:18px;border-bottom:1px solid var(--border)}
+    .page-title-row h1{font:700 clamp(1.9rem,3.4vw,2.7rem)/1.22 Georgia,"Times New Roman",serif;margin:0 0 8px}
+    .viewer-kicker{color:#875b37;font-size:11px;font-weight:750;letter-spacing:.13em;margin:0 0 8px}
+    .viewer-intro{color:var(--muted);max-width:790px;margin:0;font-size:14px}
+    .btn{background:var(--panel);color:var(--text);border:1px solid #b8b5ac;border-radius:2px;padding:9px 13px;font:650 13px/1.25 "Segoe UI",Arial,sans-serif;min-height:40px}
+    .btn:hover{background:#eeeae2;border-color:#918775}
+    .btn:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #ac8257;outline-offset:2px}
+    .btn:disabled{cursor:wait;opacity:.65}
+    .panel,.day,.month-cell{background:var(--panel);border:1px solid var(--border);border-radius:2px;box-shadow:none}
+    .panel.p-4{padding:20px}
+    .page-toolbar{gap:9px;margin-bottom:14px}
+    .filters{gap:12px}
+    input,select{background:var(--panel);border:1px solid #bcb8af;border-radius:2px;color:var(--text);height:42px;padding:0 12px;min-width:0}
+    #search{min-width:220px;flex:2}
+    #schoolSel,#eventSel{min-width:170px;flex:1}
+    .filter-label{font:750 12px/1.2 "Segoe UI",Arial,sans-serif;letter-spacing:.055em;color:var(--text)}
+    .filter-subtitle{font-size:13px;line-height:1.55}
+    .filter-status{gap:12px;flex-wrap:wrap}
+    #last-refreshed{font-size:12px!important}
+    .legend-section{margin-top:14px}
+    .legend-section h2{margin:0 0 12px;font:700 1.15rem Georgia,"Times New Roman",serif}
+    .legend{gap:8px}
+    .badge{border-radius:2px;font-size:11px;font-weight:700;padding:2px 7px;line-height:1.5;white-space:normal}
+    .data-notice{padding:12px 16px;margin:0 0 14px;border:1px solid var(--border);border-left:4px solid #6b8491;background:#e9efee;color:#274656;font-size:13px;line-height:1.55}
+    .data-notice--success{background:#e7eee6;color:#31543b;border-color:#c9d8c6;border-left-color:#64856a}
+    .data-notice--warning{background:#f4ead6;color:#705121;border-color:#ddcbaa;border-left-color:#997142}
+    .data-notice--error{background:#f2e2de;color:#7d3329;border-color:#ddc2bb;border-left-color:#ad5b50}
+    #viewer-results[hidden]{display:none!important}
+    .view-heading{font:700 1.5rem/1.3 Georgia,"Times New Roman",serif;margin:24px 0 13px;color:var(--text)}
+    .grid-3{gap:14px}
+    #weeks > .panel{border-top:3px solid #b8a286}
+    #weeks > .week-current{border-top-color:#254f63}
+    #weeks > .week-adjacent{background:#f9f7f2}
+    #weeks .week-title{font:700 17px/1.4 Georgia,"Times New Roman",serif}
+    .day{padding:11px 12px;margin-top:9px}
+    .day.today{background:#f1f0e9;border-color:#9cafb4}
+    .day-date{font-weight:700;font-size:13px;color:#304350}
+    .day-empty{border-style:solid}
+    .day-empty-text{font-size:12px;font-style:normal}
+    .event-entry{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:6px 0;width:100%;min-width:0;border-bottom:1px solid #eae6de}
+    .event-entry:last-child{border-bottom:0}
+    .event-school{font-size:12px;font-weight:600;color:var(--text);overflow-wrap:anywhere}
+    .event-notes{font-size:11px;color:var(--muted);overflow-wrap:anywhere;line-height:1.45}
+    .chip-more{border-radius:2px;padding:5px 8px;color:var(--color-primary-dark);font-weight:650}
+    .month{margin-top:22px}
+    .month .view-heading{margin:0 0 16px}
+    .month-grid{gap:6px}
+    .month-cell{padding:9px;min-height:92px;overflow-wrap:anywhere}
+    .month-cell.current{background:#f1f2ed;border-color:#a7b7b7}
+    .month-cell.month-today{outline:2px solid #416375;outline-offset:-2px}
+    .outside-month{opacity:.65;background:#f2efe8}
+    .today-label{background:#dce6e4;color:#274c61;padding:2px 5px;border-radius:2px;font-weight:700}
+    .month-event{gap:2px;padding:6px 0}
+    .month-event .badge{font-size:10px}
+    .month-event .event-school{font-size:11px}
+    .month-event .event-notes{display:none}
+    .sticky-nav{top:var(--nav-height);margin:0 0 12px;background:#f6f4ef}
+    .calendar-availability{margin-top:22px;color:var(--muted);line-height:1.6}
+    .calendar-availability summary{cursor:pointer;font:700 1.05rem Georgia,"Times New Roman",serif;color:var(--text)}
+    .calendar-availability p{margin:12px 0 0;font-size:13px}
+    .footer{font-size:12px}
+    @media(max-width:699px){
+      .container{padding:18px 14px 36px}
+      .filter-panel-header{gap:14px}
+      .filters>*{flex:1 1 100%}
+      #schoolSel,#eventSel{width:100%}
+      .page-toolbar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+      .page-toolbar .btn{width:100%}
+      .month{overflow:hidden}
+      .month .row{gap:8px}
+    }
+    @media(max-width:479px){
+      .month-cell{min-height:0}
+      .month-event .event-notes{display:block}
+    }
+
   </style>
   <!-- Libraries (small, reliable CDNs) -->
   <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
@@ -835,8 +923,8 @@
       blocks.forEach(b => {
         const card = document.createElement('div');
         card.className = 'panel p-4';
-        if (b.highlight) card.style.outline = '2px solid var(--blue-300)';
-        if (b.muted) { card.style.background = '#fafbfc'; card.style.borderColor = '#dde3ea'; card.style.opacity = '0.85'; }
+        if (b.highlight) card.classList.add('week-current');
+        if (b.muted) card.classList.add('week-adjacent');
 
         const weekEnd = b.start.add(4, 'day');
         const header = document.createElement('div');
@@ -859,7 +947,7 @@
           const top = document.createElement('div');
           top.className = 'row';
           top.style.justifyContent = 'space-between';
-          top.innerHTML = `<div style="font-size:13px;font-weight:700;color:#334155">${d.format('ddd, MMM D')}</div><div class="muted" style="font-size:11px">${list.length} event${list.length === 1 ? '' : 's'}</div>`;
+          top.innerHTML = `<div class="day-date">${d.format('ddd, MMM D')}</div><div class="muted" style="font-size:11px">${list.length} event${list.length === 1 ? '' : 's'}</div>`;
           dayDiv.appendChild(top);
 
           const chips = document.createElement('div');
@@ -921,10 +1009,10 @@
           cell.className = 'month-cell';
           if (d.isBetween(currStart, currEnd, 'day', '[]')) cell.classList.add('current');
           if (d.isSame(dayjs(), 'day')) cell.classList.add('month-today');
-          if (d.month() !== monthCursor.month()) { cell.style.opacity = '.65'; cell.style.background = '#f8fafc'; }
+          if (d.month() !== monthCursor.month()) cell.classList.add('outside-month');
           const top = document.createElement('div');
           top.className = 'cell-top';
-          const todayTag = d.isSame(dayjs(), 'day') ? '<span style="background:var(--blue-200);color:#1e40af;border-radius:6px;padding:0 4px">Today</span>' : '';
+          const todayTag = d.isSame(dayjs(), 'day') ? '<span class="today-label">Today</span>' : '';
           top.innerHTML = `<span>${d.date()}</span>${todayTag}`;
           cell.appendChild(top);
 
