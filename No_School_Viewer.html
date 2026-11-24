@@ -609,9 +609,6 @@
       WEEK_START: "monday", // fixed to Monday for Mon–Fri viewer
     };
 
-    // Sample CSV fallback (used if DATA_URL is empty or fetch fails)
-    const SAMPLE_CSV = `Date,Event,School Name,Notes\n2025-08-25,No School,Fenton High School,Teacher Work Day\n2025-09-01,Holiday,All Schools,Labor Day\n2025-09-18,Half Day,Beecher High School,Parent Conferences\n2025-08-27,No School,Lake Fenton High School,PD Day`;
-
     // Color map for badges
     const EVENT_CLASS = {
       "No School": "badge red",
@@ -628,35 +625,11 @@
       return EVENT_CLASS[name] || "badge";
     }
 
-    // ==== School color mapping (unique color per school) ====
-    function hashHue(str) {
-      let h = 0;
-      for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) % 360;
-      return h;
-    }
-    function schoolColors(name) {
-      const n = String(name || "").toLowerCase();
-      // Special handling for roll‑ups
-      if (n.includes("all school")) {
-        return { bg: 'var(--blue-50)', border: 'var(--blue-300)', text: '#1e40af' };
-      }
-      const h = hashHue(name);
-      // Pastel background with readable text/border
-      const bg = `hsl(${h}, 95%, 90%)`;
-      const border = `hsl(${h}, 70%, 75%)`;
-      const text = `hsl(${h}, 45%, 25%)`;
-      return { bg, border, text };
-    }
-    function applySchoolColor(el, school) {
-      const c = schoolColors(school);
-      el.style.backgroundColor = c.bg;
-      el.style.borderColor = c.border;
-      el.style.color = c.text;
-    }
-
     // ===================== STATE =====================
     let RAW_ROWS = []; // {date: dayjs, event, school, notes}
     let FILTERED = [];
+    let LAST_SUCCESSFUL_UPDATE = null;
+    let IS_LOADING = false;
     let ANCHOR_DAY = dayjs(); // base day for current/prev/next
 
     // If user visits on Sat/Sun, snap to upcoming Monday by default
@@ -688,12 +661,16 @@
       if (v == null) return null;
       const s = String(v).trim();
       if (!s) return null;
-      // Try fast paths
-      let d = dayjs(s);
-      if (d.isValid()) return d;
-      const formats = ['M/D/YYYY', 'MM/DD/YYYY', 'M/D/YY', 'MMM D, YYYY', 'MMMM D, YYYY', 'YYYY-MM-DD'];
-      for (const f of formats) { d = dayjs(s, f, true); if (d.isValid()) return d; }
-      if (/^\d{4,6}$/.test(s)) { const serial = parseInt(s, 10); const excelEpoch = dayjs('1899-12-30'); return excelEpoch.add(serial, 'day'); }
+      if (/^\d{4,6}$/.test(s)) {
+        const serial = Number(s);
+        if (serial > 20000 && serial < 100000) return dayjs('1899-12-30').add(serial, 'day');
+        return null;
+      }
+      const formats = ['YYYY-MM-DD', 'M/D/YYYY', 'MM/DD/YYYY', 'M/D/YY', 'MM/DD/YY', 'MMM D, YYYY', 'MMMM D, YYYY'];
+      for (const format of formats) {
+        const parsed = dayjs(s, format, true);
+        if (parsed.isValid()) return parsed;
+      }
       return null;
     }
     function parseCsvToRows(csv) {
@@ -716,12 +693,15 @@
           "Notes", "Description", "Reason", "Details"
         ], ["note", "desc", "reason", "detail", "description"]),
       };
+      if (!col.date || !col.event || !col.school || new Set([col.date, col.event, col.school]).size !== 3) {
+        throw new Error('The published calendar is missing the Date, Event, or School column.');
+      }
       for (const r of parsed.data) {
-        const dateStr = (r[col.date] || '').trim();
-        const event = (r[col.event] || '').trim();
-        const school = (r[col.school] || '').trim();
-        const notes = (r[col.notes] || '').trim();
-        const d = parseDateFlexible(dateStr) || dayjs(dateStr);
+        const dateStr = String(r[col.date] || '').trim();
+        const event = String(r[col.event] || '').trim();
+        const school = String(r[col.school] || '').trim();
+        const notes = String(col.notes ? (r[col.notes] || '') : '').trim();
+        const d = parseDateFlexible(dateStr);
         if (!d.isValid() || !event || !school) continue;
         out.push({ date: d.startOf('day'), event, school, notes });
       }
@@ -751,7 +731,7 @@
         }
       }
       // 3) fallback
-      return headers[0] || cands[0];
+      return null;
     }
     function groupByDate(rows) {
       const map = {};
@@ -776,22 +756,27 @@
 
     // ==== Expand/collapse helpers ====
     function makeChip(it) {
-      const span = document.createElement('span');
-      span.className = 'badge';
-      applySchoolColor(span, it.school);
-      span.title = `${it.event} • ${it.school}${it.notes ? ' — ' + it.notes : ''}`;
-      span.textContent = `${it.event} · ${it.school}`;
-      return span;
+      const entry = document.createElement('div');
+      entry.className = 'event-entry';
+      const type = document.createElement('span');
+      type.className = classForEvent(it.event);
+      type.textContent = it.event;
+      const school = document.createElement('span');
+      school.className = 'event-school';
+      school.textContent = it.school;
+      entry.append(type, school);
+      if (it.notes) {
+        const note = document.createElement('span');
+        note.className = 'event-notes';
+        note.textContent = it.notes;
+        entry.appendChild(note);
+      }
+      return entry;
     }
     function makeMonthChip(it) {
-      const div = document.createElement('div');
-      div.className = 'badge';
-      applySchoolColor(div, it.school);
-      div.style.display = 'block';
-      div.style.marginBottom = '4px';
-      div.title = `${it.event} • ${it.school}${it.notes ? ' — ' + it.notes : ''}`;
-      div.textContent = `${it.event} · ${it.school}`;
-      return div;
+      const entry = makeChip(it);
+      entry.classList.add('month-event');
+      return entry;
     }
     function attachExpand(container, list, startIndex, makeFn) {
       const restCount = list.length - startIndex;
