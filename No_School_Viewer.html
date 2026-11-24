@@ -946,56 +946,65 @@
     // ===================== DATA LOAD =====================
     function setLastRefreshed() {
       const el = document.getElementById('last-refreshed');
-      if (el) el.textContent = 'Updated ' + dayjs().format('h:mm A');
+      if (el && LAST_SUCCESSFUL_UPDATE) el.textContent = 'Data loaded ' + LAST_SUCCESSFUL_UPDATE.format('MMM D, h:mm A');
     }
-
+    function showDataNotice(message, kind) {
+      const notice = document.getElementById('data-notice');
+      notice.textContent = message;
+      notice.className = 'data-notice data-notice--' + kind;
+    }
     async function load() {
-      // Removed dataUrlEcho display
+      if (IS_LOADING) return;
+      IS_LOADING = true;
       document.getElementById('refreshEcho').textContent = Math.round(CONFIG.REFRESH_MS / 60000);
-
+      document.getElementById('btn-refresh').disabled = true;
+      if (!LAST_SUCCESSFUL_UPDATE) showDataNotice('Loading published school calendar data…', 'info');
       try {
-        let csvText = SAMPLE_CSV;
-        if (CONFIG.DATA_URL) {
-          const res = await fetch(CONFIG.DATA_URL, { cache: 'no-store' });
-          if (!res.ok) throw new Error('fetch ' + res.status);
-          csvText = await res.text();
-        }
-        RAW_ROWS = parseCsvToRows(csvText);
+        if (!CONFIG.DATA_URL) throw new Error('No calendar data source is configured.');
+        const res = await fetch(CONFIG.DATA_URL, { cache: 'no-store' });
+        if (!res.ok) throw new Error('Calendar source returned HTTP ' + res.status);
+        const csvText = await res.text();
+        const rows = parseCsvToRows(csvText);
+        if (!rows.length) throw new Error('No valid calendar entries were found in the published source.');
+        RAW_ROWS = rows;
+        LAST_SUCCESSFUL_UPDATE = dayjs();
+        document.getElementById('viewer-results').hidden = false;
         populateFilters(RAW_ROWS);
         render();
         setLastRefreshed();
+        showDataNotice('Calendar dates loaded from the published master sheet. For last-minute closures, check school or district announcements.', 'success');
       } catch (err) {
-        console.warn('CSV fetch failed, using sample:', err);
-        RAW_ROWS = parseCsvToRows(SAMPLE_CSV);
-        populateFilters(RAW_ROWS);
-        render();
-        setLastRefreshed();
+        console.warn('Calendar refresh failed:', err);
+        if (LAST_SUCCESSFUL_UPDATE) {
+          showDataNotice('Unable to refresh the calendar. Previously loaded dates are still shown below (last loaded ' + LAST_SUCCESSFUL_UPDATE.format('MMM D, h:mm A') + '). Confirm closures with your school or district.', 'warning');
+        } else {
+          RAW_ROWS = [];
+          FILTERED = [];
+          document.getElementById('viewer-results').hidden = true;
+          showDataNotice('Unable to load the published school calendar. No calendar dates are being shown. Try Refresh data, or check your school or district website directly.', 'error');
+        }
+      } finally {
+        IS_LOADING = false;
+        document.getElementById('btn-refresh').disabled = false;
       }
     }
 
     function populateFilters(rows) {
       const schoolSel = document.getElementById('schoolSel');
       const eventSel = document.getElementById('eventSel');
-      const schools = Array.from(new Set(rows.map(r => r.school))).sort();
-      const events = Array.from(new Set(rows.map(r => r.event))).sort();
-
-      schoolSel.innerHTML = '<option value="all">All schools</option>' + schools.map(s => `<option>${s}</option>`).join('');
-      eventSel.innerHTML = '<option value="all">All types</option>' + events.map(e => `<option>${e}</option>`).join('');
-
-      renderSchoolLegend(schools);
-    }
-
-    function renderSchoolLegend(schools) {
-      const el = document.getElementById('school-legend');
-      if (!el) return;
-      el.innerHTML = '';
-      for (const s of schools) {
-        const chip = document.createElement('span');
-        chip.className = 'badge';
-        applySchoolColor(chip, s);
-        chip.textContent = s;
-        el.appendChild(chip);
+      const priorSchool = schoolSel.value || 'all';
+      const priorEvent = eventSel.value || 'all';
+      const schools = [...new Set(rows.map(r => r.school))].sort();
+      const events = [...new Set(rows.map(r => r.event))].sort();
+      function fill(select, label, choices, previous) {
+        select.replaceChildren();
+        select.add(new Option(label, 'all'));
+        choices.forEach(v => select.add(new Option(v, v)));
+        select.value = choices.includes(previous) ? previous : 'all';
       }
+      fill(schoolSel, 'All schools', schools, priorSchool);
+      fill(eventSel, 'All event types', events, priorEvent);
+      updateClearFiltersVisibility();
     }
 
     function updateClearFiltersVisibility() {
@@ -1009,8 +1018,10 @@
     // ===================== INTERACTIONS =====================
     document.getElementById('btn-refresh').addEventListener('click', load);
     document.getElementById('btn-today').addEventListener('click', () => { ANCHOR_DAY = dayjs(); if ([0, 6].includes(ANCHOR_DAY.day())) ANCHOR_DAY = nextMonday(ANCHOR_DAY); render(); });
-    document.getElementById('prevWeek').addEventListener('click', () => { ANCHOR_DAY = startOfWeek(ANCHOR_DAY).subtract(7, 'day'); render(); });
-    document.getElementById('nextWeek').addEventListener('click', () => { ANCHOR_DAY = startOfWeek(ANCHOR_DAY).add(7, 'day'); render(); });
+    document.getElementById('btn-prev-week').addEventListener('click', () => { ANCHOR_DAY = startOfWeek(ANCHOR_DAY).subtract(7, 'day'); render(); });
+    document.getElementById('btn-next-week').addEventListener('click', () => { ANCHOR_DAY = startOfWeek(ANCHOR_DAY).add(7, 'day'); render(); });
+    document.getElementById('prevWeek').addEventListener('click', () => { ANCHOR_DAY = ANCHOR_DAY.subtract(1, 'month'); render(); });
+    document.getElementById('nextWeek').addEventListener('click', () => { ANCHOR_DAY = ANCHOR_DAY.add(1, 'month'); render(); });
     document.getElementById('search').addEventListener('input', () => { render(); updateClearFiltersVisibility(); });
     document.getElementById('schoolSel').addEventListener('change', () => { render(); updateClearFiltersVisibility(); });
     document.getElementById('eventSel').addEventListener('change', () => { render(); updateClearFiltersVisibility(); });
@@ -1027,16 +1038,6 @@
     document.getElementById('sn-prev').addEventListener('click', () => { ANCHOR_DAY = startOfWeek(ANCHOR_DAY).subtract(7, 'day'); render(); });
     document.getElementById('sn-today').addEventListener('click', () => { ANCHOR_DAY = dayjs(); if ([0, 6].includes(ANCHOR_DAY.day())) ANCHOR_DAY = nextMonday(ANCHOR_DAY); render(); });
     document.getElementById('sn-next').addEventListener('click', () => { ANCHOR_DAY = startOfWeek(ANCHOR_DAY).add(7, 'day'); render(); });
-
-    // School legend toggle
-    document.getElementById('school-legend-toggle').addEventListener('click', () => {
-      const legend = document.getElementById('school-legend');
-      const btn = document.getElementById('school-legend-toggle');
-      const expanded = btn.getAttribute('aria-expanded') === 'true';
-      legend.style.display = expanded ? 'none' : 'flex';
-      btn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
-      btn.textContent = expanded ? 'School colors ▾' : 'School colors ▴';
-    });
 
     // Auto-refresh
     setInterval(load, CONFIG.REFRESH_MS);
