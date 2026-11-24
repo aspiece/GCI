@@ -78,6 +78,15 @@
       flex-shrink: 0;
     }
 
+
+    /* Classical program directory: editorial headings and quiet borders. */
+    .programs-grid{grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+    .program-card{border-radius:2px;box-shadow:none;border-top:3px solid #b58a5d}
+    .program-card__badge{background:transparent;color:#785536;border:0;border-bottom:1px solid #b58a5d;border-radius:0;padding:0 0 6px;margin-bottom:18px;letter-spacing:.1em}
+    .program-card h3{font:700 1.2rem/1.3 var(--font-family-display)}
+    .program-card p{line-height:1.65}
+    .program-topics li::before{content:"—";font-size:1em;color:#a87747}
+    @media(max-width:660px){.programs-grid{grid-template-columns:1fr}}
   </style>
 </head>
 
@@ -105,7 +114,7 @@
   <header class="page-header" aria-labelledby="programs-page-heading">
     <div class="container--sm">
       <h1 id="programs-page-heading">Programs</h1>
-      <p>Explore our career-connected learning areas, industry certifications, and pathways for students ready to build real skills.</p>
+      <p>An overview of the subjects, hands-on work, and credentials offered through Genesee Learning Lab.</p>
     </div>
   </header>
 
@@ -116,7 +125,7 @@
         <header class="section-header" style="margin-bottom: var(--space-8);">
           <span class="section-header__eyebrow">What We Offer</span>
           <h2>Learning Programs</h2>
-          <p>Our programs are built around hands-on, authentic projects aligned to industry certifications and real career pathways.</p>
+          <p>Students learn technical skills through lessons, guided practice, and project work.</p>
         </header>
 
         <div class="programs-grid">
@@ -189,7 +198,7 @@
           <article class="program-card">
             <span class="program-card__badge">Certifications</span>
             <h3>Industry Certifications &amp; Pathways</h3>
-            <p>Earn recognized credentials and build a portfolio that opens doors to real careers in technology.</p>
+            <p>Explore industry credentials and assemble examples of work that demonstrate technical skills.</p>
             <ul class="program-topics" aria-label="Available certifications">
               <li>CompTIA Tech+</li>
               <li>CompTIA A+</li>
@@ -202,9 +211,9 @@
         </div>
 
         <div class="callout mt-12" aria-labelledby="programs-cta-heading">
-          <h2 id="programs-cta-heading">Ready to Learn?</h2>
+          <h2 id="programs-cta-heading">Explore classroom projects</h2>
           <p>Explore our student projects, connect with the team, or reach out to get involved with Genesee Learning Lab.</p>
-          <div class="hero__actions" style="justify-content: center; margin-top: var(--space-6);">
+          <div class="hero__actions" style="justify-content: flex-start; margin-top: var(--space-6);">
             <a href="projects.html" class="btn btn--primary btn--lg">View Student Projects</a>
             <a href="contact.html" class="btn btn--secondary btn--lg">Get Involved</a>
           </div>
