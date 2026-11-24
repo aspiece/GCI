@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Home School No School Viewer</title>
+  <title>School Calendar Viewer | Genesee Learning Lab</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="styles.css" />
 <style>
@@ -509,22 +509,27 @@
 
   <div class="container" id="main-content" tabindex="-1">
     <div class="page-title-row">
-      <h1>Home School No School Viewer</h1>
+      <p class="viewer-kicker">GENESEE LEARNING LAB / CALENDAR RESOURCES</p>
+      <h1>School Calendar Viewer</h1>
+      <p class="viewer-intro">Browse school closures, holidays, half days, and professional development dates reported in the master calendar.</p>
     </div>
-    <div class="page-toolbar">
-      <button id="btn-today" class="btn" title="Jump to current week">Today</button>
-      <button id="btn-refresh" class="btn" title="Refresh now">Refresh</button>
+    <div class="page-toolbar" aria-label="Calendar controls">
+      <button id="btn-prev-week" class="btn" title="Previous week">Previous week</button>
+      <button id="btn-today" class="btn" title="Jump to the current week">Today</button>
+      <button id="btn-next-week" class="btn" title="Next week">Next week</button>
+      <button id="btn-refresh" class="btn" title="Load the latest calendar data">Refresh data</button>
     </div>
+    <div id="data-notice" class="data-notice" role="status" aria-live="polite">Loading published school calendar data…</div>
 
     <div class="panel p-4">
       <div class="filter-panel-header">
         <div>
           <span class="filter-label">Filters</span>
-          <span class="filter-subtitle">Shows last, current, and next week (Mon–Fri). Auto‑updates from your master sheet.</span>
+          <span class="filter-subtitle">Search school calendar entries. The current week and month are shown below; published data refreshes automatically.</span>
         </div>
         <div class="filter-status">
           <span id="last-refreshed" class="muted" style="font-size:11px"></span>
-          <button id="clear-filters" class="btn" title="Reset all filters">✕ Clear</button>
+          <button id="clear-filters" class="btn" title="Reset all filters">Clear filters</button>
         </div>
       </div>
       <div class="filters">
@@ -535,25 +540,14 @@
       </div>
     </div>
 
-    <div id="legend-section" class="legend-section panel p-4">
-      <div class="legend-section-header">
-        <span class="filter-label">Legend</span>
-        <button id="school-legend-toggle" class="btn" aria-expanded="false" aria-controls="school-legend">School colors ▾</button>
-      </div>
-      <div class="legend">
+    <section id="legend-section" class="legend-section panel p-4" aria-labelledby="legend-heading">
+      <h2 id="legend-heading">Event types</h2>
+      <div class="legend" aria-label="Calendar event color key">
         <span class="badge red">No School</span>
         <span class="badge yellow">Half Day</span>
         <span class="badge green">Holiday</span>
         <span class="badge indigo">Teacher PD</span>
       </div>
-      <div id="school-legend" class="legend" style="display:none" aria-live="polite"></div>
-    </div>
-
-
-    <section id="calendar-availability" class="calendar-availability panel p-4" aria-labelledby="calendar-availability-heading">
-      <h2 id="calendar-availability-heading">2026–27 School Calendar Coverage</h2>
-      <p class="calendar-availability-intro">Complete 2026–27 school-year calendars have now been located for all four schools in our outstanding calendar watch: Genesee Jr/Sr High School, Genesee Early College, Michael Hamady High School, and Academy West Alternative High School. The viewer uses the master calendar spreadsheet for school dates and updates. School-specific schedule exceptions may still apply.</p>
-      <p class="calendar-availability-help"><strong>Know of a calendar correction?</strong> Please send us the official school or district source so we can verify and update the schedule.</p>
     </section>
 
     <div id="sticky-nav" class="sticky-nav" role="navigation" aria-label="Week navigation">
@@ -562,9 +556,12 @@
       <button id="sn-next" class="btn" title="Next week">▶</button>
     </div>
 
-    <div id="weeks" class="grid-3" style="margin-top:12px"></div>
+    <div id="viewer-results" hidden>
+      <h2 class="view-heading">Three-week overview</h2>
+      <div id="weeks" class="grid-3"></div>
 
     <div class="month panel p-4">
+      <h2 class="view-heading">Monthly overview</h2>
       <div class="row" style="justify-content:space-between;margin-bottom:6px">
         <div class="row muted"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px">
@@ -576,8 +573,8 @@
           <span id="monthLabel" class="week-title"></span>
         </div>
         <div class="row">
-          <button id="prevWeek" class="btn" title="Shift view to previous week">◀ Prev view</button>
-          <button id="nextWeek" class="btn" title="Shift view to next week">Next view ▶</button>
+          <button id="prevWeek" class="btn" title="Previous month">Previous month</button>
+          <button id="nextWeek" class="btn" title="Next month">Next month</button>
         </div>
       </div>
       <div class="weekday-head">
@@ -589,6 +586,14 @@
       </div>
       <div id="monthGrid" class="month-grid"></div>
     </div>
+    </div>
+
+    <details id="calendar-availability" class="calendar-availability panel p-4">
+      <summary>About the calendar data and coverage</summary>
+      <p>The viewer reads a published master calendar spreadsheet. It shows reported school dates, not real-time emergency closure announcements. School and district notices take precedence, and some building-specific schedules may differ.</p>
+      <p>The availability of dates depends on what is included in the source spreadsheet. Check official school calendars for any missing or unconfirmed dates.</p>
+      <p><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vTy-L_LG8bcMsu2w8HkdMXATdm2EASK-VR_O2XglJCmvzBxSSQ-B3-R_7jfba9DLctPy2Ul6bbLZvvI/pub?gid=371846928&amp;single=true&amp;output=csv" target="_blank" rel="noopener noreferrer">View published calendar data</a></p>
+    </details>
 
     <div class="footer">
       Auto‑refresh every <span id="refreshEcho"></span> min • Week start: Monday
