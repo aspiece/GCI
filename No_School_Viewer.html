@@ -614,6 +614,42 @@
     .event-detail-disclaimer{border-top:1px solid var(--border);margin:22px 0 0;padding-top:12px;color:#58646b;font-size:12px;line-height:1.6}
     @media(max-width:700px){.event-detail-inner{padding:19px}.event-group--month .event-group-count{margin-left:0}}
 
+
+    /* Explicit calendar views: one screen at a time, Today by default. */
+    .calendar-view-selector{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));max-width:410px;width:100%;border:1px solid #b9b3a8;background:#eeeae2;margin:0 0 17px;padding:3px;gap:2px;border-radius:2px}
+    .calendar-view-option{min-height:43px;border:1px solid transparent;border-radius:2px;background:transparent;color:#33454f;font:700 14px/1.3 "Segoe UI",Arial,sans-serif;cursor:pointer;padding:10px 13px}
+    .calendar-view-option.is-selected{background:#234759;border-color:#234759;color:#fffdf9}
+    .calendar-view-option:not(.is-selected):hover{background:#ddd9d1}
+    .calendar-view-option:focus-visible{outline:3px solid #ac8257;outline-offset:2px}
+    .calendar-period-toolbar{display:grid;grid-template-columns:auto minmax(165px,1fr) auto auto auto;align-items:center;gap:8px}
+    .calendar-period-toolbar .btn{white-space:nowrap}
+    .period-label{font:700 clamp(13px,1.5vw,17px)/1.4 Georgia,"Times New Roman",serif;color:#24343d;text-align:center;min-width:0}
+    #day-view[hidden],#weeks-view[hidden],#month-view[hidden]{display:none!important}
+    .calendar-active-view{margin-top:16px}
+    .calendar-active-view>.view-heading{margin:18px 0 10px}
+    .view-description{font-size:14px;color:#59656d;margin:0 0 15px}
+    .day-event-panel{max-width:800px;border-top:3px solid #244759}
+    .day-event-panel .event-group{margin-top:9px}
+    .day-events-summary{margin:0 0 13px;color:#53616b;font-size:13px;font-weight:650}
+    .day-events-empty{margin:0;color:#58646b;font-size:14px}
+    .month-nav-hint{font-size:12px;color:#69757a}
+    #month-view .month{margin-top:0}
+    @media(max-width:920px){
+      .calendar-period-toolbar{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .calendar-period-toolbar .period-label{grid-column:1/-1;grid-row:1;padding:3px 0 7px}
+      .calendar-period-toolbar .btn{white-space:normal}
+      #btn-prev-period{grid-column:1;grid-row:2}
+      #btn-next-period{grid-column:2;grid-row:2}
+      #btn-current-period{grid-column:1;grid-row:3}
+      #btn-refresh{grid-column:2;grid-row:3}
+    }
+    @media(max-width:480px){
+      .calendar-view-selector{max-width:none;margin-bottom:12px}
+      .calendar-view-option{font-size:13px;min-height:44px;padding:9px 4px}
+      .calendar-period-toolbar{gap:8px}
+      .month-nav-hint{display:none}
+    }
+
   </style>
   <!-- Libraries (small, reliable CDNs) -->
   <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
@@ -650,11 +686,17 @@
       <h1>School Calendar Viewer</h1>
       <p class="viewer-intro">Browse school closures, holidays, half days, and professional development dates reported in the master calendar.</p>
     </div>
-    <div class="page-toolbar" aria-label="Calendar controls">
-      <button id="btn-prev-week" class="btn" title="Previous week">Previous week</button>
-      <button id="btn-today" class="btn" title="Jump to the current week">Today</button>
-      <button id="btn-next-week" class="btn" title="Next week">Next week</button>
-      <button id="btn-refresh" class="btn" title="Load the latest calendar data">Refresh data</button>
+    <div class="calendar-view-selector" role="group" aria-label="Choose calendar view">
+      <button type="button" class="calendar-view-option is-selected" data-calendar-view="today" aria-pressed="true">Today</button>
+      <button type="button" class="calendar-view-option" data-calendar-view="3week" aria-pressed="false">3 Week</button>
+      <button type="button" class="calendar-view-option" data-calendar-view="month" aria-pressed="false">Month</button>
+    </div>
+    <div class="page-toolbar calendar-period-toolbar" aria-label="Navigate calendar dates">
+      <button id="btn-prev-period" type="button" class="btn" title="Previous day">Previous day</button>
+      <div id="period-label" class="period-label" role="status" aria-live="polite">Today</div>
+      <button id="btn-next-period" type="button" class="btn" title="Next day">Next day</button>
+      <button id="btn-current-period" type="button" class="btn" title="Return to the current date">Back to today</button>
+      <button id="btn-refresh" type="button" class="btn" title="Load the latest calendar data">Refresh data</button>
     </div>
     <div id="data-notice" class="data-notice" role="status" aria-live="polite">Loading published school calendar data…</div>
 
@@ -662,7 +704,7 @@
       <div class="filter-panel-header">
         <div>
           <span class="filter-label">Filters</span>
-          <span class="filter-subtitle">Search school calendar entries. The current week and month are shown below; published data refreshes automatically.</span>
+          <span class="filter-subtitle">Search calendar entries, then switch between Today, 3 Week, and Month. Published data refreshes automatically.</span>
         </div>
         <div class="filter-status">
           <span id="last-refreshed" class="muted" style="font-size:11px"></span>
@@ -702,18 +744,27 @@
       </div>
     </section>
 
-    <div id="sticky-nav" class="sticky-nav" role="navigation" aria-label="Week navigation">
-      <button id="sn-prev" class="btn" title="Previous week">◀</button>
-      <button id="sn-today" class="btn" title="Jump to current week">Today</button>
-      <button id="sn-next" class="btn" title="Next week">▶</button>
+    <div id="sticky-nav" class="sticky-nav" role="navigation" aria-label="Calendar date navigation">
+      <button id="sn-prev" type="button" class="btn" title="Previous day" aria-label="Previous day">◀</button>
+      <button id="sn-today" type="button" class="btn" title="Return to today">Today</button>
+      <button id="sn-next" type="button" class="btn" title="Next day" aria-label="Next day">▶</button>
     </div>
 
     <div id="viewer-results" hidden>
-      <h2 class="view-heading">Three-week overview</h2>
-      <div id="weeks" class="grid-3"></div>
+      <section id="day-view" class="calendar-active-view" aria-labelledby="day-view-heading">
+        <h2 class="view-heading" id="day-view-heading">Today</h2>
+        <p id="day-date-heading" class="view-description"></p>
+        <div id="day-events" class="day-event-panel panel p-4"></div>
+      </section>
 
-    <div class="month panel p-4">
-      <h2 class="view-heading">Monthly overview</h2>
+      <section id="weeks-view" class="calendar-active-view" aria-labelledby="weeks-view-heading" hidden>
+        <h2 class="view-heading" id="weeks-view-heading">Three-week overview</h2>
+        <div id="weeks" class="grid-3"></div>
+      </section>
+
+      <section id="month-view" class="calendar-active-view" aria-labelledby="month-view-heading" hidden>
+        <div class="month panel p-4">
+          <h2 class="view-heading" id="month-view-heading">Monthly overview</h2>
       <div class="row" style="justify-content:space-between;margin-bottom:6px">
         <div class="row muted"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px">
@@ -724,10 +775,7 @@
           </svg>
           <span id="monthLabel" class="week-title"></span>
         </div>
-        <div class="row">
-          <button id="prevWeek" class="btn" title="Previous month">Previous month</button>
-          <button id="nextWeek" class="btn" title="Next month">Next month</button>
-        </div>
+        <span class="month-nav-hint">Use the month navigation above</span>
       </div>
       <div class="weekday-head">
         <div>Mon</div>
@@ -737,7 +785,8 @@
         <div>Fri</div>
       </div>
       <div id="monthGrid" class="month-grid"></div>
-    </div>
+        </div>
+      </section>
     </div>
 
     <details id="calendar-availability" class="calendar-availability panel p-4">
@@ -818,12 +867,8 @@
     let DATA_SOURCE = 'none';
     const EXPANDED_GROUPS = new Map();
     let IS_LOADING = false;
-    let ANCHOR_DAY = dayjs(); // base day for current/prev/next
-
-    // If user visits on Sat/Sun, snap to upcoming Monday by default
-    if ([0, 6].includes(ANCHOR_DAY.day())) {
-      ANCHOR_DAY = nextMonday(ANCHOR_DAY);
-    }
+    let ANCHOR_DAY = dayjs().startOf('day'); // selected date, including Saturdays and Sundays
+    let CALENDAR_VIEW = 'today'; // Default to Today on every page load.
 
     // ===================== HELPERS =====================
     function startOfWeek(d) {
@@ -1055,10 +1100,89 @@
     }
 
     // ===================== RENDER =====================
+    const CALENDAR_VIEW_LABELS = { today: 'day', '3week': 'week', month: 'month' };
+
+    function showCalendarView(view) {
+      if (!Object.prototype.hasOwnProperty.call(CALENDAR_VIEW_LABELS, view)) return;
+      CALENDAR_VIEW = view;
+      if (view === 'today') ANCHOR_DAY = dayjs().startOf('day');
+      render();
+    }
+
+    function movePeriod(offset) {
+      if (CALENDAR_VIEW === 'today') ANCHOR_DAY = ANCHOR_DAY.add(offset, 'day');
+      else if (CALENDAR_VIEW === '3week') ANCHOR_DAY = startOfWeek(ANCHOR_DAY).add(offset * 7, 'day');
+      else ANCHOR_DAY = ANCHOR_DAY.startOf('month').add(offset, 'month');
+      render();
+    }
+
+    function returnToCurrentPeriod() {
+      ANCHOR_DAY = dayjs().startOf('day');
+      render();
+    }
+
+    function updateCalendarNavigation() {
+      const date = ANCHOR_DAY;
+      const unit = CALENDAR_VIEW_LABELS[CALENDAR_VIEW];
+      const previous = 'Previous ' + unit;
+      const next = 'Next ' + unit;
+      let periodLabel;
+      if (CALENDAR_VIEW === 'today') periodLabel = date.format('dddd, MMMM D, YYYY');
+      else if (CALENDAR_VIEW === '3week') {
+        const first = startOfWeek(date).subtract(7, 'day');
+        const last = startOfWeek(date).add(18, 'day');
+        periodLabel = first.format('MMM D') + ' – ' + last.format('MMM D, YYYY');
+      } else periodLabel = date.format('MMMM YYYY');
+      document.getElementById('period-label').textContent = periodLabel;
+      for (const [id, label] of [['btn-prev-period', previous], ['btn-next-period', next]]) {
+        const button = document.getElementById(id);
+        button.textContent = label;
+        button.title = label;
+      }
+      for (const [id, label] of [['sn-prev', previous], ['sn-next', next]]) {
+        const button = document.getElementById(id);
+        button.title = label;
+        button.setAttribute('aria-label', label);
+      }
+      document.getElementById('btn-current-period').textContent = CALENDAR_VIEW === 'today' ? 'Back to today' : 'Current ' + unit;
+      for (const button of document.querySelectorAll('[data-calendar-view]')) {
+        const selected = button.dataset.calendarView === CALENDAR_VIEW;
+        button.classList.toggle('is-selected', selected);
+        button.setAttribute('aria-pressed', String(selected));
+      }
+    }
+
     function render() {
       applyFilters();
-      renderWeeks();
-      renderMonthFixed();
+      updateCalendarNavigation();
+      document.getElementById('day-view').hidden = CALENDAR_VIEW !== 'today';
+      document.getElementById('weeks-view').hidden = CALENDAR_VIEW !== '3week';
+      document.getElementById('month-view').hidden = CALENDAR_VIEW !== 'month';
+      if (CALENDAR_VIEW === 'today') renderDay();
+      else if (CALENDAR_VIEW === '3week') renderWeeks();
+      else renderMonthFixed();
+    }
+
+    function renderDay() {
+      const day = ANCHOR_DAY.startOf('day');
+      const list = groupByDate(FILTERED)[fmt(day, 'YYYY-MM-DD')] || [];
+      document.getElementById('day-view-heading').textContent = day.isSame(dayjs(), 'day') ? 'Today' : 'Daily overview';
+      document.getElementById('day-date-heading').textContent = day.format('dddd, MMMM D, YYYY');
+      const container = document.getElementById('day-events');
+      container.replaceChildren();
+      if (list.length) {
+        const schoolCount = new Set(list.map(item => item.school)).size;
+        const summary = document.createElement('p');
+        summary.className = 'day-events-summary';
+        summary.textContent = schoolCount + ' ' + (schoolCount === 1 ? 'school' : 'schools') + ' with calendar entries';
+        container.appendChild(summary);
+        renderEventGroups(container, list, day, false);
+      } else {
+        const empty = document.createElement('p');
+        empty.className = 'day-events-empty';
+        empty.textContent = 'No calendar entries are listed for this date. That does not confirm school is in session.';
+        container.appendChild(empty);
+      }
     }
 
     function renderWeeks() {
@@ -1298,11 +1422,12 @@
       if (event.target === event.currentTarget) event.currentTarget.close();
     });
     document.getElementById('btn-refresh').addEventListener('click', load);
-    document.getElementById('btn-today').addEventListener('click', () => { ANCHOR_DAY = dayjs(); if ([0, 6].includes(ANCHOR_DAY.day())) ANCHOR_DAY = nextMonday(ANCHOR_DAY); render(); });
-    document.getElementById('btn-prev-week').addEventListener('click', () => { ANCHOR_DAY = startOfWeek(ANCHOR_DAY).subtract(7, 'day'); render(); });
-    document.getElementById('btn-next-week').addEventListener('click', () => { ANCHOR_DAY = startOfWeek(ANCHOR_DAY).add(7, 'day'); render(); });
-    document.getElementById('prevWeek').addEventListener('click', () => { ANCHOR_DAY = ANCHOR_DAY.subtract(1, 'month'); render(); });
-    document.getElementById('nextWeek').addEventListener('click', () => { ANCHOR_DAY = ANCHOR_DAY.add(1, 'month'); render(); });
+    document.querySelectorAll('[data-calendar-view]').forEach(button => {
+      button.addEventListener('click', () => showCalendarView(button.dataset.calendarView));
+    });
+    document.getElementById('btn-prev-period').addEventListener('click', () => movePeriod(-1));
+    document.getElementById('btn-next-period').addEventListener('click', () => movePeriod(1));
+    document.getElementById('btn-current-period').addEventListener('click', returnToCurrentPeriod);
     document.getElementById('search').addEventListener('input', () => { render(); updateClearFiltersVisibility(); });
     document.getElementById('schoolSel').addEventListener('change', () => { render(); updateClearFiltersVisibility(); });
     document.getElementById('eventSel').addEventListener('change', () => { render(); updateClearFiltersVisibility(); });
@@ -1315,10 +1440,10 @@
       updateClearFiltersVisibility();
     });
 
-    // Sticky nav (mirrors main week nav buttons)
-    document.getElementById('sn-prev').addEventListener('click', () => { ANCHOR_DAY = startOfWeek(ANCHOR_DAY).subtract(7, 'day'); render(); });
-    document.getElementById('sn-today').addEventListener('click', () => { ANCHOR_DAY = dayjs(); if ([0, 6].includes(ANCHOR_DAY.day())) ANCHOR_DAY = nextMonday(ANCHOR_DAY); render(); });
-    document.getElementById('sn-next').addEventListener('click', () => { ANCHOR_DAY = startOfWeek(ANCHOR_DAY).add(7, 'day'); render(); });
+    // The mobile sticky controls follow the selected view's period.
+    document.getElementById('sn-prev').addEventListener('click', () => movePeriod(-1));
+    document.getElementById('sn-today').addEventListener('click', returnToCurrentPeriod);
+    document.getElementById('sn-next').addEventListener('click', () => movePeriod(1));
 
     // Auto-refresh
     setInterval(load, CONFIG.REFRESH_MS);
@@ -1353,6 +1478,8 @@
       console.groupEnd();
     })();
 
+    // Today is the default view on every visit, even on weekends.
+    updateCalendarNavigation();
     // Kick things off
     load();
   </script>
