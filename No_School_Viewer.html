@@ -1194,10 +1194,11 @@
       const weeksEl = document.getElementById('weeks');
       weeksEl.innerHTML = '';
 
+      const viewingCurrentWeek = currStart.isSame(startOfWeek(dayjs()), 'day');
       const blocks = [
-        { label: 'Last week', start: prevStart, muted: true },
-        { label: 'This week', start: currStart, highlight: true },
-        { label: 'Next week', start: nextStart, muted: true },
+        { label: 'Previous week', start: prevStart, muted: true },
+        { label: viewingCurrentWeek ? 'This week' : 'Selected week', start: currStart, highlight: true },
+        { label: 'Following week', start: nextStart, muted: true },
       ];
 
       blocks.forEach(b => {
