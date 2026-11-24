@@ -44,15 +44,39 @@
     footer p:last-child { margin-bottom:0; }
     @media(max-width:600px) { main { margin:0; border:0; } .contents ul { display:block; } section { margin-top:1.25rem; padding-top:1.5rem; } }
     @media print { body,main { background:white; } main { max-width:none; margin:0; padding:0; border:0; } .masthead,.skip,.contents,.back { display:none; } a { color:inherit; } .action { background:white; color:var(--navy); border-color:var(--navy); } h2 { break-after:avoid; } }
+    .heading-row { display:flex; align-items:center; justify-content:space-between; gap:1.25rem; margin:0 0 1rem; }
+    .heading-row h1 { margin:0; }
+    .header-art { width:180px; height:auto; flex:none; }
+    section h2 { display:flex; align-items:flex-start; gap:.65rem; }
+    .section-icon { display:inline-flex; align-items:center; justify-content:center; width:2.2rem; height:2.2rem; margin-top:-.12rem; border:1px solid #bdac95; border-radius:3px; background:#eeeae2; color:var(--navy); flex:none; }
+    .section-icon svg { width:1.5rem; height:1.5rem; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+    @media(max-width:600px) { .header-art { width:104px; } .heading-row { gap:.75rem; } }
+    @media(max-width:360px) { .header-art { width:78px; } }
+    @media print { .header-art,.section-icon { display:none; } }
   </style>
 </head>
 <body>
+  <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute;overflow:hidden"><symbol id="icon-bus" viewBox="0 0 24 24"><path d="M6 17H4V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v11h-2M8 17h8M4 11h16M8 4v7M16 4v7"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></symbol><symbol id="icon-drone" viewBox="0 0 24 24"><path d="m8 8 8 8m0-8-8 8"/><rect x="9" y="9" width="6" height="6" rx="2"/><ellipse cx="5" cy="5" rx="4" ry="2"/><ellipse cx="19" cy="5" rx="4" ry="2"/><ellipse cx="5" cy="19" rx="4" ry="2"/><ellipse cx="19" cy="19" rx="4" ry="2"/><path d="m7 6 3 3m7-3-3 3m-7 9 3-3m7 3-3-3"/></symbol><symbol id="icon-progress" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 16v-3m5 3V9m5 7V6"/></symbol><symbol id="icon-snacks" viewBox="0 0 24 24"><path d="M6 3h12l-1 4 1 10-1 4H7l-1-4L7 7Z"/><path d="M7 7h10M7 17h10"/><circle cx="12" cy="12" r="3"/></symbol><symbol id="icon-helpdesk" viewBox="0 0 24 24"><rect x="2" y="3" width="15" height="11" rx="1"/><path d="M7 18h7m-4-4v4m9-8a4 4 0 0 0-5 5l-4 4 2 2 4-4a4 4 0 0 0 5-5l-3 2-2-2Z"/></symbol><symbol id="icon-printer" viewBox="0 0 24 24"><path d="M4 21V3h16v18ZM4 7h16M12 7v4m-2 0h4l-2 3ZM7 18h10m-8 0v-2h6v2"/></symbol></svg>
   <a class="skip" href="#main">Skip to family update</a>
   <header class="masthead"><p>Genesee Career Institute · Computer Science</p></header>
   <main id="main" tabindex="-1">
     <header>
       <p class="eyebrow"><time datetime="2026-11-24">November 24, 2026</time> · Family update</p>
-      <h1>November family update</h1>
+      <div class="heading-row"><h1>November family update</h1>
+      <svg class="header-art" viewBox="0 0 240 144" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1" y="1" width="238" height="142" rx="8" fill="#eeeae2"/>
+        <circle cx="183" cy="45" r="32" fill="#ddd1bc"/>
+        <path d="M105 102c39 22 82 20 91-10" fill="none" stroke="#a87747" stroke-width="2" stroke-dasharray="4 5"/>
+        <g fill="none" stroke="#193341" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M25 118V28h78v90ZM25 49h78M64 49v20m-7 0h14l-7 12ZM36 106h56"/>
+          <path d="M43 106V93l21-12 20 12v13m-41-13 21 12 20-12m-20 12V81" fill="#fffdf9"/>
+          <path d="m165 43 35 26m0-26-35 26"/>
+          <rect x="174" y="47" width="17" height="17" rx="5" fill="#fffdf9"/>
+          <ellipse cx="159" cy="38" rx="15" ry="5" fill="#fffdf9"/><ellipse cx="207" cy="38" rx="15" ry="5" fill="#fffdf9"/>
+          <ellipse cx="159" cy="75" rx="15" ry="5" fill="#fffdf9"/><ellipse cx="207" cy="75" rx="15" ry="5" fill="#fffdf9"/>
+        </g>
+        <circle cx="35" cy="38" r="2" fill="#a87747"/><circle cx="43" cy="38" r="2" fill="#a87747"/>
+      </svg></div>
       <p class="intro">Hello, GCI Computer Science families! Please review these next steps with your student, along with ways to support our program.</p>
       <p><a href="#instructor-contacts">Email your instructor with questions</a></p>
       <p><strong>Please take these next steps:</strong></p>
@@ -77,7 +101,7 @@
     </details>
 
     <section id="mott" aria-labelledby="mott-heading">
-      <h2 id="mott-heading">Mott Field Trip</h2>
+      <h2 id="mott-heading"><span class="section-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><use href="#icon-bus"/></svg></span><span>Mott Field Trip</span></h2>
       <ul>
         <li><strong>Who:</strong> All first- and second-session students are expected to attend.</li>
         <li><strong>When:</strong> <time datetime="2026-12-11">Friday, December 11, 2026</time></li>
@@ -98,7 +122,7 @@
     </section>
 
     <section id="drones" aria-labelledby="drone-heading">
-      <h2 id="drone-heading">Drone Competition</h2>
+      <h2 id="drone-heading"><span class="section-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><use href="#icon-drone"/></svg></span><span>Drone Competition</span></h2>
       <ul>
         <li><strong>Who:</strong> Students in the <strong>Software Engineering program</strong>.</li>
         <li><strong>When:</strong> <time datetime="2027-02-13">Saturday, February 13, 2027</time> — tentative until our registration is confirmed.</li>
@@ -118,7 +142,7 @@
     </section>
 
     <section id="parentvue" aria-labelledby="parentvue-heading">
-      <h2 id="parentvue-heading">Activate your GCI ParentVUE account</h2>
+      <h2 id="parentvue-heading"><span class="section-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><use href="#icon-progress"/></svg></span><span>Activate your GCI ParentVUE account</span></h2>
       <p>ParentVUE helps you stay up to date on your student’s <strong>grades and attendance at GCI</strong>. Checking it regularly is a helpful way to follow their progress, talk with them about how things are going, and reach out to an instructor when questions come up. <strong>GCI uses a separate ParentVUE login from your child’s home school district.</strong></p>
       <p><a class="action" href="https://parentvue.geneseeisd.org/gci/PXP2_Login_Parent.aspx">Open GCI ParentVUE</a></p>
       <p class="detail">Already have a GCI account? Sign in with your GCI credentials or use “Forgot Password” on the login page.</p>
@@ -132,7 +156,7 @@
     </section>
 
     <section id="snacks" aria-labelledby="snack-heading">
-      <h2 id="snack-heading">Snack donations support financial literacy</h2>
+      <h2 id="snack-heading"><span class="section-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><use href="#icon-snacks"/></svg></span><span>Snack donations support financial literacy</span></h2>
       <p>If your family is able, please consider donating <strong>individually packaged, shelf-stable snacks</strong> for our classroom store.</p>
       <p>We use <a href="https://www.classbank.com/">ClassBank</a> as a digital classroom economy. Students earn virtual classroom dollars through jobs and positive contributions, then practice budgeting, saving, and spending.</p>
       <p><strong>Donated snacks stock our classroom store.</strong> Students can purchase them with classroom dollars, connecting financial literacy with their effort and responsibility in class.</p>
@@ -141,7 +165,7 @@
     </section>
 
     <section id="helpdesk" aria-labelledby="helpdesk-heading">
-      <h2 id="helpdesk-heading">Student Helpdesk and computer donations</h2>
+      <h2 id="helpdesk-heading"><span class="section-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><use href="#icon-helpdesk"/></svg></span><span>Student Helpdesk and computer donations</span></h2>
       <p>Our Student Helpdesk gives students hands-on experience troubleshooting computer problems and making repairs. If you have an <strong>out-of-warranty computer or device</strong> that needs attention, we’re happy to take a look!</p>
       <p>We also accept <strong>donations of old computers</strong> for students to troubleshoot, repair, and learn from. These projects help students build practical IT support skills while helping our community.</p>
       <p>Please email <a href="mailto:dcascarelli@geneseeisd.org">Dominic Cascarelli</a> or <a href="mailto:aspiece@geneseeisd.org">Andrew Spiece</a> to discuss a device or arrange a donation.</p>
@@ -149,7 +173,7 @@
     </section>
 
     <section id="print-farm" aria-labelledby="print-farm-heading">
-      <h2 id="print-farm-heading">3D Printing</h2>
+      <h2 id="print-farm-heading"><span class="section-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><use href="#icon-printer"/></svg></span><span>3D Printing</span></h2>
       <p>Our student-run print farm now has <strong>12 printers</strong> and can handle larger orders as well as individual items. Students gain hands-on experience managing orders, operating printers, and producing finished prints.</p>
       <p>Browse <a href="https://makerworld.com/en">MakerWorld for 3D models</a> to find something you’d like printed. <strong>We currently accept ready-to-print files only; custom design orders are not available.</strong></p>
       <p><strong>Current pricing:</strong></p>
