@@ -183,6 +183,26 @@
     @media (max-width: 768px) {
       .about-layout, .cert-layout { grid-template-columns: 1fr; }
     }
+
+    /* Classic homepage: numbered editorial sections instead of emoji tiles. */
+    .about-content h2{font-family:var(--font-family-display);font-weight:700;letter-spacing:-.02em}
+    .about-highlight{background:transparent;border:0;border-bottom:1px solid var(--color-border);border-radius:0;padding:16px 0;gap:20px}
+    .about-highlight:first-child{border-top:1px solid var(--color-border)}
+    .about-highlight__icon{font:700 1.25rem var(--font-family-display);color:#92613c;min-width:37px;margin-top:2px}
+    .about-highlight__text strong{font-family:var(--font-family-display);font-size:1.05rem;font-weight:700}
+    .experiences-grid{gap:16px}
+    .experience-card{background:transparent;border:1px solid #5b6b73;border-radius:2px;padding:23px}
+    .experience-card:hover{background:#294454;border-color:#a4adb0}
+    .experience-card__emoji{font:700 1rem var(--font-family-display);color:#dec3a1;margin:0 0 15px}
+    .experience-card h3{font:700 1.12rem/1.3 var(--font-family-display);color:#fffaf3}
+    .experience-card p{color:#d2dce0;line-height:1.72}
+    .cert-list li,.pathway-list li{background:transparent;box-shadow:none;border:0;border-bottom:1px solid var(--color-border);border-radius:0;padding:14px 0;color:var(--color-text)}
+    .cert-list li::before{content:"";width:7px;height:7px;background:#a87747;border-radius:0}
+    .pathway-list li::before{content:"—";color:#976d43}
+    .community-card{text-align:left;border-radius:2px;box-shadow:none;border-top:3px solid #b58a5d}
+    .community-card__icon{font:700 1rem var(--font-family-display);color:#88633e;border-bottom:1px solid #b58a5d;width:38px;padding-bottom:9px;margin:0 0 17px}
+    .community-card h3{font-family:var(--font-family-display)}
+    #footer-cta-heading{font:700 clamp(1.8rem,3vw,2.55rem)/1.2 var(--font-family-display);letter-spacing:-.015em;color:#faf8f2;margin:0 0 var(--space-4)}
   </style>
 </head>
 
@@ -211,15 +231,14 @@
     <!-- 1. HERO -->
     <section class="hero" aria-labelledby="hero-heading">
       <div class="hero__inner">
-        <p class="hero__eyebrow" aria-hidden="true">&#x1F680; Genesee County, Michigan</p>
+        <p class="hero__eyebrow">Genesee Career Institute &nbsp;/&nbsp; Genesee County, Michigan</p>
         <h1 id="hero-heading" class="hero__title">
-          Building the Future of<br />
-          <span>Computer Science</span><br />
-          in Genesee County
+          Computer science,<br />
+          <span>learned by doing.</span>
         </h1>
         <p class="hero__subtitle">
-          Hands-on learning in programming, hardware, cybersecurity, AI, and emerging technologies
-          designed to prepare students for real careers.
+          Students learn programming, computer hardware, cybersecurity, and emerging technologies
+          by making things, solving problems, and testing their ideas.
         </p>
         <div class="hero__actions">
           <a href="programs.html" class="btn btn--primary btn--lg">Explore Programs</a>
@@ -235,42 +254,43 @@
         <div class="about-layout">
           <div class="about-content">
             <p class="section-header__eyebrow">About Us</p>
-            <h2 id="about-heading">Real Skills. Real Projects. Real Futures.</h2>
+            <h2 id="about-heading">Learning by doing</h2>
             <p>
-              Genesee Learning Lab is a hands-on computer science and technology initiative focused on helping
-              students build real-world skills through authentic, career-connected projects. We believe every
-              student deserves access to meaningful technology education — regardless of background or prior experience.
+              At Genesee Learning Lab, students learn computer science by building, testing, and
+              improving things that work. Classroom activities give students practical experience
+              and room to learn from mistakes.
             </p>
             <p>
-              Our curriculum spans programming, computer hardware, cybersecurity, artificial intelligence, data science,
-              3D printing, and emerging technologies — giving students a broad and deep foundation for the careers of tomorrow.
+              Lessons cover programming, hardware, cybersecurity, artificial intelligence, data,
+              3D printing, and engineering. Students can start with the basics and take on more
+              challenging projects as their skills grow.
             </p>
             <a href="programs.html" class="btn btn--outline">Explore Our Programs</a>
           </div>
           <div class="about-highlights" aria-label="Key focus areas">
             <div class="about-highlight">
-              <span class="about-highlight__icon" aria-hidden="true">&#x1F4BB;</span>
+              <span class="about-highlight__icon" aria-hidden="true">01</span>
               <div class="about-highlight__text">
                 <strong>Authentic Project Work</strong>
                 <span>Students build, code, design, and solve real problems — not just worksheets.</span>
               </div>
             </div>
             <div class="about-highlight">
-              <span class="about-highlight__icon" aria-hidden="true">&#x1F3AF;</span>
+              <span class="about-highlight__icon" aria-hidden="true">02</span>
               <div class="about-highlight__text">
                 <strong>Career-Connected Learning</strong>
                 <span>Pathways aligned to real industry certifications and in-demand careers.</span>
               </div>
             </div>
             <div class="about-highlight">
-              <span class="about-highlight__icon" aria-hidden="true">&#x1F91D;</span>
+              <span class="about-highlight__icon" aria-hidden="true">03</span>
               <div class="about-highlight__text">
                 <strong>Community-Centered</strong>
                 <span>Open to schools, families, partners, and organizations across Genesee County.</span>
               </div>
             </div>
             <div class="about-highlight">
-              <span class="about-highlight__icon" aria-hidden="true">&#x1F331;</span>
+              <span class="about-highlight__icon" aria-hidden="true">04</span>
               <div class="about-highlight__text">
                 <strong>Built for Everyone</strong>
                 <span>Welcoming, accessible learning for all students regardless of experience level.</span>
@@ -287,31 +307,31 @@
         <header class="section-header">
           <span class="section-header__eyebrow">What We Teach</span>
           <h2 id="learning-areas-heading">Learning Areas</h2>
-          <p>Explore five interconnected disciplines that together cover the breadth of modern technology careers.</p>
+          <p>Explore the subjects students study and the kinds of projects they build.</p>
         </header>
         <div class="card-grid" role="list">
           <article class="card" role="listitem">
-            <div class="card__icon" aria-hidden="true">&#x2328;&#xFE0F;</div>
+            <div class="card__icon" aria-hidden="true">01</div>
             <h3>Programming &amp; Software Development</h3>
             <p>From Python and web development to app design and software engineering, students learn to think like developers and build real applications from scratch.</p>
           </article>
           <article class="card" role="listitem">
-            <div class="card__icon" aria-hidden="true">&#x1F5A5;&#xFE0F;</div>
+            <div class="card__icon" aria-hidden="true">02</div>
             <h3>Computer Hardware &amp; IT Systems</h3>
             <p>Students build, upgrade, and troubleshoot computers. They explore networking, operating systems, and the physical infrastructure that powers the digital world.</p>
           </article>
           <article class="card" role="listitem">
-            <div class="card__icon" aria-hidden="true">&#x1F510;</div>
+            <div class="card__icon" aria-hidden="true">03</div>
             <h3>Cybersecurity</h3>
             <p>Students explore how to protect systems and data, practice with real-world security scenarios, and build skills aligned to CompTIA and industry security standards.</p>
           </article>
           <article class="card" role="listitem">
-            <div class="card__icon" aria-hidden="true">&#x1F916;</div>
+            <div class="card__icon" aria-hidden="true">04</div>
             <h3>Artificial Intelligence &amp; Data Science</h3>
-            <p>Students work with AI tools, explore machine learning concepts, and use real data to answer meaningful questions — preparing for the most in-demand field in tech.</p>
+            <p>Students evaluate AI tools, interpret data, and practice using technology responsibly.</p>
           </article>
           <article class="card" role="listitem">
-            <div class="card__icon" aria-hidden="true">&#x2699;&#xFE0F;</div>
+            <div class="card__icon" aria-hidden="true">05</div>
             <h3>Engineering &amp; Emerging Technology</h3>
             <p>From 3D printing and Raspberry Pi to autonomous drones and maker projects, students design and build physical-digital solutions to real engineering challenges.</p>
           </article>
@@ -325,41 +345,41 @@
         <header class="section-header">
           <span class="section-header__eyebrow">Student Experiences</span>
           <h2 id="experiences-heading">What Students Are Doing</h2>
-          <p>Hands-on, energizing, and career-ready — here's a sample of the work happening in the lab.</p>
+          <p>Examples of the work students do in our classrooms and labs.</p>
         </header>
         <div class="experiences-grid" role="list">
           <article class="experience-card" role="listitem">
-            <div class="experience-card__emoji" aria-hidden="true">&#x1F5A5;&#xFE0F;</div>
+            <div class="experience-card__emoji" aria-hidden="true">01</div>
             <h3>Building &amp; Troubleshooting PCs</h3>
             <p>Students disassemble and reassemble computers, diagnose hardware failures, and configure operating systems from scratch.</p>
           </article>
           <article class="experience-card" role="listitem">
-            <div class="experience-card__emoji" aria-hidden="true">&#x1F3AE;</div>
+            <div class="experience-card__emoji" aria-hidden="true">02</div>
             <h3>Programming Games &amp; Software</h3>
             <p>From text-based Python games to interactive web applications, students write real code that does real things.</p>
           </article>
           <article class="experience-card" role="listitem">
-            <div class="experience-card__emoji" aria-hidden="true">&#x1F5A8;&#xFE0F;</div>
+            <div class="experience-card__emoji" aria-hidden="true">03</div>
             <h3>Designing &amp; 3D Printing Products</h3>
             <p>Using Tinkercad and Bambu A1 printers, students design, slice, and print original products solving real design challenges.</p>
           </article>
           <article class="experience-card" role="listitem">
-            <div class="experience-card__emoji" aria-hidden="true">&#x1F353;</div>
+            <div class="experience-card__emoji" aria-hidden="true">04</div>
             <h3>Working with Raspberry Pi Systems</h3>
             <p>Students program microcomputers for real applications — from media centers to environmental sensors to physical computing projects.</p>
           </article>
           <article class="experience-card" role="listitem">
-            <div class="experience-card__emoji" aria-hidden="true">&#x1F6E1;&#xFE0F;</div>
+            <div class="experience-card__emoji" aria-hidden="true">05</div>
             <h3>Exploring Cybersecurity Scenarios</h3>
             <p>Students navigate ethical hacking challenges, practice defense strategies, and learn to think like security professionals.</p>
           </article>
           <article class="experience-card" role="listitem">
-            <div class="experience-card__emoji" aria-hidden="true">&#x1F4CA;</div>
+            <div class="experience-card__emoji" aria-hidden="true">06</div>
             <h3>Using AI &amp; Data Tools</h3>
             <p>Students analyze real datasets, build models, and work with modern AI platforms to solve data-driven problems.</p>
           </article>
           <article class="experience-card" role="listitem">
-            <div class="experience-card__emoji" aria-hidden="true">&#x1F681;</div>
+            <div class="experience-card__emoji" aria-hidden="true">07</div>
             <h3>Autonomous Drone Development</h3>
             <p>Students program and deploy autonomous drone systems, exploring the intersection of hardware, software, and real-world navigation.</p>
           </article>
@@ -373,7 +393,7 @@
         <header class="section-header">
           <span class="section-header__eyebrow">Credentials &amp; Careers</span>
           <h2 id="certs-heading">Certifications &amp; Pathways</h2>
-          <p>Students leave Genesee Learning Lab with recognized credentials and a clear path toward real careers.</p>
+          <p>Students can explore industry credentials and the careers connected to their technical skills.</p>
         </header>
         <div class="cert-layout">
           <div class="cert-group">
@@ -406,26 +426,26 @@
         <header class="section-header">
           <span class="section-header__eyebrow">Community</span>
           <h2 id="community-heading">Built With Our Community</h2>
-          <p>Genesee Learning Lab thrives on partnerships. We welcome collaboration from everyone who believes in the power of quality technology education.</p>
+          <p>We work with educators, families, and local partners to create more opportunities for students.</p>
         </header>
         <div class="community-grid" role="list">
           <article class="community-card" role="listitem">
-            <div class="community-card__icon" aria-hidden="true">&#x1F3EB;</div>
+            <div class="community-card__icon" aria-hidden="true">01</div>
             <h3>Schools</h3>
             <p>Partnering with schools and districts to bring hands-on CS education to more classrooms across Genesee County.</p>
           </article>
           <article class="community-card" role="listitem">
-            <div class="community-card__icon" aria-hidden="true">&#x1F468;&#x200D;&#x1F469;&#x200D;&#x1F467;</div>
+            <div class="community-card__icon" aria-hidden="true">02</div>
             <h3>Families</h3>
             <p>Supporting students and parents through transparent communication, learning events, and shared celebrations of student work.</p>
           </article>
           <article class="community-card" role="listitem">
-            <div class="community-card__icon" aria-hidden="true">&#x1F3E2;</div>
+            <div class="community-card__icon" aria-hidden="true">03</div>
             <h3>Industry Partners</h3>
             <p>Connecting students with professionals for guest speakers, mentorship, internships, and authentic project challenges.</p>
           </article>
           <article class="community-card" role="listitem">
-            <div class="community-card__icon" aria-hidden="true">&#x1F310;</div>
+            <div class="community-card__icon" aria-hidden="true">04</div>
             <h3>Community Organizations</h3>
             <p>Collaborating with local nonprofits, libraries, and community groups to extend learning beyond the classroom.</p>
           </article>
@@ -441,8 +461,8 @@
     <!-- 7. FOOTER CTA -->
     <section class="section section--dark" aria-labelledby="footer-cta-heading">
       <div class="container text-center">
-        <h2 id="footer-cta-heading" style="margin:0 0 var(--space-4);font-size:clamp(var(--font-size-2xl),3vw,var(--font-size-4xl));font-weight:800;letter-spacing:-0.02em;color:#fff;">
-          Ready to Get Started?
+        <h2 id="footer-cta-heading">
+          Explore the work
         </h2>
         <p style="margin:0 auto var(--space-8);max-width:560px;font-size:var(--font-size-lg);color:#94a3b8;">
           Explore our programs, see what students are building, or reach out to connect with the Genesee Learning Lab community.
