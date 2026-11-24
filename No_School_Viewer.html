@@ -577,6 +577,43 @@
       .filter-field input,.filter-field select{width:100%!important}
     }
 
+
+    /* Consolidated school-calendar categories and accessible school details */
+    .legend-help{font-size:12px;color:var(--muted);margin:0 0 12px}
+    .badge.neutral{background:#edf0ed;border-color:#d0d6d1;color:#40584e}
+    #weeks .day .event-group,#monthGrid .event-group{width:100%}
+    .event-group{background:#fffdf9;border:1px solid #d7d2c8;border-radius:2px;margin-top:6px;min-width:0}
+    .event-group>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;padding:7px 8px;min-width:0;list-style:none}
+    .event-group>summary::-webkit-details-marker{display:none}
+    .event-group>summary::after{content:"+";color:#66757d;font-size:16px;font-weight:700;flex-shrink:0}
+    .event-group[open]>summary::after{content:"−"}
+    .event-group>summary:focus-visible{outline:3px solid #ac8257;outline-offset:2px}
+    .event-group>summary .badge{max-width:100%;white-space:normal;font-size:11px}
+    .event-group-count{margin-left:auto;color:#56636b;font-size:11px;white-space:nowrap}
+    .event-school-list{list-style:none;padding:4px 8px 8px;margin:0;border-top:1px solid var(--border);max-width:100%}
+    .event-school-list li+li{border-top:1px solid #eee9df}
+    .event-school-button{display:block;width:100%;border:0;border-radius:0;background:transparent;text-align:left;color:#244b5e;font:600 12px/1.4 "Segoe UI",Arial,sans-serif;padding:9px 4px;cursor:pointer;overflow-wrap:anywhere}
+    .event-school-button:hover{background:#edf1ee;text-decoration:underline;text-underline-offset:2px}
+    .event-school-button:focus-visible{outline:3px solid #ac8257;outline-offset:1px}
+    .event-group--month>summary{padding:6px;flex-wrap:wrap;gap:5px}
+    .event-group--month .event-group-count{font-size:10px}
+    .event-group--month .badge{font-size:10px}
+    .event-group--month .event-school-list{padding:4px}
+    .event-group--month .event-school-button{font-size:11px;padding:8px 3px}
+    #weeks .day .event-group:not([open]){background:#faf9f5}
+    .event-detail-dialog{max-width:min(550px,calc(100vw - 30px));max-height:min(85vh,720px);width:100%;padding:0;border:1px solid #a7a29a;border-top:5px solid #a87747;border-radius:2px;background:#fffdf9;color:#24343d;box-shadow:0 16px 55px rgba(13,32,43,.24)}
+    .event-detail-dialog::backdrop{background:rgba(15,32,41,.6)}
+    .event-detail-inner{padding:24px 26px;max-height:80vh;overflow-y:auto}
+    .event-detail-close{float:right}
+    .event-detail-kicker{font-size:12px;font-weight:650;letter-spacing:.02em;color:#6a6255;margin:0 0 10px;padding-top:8px}
+    .event-detail-dialog h2{font:700 1.7rem/1.3 Georgia,"Times New Roman",serif;margin:0 0 20px;color:#24343d}
+    .event-detail-fields{margin:0;display:grid;grid-template-columns:1fr;gap:3px}
+    .event-detail-fields dt{font-size:11px;color:#68747a;letter-spacing:.08em;text-transform:uppercase;font-weight:750;margin-top:12px}
+    .event-detail-fields dd{margin:0;font-size:14px;color:#273b45;line-height:1.55;overflow-wrap:anywhere}
+    .event-detail-fields a{color:#254c61}
+    .event-detail-disclaimer{border-top:1px solid var(--border);margin:22px 0 0;padding-top:12px;color:#58646b;font-size:12px;line-height:1.6}
+    @media(max-width:700px){.event-detail-inner{padding:19px}.event-group--month .event-group-count{margin-left:0}}
+
   </style>
   <!-- Libraries (small, reliable CDNs) -->
   <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
@@ -642,19 +679,26 @@
           <select id="schoolSel"></select>
         </label>
         <label class="filter-field" for="eventSel">
-          <span>Event type</span>
+          <span>Event category</span>
           <select id="eventSel"></select>
         </label>
       </div>
     </div>
 
     <section id="legend-section" class="legend-section panel p-4" aria-labelledby="legend-heading">
-      <h2 id="legend-heading">Event types</h2>
+      <h2 id="legend-heading">Event categories</h2>
+      <p class="legend-help">Select a category to see schools. Select a school for its original schedule details.</p>
       <div class="legend" aria-label="Calendar event color key">
         <span class="badge red">No School</span>
+        <span class="badge yellow">Early Release</span>
         <span class="badge yellow">Half Day</span>
-        <span class="badge green">Holiday</span>
-        <span class="badge indigo">Teacher PD</span>
+        <span class="badge indigo">Late Start</span>
+        <span class="badge green">Holiday / Break</span>
+        <span class="badge indigo">Staff / PD Day</span>
+        <span class="badge green">First / Last Day</span>
+        <span class="badge indigo">Conferences</span>
+        <span class="badge indigo">Testing / Exams</span>
+        <span class="badge neutral">Other Events</span>
       </div>
     </section>
 
@@ -699,9 +743,20 @@
     <details id="calendar-availability" class="calendar-availability panel p-4">
       <summary>About the calendar data and coverage</summary>
       <p>The viewer checks the published master calendar and uses a dated copy from November 23, 2026 when live updates are unavailable. It does not report emergency closures in real time. Official school and district announcements take precedence.</p>
+      <p>Categories help group different wording into a consistent view. The original event wording and any available source or verification date appear when you select a school. A partial closure affecting only certain grades or sessions may still appear under No School; always read the individual details.</p>
       <p>The availability of dates depends on what is included in the source spreadsheet. Check official school calendars for any missing or unconfirmed dates.</p>
       <p><a href="data/school-calendar.csv" download>Download saved calendar data (CSV)</a></p>
     </details>
+
+    <dialog id="event-detail-dialog" class="event-detail-dialog" aria-labelledby="event-detail-title">
+      <div class="event-detail-inner">
+        <button id="event-detail-close" class="btn event-detail-close" type="button" aria-label="Close event details">Close</button>
+        <p class="event-detail-kicker" id="event-detail-date"></p>
+        <h2 id="event-detail-title"></h2>
+        <dl id="event-detail-fields" class="event-detail-fields"></dl>
+        <p class="event-detail-disclaimer">Dates come from published calendar information, not emergency closure alerts. Check with the school or district for the latest changes.</p>
+      </div>
+    </dialog>
 
     <div class="footer">
       Auto‑refresh every <span id="refreshEcho"></span> min • Week start: Monday
@@ -719,20 +774,41 @@
       WEEK_START: "monday", // fixed to Monday for Mon–Fri viewer
     };
 
-    // Color map for badges
-    const EVENT_CLASS = {
-      "No School": "badge red",
-      "Half Day": "badge yellow",
-      "Holiday": "badge green",
-      "Teacher PD": "badge indigo",
-    };
-    function classForEvent(name) {
-      const n = String(name || "").toLowerCase();
-      if (n.includes("no school")) return "badge red";
-      if (n.includes("half") && n.includes("day")) return "badge yellow";
-      if (n.includes("holiday")) return "badge green";
-      if (n.includes("pd") || n.includes("professional") || n.includes("teacher")) return "badge indigo";
-      return EVENT_CLASS[name] || "badge";
+    // Categories are ordered by their usefulness for comparing school schedules.
+    // Explicit no-school statements take priority. A half day with "break"
+    // in the description is still a half day, not a full closure.
+    const EVENT_CATEGORIES = [
+      { key: 'no-school', label: 'No School', className: 'red' },
+      { key: 'early-release', label: 'Early Release', className: 'yellow' },
+      { key: 'half-day', label: 'Half Day', className: 'yellow' },
+      { key: 'late-start', label: 'Late Start', className: 'indigo' },
+      { key: 'holiday', label: 'Holiday / Break', className: 'green' },
+      { key: 'staff-day', label: 'Staff / PD Day', className: 'indigo' },
+      { key: 'first-last-day', label: 'First / Last Day', className: 'green' },
+      { key: 'conferences', label: 'Conferences', className: 'indigo' },
+      { key: 'testing', label: 'Testing / Exams', className: 'indigo' },
+      { key: 'other', label: 'Other Events', className: 'neutral' },
+    ];
+
+    const CATEGORY_BY_KEY = Object.fromEntries(EVENT_CATEGORIES.map(category => [category.key, category]));
+
+    function classifyEvent(rawEvent) {
+      const value = String(rawEvent || '').toLowerCase().replace(/[\u2010-\u2015]/g, '-');
+      if (/\bno[\s-]*(school|students|classes|college classes)\b|\bno regular school\b|\b(school|building|office) closed\b|\bintersession\b/.test(value)) return 'no-school';
+      if (/\bhalf[\s-]*day\b|\bstudents am only\b|\bnoon dismissal\b/.test(value)) return 'half-day';
+      if (/\bearly[\s-]*(releases?|dismissal)\b|\breduced day\b|\btwo[\s-]*hour early\b|\bone[\s-]*hour early\b|\bdismissal at?\s*\d|\bdismissal\s+\d|\b\d{1,2}:\d{2}\s*(am|pm)?\s*dismissal\b/.test(value)) return 'early-release';
+      if (/\blate[\s-]*start\b|\bdelayed[\s-]*(start|day)\b|\bschool opens \d/.test(value)) return 'late-start';
+      if (/\b(students|sessions) excused\b|\bno college classes\b/.test(value)) return 'no-school';
+      if (/\bholiday\b|\b(recess|break)\b/.test(value)) return 'holiday';
+      if (/\bprofessional development\b|\bteacher pd\b|\bpd day\b|\bstaff work\b|\bteacher work\b|\bstaff development\b|\bstaff professional\b/.test(value)) return 'staff-day';
+      if (/\b(first|last) (full )?(day|student day)\b|\bseniors?[’']? last day\b|\bclasses resume\b/.test(value)) return 'first-last-day';
+      if (/\bconferences?\b/.test(value)) return 'conferences';
+      if (/\bexams?\b|\btesting\b|\btest day\b|\bpsat\b|\bsat\b|\bact\b|\bm-step\b/.test(value)) return 'testing';
+      return 'other';
+    }
+
+    function classForEvent(event) {
+      return 'badge ' + CATEGORY_BY_KEY[classifyEvent(event)].className;
     }
 
     // ===================== STATE =====================
@@ -740,6 +816,7 @@
     let FILTERED = [];
     let LAST_SUCCESSFUL_UPDATE = null;
     let DATA_SOURCE = 'none';
+    const EXPANDED_GROUPS = new Map();
     let IS_LOADING = false;
     let ANCHOR_DAY = dayjs(); // base day for current/prev/next
 
@@ -803,6 +880,9 @@
         notes: findHeader(headers, [
           "Notes", "Description", "Reason", "Details"
         ], ["note", "desc", "reason", "detail", "description"]),
+        year: findHeader(headers, ["School Year", "school year", "Academic Year"], ["schoolyear", "academicyear"]),
+        source: findHeader(headers, ["Source", "Calendar Source", "Source URL"], ["source"]),
+        verified: findHeader(headers, ["Last Verified", "Verified Date"], ["lastverified", "verified"]),
       };
       if (!col.date || !col.event || !col.school || new Set([col.date, col.event, col.school]).size !== 3) {
         throw new Error('The published calendar is missing the Date, Event, or School column.');
@@ -812,9 +892,12 @@
         const event = String(r[col.event] || '').trim();
         const school = String(r[col.school] || '').trim();
         const notes = String(col.notes ? (r[col.notes] || '') : '').trim();
+        const schoolYear = String(col.year ? (r[col.year] || '') : '').trim();
+        const source = String(col.source ? (r[col.source] || '') : '').trim();
+        const verified = String(col.verified ? (r[col.verified] || '') : '').trim();
         const d = parseDateFlexible(dateStr);
-        if (!d.isValid() || !event || !school) continue;
-        out.push({ date: d.startOf('day'), event, school, notes });
+        if (!d || !d.isValid() || !event || !school) continue;
+        out.push({ date: d.startOf('day'), event, school, notes, schoolYear, source, verified, category: classifyEvent(event) });
       }
       out.sort((a, b) => a.date.valueOf() - b.date.valueOf());
       return out;
@@ -854,71 +937,121 @@
     }
 
     function applyFilters() {
-      const q = document.getElementById('search').value.toLowerCase();
+      const q = document.getElementById('search').value.trim().toLowerCase();
       const school = document.getElementById('schoolSel').value;
       const eventT = document.getElementById('eventSel').value;
       FILTERED = RAW_ROWS.filter(r => {
-        const matchesQ = [r.school, r.event, r.notes || ''].some(s => s.toLowerCase().includes(q));
+        const category = CATEGORY_BY_KEY[r.category];
+        const matchesQ = [r.school, r.event, r.notes || '', category.label, r.schoolYear || ''].some(s => s.toLowerCase().includes(q));
         const matchesSchool = (school === 'all' || r.school === school);
-        const matchesEvent = (eventT === 'all' || r.event === eventT);
+        const matchesEvent = (eventT === 'all' || r.category === eventT);
         return matchesQ && matchesSchool && matchesEvent;
       });
     }
 
-    // ==== Expand/collapse helpers ====
-    function makeChip(it) {
-      const entry = document.createElement('div');
-      entry.className = 'event-entry';
-      const type = document.createElement('span');
-      type.className = classForEvent(it.event);
-      type.textContent = it.event;
-      const school = document.createElement('span');
-      school.className = 'event-school';
-      school.textContent = it.school;
-      entry.append(type, school);
-      if (it.notes) {
-        const note = document.createElement('span');
-        note.className = 'event-notes';
-        note.textContent = it.notes;
-        entry.appendChild(note);
+    // School names are listed under categories. The exact original event,
+    // verification date and source are available when a school is selected.
+    function openEventDetails(item) {
+      const dialog = document.getElementById('event-detail-dialog');
+      document.getElementById('event-detail-title').textContent = CATEGORY_BY_KEY[item.category].label;
+      document.getElementById('event-detail-date').textContent = item.date.format('dddd, MMMM D, YYYY');
+      const details = document.getElementById('event-detail-fields');
+      details.replaceChildren();
+
+      function addDetail(label, value) {
+        if (!value) return;
+        const dt = document.createElement('dt');
+        dt.textContent = label;
+        const dd = document.createElement('dd');
+        dd.textContent = value;
+        details.append(dt, dd);
       }
-      return entry;
-    }
-    function makeMonthChip(it) {
-      const entry = makeChip(it);
-      entry.classList.add('month-event');
-      return entry;
-    }
-    function attachExpand(container, list, startIndex, makeFn) {
-      const restCount = list.length - startIndex;
-      const more = document.createElement('span');
-      more.className = 'chip-more';
-      more.setAttribute('role', 'button');
-      more.setAttribute('aria-expanded', 'false');
-      more.tabIndex = 0;
-      more.textContent = `+${restCount} more`;
-      const expand = () => {
-        for (const it of list.slice(startIndex)) {
-          const el = makeFn(it);
-          el.classList.add('extra-chip');
-          container.appendChild(el);
+      addDetail('School', item.school);
+      addDetail('Original calendar entry', item.event);
+      addDetail('School year', item.schoolYear);
+      addDetail('Additional notes', item.notes);
+      addDetail('Last verified', item.verified);
+
+      const sourceLabel = document.createElement('dt');
+      const sourceValue = document.createElement('dd');
+      sourceLabel.textContent = 'Calendar source';
+      if (item.source) {
+        // Only recognized web URLs are clickable; all other source descriptions
+        // stay plain text. No untrusted HTML from a spreadsheet is inserted.
+        try {
+          const url = new URL(item.source);
+          if (url.protocol === 'https:' || url.protocol === 'http:') {
+            const link = document.createElement('a');
+            link.href = url.href;
+            link.textContent = 'Open the original source';
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            sourceValue.appendChild(link);
+          } else {
+            sourceValue.textContent = item.source;
+          }
+        } catch (e) {
+          sourceValue.textContent = item.source;
         }
-        more.textContent = 'Show less';
-        more.setAttribute('aria-expanded', 'true');
-      };
-      const collapse = () => {
-        container.querySelectorAll('.extra-chip').forEach(el => el.remove());
-        more.textContent = `+${restCount} more`;
-        more.setAttribute('aria-expanded', 'false');
-      };
-      more.addEventListener('click', () => {
-        const expanded = more.getAttribute('aria-expanded') === 'true';
-        if (expanded) collapse(); else expand();
-      });
-      more.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); more.click(); }
-      });
-      container.appendChild(more);
+      } else {
+        sourceValue.textContent = 'No individual source listed in this calendar entry.';
+      }
+      details.append(sourceLabel, sourceValue);
+      if (typeof dialog.showModal === 'function') dialog.showModal();
+      else dialog.setAttribute('open', '');
+    }
+
+    function renderEventGroups(container, items, day, compact) {
+      const groups = new Map();
+      for (const category of EVENT_CATEGORIES) groups.set(category.key, []);
+      items.forEach(item => groups.get(item.category).push(item));
+
+      for (const category of EVENT_CATEGORIES) {
+        const entries = groups.get(category.key);
+        if (!entries.length) continue;
+        entries.sort((a, b) => a.school.localeCompare(b.school) || a.event.localeCompare(b.event));
+        const schoolCount = new Set(entries.map(item => item.school)).size;
+        const group = document.createElement('details');
+        group.className = 'event-group' + (compact ? ' event-group--month' : '');
+        const groupKey = (compact ? 'month' : 'week') + '|' + day.format('YYYY-MM-DD') + '|' + category.key;
+        group.open = EXPANDED_GROUPS.has(groupKey) ? EXPANDED_GROUPS.get(groupKey) : (!compact && category.key === 'no-school');
+        const summary = document.createElement('summary');
+        const badge = document.createElement('span');
+        badge.className = 'badge ' + category.className;
+        badge.textContent = category.label;
+        const count = document.createElement('span');
+        count.className = 'event-group-count';
+        count.textContent = schoolCount + ' ' + (schoolCount === 1 ? 'school' : 'schools');
+        summary.append(badge, count);
+        group.appendChild(summary);
+
+        const schools = document.createElement('ul');
+        schools.className = 'event-school-list';
+        group.appendChild(schools);
+        let rendered = false;
+        function populateSchools() {
+          if (rendered) return;
+          for (const item of entries) {
+            const li = document.createElement('li');
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'event-school-button';
+            button.textContent = item.school;
+            button.setAttribute('aria-label', item.school + ', ' + category.label + ', ' + day.format('MMM D, YYYY') + '. View details');
+            button.title = 'View original event information for ' + item.school;
+            button.addEventListener('click', () => openEventDetails(item));
+            li.appendChild(button);
+            schools.appendChild(li);
+          }
+          rendered = true;
+        }
+        if (group.open) populateSchools();
+        group.addEventListener('toggle', () => {
+          EXPANDED_GROUPS.set(groupKey, group.open);
+          if (group.open) populateSchools();
+        });
+        container.appendChild(group);
+      }
     }
 
     // ===================== RENDER =====================
@@ -982,10 +1115,7 @@
             noEvents.textContent = 'No events';
             chips.appendChild(noEvents);
           } else {
-            list.slice(0, 6).forEach(it => chips.appendChild(makeChip(it)));
-            if (list.length > 6) {
-              attachExpand(chips, list, 6, makeChip);
-            }
+            renderEventGroups(chips, list, d, false);
           }
           dayDiv.appendChild(chips);
           daysWrap.appendChild(dayDiv);
@@ -1040,12 +1170,7 @@
           cell.appendChild(top);
 
           const chipsWrap = document.createElement('div');
-          for (const it of items.slice(0, 3)) {
-            chipsWrap.appendChild(makeMonthChip(it));
-          }
-          if (items.length > 3) {
-            attachExpand(chipsWrap, items, 3, makeMonthChip);
-          }
+          renderEventGroups(chipsWrap, items, d, true);
           cell.appendChild(chipsWrap);
 
           row.appendChild(cell);
@@ -1139,7 +1264,8 @@
       const priorSchool = schoolSel.value || 'all';
       const priorEvent = eventSel.value || 'all';
       const schools = [...new Set(rows.map(r => r.school))].sort();
-      const events = [...new Set(rows.map(r => r.event))].sort();
+      const presentCategories = new Set(rows.map(r => r.category));
+      const events = EVENT_CATEGORIES.filter(category => presentCategories.has(category.key));
       function fill(select, label, choices, previous) {
         select.replaceChildren();
         select.add(new Option(label, 'all'));
@@ -1147,7 +1273,10 @@
         select.value = choices.includes(previous) ? previous : 'all';
       }
       fill(schoolSel, 'All schools', schools, priorSchool);
-      fill(eventSel, 'All event types', events, priorEvent);
+      eventSel.replaceChildren();
+      eventSel.add(new Option('All categories', 'all'));
+      events.forEach(category => eventSel.add(new Option(category.label, category.key)));
+      eventSel.value = events.some(category => category.key === priorEvent) ? priorEvent : 'all';
       updateClearFiltersVisibility();
     }
 
@@ -1160,6 +1289,14 @@
     }
 
     // ===================== INTERACTIONS =====================
+    document.getElementById('event-detail-close').addEventListener('click', () => {
+      const dialog = document.getElementById('event-detail-dialog');
+      if (typeof dialog.close === 'function') dialog.close();
+      else dialog.removeAttribute('open');
+    });
+    document.getElementById('event-detail-dialog').addEventListener('click', event => {
+      if (event.target === event.currentTarget) event.currentTarget.close();
+    });
     document.getElementById('btn-refresh').addEventListener('click', load);
     document.getElementById('btn-today').addEventListener('click', () => { ANCHOR_DAY = dayjs(); if ([0, 6].includes(ANCHOR_DAY.day())) ANCHOR_DAY = nextMonday(ANCHOR_DAY); render(); });
     document.getElementById('btn-prev-week').addEventListener('click', () => { ANCHOR_DAY = startOfWeek(ANCHOR_DAY).subtract(7, 'day'); render(); });
