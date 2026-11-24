@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101a2e">
+<meta name="description" content="Create random, balanced classroom groups. Free, shareable and private.">
+<title>Classroom Group Generator | Genesee Learning Lab</title>
+<style>
+:root{color-scheme:dark;font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;--bg:#0d1424;--surface:#16223a;--surface2:#1d2c49;--border:#344765;--text:#eff6ff;--muted:#adbed9;--mint:#a5f3d4}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(ellipse at 8% 0,#273e66 0,transparent 37%),radial-gradient(ellipse at 92% 5%,#214d50 0,transparent 34%),var(--bg);color:var(--text);min-height:100vh}
+button,input,textarea,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #a5f3d4;outline-offset:3px}
+.skip{position:absolute;top:-70px;left:8px;background:white;color:black;padding:12px;z-index:10}.skip:focus{top:8px}
+.wrap{max-width:1260px;margin:0 auto;padding:28px 24px 40px}
+.topbar,.brand,.hero,.toolbar,.result-header,.row,.summary{display:flex;align-items:center;gap:12px}
+.topbar,.hero,.result-header{justify-content:space-between}
+.topbar{margin-bottom:42px;flex-wrap:wrap}
+.logo{display:grid;place-items:center;width:48px;height:48px;border-radius:15px;background:linear-gradient(135deg,#abf7d9,#88b6fd);color:#0e2441;font-weight:900;letter-spacing:-.06em;font-size:20px}
+.brand-name{font-size:17px;font-weight:850;line-height:1.2}.brand-sub{display:block;font-weight:500;color:var(--muted);font-size:12px;margin-top:3px}
+.link{color:#c4e9ff;text-decoration:none;font-size:13px;font-weight:650}.link:hover{text-decoration:underline}
+h1{font-size:clamp(30px,4vw,52px);margin:7px 0 11px;letter-spacing:-.06em;line-height:1.07}
+.eyebrow{color:var(--mint);font-size:12px;font-weight:850;letter-spacing:.13em;text-transform:uppercase}
+.lede{color:var(--muted);line-height:1.6;margin:0;max-width:635px;font-size:15px}
+.hero{align-items:end;margin-bottom:26px;flex-wrap:wrap}
+.privacy{padding:8px 13px;border-radius:100px;border:1px solid #346253;background:#193d39;color:#b9ffdf;font-size:12px;font-weight:800;white-space:nowrap}
+.layout{display:grid;grid-template-columns:minmax(320px,390px) minmax(0,1fr);gap:20px;align-items:start}
+.panel{background:#132039ee;border:1px solid var(--border);box-shadow:0 15px 42px #0003;border-radius:22px;padding:22px;min-width:0}
+.panel h2{font-size:18px;margin:0 0 18px;letter-spacing:-.025em}
+label{display:block;font-size:13px;font-weight:800;color:#e1eaff;margin-bottom:8px}
+input,textarea,select{width:100%;border:1px solid #415879;background:#0e192d;color:#f3f8ff;border-radius:11px;padding:11px}
+input::placeholder,textarea::placeholder{color:#8096b4}
+textarea{min-height:206px;resize:vertical;line-height:1.6}
+.help{font-size:12px;color:var(--muted);margin:7px 0 0;line-height:1.5}
+.field{margin-bottom:18px}
+.row{flex-wrap:wrap}.row>*{min-width:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:11px;background:var(--surface2);color:#f1f7ff;padding:10px 14px;font-weight:750;font-size:13px;min-height:42px;transition:background .12s,transform .12s}
+.btn:hover{background:#28405e;transform:translateY(-1px)}
+.btn-primary{background:var(--mint);color:#103b31;border-color:var(--mint);font-weight:900}
+.btn-primary:hover{background:#c6ffe9}
+.btn-clear{background:transparent}
+.btn-block{width:100%;font-size:15px;padding:13px 15px}
+hr{height:1px;border:0;background:var(--border);margin:21px 0}
+.segment{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border:1px solid var(--border);background:#0c192e;border-radius:12px;margin-bottom:14px}
+.segment button{border:0;border-radius:9px;background:transparent;color:#b9c9df;padding:10px 4px;font-size:12px;font-weight:800}
+.segment button[aria-pressed="true"]{background:#314a6d;color:#fff}
+.stepper{display:flex;align-items:center;gap:10px}
+.stepper button{width:43px;height:43px;border:1px solid var(--border);border-radius:10px;background:#263b5b;color:#fff;font-size:23px}
+.stepper input{width:85px;text-align:center;font-size:19px;font-weight:900}
+.summary{justify-content:space-between;flex-wrap:wrap;font-size:13px;color:var(--muted);margin:16px 0}
+.summary strong{color:var(--mint)}
+.status{min-height:20px;font-size:12px;color:#ffdaad;margin-top:9px;line-height:1.5}
+.result-header{align-items:flex-start;flex-wrap:wrap;margin-bottom:18px}
+.result-header h2{font-size:22px;margin:4px 0 0}
+.toolbar{flex-wrap:wrap;justify-content:flex-end;gap:7px}
+.toolbar .btn{padding:8px 10px;min-height:36px;font-size:12px}
+.empty{border:1px dashed #4e6385;border-radius:18px;background:linear-gradient(150deg,#192841,#111d32);min-height:365px;display:flex;align-items:center;justify-content:center;text-align:center;padding:35px}
+.empty-icon{font-size:49px;line-height:1}
+.empty h3{margin:17px 0 7px;font-size:21px}
+.empty p{font-size:14px;color:var(--muted);line-height:1.6;max-width:340px;margin:0 auto}
+.groups{display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:14px}
+.group{border:1px solid #3b506f;border-radius:16px;overflow:hidden;background:#1a2a45;min-width:0}
+.group-top{padding:14px;display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid #3b506f}
+.group-title{display:flex;align-items:center;gap:9px;font-weight:850}
+.dot{width:11px;height:11px;border-radius:50%;background:var(--dot);box-shadow:0 0 12px var(--dot)}
+.group-count{font-size:12px;color:#bbcae0}
+.names{list-style:none;margin:0;padding:9px}
+.names li{display:flex;align-items:center;gap:6px;justify-content:space-between;background:#253856;padding:10px 9px;margin-bottom:6px;border-radius:10px;min-width:0}
+.names li:last-child{margin-bottom:0}
+.person{font-size:14px;font-weight:700;overflow-wrap:anywhere;min-width:0}
+.mover{width:67px;flex:0 0 67px;padding:5px 1px;font-size:11px;min-height:30px;border-radius:7px}
+.foot{color:#8fa7c4;text-align:center;font-size:12px;margin-top:26px}
+.projector .setup,.projector .hero,.projector .foot,.projector .share-btn{display:none}
+.projector .layout{display:block}.projector .wrap{max-width:none;padding:16px 26px}
+.projector .topbar{margin-bottom:14px}.projector .results{min-height:85vh}
+.projector .groups{grid-template-columns:repeat(auto-fit,minmax(265px,1fr));gap:18px}
+.projector .group-top{padding:17px}.projector .group-title{font-size:22px}
+.projector .person{font-size:clamp(18px,2vw,26px)}.projector .names li{padding:13px}
+.projector .mover{display:none}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#d1ffea;color:#113d2e;padding:12px 18px;border-radius:12px;font-size:13px;font-weight:800;z-index:20;max-width:90vw;box-shadow:0 10px 40px #0007}
+[hidden]{display:none!important}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.wrap{padding:18px 14px 32px}.topbar{margin-bottom:30px}.hero{margin-bottom:20px}.panel{padding:17px}.result-header{gap:12px}.toolbar{justify-content:flex-start}}
+@media print{*{color:#000!important;box-shadow:none!important;text-shadow:none!important}body{background:#fff!important}.topbar,.hero,.setup,.toolbar,.foot,.mover{display:none!important}.wrap{padding:0}.layout{display:block}.panel{border:0;padding:0;background:white}.result-header{margin:0 0 15px}.groups{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.group{border:1px solid #777;background:white;break-inside:avoid}.group-top{border-bottom:1px solid #aaa}.names li{background:#fff;border-bottom:1px solid #ddd;border-radius:0}.dot{background:#888!important}}
+</style>
+</head>
+<body>
+<a class="skip" href="#roster">Skip to class roster</a>
+<div class="wrap">
+<header class="topbar">
+ <div class="brand"><div class="logo" aria-hidden="true">GL</div><div class="brand-name">Classroom Group Generator<span class="brand-sub">A Genesee Learning Lab classroom tool</span></div></div>
+ <button class="btn share-btn" id="share" type="button">Share this app</button>
+</header>
+<main>
+ <section class="hero"><div><div class="eyebrow">Fast. Fair. Classroom-ready.</div><h1>Better groups, in seconds.</h1><p class="lede">Paste your class list, pick a group size, and shuffle. Perfect for collaborative work, labs, and discussions.</p></div><div class="privacy">● Names stay on this device</div></section>
+ <div class="layout">
+  <section class="panel setup" aria-labelledby="setup-title">
+   <h2 id="setup-title">Set up your class</h2>
+   <div class="field">
+    <label for="saved">Saved class lists</label>
+    <div class="row"><select id="saved" aria-label="Saved class lists" style="flex:1"><option value="">Choose a saved class...</option></select><button id="delete-saved" class="btn btn-clear" type="button" title="Delete selected saved class">Delete</button></div>
+    <p class="help">Saved locally in this browser, not shared with other devices.</p>
+   </div>
+   <div class="field">
+    <label for="roster">Student names <span id="roster-count" style="color:var(--mint);font-weight:700">(0 students)</span></label>
+    <textarea id="roster" spellcheck="false" placeholder="One name per line&#10;Alex Rivera&#10;Jordan Lee&#10;Taylor Morgan"></textarea>
+    <p class="help">Paste names one per line, or separated by commas. Duplicate names are kept in case students share a name.</p>
+    <div class="row" style="margin-top:10px"><button id="sample" class="btn" type="button">Load example</button><button id="save" class="btn" type="button">Save class list</button><button id="clear" class="btn btn-clear" type="button">Clear</button></div>
+   </div>
+   <hr>
+   <label>How should we divide the class?</label>
+   <div class="segment" role="group" aria-label="Grouping mode">
+    <button id="mode-size" aria-pressed="true" type="button">Students per group</button>
+    <button id="mode-count" aria-pressed="false" type="button">Number of groups</button>
+   </div>
+   <label id="quantity-label" for="quantity">Students per group</label>
+   <div class="stepper"><button id="minus" type="button" aria-label="Decrease by one">−</button><input id="quantity" type="number" min="1" max="999" value="4" inputmode="numeric"><button id="plus" type="button" aria-label="Increase by one">+</button></div>
+   <div class="summary"><span><strong id="students">0</strong> students</span><span><strong id="prediction">0</strong> groups expected</span></div>
+   <button id="generate" class="btn btn-primary btn-block" type="button">✦ Generate groups</button>
+   <div id="status" class="status" role="status" aria-live="polite"></div>
+  </section>
+  <section class="panel results" aria-labelledby="results-heading">
+   <div class="result-header">
+    <div><div class="eyebrow">Your groups</div><h2 id="results-heading">Ready to shuffle</h2></div>
+    <div class="toolbar">
+     <button id="shuffle" class="btn" type="button" disabled>↻ Reshuffle</button>
+     <button id="copy" class="btn" type="button" disabled>Copy</button>
+     <button id="download" class="btn" type="button" disabled>Export</button>
+     <button id="print" class="btn" type="button" disabled>Print</button>
+     <button id="project" class="btn" type="button" disabled>Projector view</button>
+    </div>
+   </div>
+   <div id="empty" class="empty"><div><div class="empty-icon" aria-hidden="true">🎲</div><h3>Every team starts here</h3><p>Add a roster or try the example class, then select <strong>Generate groups</strong>. Your balanced groups will appear here.</p></div></div>
+   <div id="groups" class="groups" aria-live="polite" hidden></div>
+   <div class="help" id="move-help" hidden style="margin-top:14px">Need to make a quick adjustment? Use the Move menu beside a name to switch groups.</div>
+  </section>
+ </div>
+</main>
+<div class="foot">Free classroom tool · No accounts · No student data sent to a server · Genesee Learning Lab</div>
+</div>
+<div id="toast" role="status" hidden></div>
+<script>
+(function(){
+'use strict';
+var $=function(id){return document.getElementById(id);};
+var roster=$('roster'), quantity=$('quantity'), groupsEl=$('groups');
+var mode='size', groups=[], current=[], storageKey='gci-group-generator-rosters-v1', colors=['#a5f3d4','#96c8ff','#fbd28d','#d6b4ff','#ffaebd','#9ce1f0','#fed49b','#c2e1a2'];
+var sample=['Alex Rivera','Jordan Lee','Taylor Morgan','Casey Brooks','Sam Carter','Riley Park','Morgan Chen','Jamie Ellis','Avery Bell','Quinn Davis','Harper James','Drew Bennett','Parker Reed','Cameron Clark','Skyler Woods','Bailey Gray','Emerson Moore','Logan Kim','Rowan Bailey','Charlie Adams','Kendall Price','Robin Hayes','Finley Scott','Jesse Cooper'];
+function names(){return roster.value.split(/[\n,\r]+/).map(function(n){return n.trim();}).filter(Boolean);}
+function readSaved(){try{var v=JSON.parse(localStorage.getItem(storageKey)||'{}');return v && typeof v==='object' && !Array.isArray(v)?v:{};}catch(e){return {};}}
+function writeSaved(obj){try{localStorage.setItem(storageKey,JSON.stringify(obj));return true;}catch(e){message('Browser storage is unavailable. Class lists cannot be saved here.');return false;}}
+function message(s){$('status').textContent=s;}
+function toast(s){$('toast').textContent=s;$('toast').hidden=false;clearTimeout(toast.timer);toast.timer=setTimeout(function(){$('toast').hidden=true;},2700);}
+function clamp(n,min,max){return Math.min(max,Math.max(min,Number.isFinite(n)?n:min));}
+function requested(){return clamp(Math.floor(Number(quantity.value)),1,999);}
+function groupCount(n){return n===0?0:Math.min(n,mode==='size'?Math.ceil(n/requested()):requested());}
+function refresh(){var a=names();$('roster-count').textContent='('+a.length+' students)';$('students').textContent=a.length;$('prediction').textContent=groupCount(a.length);$('delete-saved').disabled=!$('saved').value;}
+function invalidate(){groups=[];current=[];render();message('');refresh();}
+function randomIndex(max){if(window.crypto&&window.crypto.getRandomValues){var unit=4294967296;var limit=unit-(unit%max);var arr=new Uint32Array(1);do{window.crypto.getRandomValues(arr);}while(arr[0]>=limit);return arr[0]%max;}return Math.floor(Math.random()*max);}
+function randomize(arr){var copy=arr.slice();for(var i=copy.length-1;i>0;i--){var j=randomIndex(i+1),v=copy[i];copy[i]=copy[j];copy[j]=v;}return copy;}
+function generate(){var a=names();if(!a.length){message('Add at least one student to get started.');roster.focus();return;}var n=groupCount(a.length), shuffled=randomize(a);groups=Array.from({length:n},function(){return [];});shuffled.forEach(function(person,i){groups[i%n].push(person);});current=a.slice();render();message('');toast('Groups generated!');}
+function format(){return groups.map(function(g,i){return 'Group '+(i+1)+' ('+g.length+')\n'+g.map(function(n){return '• '+n;}).join('\n');}).join('\n\n');}
+function render(){var enabled=groups.length>0;$('shuffle').disabled=!enabled;$('copy').disabled=!enabled;$('download').disabled=!enabled;$('print').disabled=!enabled;$('project').disabled=!enabled;$('empty').hidden=enabled;groupsEl.hidden=!enabled;$('move-help').hidden=!enabled;groupsEl.replaceChildren();$('results-heading').textContent=enabled?groups.length+' balanced groups':'Ready to shuffle';if(!enabled){if(document.body.classList.contains('projector'))projector(false);return;}
+groups.forEach(function(group,gidx){var card=document.createElement('article');card.className='group';var header=document.createElement('div');header.className='group-top';var title=document.createElement('div');title.className='group-title';var dot=document.createElement('span');dot.className='dot';dot.style.setProperty('--dot',colors[gidx%colors.length]);dot.setAttribute('aria-hidden','true');title.appendChild(dot);var words=document.createElement('span');words.textContent='Group '+(gidx+1);title.appendChild(words);header.appendChild(title);var count=document.createElement('span');count.className='group-count';count.textContent=group.length+' '+(group.length===1?'student':'students');header.appendChild(count);card.appendChild(header);
+var ul=document.createElement('ul');ul.className='names';group.forEach(function(person,pidx){var li=document.createElement('li');var n=document.createElement('span');n.className='person';n.textContent=person;li.appendChild(n);if(groups.length>1){var select=document.createElement('select');select.className='mover';select.setAttribute('aria-label','Move '+person+' to another group');var keep=document.createElement('option');keep.textContent='Move…';keep.value='';select.appendChild(keep);groups.forEach(function(other,otherIdx){if(gidx===otherIdx)return;var opt=document.createElement('option');opt.value=String(otherIdx);opt.textContent='Group '+(otherIdx+1);select.appendChild(opt);});select.addEventListener('change',function(){if(select.value==='')return;var to=Number(select.value);groups[to].push(groups[gidx].splice(pidx,1)[0]);render();toast('Student moved to Group '+(to+1));});li.appendChild(select);}ul.appendChild(li);});card.appendChild(ul);groupsEl.appendChild(card);});
+}
+function loadOptions(selected){var all=readSaved(),sel=$('saved');sel.replaceChildren();var first=document.createElement('option');first.value='';first.textContent='Choose a saved class...';sel.appendChild(first);Object.keys(all).sort(function(a,b){return a.localeCompare(b);}).forEach(function(name){var opt=document.createElement('option');opt.value=name;opt.textContent=name;sel.appendChild(opt);});sel.value=selected&&all[selected]?selected:'';refresh();}
+function projector(on){document.body.classList.toggle('projector',on);$('project').textContent=on?'Exit projector':'Projector view';$('project').setAttribute('aria-pressed',on?'true':'false');}
+$('mode-size').addEventListener('click',function(){mode='size';setMode();});
+$('mode-count').addEventListener('click',function(){mode='count';setMode();});
+function setMode(){$('mode-size').setAttribute('aria-pressed',String(mode==='size'));$('mode-count').setAttribute('aria-pressed',String(mode==='count'));$('quantity-label').textContent=mode==='size'?'Students per group':'Number of groups';quantity.value=mode==='size'?4:5;invalidate();}
+$('minus').addEventListener('click',function(){quantity.value=clamp(requested()-1,1,999);invalidate();});
+$('plus').addEventListener('click',function(){quantity.value=clamp(requested()+1,1,999);invalidate();});
+quantity.addEventListener('change',function(){quantity.value=requested();invalidate();});
+quantity.addEventListener('input',function(){invalidate();});
+roster.addEventListener('input',invalidate);
+$('generate').addEventListener('click',generate);
+$('shuffle').addEventListener('click',generate);
+$('sample').addEventListener('click',function(){if(roster.value.trim()&&!confirm('Replace your current roster with example students?'))return;roster.value=sample.join('\n');$('saved').value='';invalidate();toast('Example class loaded');});
+$('clear').addEventListener('click',function(){if(roster.value.trim()&&!confirm('Clear the current roster? Saved classes will not be deleted.'))return;roster.value='';$('saved').value='';invalidate();});
+$('save').addEventListener('click',function(){var a=names();if(!a.length){message('Add names before saving a class.');return;}var selected=$('saved').value;var answer=prompt('Name this class:',selected||'Period 1');if(answer===null)return;var key=answer.trim();if(!key){message('Enter a class name to save.');return;}var all=readSaved();if(Object.prototype.hasOwnProperty.call(all,key)&&key!==selected&&!confirm('Replace saved class "'+key+'"?'))return;all[key]=a.join('\n');if(writeSaved(all)){loadOptions(key);toast('Class list saved on this device');message('');}});
+$('saved').addEventListener('change',function(){var key=this.value,all=readSaved();if(!key){refresh();return;}roster.value=String(all[key]||'');invalidate();toast('Loaded '+key);});
+$('delete-saved').addEventListener('click',function(){var key=$('saved').value;if(!key)return;if(!confirm('Delete saved class "'+key+'" from this browser?'))return;var all=readSaved();delete all[key];if(writeSaved(all)){loadOptions('');toast('Saved class deleted');}});
+$('copy').addEventListener('click',async function(){try{await navigator.clipboard.writeText(format());toast('Group assignments copied');}catch(e){message('Clipboard unavailable. Try Export instead.');}});
+$('download').addEventListener('click',function(){var file=new Blob([format()+'\n'],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(file),link=document.createElement('a');link.href=url;link.download='classroom-groups.txt';document.body.appendChild(link);link.click();link.remove();setTimeout(function(){URL.revokeObjectURL(url);},1000);});
+$('print').addEventListener('click',function(){window.print();});
+$('project').addEventListener('click',function(){projector(!document.body.classList.contains('projector'));});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&document.body.classList.contains('projector'))projector(false);});
+$('share').addEventListener('click',async function(){try{await navigator.clipboard.writeText(location.origin+location.pathname);toast('App link copied (no student names included)');}catch(e){toast('Share the URL from your browser address bar');}});
+loadOptions();refresh();render();
+})();
+</script>
+</body>
+</html>
