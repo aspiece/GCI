@@ -53,6 +53,11 @@
     @media(max-width:600px) { .header-art { width:104px; } .heading-row { gap:.75rem; } }
     @media(max-width:360px) { .header-art { width:78px; } }
     @media print { .header-art,.section-icon { display:none; } }
+    .event-photo { margin:1.5rem 0 0; }
+    .event-photo img { display:block; width:100%; height:auto; aspect-ratio:16/9; object-fit:cover; border-radius:3px; background:#eeeae2; }
+    .event-photo figcaption { margin-top:.5rem; font-size:.875rem; line-height:1.5; color:var(--muted); }
+    @media(max-width:600px) { .event-photo img { aspect-ratio:3/2; } }
+    @media print { .event-photo { break-inside:avoid; } .event-photo img { max-height:180px; object-fit:contain; } }
   </style>
 </head>
 <body>
@@ -118,6 +123,10 @@
         <li>Take it to their home school office for the principal’s signature. The office is familiar with this process and can help route the form.</li>
         <li>Return the signed form to their GCI instructor and provide a copy to their home school attendance office.</li>
       </ol>
+      <figure class="event-photo">
+        <img src="https://libraryc.org/img/mcc.jpg" alt="A campus building at Mott Community College, with outdoor seating and trees." loading="lazy" decoding="async" referrerpolicy="no-referrer">
+        <figcaption>Mott Community College campus. <a href="https://libraryc.org/mcc/upcoming">Photo source: MCC Library events</a>.</figcaption>
+      </figure>
       <p class="back"><a href="#quick-links">Back to quick links</a></p>
     </section>
 
@@ -138,6 +147,10 @@
         <li><a href="https://recfevents.org/Events/Details/383">For the Love of Flight event page and agenda</a> — open the Agenda section for the full schedule, plus event details and updates.</li>
       </ul>
       <p class="detail">The event agenda is subject to change. Please check the event page before traveling; we’ll confirm our team’s arrival instructions separately.</p>
+      <figure class="event-photo">
+        <img src="https://www.kettering.edu/sites/default/files/inline-images/05132023-DroneCompetition-RecCenter-KS-11.jpg" alt="A drone in flight above an indoor aerial drone competition field at Kettering University." loading="lazy" decoding="async" referrerpolicy="no-referrer">
+        <figcaption>A previous aerial drone competition at Kettering University. <a href="https://www.kettering.edu/who-we-are/news-events/kettering-news/aerial-drone-competition-inspires-students-and-staff-alike-kettering-university">Photo source: Kettering University</a>.</figcaption>
+      </figure>
       <p class="back"><a href="#quick-links">Back to quick links</a></p>
     </section>
 
