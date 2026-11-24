@@ -663,6 +663,24 @@
     .category-guide .legend .badge{font-size:11px}
     .category-guide .legend-help{margin:0 0 10px}
 
+
+    /* Compact filters: closed by default, with an always-visible active count. */
+    .filters-disclosure{border:1px solid var(--border);border-radius:2px;background:var(--panel);margin:14px 0 0}
+    .filters-disclosure>summary{display:flex;align-items:center;gap:9px;padding:10px 15px;min-height:44px;cursor:pointer;list-style:none;color:#244759}
+    .filters-disclosure>summary::-webkit-details-marker{display:none}
+    .filters-disclosure>summary::before{content:"+";font:700 18px/1 "Segoe UI",Arial,sans-serif;color:#456475}
+    .filters-disclosure[open]>summary::before{content:"−"}
+    .filters-disclosure>summary:focus-visible{outline:3px solid #ac8257;outline-offset:2px}
+    .filters-disclosure-label{font-weight:700;font-size:14px}
+    .active-filter-count{font-size:11px;font-weight:700;background:#244759;color:#fffdf9;padding:3px 7px;border-radius:2px}
+    .active-filter-count[hidden]{display:none!important}
+    .filters-disclosure-body{padding:15px;border-top:1px solid var(--border)}
+    .filters-disclosure .filter-label{display:none}
+    .filters-disclosure .filter-panel-header{margin-bottom:12px}
+    .filters-disclosure .filter-subtitle{margin-top:0}
+    .filters-disclosure .category-guide{margin-top:11px}
+    @media(max-width:760px){.filters-disclosure-body{padding:12px}}
+
   </style>
   <!-- Libraries (small, reliable CDNs) -->
   <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
@@ -713,7 +731,12 @@
     </div>
     <div id="data-notice" class="data-notice" role="status" aria-live="polite">Loading published school calendar data…</div>
 
-    <div class="panel p-4">
+    <details id="filters-panel" class="filters-disclosure">
+      <summary class="filters-disclosure-summary">
+        <span class="filters-disclosure-label">Filters</span>
+        <span id="active-filters-count" class="active-filter-count" hidden></span>
+      </summary>
+      <div class="filters-disclosure-body">
       <div class="filter-panel-header">
         <div>
           <span class="filter-label">Filters</span>
@@ -756,9 +779,8 @@
           </div>
         </div>
       </details>
-    </div>
-
-
+      </div>
+    </details>
 
     <div id="sticky-nav" class="sticky-nav" role="navigation" aria-label="Calendar date navigation">
       <button id="sn-prev" type="button" class="btn" title="Previous day" aria-label="Previous day">◀</button>
@@ -1422,11 +1444,15 @@
     }
 
     function updateClearFiltersVisibility() {
-      const q = document.getElementById('search').value;
+      const q = document.getElementById('search').value.trim();
       const school = document.getElementById('schoolSel').value;
       const eventT = document.getElementById('eventSel').value;
-      const active = q !== '' || school !== 'all' || eventT !== 'all';
-      document.getElementById('clear-filters').style.display = active ? 'inline-flex' : 'none';
+      const count = Number(Boolean(q)) + Number(school !== 'all') + Number(eventT !== 'all');
+      document.getElementById('clear-filters').style.display = count ? 'inline-flex' : 'none';
+      const badge = document.getElementById('active-filters-count');
+      badge.hidden = count === 0;
+      badge.textContent = count + ' active';
+      document.getElementById('filters-panel').classList.toggle('has-active-filters', count > 0);
     }
 
     // ===================== INTERACTIONS =====================
