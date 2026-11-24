@@ -20,6 +20,15 @@
   <title>Student Tools &amp; Activities — Genesee Learning Lab</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="styles.css" />
+  <style>
+    .category-jump{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-2);margin-bottom:var(--space-6)}
+    .category-jump span{font-size:var(--font-size-sm);font-weight:700;margin-right:var(--space-2);color:var(--color-text-muted)}
+    .category-jump a{display:inline-block;border:1px solid var(--color-border);border-radius:999px;background:var(--color-surface);padding:8px 13px;font-size:var(--font-size-sm);font-weight:650;color:var(--color-primary);text-decoration:none}
+    .category-jump a:hover,.category-jump a:focus-visible{background:var(--color-surface-alt);text-decoration:underline}
+    .project-card{scroll-margin-top:24px}
+    .category-title{margin:0 0 var(--space-2);font-size:var(--font-size-xl);font-weight:750}
+    .category-desc{margin:0 0 var(--space-5);color:var(--color-text-muted);line-height:1.6;font-size:var(--font-size-sm)}
+  </style>
 
   <script type="application/ld+json">
   {
@@ -72,86 +81,122 @@
     <div class="section">
       <div class="container">
 
+        <nav class="category-jump" aria-label="Jump to a project category">
+          <span>Browse by category</span>
+          <a href="#teacher-tools">Classroom & Teacher Tools</a>
+          <a href="#teamwork">Communication & Teamwork</a>
+          <a href="#math">Math & Skill Practice</a>
+          <a href="#ai-data">AI & Data Learning</a>
+          <a href="#career">Career & Productivity Skills</a>
+        </nav>
+
         <div class="project-grid">
-          <!-- Interactive Activities Card -->
-          <section class="project-card" aria-labelledby="activities-title">
-            <h2 id="activities-title" style="margin:0 0 var(--space-4);font-size:var(--font-size-xl);font-weight:700;">Active This Semester</h2>
+          <section class="project-card" id="teacher-tools" aria-labelledby="teacher-tools-title">
+            <h2 class="category-title" id="teacher-tools-title">Classroom & Teacher Tools</h2>
+            <p class="category-desc">Helpful tools for planning, organizing, and running your classroom.</p>
             <ul class="project-list">
               <li>
-                <a href="group-generator/">Classroom Group Generator</a>
-                <span class="item-desc">Randomly create balanced classroom teams, reshuffle, save class lists on your device, and display groups on a projector.<span class="status-pill status-prod">Active</span></span>
+              <a href="group-generator/">Classroom Group Generator</a>
+              <span class="item-desc">Randomly create balanced classroom teams, reshuffle, save class lists on your device, and display groups on a projector.<span class="status-pill status-prod">Active</span></span>
               </li>
               <li>
-                <a href="GCI_Communications.html">Communication Brainbreaks</a>
-                <span class="item-desc">Explore communication-focused activities for teamwork and professionalism.<span class="status-pill status-prod">Active</span></span>
+              <a href="No_School_Viewer.html">No School Viewer</a>
+              <span class="item-desc">Check and view no-school days from the calendar data.<span class="status-pill status-prod">Active</span></span>
               </li>
               <li>
-                <a href="IEfollowup.html">EI Base Camp Self-Check &amp; Sort</a>
-                <span class="item-desc">Reflect on emotional intelligence skills with a guided follow-up activity.<span class="status-pill status-prod">Active</span></span>
+              <a href="Intro_CS_and_Hardware_Pacing_Guide.html">Hardware/CS Pacing Guide</a>
+              <span class="item-desc">Open the current Intro to Computer Hardware and Intro to Computer Science pacing webpage with calendar notes and milestones.<span class="status-pill status-prod">Active</span></span>
               </li>
               <li>
-                <a href="High_Ropes_Teamwork_Follow_Up_Assignment.html">Ropes Course Teamwork Reflection</a>
-                <span class="item-desc">Blended learning and makeup assignment with required video analysis, Merrill-aligned prompts, and progress-based completion checks.<span class="status-pill status-prod">Active</span></span>
-              </li>
-              <li>
-                <a href="Invoice_Generator.html">3D Print Invoice Generator</a>
-                <span class="item-desc">Create sample invoices quickly for business and office workflow practice.<span class="status-pill status-prod">Active</span></span>
-              </li>
-              <li>
-                <a href="KPOPMath.html">K-Pop Math Trainer</a>
-                <span class="item-desc">Solve math tasks in a music-themed practice experience.<span class="status-pill status-prod">Active</span></span>
-              </li>
-              <li>
-                <a href="No_School_Viewer.html">No School Viewer</a>
-                <span class="item-desc">Check and view no-school days from the calendar data.<span class="status-pill status-prod">Active</span></span>
-              </li>
-              <li>
-                <a href="Intro_CS_and_Hardware_Pacing_Guide.html">Hardware/CS Pacing Guide</a>
-                <span class="item-desc">Open the current Intro to Computer Hardware and Intro to Computer Science pacing webpage with calendar notes and milestones.<span class="status-pill status-prod">Active</span></span>
-              </li>
-              <li>
-                <a href="OOOReview.html">Order of Operations Practice</a>
-                <span class="item-desc">Practice order-of-operations skills with immediate feedback and review.<span class="status-pill status-prod">Active</span></span>
-              </li>
-              <li>
-                <a href="Model_Rescue_Simulation.html">Model Rescue Simulation</a>
-                <span class="item-desc">Run a 20-minute fictional model challenge to train, test, improve data, and compare results.<span class="status-pill status-prod">Active</span></span>
-              </li>
-              <li>
-                <a href="https://tinyurl.com/2526TechPio" target="_blank" rel="noopener noreferrer">AI for Teachers &amp; Students: Building Capacity (opens in new tab)</a>
-                <span class="item-desc">Open the presentation slides used for the current class and showcase examples (Presented: February 26, 2026).<span class="status-pill status-prod">Active</span></span>
-              </li>
-
-              <li>
-                <a href="wordguide1.html">MOS Word Project 1</a>
-                <span class="item-desc">Follow a step-by-step walkthrough for MOS Word Project 1.<span class="status-pill status-prod">Active</span></span>
-              </li>
-              <li>
-                <a href="wordguide2.html">MOS Word Project 2</a>
-                <span class="item-desc">Follow a step-by-step walkthrough for MOS Word Project 2.<span class="status-pill status-prod">Active</span></span>
-              </li>
-              <li>
-                <a href="wordguide3.html">MOS Word Project 3</a>
-                <span class="item-desc">Follow a step-by-step walkthrough for MOS Word Project 3.<span class="status-pill status-prod">Active</span></span>
-              </li>
-              <li>
-                <a href="Job_Application_Assignment.html">Job Application Builder</a>
-                <span class="item-desc">Launch the interactive, student-facing job application assignment with embedded videos, quiz checks, and progress tracking.<span class="status-pill status-prod">Active</span></span>
-              </li>
-              <li>
-                <a href="Recommendation_Letter_Generator.html">Recommendation Letter Generator</a>
-                <span class="item-desc">Generate a personalized, unique recommendation letter based on student name, class, traits, and purpose.<span class="status-pill status-prod">Active</span></span>
+              <a href="Recommendation_Letter_Generator.html">Recommendation Letter Generator</a>
+              <span class="item-desc">Generate a personalized, unique recommendation letter based on student name, class, traits, and purpose.<span class="status-pill status-prod">Active</span></span>
               </li>
             </ul>
+          </section>
 
-            <div class="instructional-note" aria-label="Instructional use notice">
+          <section class="project-card" id="teamwork" aria-labelledby="teamwork-title">
+            <h2 class="category-title" id="teamwork-title">Communication & Teamwork</h2>
+            <p class="category-desc">Activities for collaboration, self-awareness, and reflection.</p>
+            <ul class="project-list">
+              <li>
+              <a href="GCI_Communications.html">Communication Brainbreaks</a>
+              <span class="item-desc">Explore communication-focused activities for teamwork and professionalism.<span class="status-pill status-prod">Active</span></span>
+              </li>
+              <li>
+              <a href="IEfollowup.html">EI Base Camp Self-Check &amp; Sort</a>
+              <span class="item-desc">Reflect on emotional intelligence skills with a guided follow-up activity.<span class="status-pill status-prod">Active</span></span>
+              </li>
+              <li>
+              <a href="High_Ropes_Teamwork_Follow_Up_Assignment.html">Ropes Course Teamwork Reflection</a>
+              <span class="item-desc">Blended learning and makeup assignment with required video analysis, Merrill-aligned prompts, and progress-based completion checks.<span class="status-pill status-prod">Active</span></span>
+              </li>
+            </ul>
+          </section>
+
+          <section class="project-card" id="math" aria-labelledby="math-title">
+            <h2 class="category-title" id="math-title">Math & Skill Practice</h2>
+            <p class="category-desc">Interactive ways to practice foundational skills.</p>
+            <ul class="project-list">
+              <li>
+              <a href="KPOPMath.html">K-Pop Math Trainer</a>
+              <span class="item-desc">Solve math tasks in a music-themed practice experience.<span class="status-pill status-prod">Active</span></span>
+              </li>
+              <li>
+              <a href="OOOReview.html">Order of Operations Practice</a>
+              <span class="item-desc">Practice order-of-operations skills with immediate feedback and review.<span class="status-pill status-prod">Active</span></span>
+              </li>
+            </ul>
+          </section>
+
+          <section class="project-card" id="ai-data" aria-labelledby="ai-data-title">
+            <h2 class="category-title" id="ai-data-title">AI & Data Learning</h2>
+            <p class="category-desc">Explore AI concepts, model improvement, and instructional resources.</p>
+            <ul class="project-list">
+              <li>
+              <a href="Model_Rescue_Simulation.html">Model Rescue Simulation</a>
+              <span class="item-desc">Run a 20-minute fictional model challenge to train, test, improve data, and compare results.<span class="status-pill status-prod">Active</span></span>
+              </li>
+              <li>
+              <a href="https://tinyurl.com/2526TechPio" target="_blank" rel="noopener noreferrer">AI for Teachers &amp; Students: Building Capacity (opens in new tab)</a>
+              <span class="item-desc">Open the presentation slides used for the current class and showcase examples (Presented: February 26, 2026).<span class="status-pill status-prod">Active</span></span>
+              </li>
+            </ul>
+          </section>
+
+          <section class="project-card" id="career" aria-labelledby="career-title">
+            <h2 class="category-title" id="career-title">Career & Productivity Skills</h2>
+            <p class="category-desc">Practice workplace documents, applications, and business workflows.</p>
+            <ul class="project-list">
+              <li>
+              <a href="Invoice_Generator.html">3D Print Invoice Generator</a>
+              <span class="item-desc">Create sample invoices quickly for business and office workflow practice.<span class="status-pill status-prod">Active</span></span>
+              </li>
+              <li>
+              <a href="wordguide1.html">MOS Word Project 1</a>
+              <span class="item-desc">Follow a step-by-step walkthrough for MOS Word Project 1.<span class="status-pill status-prod">Active</span></span>
+              </li>
+              <li>
+              <a href="wordguide2.html">MOS Word Project 2</a>
+              <span class="item-desc">Follow a step-by-step walkthrough for MOS Word Project 2.<span class="status-pill status-prod">Active</span></span>
+              </li>
+              <li>
+              <a href="wordguide3.html">MOS Word Project 3</a>
+              <span class="item-desc">Follow a step-by-step walkthrough for MOS Word Project 3.<span class="status-pill status-prod">Active</span></span>
+              </li>
+              <li>
+              <a href="Job_Application_Assignment.html">Job Application Builder</a>
+              <span class="item-desc">Launch the interactive, student-facing job application assignment with embedded videos, quiz checks, and progress tracking.<span class="status-pill status-prod">Active</span></span>
+              </li>
+            </ul>
+          </section>
+        </div>
+
+        <div class="instructional-note" aria-label="Instructional use notice">
               <p><strong>3D Print Farm:</strong> For current 3D printing updates and brief program information, visit <a href="https://print.geneseelearninglab.com" target="_blank" rel="noopener noreferrer">our 3D Print Farm page</a>.</p>
               <p><strong>Instructional Use:</strong> This page is maintained for classroom instruction in Genesee Career Institute Computer Science courses.</p>
               <p>Resources are curriculum-aligned student practice activities and teacher-created instructional materials.</p>
               <p>For content review or allowlist requests, contact your district instructional technology team and reference this page as an educational resource hub.</p>
             </div>
-          </section>
-        </div>
 
       </div>
     </div>
