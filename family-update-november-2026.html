@@ -36,13 +36,14 @@
     ul,ol { padding-left:1.4rem; margin:.5rem 0 1rem; }
     li { padding-left:.2rem; margin:.4rem 0; }
     .detail { color:var(--muted); }
-    .action { display:inline-flex; align-items:center; min-height:44px; padding:.55rem 1rem; border:1px solid var(--link); font-weight:700; }
+    .action { display:inline-flex; align-items:center; justify-content:center; min-height:44px; max-width:100%; padding:.65rem 1rem; border:1px solid var(--navy); border-radius:3px; background:var(--navy); color:var(--paper); font-weight:700; text-align:center; }
+    .action:hover { background:var(--link); color:var(--paper); }
     .back { text-align:right; margin:1.1rem 0 0; font-size:.95rem; }
     .back a { display:inline-flex; min-height:44px; align-items:center; }
     footer { padding-top:2rem; margin-top:2rem; border-top:1px solid var(--line); }
     footer p:last-child { margin-bottom:0; }
     @media(max-width:600px) { main { margin:0; border:0; } .contents ul { display:block; } section { margin-top:1.25rem; padding-top:1.5rem; } }
-    @media print { body,main { background:white; } main { max-width:none; margin:0; padding:0; border:0; } .masthead,.skip,.contents,.back { display:none; } a { color:inherit; } h2 { break-after:avoid; } }
+    @media print { body,main { background:white; } main { max-width:none; margin:0; padding:0; border:0; } .masthead,.skip,.contents,.back { display:none; } a { color:inherit; } .action { background:white; color:var(--navy); border-color:var(--navy); } h2 { break-after:avoid; } }
   </style>
 </head>
 <body>
@@ -53,6 +54,7 @@
       <p class="eyebrow"><time datetime="2026-11-24">November 24, 2026</time> · Family update</p>
       <h1>November family update</h1>
       <p class="intro">Hello, GCI Computer Science families! Please review these next steps with your student, along with ways to support our program.</p>
+      <p><a href="#instructor-contacts">Email your instructor with questions</a></p>
       <p><strong>Please take these next steps:</strong></p>
       <ul>
         <li><a href="#mott">Complete the Mott permission slip</a> with parent or guardian and principal signatures. <strong>Trip date: December 11.</strong></li>
@@ -75,15 +77,17 @@
     </details>
 
     <section id="mott" aria-labelledby="mott-heading">
-      <h2 id="mott-heading">IT Day at Mott Community College</h2>
+      <h2 id="mott-heading">Mott Field Trip</h2>
       <ul>
-        <li><strong>When:</strong> <time datetime="2026-12-11">Friday, December 11, 2026</time></li>
         <li><strong>Who:</strong> All first- and second-session students are expected to attend.</li>
+        <li><strong>When:</strong> <time datetime="2026-12-11">Friday, December 11, 2026</time></li>
+        <li><strong>Where:</strong> IT Day at Mott Community College.</li>
         <li><strong>Transportation:</strong> GISD bus; departure at 9:00 a.m. and return at 1:00 p.m.</li>
+        <li><strong>What to do:</strong> Complete the permission slip, obtain both signatures, and return it to your GCI instructor.</li>
       </ul>
       <p>This field trip connects our classroom learning with college and career opportunities in information technology.</p>
       <p><strong>The permission slip was sent home with students today, <time datetime="2026-11-24">November 24</time>.</strong> You can also download a copy below.</p>
-      <p><a class="action" href="assets/forms/mott-it-day-permission-slip-2026.pdf" download="Mott-IT-Day-Permission-Slip-2026.pdf">Download Mott Field Trip Permission Slip (PDF)</a></p>
+      <p><a class="action" href="assets/forms/mott-it-day-permission-slip-2026.pdf" download="Mott-IT-Day-Permission-Slip-2026.pdf">Download permission slip (PDF)</a></p>
       <p><strong>The permission slip needs two signatures: a parent or guardian’s and the home school principal’s.</strong> Please have your student:</p>
       <ol>
         <li>Complete the form and get a parent or guardian’s signature.</li>
@@ -94,13 +98,14 @@
     </section>
 
     <section id="drones" aria-labelledby="drone-heading">
-      <h2 id="drone-heading">Drone Competition — Software Engineering</h2>
-      <p>Students in our <strong>Software Engineering program</strong> are working in teams to program, test, and document their drones for the Aerial Drone Competition. This classroom project culminates in an event that is an essential part of our Career Technical Education program.</p>
+      <h2 id="drone-heading">Drone Competition</h2>
       <ul>
-        <li><strong>Tentative date:</strong> <time datetime="2027-02-13">Saturday, February 13, 2027</time>, at Kettering University. This date remains tentative until our registration is confirmed.</li>
-        <li><strong>Meeting place:</strong> Everyone will meet at Kettering’s Connie and Jim John Recreation Center, 1700 University Avenue, Flint, MI 48504. We’ll share our exact meeting spot and arrival time once confirmed.</li>
-        <li><strong>Team commitment:</strong> Each student is expected to complete their share of the work, communicate with teammates, and attend the competition.</li>
+        <li><strong>Who:</strong> Students in the <strong>Software Engineering program</strong>.</li>
+        <li><strong>When:</strong> <time datetime="2027-02-13">Saturday, February 13, 2027</time> — tentative until our registration is confirmed.</li>
+        <li><strong>Where:</strong> Kettering’s Connie and Jim John Recreation Center, 1700 University Avenue, Flint, MI 48504. Everyone will meet there; our exact meeting spot and arrival time will be shared once confirmed.</li>
+        <li><strong>What to do:</strong> Review your February schedule together and have your student report conflicts privately as soon as we return from Thanksgiving break.</li>
       </ul>
+      <p>This classroom team project brings programming, testing, and documentation together at the Aerial Drone Competition, an essential part of our Career Technical Education program. <strong>Each student is expected to complete their share of the work, communicate with teammates, and attend the competition.</strong></p>
       <p><strong>Please review your family’s February schedule with your student over Thanksgiving break.</strong> Have your student speak with me privately about any conflicts as soon as we return. Early communication is crucial because teammates are counting on each student.</p>
       <p><strong>Competition information and directions:</strong></p>
       <ul>
@@ -129,7 +134,8 @@
     <section id="snacks" aria-labelledby="snack-heading">
       <h2 id="snack-heading">Snack donations support financial literacy</h2>
       <p>If your family is able, please consider donating <strong>individually packaged, shelf-stable snacks</strong> for our classroom store.</p>
-      <p>We use <a href="https://www.classbank.com/">ClassBank</a>, a digital classroom economy, as part of our financial literacy work. Students earn virtual classroom dollars through classroom jobs and positive contributions, then practice deciding how much to save or spend. <strong>Snacks are one of the incentives students can purchase with their classroom dollars.</strong> This connects budgeting, saving, and spending decisions with their effort and responsibility in class.</p>
+      <p>We use <a href="https://www.classbank.com/">ClassBank</a> as a digital classroom economy. Students earn virtual classroom dollars through jobs and positive contributions, then practice budgeting, saving, and spending.</p>
+      <p><strong>Donated snacks stock our classroom store.</strong> Students can purchase them with classroom dollars, connecting financial literacy with their effort and responsibility in class.</p>
       <p>Students can bring donations to class. Contributions are optional, and any amount is appreciated. Thank you for helping make these lessons meaningful!</p>
       <p class="back"><a href="#quick-links">Back to quick links</a></p>
     </section>
@@ -143,7 +149,7 @@
     </section>
 
     <section id="print-farm" aria-labelledby="print-farm-heading">
-      <h2 id="print-farm-heading">Our student-run 3D print farm</h2>
+      <h2 id="print-farm-heading">3D Printing</h2>
       <p>Our student-run print farm now has <strong>12 printers</strong> and can handle larger orders as well as individual items. Students gain hands-on experience managing orders, operating printers, and producing finished prints.</p>
       <p>Browse <a href="https://makerworld.com/en">MakerWorld for 3D models</a> to find something you’d like printed. <strong>We currently accept ready-to-print files only; custom design orders are not available.</strong></p>
       <p><strong>Current pricing:</strong></p>
@@ -155,13 +161,13 @@
       </ul>
       <p><strong>Example:</strong> A print using two hours of printer time and 100 grams of filament costs <strong>$5 before tax and any discount</strong> ($3 for printer time + $2 for filament).</p>
       <p>Please encourage your student to use the <strong>Student Print Submission</strong> form and choose <strong>Personal Project</strong> for a family order. They can submit a ready-to-print file or MakerWorld link with the order. The form also lists “Idea / design help,” but that service is not currently available for family orders.</p>
-      <p><a class="action" href="https://print.geneseelearninglab.com/requests.html#panel-student">Open the Student Print Submission Form</a></p>
+      <p><a class="action" href="https://print.geneseelearninglab.com/requests.html#panel-student">Submit a print order</a></p>
       <p class="detail">The form’s cost estimator provides an estimate, not a confirmed quote. Our confirmed-quote system is not yet available; the rates above apply, with sales tax added and discounts available for larger orders.</p>
       <p><strong>Every order supports our students.</strong> Proceeds from print orders help cover competition travel, apparel, and gear for competitions and Work Based Learning. Our goal is to cover program-related costs so every student can participate regardless of their family’s ability to pay.</p>
       <p class="back"><a href="#quick-links">Back to quick links</a></p>
     </section>
 
-    <footer aria-label="Previous communication and instructor contacts">
+    <footer id="instructor-contacts" tabindex="-1" aria-label="Previous communication and instructor contacts">
       <p><strong>Previous communication:</strong> <a href="https://docs.google.com/document/d/e/2PACX-1vR_BJLpTcctce6iaLze3QmpaImA5D3RNQg61SzGJlK02fKH9S1Jm-vVFicbdpa7V6BJEf0QdHPTQuIO/pub">Read our earlier GCI Computer Science program newsletter</a>.</p>
       <p>Thank you for your support and for talking through these plans with your student. Please email us with questions.</p>
       <p><strong>Dominic Cascarelli</strong> · <a href="mailto:dcascarelli@geneseeisd.org">dcascarelli@geneseeisd.org</a><br>
