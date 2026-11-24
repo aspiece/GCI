@@ -60,7 +60,32 @@
     .event-photo figcaption { margin-top:.4rem; font-size:.8rem; line-height:1.45; color:var(--muted); }
     @media(max-width:700px) { .event-overview { grid-template-columns:1fr; gap:.75rem; } .event-photo { max-width:200px; justify-self:start; } }
     @media print { .event-overview { grid-template-columns:minmax(0,1fr) 160px; gap:1rem; } .event-photo { break-inside:avoid; } .event-photo img { max-height:110px; object-fit:contain; } }
+    .permission-tool { margin:1rem 0; }
+    .permission-tool > summary { cursor:pointer; }
+    .permission-tool > summary:focus-visible, .permission-tool button:focus-visible, .permission-tool input:focus-visible { outline:3px solid #85572f; outline-offset:3px; }
+    .permission-inner { padding-top:1rem; }
+    .permission-inner h3 { margin:.5rem 0 1rem; font:700 1.3rem/1.3 Georgia,serif; }
+    .permission-inner fieldset { min-width:0; border:1px solid var(--line); padding:1rem; margin:1rem 0; }
+    .permission-inner legend { padding:0 .3rem; font-weight:700; }
+    .permission-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; }
+    .permission-grid label { display:block; font-weight:600; margin-bottom:.3rem; }
+    .permission-grid input { width:100%; min-width:0; min-height:44px; padding:.65rem; border:1px solid #73818a; border-radius:3px; background:white; color:var(--ink); font:inherit; }
+    .permission-grid small { display:block; color:var(--muted); line-height:1.4; margin-top:.3rem; }
+    .permission-full { grid-column:1 / -1; }
+    .permission-authorization { margin-top:1.5rem; }
+    #parent-signature { display:block; width:100%; height:180px; border:2px solid #53616b; border-radius:3px; background:#fff; touch-action:none; }
+    .permission-inner button { font:inherit; cursor:pointer; }
+    .permission-inner button:disabled { cursor:wait; opacity:.7; }
+    .permission-clear { min-height:44px; padding:.5rem .8rem; background:var(--paper); color:var(--navy); border:1px solid var(--navy); border-radius:3px; }
+    .permission-consent { display:flex; align-items:flex-start; gap:.7rem; margin:1.5rem 0; }
+    .permission-consent input { width:22px; height:22px; flex:none; margin-top:.3rem; }
+    .permission-error { color:#9b1c1c; font-weight:600; }
+    .permission-result { display:inline-block; min-height:44px; padding:.5rem 0; }
+    @media(max-width:600px) { .permission-grid { grid-template-columns:1fr; } .permission-inner fieldset { padding:.75rem; } }
+    @media print { .permission-tool { display:none; } }
   </style>
+  <script src="assets/js/mott-permission-pdf.js" defer></script>
+  <script src="assets/js/mott-permission.js" defer></script>
 </head>
 <body>
   <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute;overflow:hidden"><symbol id="icon-bus" viewBox="0 0 24 24"><path d="M6 17H4V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v11h-2M8 17h8M4 11h16M8 4v7M16 4v7"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></symbol><symbol id="icon-drone" viewBox="0 0 24 24"><path d="m8 8 8 8m0-8-8 8"/><rect x="9" y="9" width="6" height="6" rx="2"/><ellipse cx="5" cy="5" rx="4" ry="2"/><ellipse cx="19" cy="5" rx="4" ry="2"/><ellipse cx="5" cy="19" rx="4" ry="2"/><ellipse cx="19" cy="19" rx="4" ry="2"/><path d="m7 6 3 3m7-3-3 3m-7 9 3-3m7 3-3-3"/></symbol><symbol id="icon-progress" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 16v-3m5 3V9m5 7V6"/></symbol><symbol id="icon-snacks" viewBox="0 0 24 24"><path d="M6 3h12l-1 4 1 10-1 4H7l-1-4L7 7Z"/><path d="M7 7h10M7 17h10"/><circle cx="12" cy="12" r="3"/></symbol><symbol id="icon-helpdesk" viewBox="0 0 24 24"><rect x="2" y="3" width="15" height="11" rx="1"/><path d="M7 18h7m-4-4v4m9-8a4 4 0 0 0-5 5l-4 4 2 2 4-4a4 4 0 0 0 5-5l-3 2-2-2Z"/></symbol><symbol id="icon-printer" viewBox="0 0 24 24"><path d="M4 21V3h16v18ZM4 7h16M12 7v4m-2 0h4l-2 3ZM7 18h10m-8 0v-2h6v2"/></symbol></svg>
@@ -124,7 +149,45 @@
       </div>
       <p>This field trip connects our classroom learning with college and career opportunities in information technology.</p>
       <p><strong>The permission slip was sent home with students today, <time datetime="2026-11-24">November 24</time>.</strong> You can also download a copy below.</p>
-      <p><a class="action" href="assets/forms/mott-it-day-permission-slip-2026.pdf" download="Mott-IT-Day-Permission-Slip-2026.pdf">Download permission slip (PDF)</a></p>
+      <details id="complete-permission" class="permission-tool">
+        <summary class="action">Complete and sign permission slip</summary>
+        <div class="permission-inner">
+          <h3>Complete your Mott permission slip</h3>
+          <p>Enter the information below, draw your signature, and download the completed PDF. Then print it for your student’s home school principal to sign.</p>
+          <p class="detail">Your entries and signature stay in your browser. This form does not submit them to GCI or save them on this website.</p>
+          <noscript><p>Please enable JavaScript to use this tool, or download the blank slip below and sign it by hand.</p></noscript>
+          <form id="mott-permission-form" autocomplete="off" method="post" action="about:blank">
+            <fieldset id="permission-controls" disabled>
+              <legend>Student and parent information</legend>
+              <p class="detail">Fields marked “required” must be completed. Medical contact fields are optional.</p>
+              <div class="permission-grid">
+                <div><label for="permission-student">Student’s full name (required)</label><input id="permission-student" name="studentName" type="text" maxlength="70" required autocomplete="off"></div>
+                <div><label for="permission-guardian">Parent/guardian printed name (required)</label><input id="permission-guardian" name="guardianName" type="text" maxlength="70" required autocomplete="off"><small>This identifies the signer; it is not a typed signature.</small></div>
+                <div><label for="permission-phone">Student home phone number (required)</label><input id="permission-phone" name="homePhone" type="tel" maxlength="30" required autocomplete="off"></div>
+                <div><label for="permission-date">Date signed (required)</label><input id="permission-date" name="signatureDate" type="date" required></div>
+                <div><label for="permission-doctor">Doctor’s name (optional)</label><input id="permission-doctor" name="doctorName" type="text" maxlength="60" autocomplete="off"></div>
+                <div><label for="permission-doctor-phone">Doctor’s phone number (optional)</label><input id="permission-doctor-phone" name="doctorPhone" type="tel" maxlength="30" autocomplete="off"></div>
+                <div class="permission-full"><label for="permission-hospital">Hospital of preference (optional)</label><input id="permission-hospital" name="hospital" type="text" maxlength="100" autocomplete="off"></div>
+              </div>
+              <div class="permission-authorization">
+                <p><strong>Permission and authorization</strong></p>
+                <p>I give permission for the student named above to attend IT Day at Mott Community College on December 11, 2026, traveling by GISD bus, departing at 9:00 a.m. and returning at 1:00 p.m. This trip takes place during school hours; my child will arrive home at the usual time.</p>
+                <p>In case of illness or accident, I authorize the teacher or school official to seek medical assistance at my expense.</p>
+              </div>
+              <p id="signature-label"><strong>Draw your parent or guardian signature (required)</strong></p>
+              <p id="signature-help" class="detail">Use your finger, mouse, or stylus inside the box. Only drawn signatures are accepted here. If you cannot use the drawing pad, <a href="assets/forms/mott-it-day-permission-slip-2026.pdf" download>download the blank slip</a> and sign it by hand.</p>
+              <canvas id="parent-signature" width="1000" height="240" role="img" aria-labelledby="signature-label" aria-describedby="signature-help signature-status">Draw your signature here, or use the blank permission slip.</canvas>
+              <p id="signature-status" class="detail" role="status">No signature drawn yet.</p>
+              <button type="button" id="clear-signature" class="permission-clear">Clear signature</button>
+              <label class="permission-consent"><input type="checkbox" id="permission-consent" required><span>I am the parent or guardian named above. I have reviewed the permission slip and the authorization statements above, and I intend my drawn signature to sign this permission slip.</span></label>
+              <button type="button" id="download-signed-slip" class="action">Download completed PDF</button>
+            </fieldset>
+          </form>
+          <p id="permission-feedback" class="detail" role="status" aria-live="polite" tabindex="-1"></p>
+          <p class="detail">After downloading: save and print the PDF, obtain the principal’s signature, return it to your GCI instructor, and give a copy to your home school attendance office.</p>
+        </div>
+      </details>
+      <p><a href="assets/forms/mott-it-day-permission-slip-2026.pdf" download="Mott-IT-Day-Permission-Slip-2026.pdf">Download blank permission slip (PDF)</a> to complete and sign by hand.</p>
       <p><strong>The permission slip needs two signatures: a parent or guardian’s and the home school principal’s.</strong> Please have your student:</p>
       <ol>
         <li>Complete the form and get a parent or guardian’s signature.</li>
