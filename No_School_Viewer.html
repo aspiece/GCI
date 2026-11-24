@@ -565,6 +565,18 @@
       .month-event .event-notes{display:block}
     }
 
+
+    /* Responsive, individually labelled filters without inline width conflicts. */
+    .filters{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:end}
+    .filter-field{display:block;min-width:0;width:100%;font-weight:650;color:var(--text)}
+    .filter-field>span{display:block;font-size:12px;margin-bottom:6px;line-height:1.4}
+    .filter-field input,.filter-field select{width:100%!important;min-width:0!important;max-width:100%;display:block;box-sizing:border-box;height:44px}
+    @media(max-width:760px){
+      .filters{grid-template-columns:minmax(0,1fr);gap:14px}
+      .filter-field{width:100%;min-width:0}
+      .filter-field input,.filter-field select{width:100%!important}
+    }
+
   </style>
   <!-- Libraries (small, reliable CDNs) -->
   <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
@@ -621,10 +633,18 @@
         </div>
       </div>
       <div class="filters">
-        <label for="search" class="sr-only">Search school, event, or notes</label>
-        <input id="search" type="search" placeholder="Search school, event, notes…" style="flex:1;min-width:220px" />
-        <select id="schoolSel" aria-label="Filter by school" style="min-width:220px"></select>
-        <select id="eventSel" aria-label="Filter by event type" style="min-width:180px"></select>
+        <label class="filter-field" for="search">
+          <span>Search</span>
+          <input id="search" type="search" placeholder="School, event, or notes" />
+        </label>
+        <label class="filter-field" for="schoolSel">
+          <span>School</span>
+          <select id="schoolSel"></select>
+        </label>
+        <label class="filter-field" for="eventSel">
+          <span>Event type</span>
+          <select id="eventSel"></select>
+        </label>
       </div>
     </div>
 
@@ -693,6 +713,8 @@
     const CONFIG = {
       // TODO: paste your published CSV URL here (same-origin with host is ideal in Teams)
       DATA_URL: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTy-L_LG8bcMsu2w8HkdMXATdm2EASK-VR_O2XglJCmvzBxSSQ-B3-R_7jfba9DLctPy2Ul6bbLZvvI/pub?gid=371846928&single=true&output=csv",
+      SNAPSHOT_URL: "data/school-calendar.csv",
+      SNAPSHOT_DATE: "November 23, 2026",
       REFRESH_MS: 5 * 60 * 1000, // 5 minutes
       WEEK_START: "monday", // fixed to Monday for Mon–Fri viewer
     };
@@ -717,6 +739,7 @@
     let RAW_ROWS = []; // {date: dayjs, event, school, notes}
     let FILTERED = [];
     let LAST_SUCCESSFUL_UPDATE = null;
+    let DATA_SOURCE = 'none';
     let IS_LOADING = false;
     let ANCHOR_DAY = dayjs(); // base day for current/prev/next
 
@@ -1034,44 +1057,77 @@
     // ===================== DATA LOAD =====================
     function setLastRefreshed() {
       const el = document.getElementById('last-refreshed');
-      if (el && LAST_SUCCESSFUL_UPDATE) el.textContent = 'Data loaded ' + LAST_SUCCESSFUL_UPDATE.format('MMM D, h:mm A');
+      if (!el) return;
+      if (DATA_SOURCE === 'live' && LAST_SUCCESSFUL_UPDATE) {
+        el.textContent = 'Master sheet checked ' + LAST_SUCCESSFUL_UPDATE.format('MMM D, h:mm A');
+      } else if (DATA_SOURCE === 'snapshot') {
+        el.textContent = 'Saved copy: ' + CONFIG.SNAPSHOT_DATE;
+      }
     }
     function showDataNotice(message, kind) {
       const notice = document.getElementById('data-notice');
       notice.textContent = message;
       notice.className = 'data-notice data-notice--' + kind;
     }
+    function showCalendarRows(rows, source) {
+      RAW_ROWS = rows;
+      DATA_SOURCE = source;
+      document.getElementById('viewer-results').hidden = false;
+      populateFilters(RAW_ROWS);
+      render();
+      setLastRefreshed();
+    }
+
     async function load() {
       if (IS_LOADING) return;
       IS_LOADING = true;
       document.getElementById('refreshEcho').textContent = Math.round(CONFIG.REFRESH_MS / 60000);
       document.getElementById('btn-refresh').disabled = true;
-      if (!LAST_SUCCESSFUL_UPDATE) showDataNotice('Loading published school calendar data…', 'info');
+      if (DATA_SOURCE === 'none') showDataNotice('Loading saved school calendar dates…', 'info');
+
+      // Load the same-origin copy first so that the calendar is usable even if
+      // the published Google Sheet endpoint blocks or delays browser requests.
+      if (DATA_SOURCE === 'none' || DATA_SOURCE === 'snapshot') {
+        try {
+          const snapshotResponse = await fetch(CONFIG.SNAPSHOT_URL, { cache: 'no-store' });
+          if (!snapshotResponse.ok) throw new Error('Saved calendar returned HTTP ' + snapshotResponse.status);
+          const snapshotRows = parseCsvToRows(await snapshotResponse.text());
+          if (!snapshotRows.length) throw new Error('Saved calendar has no valid entries.');
+          showCalendarRows(snapshotRows, 'snapshot');
+          showDataNotice('Showing the saved school calendar from ' + CONFIG.SNAPSHOT_DATE + '. Checking for updates…', 'info');
+        } catch (snapshotError) {
+          console.warn('Saved school calendar could not be loaded:', snapshotError);
+        }
+      }
+
+      // The published Google Sheet remains the preferred live source. Never
+      // replace valid records with a failed fetch or example data.
+      let timerId;
+      const controller = new AbortController();
       try {
-        if (!CONFIG.DATA_URL) throw new Error('No calendar data source is configured.');
-        const res = await fetch(CONFIG.DATA_URL, { cache: 'no-store' });
-        if (!res.ok) throw new Error('Calendar source returned HTTP ' + res.status);
-        const csvText = await res.text();
-        const rows = parseCsvToRows(csvText);
-        if (!rows.length) throw new Error('No valid calendar entries were found in the published source.');
-        RAW_ROWS = rows;
+        if (!CONFIG.DATA_URL) throw new Error('No live calendar URL is configured.');
+        timerId = setTimeout(() => controller.abort(), 8000);
+        const response = await fetch(CONFIG.DATA_URL, { cache: 'no-store', signal: controller.signal });
+        if (!response.ok) throw new Error('Published calendar returned HTTP ' + response.status);
+        const rows = parseCsvToRows(await response.text());
+        if (!rows.length) throw new Error('Published calendar contains no usable records.');
         LAST_SUCCESSFUL_UPDATE = dayjs();
-        document.getElementById('viewer-results').hidden = false;
-        populateFilters(RAW_ROWS);
-        render();
-        setLastRefreshed();
-        showDataNotice('Calendar dates loaded from the published master sheet. For last-minute closures, check school or district announcements.', 'success');
-      } catch (err) {
-        console.warn('Calendar refresh failed:', err);
-        if (LAST_SUCCESSFUL_UPDATE) {
-          showDataNotice('Unable to refresh the calendar. Previously loaded dates are still shown below (last loaded ' + LAST_SUCCESSFUL_UPDATE.format('MMM D, h:mm A') + '). Confirm closures with your school or district.', 'warning');
+        showCalendarRows(rows, 'live');
+        showDataNotice('Current calendar data loaded from the published master sheet. For emergency closures, check your school or district announcements.', 'success');
+      } catch (error) {
+        console.warn('Published calendar refresh failed:', error);
+        if (DATA_SOURCE === 'snapshot') {
+          showDataNotice('Showing saved calendar dates from ' + CONFIG.SNAPSHOT_DATE + '. Live updates from Google Sheets are currently unavailable. Check official school or district notices for changes.', 'warning');
+        } else if (DATA_SOURCE === 'live' && LAST_SUCCESSFUL_UPDATE) {
+          showDataNotice('Unable to refresh live dates. Data last loaded ' + LAST_SUCCESSFUL_UPDATE.format('MMM D, h:mm A') + ' remains on screen. Confirm changes with your school or district.', 'warning');
         } else {
           RAW_ROWS = [];
           FILTERED = [];
           document.getElementById('viewer-results').hidden = true;
-          showDataNotice('Unable to load the published school calendar. No calendar dates are being shown. Try Refresh data, or check your school or district website directly.', 'error');
+          showDataNotice('Unable to load school calendar data. No dates are being shown. Try Refresh data, or check your school or district website.', 'error');
         }
       } finally {
+        clearTimeout(timerId);
         IS_LOADING = false;
         document.getElementById('btn-refresh').disabled = false;
       }
