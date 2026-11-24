@@ -27,6 +27,8 @@
     .intro { max-width:65ch; }
     .contents { margin:1.5rem 0 0; padding:1rem 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
     .contents ul { display:flex; flex-wrap:wrap; gap:.25rem 1.2rem; margin:0; padding:0; list-style:none; }
+    .contents summary { display:list-item; min-height:44px; padding:.5rem 0; cursor:pointer; font-weight:700; color:var(--navy); }
+    .contents summary:focus-visible { outline:3px solid #85572f; outline-offset:4px; }
     .contents a { display:inline-flex; align-items:center; min-height:44px; font-weight:600; }
     section { padding-top:2rem; margin-top:2rem; border-top:1px solid var(--line); scroll-margin-top:1rem; }
     section:first-of-type { border-top:0; margin-top:0; }
@@ -49,17 +51,19 @@
   <main id="main" tabindex="-1">
     <header>
       <p class="eyebrow"><time datetime="2026-11-24">November 24, 2026</time> · Family update</p>
-      <h1>A few updates for our families</h1>
-      <p class="intro">Hello, GCI Computer Science families! Please review the upcoming trip and competition plans with your student, and use GCI ParentVUE to stay connected. You’ll also find ways to support our students through snack donations, the Student Helpdesk, and 3D printing.</p>
+      <h1>November family update</h1>
+      <p class="intro">Hello, GCI Computer Science families! Please review these next steps with your student, along with ways to support our program.</p>
       <p><strong>Please take these next steps:</strong></p>
       <ul>
-        <li><a href="#mott">Complete the Mott permission slip</a> for December 11, including both parent or guardian and principal signatures.</li>
+        <li><a href="#mott">Complete the Mott permission slip</a> with parent or guardian and principal signatures. <strong>Trip date: December 11.</strong></li>
         <li><a href="#drones">Review the tentative February 13 competition date</a> with your Software Engineering student and have them report scheduling conflicts promptly.</li>
-        <li><a href="#parentvue">Activate your GCI ParentVUE account</a> to follow your student’s grades and attendance.</li>
+        <li><a href="#parentvue">Check grades and attendance in GCI ParentVUE</a>, or activate your account if you haven’t signed up.</li>
       </ul>
     </header>
-    <nav class="contents" id="quick-links" aria-label="In this update">
-      <ul>
+    <details class="contents" id="quick-links">
+      <summary>Jump to a section</summary>
+      <nav aria-label="In this update">
+        <ul>
         <li><a href="#mott">Mott field trip</a></li>
         <li><a href="#drones">Drone competition</a></li>
         <li><a href="#parentvue">ParentVUE</a></li>
@@ -67,7 +71,8 @@
         <li><a href="#helpdesk">Student Helpdesk</a></li>
         <li><a href="#print-farm">3D printing</a></li>
       </ul>
-    </nav>
+      </nav>
+    </details>
 
     <section id="mott" aria-labelledby="mott-heading">
       <h2 id="mott-heading">IT Day at Mott Community College</h2>
@@ -89,7 +94,7 @@
     </section>
 
     <section id="drones" aria-labelledby="drone-heading">
-      <h2 id="drone-heading">Software Engineering team project and competition</h2>
+      <h2 id="drone-heading">Drone Competition — Software Engineering</h2>
       <p>Students in our <strong>Software Engineering program</strong> are working in teams to program, test, and document their drones for the Aerial Drone Competition. This classroom project culminates in an event that is an essential part of our Career Technical Education program.</p>
       <ul>
         <li><strong>Tentative date:</strong> <time datetime="2027-02-13">Saturday, February 13, 2027</time>, at Kettering University. This date remains tentative until our registration is confirmed.</li>
@@ -110,13 +115,14 @@
     <section id="parentvue" aria-labelledby="parentvue-heading">
       <h2 id="parentvue-heading">Activate your GCI ParentVUE account</h2>
       <p>ParentVUE helps you stay up to date on your student’s <strong>grades and attendance at GCI</strong>. Checking it regularly is a helpful way to follow their progress, talk with them about how things are going, and reach out to an instructor when questions come up. <strong>GCI uses a separate ParentVUE login from your child’s home school district.</strong></p>
+      <p><a class="action" href="https://parentvue.geneseeisd.org/gci/PXP2_Login_Parent.aspx">Open GCI ParentVUE</a></p>
+      <p class="detail">Already have a GCI account? Sign in with your GCI credentials or use “Forgot Password” on the login page.</p>
+      <p><strong>First-time setup:</strong></p>
       <ol>
         <li>Request an activation key from <a href="mailto:GCI@geneseeisd.org">GCI@geneseeisd.org</a> or the GCI main office at <a href="tel:+18105914462">810-591-4462</a>.</li>
         <li>Open GCI ParentVUE and choose <strong>More Options → Activate Account</strong>.</li>
         <li>Enter the name and activation key provided by the school, then create your username and password.</li>
       </ol>
-      <p><a class="action" href="https://parentvue.geneseeisd.org/gci/PXP2_Login_Parent.aspx">Open GCI ParentVUE</a></p>
-      <p class="detail">Already have a GCI account? Sign in with your GCI credentials or use “Forgot Password” on the login page.</p>
       <p class="back"><a href="#quick-links">Back to quick links</a></p>
     </section>
 
@@ -148,13 +154,15 @@
         <li><strong>Larger orders:</strong> Discounts are available.</li>
       </ul>
       <p><strong>Example:</strong> A print using two hours of printer time and 100 grams of filament costs <strong>$5 before tax and any discount</strong> ($3 for printer time + $2 for filament).</p>
-      <p>Our quote system is not yet up and running. Please encourage your student to submit an order through the Print Lab submission form. <strong>Ready-to-print files can be submitted as part of the order form.</strong></p>
-      <p><a class="action" href="https://print.geneseelearninglab.com/requests.html">Open the Print Lab Submission Form</a></p>
+      <p>Please encourage your student to use the <strong>Student Print Submission</strong> form and choose <strong>Personal Project</strong> for a family order. They can submit a ready-to-print file or MakerWorld link with the order. The form also lists “Idea / design help,” but that service is not currently available for family orders.</p>
+      <p><a class="action" href="https://print.geneseelearninglab.com/requests.html#panel-student">Open the Student Print Submission Form</a></p>
+      <p class="detail">The form’s cost estimator provides an estimate, not a confirmed quote. Our confirmed-quote system is not yet available; the rates above apply, with sales tax added and discounts available for larger orders.</p>
       <p><strong>Every order supports our students.</strong> Proceeds from print orders help cover competition travel, apparel, and gear for competitions and Work Based Learning. Our goal is to cover program-related costs so every student can participate regardless of their family’s ability to pay.</p>
       <p class="back"><a href="#quick-links">Back to quick links</a></p>
     </section>
 
-    <footer aria-label="Instructor contacts">
+    <footer aria-label="Previous communication and instructor contacts">
+      <p><strong>Previous communication:</strong> <a href="https://docs.google.com/document/d/e/2PACX-1vR_BJLpTcctce6iaLze3QmpaImA5D3RNQg61SzGJlK02fKH9S1Jm-vVFicbdpa7V6BJEf0QdHPTQuIO/pub">Read our earlier GCI Computer Science program newsletter</a>.</p>
       <p>Thank you for your support and for talking through these plans with your student. Please email us with questions.</p>
       <p><strong>Dominic Cascarelli</strong> · <a href="mailto:dcascarelli@geneseeisd.org">dcascarelli@geneseeisd.org</a><br>
       <strong>Andrew Spiece</strong> · <a href="mailto:aspiece@geneseeisd.org">aspiece@geneseeisd.org</a></p>
