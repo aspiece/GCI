@@ -698,9 +698,9 @@
 
     <details id="calendar-availability" class="calendar-availability panel p-4">
       <summary>About the calendar data and coverage</summary>
-      <p>The viewer reads a published master calendar spreadsheet. It shows reported school dates, not real-time emergency closure announcements. School and district notices take precedence, and some building-specific schedules may differ.</p>
+      <p>The viewer checks the published master calendar and uses a dated copy from November 23, 2026 when live updates are unavailable. It does not report emergency closures in real time. Official school and district announcements take precedence.</p>
       <p>The availability of dates depends on what is included in the source spreadsheet. Check official school calendars for any missing or unconfirmed dates.</p>
-      <p><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vTy-L_LG8bcMsu2w8HkdMXATdm2EASK-VR_O2XglJCmvzBxSSQ-B3-R_7jfba9DLctPy2Ul6bbLZvvI/pub?gid=371846928&amp;single=true&amp;output=csv" target="_blank" rel="noopener noreferrer">View published calendar data</a></p>
+      <p><a href="data/school-calendar.csv" download>Download saved calendar data (CSV)</a></p>
     </details>
 
     <div class="footer">
@@ -711,7 +711,7 @@
   <script>
     // ===================== CONFIG =====================
     const CONFIG = {
-      // TODO: paste your published CSV URL here (same-origin with host is ideal in Teams)
+      // Optional published live feed. When unavailable, a dated same-origin CSV provides the calendar.
       DATA_URL: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTy-L_LG8bcMsu2w8HkdMXATdm2EASK-VR_O2XglJCmvzBxSSQ-B3-R_7jfba9DLctPy2Ul6bbLZvvI/pub?gid=371846928&single=true&output=csv",
       SNAPSHOT_URL: "data/school-calendar.csv",
       SNAPSHOT_DATE: "November 23, 2026",
