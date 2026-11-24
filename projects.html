@@ -39,6 +39,26 @@
     .project-card{scroll-margin-top:24px}
     .category-title{margin:0 0 var(--space-2);font-size:var(--font-size-xl);font-weight:750}
     .category-desc{margin:0 0 var(--space-5);color:var(--color-text-muted);line-height:1.6;font-size:var(--font-size-sm)}
+
+    /* Classic project index: more like a directory, less like a dashboard. */
+    .project-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;align-items:start}
+    .project-card{border:1px solid var(--color-border);border-top:3px solid #a87747;border-radius:2px;padding:25px;box-shadow:none}
+    .project-card .category-title{font:700 1.38rem/1.26 var(--font-family-display);letter-spacing:-.01em}
+    .category-desc{border-bottom:1px solid var(--color-border);padding-bottom:17px;margin-bottom:21px;line-height:1.6}
+    .category-jump{border-top:1px solid var(--color-border);border-bottom:1px solid var(--color-border);padding:14px 0;margin-bottom:26px;gap:7px 17px}
+    .category-jump span{color:var(--color-text-muted);font-size:.8rem;font-weight:700;letter-spacing:.03em}
+    .category-jump a{border:0;border-radius:0;background:transparent;padding:3px 0;font-size:.82rem;font-weight:600;color:#254759;text-decoration:underline;text-decoration-color:#b7a896;text-underline-offset:4px}
+    .category-jump a:hover,.category-jump a:focus-visible{background:transparent;text-decoration-color:#254759}
+    .project-kind{display:inline;color:#54636a;background:transparent;border:0;border-radius:0;padding:0;margin:0 5px 0 0;font-size:.7rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+    .project-kind::after{content:" · ";color:#a4a39b}
+    .status-feedback{background:#e8eff0;color:#365563;border-color:#c2d1d4}
+    .project-list li+li{margin-top:17px;padding-top:17px;border-top:1px solid var(--color-border)}
+    .project-list a.project-feedback-link{font-size:.76rem;font-weight:600;margin-top:8px;text-decoration:underline;text-underline-offset:3px}
+    .feedback-invite{background:#ede8df;border:1px solid #d4cbbd;border-left:4px solid #a87747;border-radius:2px;padding:20px 22px}
+    .feedback-invite strong{font-family:var(--font-family-display);font-size:1.15rem}
+    .feedback-invite a{background:#24495e;border-radius:2px;padding:11px 15px}
+    .feedback-invite a:hover,.feedback-invite a:focus-visible{background:#193646}
+    @media(max-width:850px){.project-grid{grid-template-columns:1fr}}
   </style>
 
   <script type="application/ld+json">
@@ -95,9 +115,9 @@
                 <aside class="feedback-invite" aria-label="Share feedback on these learning tools">
           <div>
             <strong>Help shape these tools</strong>
-            <p>Many projects are still in development. Teachers and students can share bugs, suggestions, and accessibility feedback. GitHub sign-in is required; feedback is public, so please do not include student information.</p>
+            <p>These projects are works in progress. Teachers and students can report bugs, suggest improvements, and comment on accessibility. GitHub sign-in is required; feedback is public, so please do not include student information.</p>
           </div>
-          <a href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml" target="_blank" rel="noopener noreferrer">Give project feedback ↗</a>
+          <a href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml" target="_blank" rel="noopener noreferrer">Share feedback</a>
         </aside>
 
         <nav class="category-jump" aria-label="Jump to a project category">
@@ -120,22 +140,22 @@
               <li>
                 <a href="group-generator/">Classroom Group Generator</a>
                 <span class="item-desc">Randomly create balanced classroom teams, reshuffle, save class lists on your device, and display groups on a projector.<span class="project-kind">Classroom App</span><span class="status-pill status-progress">In Development</span><span class="status-pill status-feedback">Needs Feedback</span></span>
-                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Classroom%20Group%20Generator" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Classroom Group Generator">Give feedback <span aria-hidden="true">↗</span></a>
+                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Classroom%20Group%20Generator" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Classroom Group Generator">Send feedback</a>
               </li>
               <li>
                 <a href="No_School_Viewer.html">No School Viewer</a>
                 <span class="item-desc">Check and view no-school days from the calendar data.<span class="project-kind">Classroom App</span><span class="status-pill status-progress">In Development</span><span class="status-pill status-feedback">Needs Feedback</span></span>
-                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20No%20School%20Viewer" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on No School Viewer">Give feedback <span aria-hidden="true">↗</span></a>
+                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20No%20School%20Viewer" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on No School Viewer">Send feedback</a>
               </li>
               <li>
                 <a href="Intro_CS_and_Hardware_Pacing_Guide.html">Hardware/CS Pacing Guide</a>
                 <span class="item-desc">Open the current Intro to Computer Hardware and Intro to Computer Science pacing webpage with calendar notes and milestones.<span class="project-kind">Curriculum</span><span class="status-pill status-progress">In Development</span><span class="status-pill status-feedback">Needs Feedback</span></span>
-                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Hardware%2FCS%20Pacing%20Guide" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Hardware/CS Pacing Guide">Give feedback <span aria-hidden="true">↗</span></a>
+                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Hardware%2FCS%20Pacing%20Guide" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Hardware/CS Pacing Guide">Send feedback</a>
               </li>
               <li>
                 <a href="Recommendation_Letter_Generator.html">Recommendation Letter Generator</a>
                 <span class="item-desc">Generate a personalized, unique recommendation letter based on student name, class, traits, and purpose.<span class="project-kind">Classroom App</span><span class="status-pill status-progress">In Development</span><span class="status-pill status-feedback">Needs Feedback</span></span>
-                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Recommendation%20Letter%20Generator" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Recommendation Letter Generator">Give feedback <span aria-hidden="true">↗</span></a>
+                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Recommendation%20Letter%20Generator" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Recommendation Letter Generator">Send feedback</a>
               </li>
             </ul>
           </section>
@@ -147,28 +167,28 @@
               <li>
                 <a href="https://github.com/aspiece/cs50-learning-companion" target="_blank" rel="noopener noreferrer">CS50 Learning Companion</a>
                 <span class="item-desc">VS Code extension with guided, solution-free CS50P starter assignments, hints, testing, and debugging support.<span class="project-kind">Classroom App</span><span class="status-pill status-progress">In Development</span><span class="status-pill status-feedback">Needs Feedback</span></span>
-                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20CS50%20Learning%20Companion" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on CS50 Learning Companion">Give feedback <span aria-hidden="true">↗</span></a>
+                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20CS50%20Learning%20Companion" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on CS50 Learning Companion">Send feedback</a>
               </li>
               <li>
                 <a href="https://aspiece.github.io/QTIBuilder/" target="_blank" rel="noopener noreferrer">Canvas QTI Builder</a>
                 <span class="item-desc">Create Canvas quiz imports from pasted questions and CSV or XLSX files, with browser-based processing.<span class="project-kind">Classroom App</span><span class="status-pill status-progress">In Development</span><span class="status-pill status-feedback">Needs Feedback</span></span>
-                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Canvas%20QTI%20Builder" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Canvas QTI Builder">Give feedback <span aria-hidden="true">↗</span></a>
+                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Canvas%20QTI%20Builder" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Canvas QTI Builder">Send feedback</a>
               </li>
               <li>
                 <a href="ProgReview.html">Programming Review — Python Basics</a>
                 <span class="item-desc">Interactive review of Python programming foundations.<span class="project-kind">Classroom App</span><span class="status-pill status-progress">In Development</span><span class="status-pill status-feedback">Needs Feedback</span></span>
-                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Programming%20Review%20%E2%80%94%20Python%20Basics" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Programming Review — Python Basics">Give feedback <span aria-hidden="true">↗</span></a>
+                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Programming%20Review%20%E2%80%94%20Python%20Basics" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Programming Review — Python Basics">Send feedback</a>
               </li>
 
               <li>
                 <a href="https://aspiece.github.io/Agile-Methodology-Module/" target="_blank" rel="noopener noreferrer">Agile Methodology Module</a>
                 <span class="item-desc">Eight-lesson student course on Agile and Scrum, including backlogs, sprint planning, teamwork, feedback, and iterative product development.<span class="project-kind">Learning Module</span><span class="status-pill status-progress">In Development</span><span class="status-pill status-feedback">Needs Feedback</span></span>
-                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Agile%20Methodology%20Module" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Agile Methodology Module">Give feedback <span aria-hidden="true">↗</span></a>
+                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Agile%20Methodology%20Module" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Agile Methodology Module">Send feedback</a>
               </li>
               <li>
                 <a href="https://ide.geneseelearninglab.com/" target="_blank" rel="noopener noreferrer">Python Lab</a>
                 <span class="item-desc">Browser-based Python editor with a debugger, tests, project files, and classroom coding templates.<span class="project-kind">Classroom App</span><span class="status-pill status-progress">In Development</span><span class="status-pill status-feedback">Needs Feedback</span></span>
-                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Python%20Lab" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Python Lab">Give feedback <span aria-hidden="true">↗</span></a>
+                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Python%20Lab" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Python Lab">Send feedback</a>
               </li>
             </ul>
           </section>
@@ -180,12 +200,12 @@
               <li>
                 <a href="https://aspiece.github.io/2nd-semester-introduction-to-computer-science/" target="_blank" rel="noopener noreferrer">Second-Semester Python Curriculum</a>
                 <span class="item-desc">Adapted TEALS second-semester curriculum with student lesson views, coding practice, and teaching resources.<span class="project-kind">Curriculum</span><span class="status-pill status-progress">In Development</span><span class="status-pill status-feedback">Needs Feedback</span></span>
-                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Second-Semester%20Python%20Curriculum" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Second-Semester Python Curriculum">Give feedback <span aria-hidden="true">↗</span></a>
+                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Second-Semester%20Python%20Curriculum" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Second-Semester Python Curriculum">Send feedback</a>
               </li>
               <li>
                 <a href="CS50P_Problem_Sets_Home.html">CS50P Problem Set Guides</a>
                 <span class="item-desc">Student-facing guide hub for CS50P problem sets and final-project support.<span class="project-kind">Curriculum</span><span class="status-pill status-progress">In Development</span><span class="status-pill status-feedback">Needs Feedback</span></span>
-                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20CS50P%20Problem%20Set%20Guides" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on CS50P Problem Set Guides">Give feedback <span aria-hidden="true">↗</span></a>
+                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20CS50P%20Problem%20Set%20Guides" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on CS50P Problem Set Guides">Send feedback</a>
               </li>
             </ul>
           </section>
@@ -197,23 +217,23 @@
               <li>
                 <a href="https://print.geneseelearninglab.com/" target="_blank" rel="noopener noreferrer">GCI 3D Print Farm</a>
                 <span class="item-desc">Explore student-operated 3D printing, training resources, and the print request and queue experience.<span class="project-kind">Project Showcase</span><span class="status-pill status-progress">In Development</span><span class="status-pill status-feedback">Needs Feedback</span></span>
-                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20GCI%203D%20Print%20Farm" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on GCI 3D Print Farm">Give feedback <span aria-hidden="true">↗</span></a>
+                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20GCI%203D%20Print%20Farm" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on GCI 3D Print Farm">Send feedback</a>
               </li>
               <li>
                 <a href="Digital_3D_Printing_Notebook_Bambu_A1.html">Digital 3D Printing Notebook</a>
                 <span class="item-desc">Guided student notebook for learning the Bambu A1 printing workflow.<span class="project-kind">Curriculum</span><span class="status-pill status-progress">In Development</span><span class="status-pill status-feedback">Needs Feedback</span></span>
-                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Digital%203D%20Printing%20Notebook" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Digital 3D Printing Notebook">Give feedback <span aria-hidden="true">↗</span></a>
+                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Digital%203D%20Printing%20Notebook" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Digital 3D Printing Notebook">Send feedback</a>
               </li>
 
               <li>
                 <a href="https://fentonbuttons.geneseelearninglab.com/" target="_blank" rel="noopener noreferrer">Button Designer — Fenton Robotics</a>
                 <span class="item-desc">Create Fenton Robotics buttons using team colors, logos, editable designs, and print-ready layouts.<span class="project-kind">Classroom App</span><span class="status-pill status-progress">In Development</span><span class="status-pill status-feedback">Needs Feedback</span></span>
-                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Button%20Designer%20%E2%80%94%20Fenton%20Robotics" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Button Designer — Fenton Robotics">Give feedback <span aria-hidden="true">↗</span></a>
+                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Button%20Designer%20%E2%80%94%20Fenton%20Robotics" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Button Designer — Fenton Robotics">Send feedback</a>
               </li>
               <li>
                 <a href="https://aspiece.github.io/button-studio/" target="_blank" rel="noopener noreferrer">Button Studio</a>
                 <span class="item-desc">General-purpose button design studio with customizable templates, artwork tools, and printable PDFs.<span class="project-kind">Classroom App</span><span class="status-pill status-progress">In Development</span><span class="status-pill status-feedback">Needs Feedback</span></span>
-                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Button%20Studio" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Button Studio">Give feedback <span aria-hidden="true">↗</span></a>
+                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Button%20Studio" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Button Studio">Send feedback</a>
               </li>
             </ul>
           </section>
@@ -225,23 +245,23 @@
               <li>
                 <a href="AgileReview.html">Agile Brain Breaks</a>
                 <span class="item-desc">Interactive practice activities for revisiting Agile concepts and collaboration.<span class="project-kind">Classroom App</span><span class="status-pill status-progress">In Development</span><span class="status-pill status-feedback">Needs Feedback</span></span>
-                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Agile%20Brain%20Breaks" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Agile Brain Breaks">Give feedback <span aria-hidden="true">↗</span></a>
+                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Agile%20Brain%20Breaks" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Agile Brain Breaks">Send feedback</a>
               </li>
 
               <li>
                 <a href="GCI_Communications.html">Communication Brainbreaks</a>
                 <span class="item-desc">Explore communication-focused activities for teamwork and professionalism.<span class="project-kind">Classroom App</span><span class="status-pill status-progress">In Development</span><span class="status-pill status-feedback">Needs Feedback</span></span>
-                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Communication%20Brainbreaks" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Communication Brainbreaks">Give feedback <span aria-hidden="true">↗</span></a>
+                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Communication%20Brainbreaks" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Communication Brainbreaks">Send feedback</a>
               </li>
               <li>
                 <a href="IEfollowup.html">EI Base Camp Self-Check &amp; Sort</a>
                 <span class="item-desc">Reflect on emotional intelligence skills with a guided follow-up activity.<span class="project-kind">Learning Module</span><span class="status-pill status-progress">In Development</span><span class="status-pill status-feedback">Needs Feedback</span></span>
-                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20EI%20Base%20Camp%20Self-Check%20%26%20Sort" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on EI Base Camp Self-Check &amp; Sort">Give feedback <span aria-hidden="true">↗</span></a>
+                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20EI%20Base%20Camp%20Self-Check%20%26%20Sort" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on EI Base Camp Self-Check &amp; Sort">Send feedback</a>
               </li>
               <li>
                 <a href="High_Ropes_Teamwork_Follow_Up_Assignment.html">Ropes Course Teamwork Reflection</a>
                 <span class="item-desc">Blended learning and makeup assignment with required video analysis, Merrill-aligned prompts, and progress-based completion checks.<span class="project-kind">Learning Module</span><span class="status-pill status-progress">In Development</span><span class="status-pill status-feedback">Needs Feedback</span></span>
-                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Ropes%20Course%20Teamwork%20Reflection" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Ropes Course Teamwork Reflection">Give feedback <span aria-hidden="true">↗</span></a>
+                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Ropes%20Course%20Teamwork%20Reflection" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Ropes Course Teamwork Reflection">Send feedback</a>
               </li>
             </ul>
           </section>
@@ -253,12 +273,12 @@
               <li>
                 <a href="KPOPMath.html">K-Pop Math Trainer</a>
                 <span class="item-desc">Solve math tasks in a music-themed practice experience.<span class="project-kind">Classroom App</span><span class="status-pill status-progress">In Development</span><span class="status-pill status-feedback">Needs Feedback</span></span>
-                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20K-Pop%20Math%20Trainer" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on K-Pop Math Trainer">Give feedback <span aria-hidden="true">↗</span></a>
+                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20K-Pop%20Math%20Trainer" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on K-Pop Math Trainer">Send feedback</a>
               </li>
               <li>
                 <a href="OOOReview.html">Order of Operations Practice</a>
                 <span class="item-desc">Practice order-of-operations skills with immediate feedback and review.<span class="project-kind">Classroom App</span><span class="status-pill status-progress">In Development</span><span class="status-pill status-feedback">Needs Feedback</span></span>
-                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Order%20of%20Operations%20Practice" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Order of Operations Practice">Give feedback <span aria-hidden="true">↗</span></a>
+                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Order%20of%20Operations%20Practice" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Order of Operations Practice">Send feedback</a>
               </li>
             </ul>
           </section>
@@ -270,17 +290,17 @@
               <li>
                 <a href="https://ai.geneseelearninglab.com/" target="_blank" rel="noopener noreferrer">AI Literacy — Student Module</a>
                 <span class="item-desc">Eight interactive lessons introducing responsible AI use, prompting, privacy, ethics, bias, and real-world applications.<span class="project-kind">Learning Module</span><span class="status-pill status-progress">In Pilot</span></span>
-                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20AI%20Literacy%20%E2%80%94%20Student%20Module" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on AI Literacy — Student Module">Give feedback <span aria-hidden="true">↗</span></a>
+                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20AI%20Literacy%20%E2%80%94%20Student%20Module" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on AI Literacy — Student Module">Send feedback</a>
               </li>
               <li>
                 <a href="Model_Rescue_Simulation.html">Model Rescue Simulation</a>
                 <span class="item-desc">Run a 20-minute fictional model challenge to train, test, improve data, and compare results.<span class="project-kind">Classroom App</span><span class="status-pill status-progress">In Development</span><span class="status-pill status-feedback">Needs Feedback</span></span>
-                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Model%20Rescue%20Simulation" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Model Rescue Simulation">Give feedback <span aria-hidden="true">↗</span></a>
+                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Model%20Rescue%20Simulation" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Model Rescue Simulation">Send feedback</a>
               </li>
               <li>
                 <a href="https://tinyurl.com/2526TechPio" target="_blank" rel="noopener noreferrer">AI for Teachers &amp; Students: Building Capacity (opens in new tab)</a>
                 <span class="item-desc">Open the presentation slides used for the current class and showcase examples (Presented: February 26, 2026).<span class="project-kind">Project Showcase</span><span class="status-pill status-progress">In Development</span><span class="status-pill status-feedback">Needs Feedback</span></span>
-                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20AI%20for%20Teachers%20%26%20Students%3A%20Building%20Capacity" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on AI for Teachers &amp; Students: Building Capacity">Give feedback <span aria-hidden="true">↗</span></a>
+                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20AI%20for%20Teachers%20%26%20Students%3A%20Building%20Capacity" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on AI for Teachers &amp; Students: Building Capacity">Send feedback</a>
               </li>
             </ul>
           </section>
@@ -292,32 +312,32 @@
               <li>
                 <a href="https://careeressentials.geneseelearninglab.com/" target="_blank" rel="noopener noreferrer">Career Essentials: Skills for Workplace Success</a>
                 <span class="item-desc">Career-readiness lessons on communication, trust, teamwork, problem-solving, leadership, employee readiness, and professional growth.<span class="project-kind">Learning Module</span><span class="status-pill status-progress">In Development</span><span class="status-pill status-feedback">Needs Feedback</span></span>
-                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Career%20Essentials%3A%20Skills%20for%20Workplace%20Success" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Career Essentials: Skills for Workplace Success">Give feedback <span aria-hidden="true">↗</span></a>
+                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Career%20Essentials%3A%20Skills%20for%20Workplace%20Success" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Career Essentials: Skills for Workplace Success">Send feedback</a>
               </li>
               <li>
                 <a href="Invoice_Generator.html">3D Print Invoice Generator</a>
                 <span class="item-desc">Create sample invoices quickly for business and office workflow practice.<span class="project-kind">Classroom App</span><span class="status-pill status-progress">In Development</span><span class="status-pill status-feedback">Needs Feedback</span></span>
-                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%203D%20Print%20Invoice%20Generator" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on 3D Print Invoice Generator">Give feedback <span aria-hidden="true">↗</span></a>
+                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%203D%20Print%20Invoice%20Generator" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on 3D Print Invoice Generator">Send feedback</a>
               </li>
               <li>
                 <a href="wordguide1.html">MOS Word Project 1</a>
                 <span class="item-desc">Follow a step-by-step walkthrough for MOS Word Project 1.<span class="project-kind">Curriculum</span><span class="status-pill status-progress">In Development</span><span class="status-pill status-feedback">Needs Feedback</span></span>
-                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20MOS%20Word%20Project%201" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on MOS Word Project 1">Give feedback <span aria-hidden="true">↗</span></a>
+                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20MOS%20Word%20Project%201" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on MOS Word Project 1">Send feedback</a>
               </li>
               <li>
                 <a href="wordguide2.html">MOS Word Project 2</a>
                 <span class="item-desc">Follow a step-by-step walkthrough for MOS Word Project 2.<span class="project-kind">Curriculum</span><span class="status-pill status-progress">In Development</span><span class="status-pill status-feedback">Needs Feedback</span></span>
-                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20MOS%20Word%20Project%202" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on MOS Word Project 2">Give feedback <span aria-hidden="true">↗</span></a>
+                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20MOS%20Word%20Project%202" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on MOS Word Project 2">Send feedback</a>
               </li>
               <li>
                 <a href="wordguide3.html">MOS Word Project 3</a>
                 <span class="item-desc">Follow a step-by-step walkthrough for MOS Word Project 3.<span class="project-kind">Curriculum</span><span class="status-pill status-progress">In Development</span><span class="status-pill status-feedback">Needs Feedback</span></span>
-                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20MOS%20Word%20Project%203" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on MOS Word Project 3">Give feedback <span aria-hidden="true">↗</span></a>
+                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20MOS%20Word%20Project%203" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on MOS Word Project 3">Send feedback</a>
               </li>
               <li>
                 <a href="Job_Application_Assignment.html">Job Application Builder</a>
                 <span class="item-desc">Launch the interactive, student-facing job application assignment with embedded videos, quiz checks, and progress tracking.<span class="project-kind">Learning Module</span><span class="status-pill status-progress">In Development</span><span class="status-pill status-feedback">Needs Feedback</span></span>
-                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Job%20Application%20Builder" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Job Application Builder">Give feedback <span aria-hidden="true">↗</span></a>
+                <a class="project-feedback-link" href="https://github.com/aspiece/GCI/issues/new?template=project-feedback.yml&amp;title=Project%20feedback%3A%20Job%20Application%20Builder" target="_blank" rel="noopener noreferrer" aria-label="Give feedback on Job Application Builder">Send feedback</a>
               </li>
             </ul>
           </section>
