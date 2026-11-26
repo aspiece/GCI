@@ -111,11 +111,64 @@ function pptx(groups){
  files['ppt/theme/theme1.xml']=theme();
  return packageZip(files,'application/vnd.openxmlformats-officedocument.presentationml.presentation');
 }
+function pdf(groups){
+ var PDF=root.jspdf&&root.jspdf.jsPDF;
+ if(!PDF)return Promise.reject(new Error('PDF export library is unavailable. Reload the page and try again.'));
+ var doc=new PDF({orientation:'portrait',unit:'pt',format:'letter',compress:true});
+ var pageWidth=612,pageHeight=792,margin=46,right=pageWidth-margin,bottom=pageHeight-52;
+ var cursor=0,page=0;
+ function headerPage(){
+  page++;
+  if(page>1)doc.addPage();
+  doc.setFillColor(25,51,65);
+  doc.rect(0,0,pageWidth,73,'F');
+  doc.setFont('times','bold');doc.setFontSize(20);doc.setTextColor(255,253,249);
+  doc.text('Classroom Group Assignments',margin,45);
+  doc.setDrawColor(168,119,71);doc.setLineWidth(3);doc.line(0,73,pageWidth,73);
+  doc.setTextColor(36,52,61);cursor=103;
+ }
+ function checkRoom(h){if(cursor+h>bottom)headerPage();}
+ function text(value,x,y){doc.text(String(value),x,y);}
+ function wrap(value,width){
+  return doc.splitTextToSize(String(value),width);
+ }
+ headerPage();
+ groups.forEach(function(group,index){
+  checkRoom(60);
+  doc.setFillColor(238,234,226);
+  doc.roundedRect(margin,cursor-16,right-margin,31,1.5,1.5,'F');
+  doc.setFont('times','bold');doc.setFontSize(15);doc.setTextColor(25,51,65);
+  text('Group '+(index+1),margin+10,cursor+4);
+  doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(83,97,107);
+  text(group.length+' '+(group.length===1?'student':'students'),right-83,cursor+3);
+  cursor+=29;
+  group.forEach(function(name){
+   doc.setFont('helvetica','normal');doc.setFontSize(11);doc.setTextColor(36,52,61);
+   var nameLines=wrap(name,right-margin-38);
+   for(var j=0;j<nameLines.length;j++){
+    checkRoom(19);
+    text((j===0?'•  ':'   ')+nameLines[j],margin+14,cursor+4);
+    cursor+=17;
+   }
+  });
+  cursor+=19;
+ });
+ var count=doc.getNumberOfPages();
+ for(var p=1;p<=count;p++){
+  doc.setPage(p);doc.setDrawColor(212,208,199);doc.line(margin,pageHeight-43,right,pageHeight-43);
+  doc.setTextColor(83,97,107);doc.setFont('helvetica','normal');doc.setFontSize(9);
+  doc.text('Genesee Learning Lab  |  Classroom Group Generator',margin,pageHeight-28);
+  doc.text('Page '+p+' of '+count,right,pageHeight-28,{align:'right'});
+ }
+ return Promise.resolve(doc.output('blob'));
+}
+
 function make(format,groups){
  if(!Array.isArray(groups)||!groups.length||groups.some(function(g){return !Array.isArray(g)||!g.length||g.some(function(n){return typeof n!=='string';});}))return Promise.reject(new Error('Generate or load a grouping before downloading.'));
  if(format==='docx')return docx(groups);
  if(format==='xlsx')return xlsx(groups);
  if(format==='pptx')return pptx(groups);
+ if(format==='pdf')return pdf(groups);
  return Promise.reject(new Error('Unsupported document format.'));
 }
 root.GroupExport={make:make};
