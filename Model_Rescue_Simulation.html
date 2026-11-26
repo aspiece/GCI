@@ -2827,7 +2827,7 @@
               <div class="reflection-prompt-grid">
                 <div class="field-card">
                   <label for="reflectionFix">What changed in the training data?</label>
-                  <textarea id="reflectionFix" placeholder="Describe the targeted training examples that helped Version 2 improve."></textarea>
+                  <textarea id="reflectionFix" placeholder="Describe the training examples you selected and whether they addressed the missing pattern."></textarea>
                 </div>
                 <div class="field-card">
                   <label for="reflectionEvidence">What evidence supports your final decision?</label>
@@ -2860,8 +2860,8 @@
                 </div>
 
                 <div class="field-card">
-                  <label for="reflectionPerformance">Version 2 performed</label>
-                  <select id="reflectionPerformance">
+                  <label for="reflectionPerformance">Version 2 performed (filled from the comparison)</label>
+                  <select id="reflectionPerformance" disabled>
                     <option value="">Select one...</option>
                     <option value="better">better</option>
                     <option value="worse">worse</option>
@@ -4466,7 +4466,7 @@
           box.textContent = 'Complete the comparison first.';
           return;
         }
-        box.textContent = 'Evidence: Version 1 got ' + state.compare.v1Score + ' of 6 correct. Version 2 got ' + state.compare.v2Score + ' of 6 correct. Middle-range examples: ' + getMiddleRangeRepresentationStatus(2) + '. Human review: required. Test set: 6 records.';
+        box.textContent = 'Evidence: Version 1 got ' + state.compare.v1Score + ' of 6 correct. Version 2 got ' + state.compare.v2Score + ' of 6 correct. Middle-range examples: ' + getMiddleRangeRepresentationStatus(2) + '. Human review: required. Development comparison: 6 records. Fresh independent testing required.';
       }
 
       function renderAuthoritySelection() {
@@ -4656,7 +4656,7 @@
           'I selected new training records that ' + recordReason + '. ' +
           'Version 2 performed ' + (performance === 'the same' ? 'the same as' : performance + ' than') + ' Version 1. ' +
           'A trained person should make the final decision because ' + oversight + '. ' +
-          'What fixed the model: ' + fix + '. ' +
+          'Training changes: ' + fix + '. ' +
           'Evidence for my decision: ' + evidence + '. ' +
           'Evaluation limit: these six practice records helped guide the rescue; a fresh independent test is required.';
       }
@@ -4802,6 +4802,7 @@
         }
         var finishMission = function (message, type) {
           markStageComplete(8);
+          state.datasetReviewRequired = false;
           saveState();
           renderAll();
           showFeedback('copyReportStatus', message, type);
