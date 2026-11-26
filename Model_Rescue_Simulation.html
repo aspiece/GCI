@@ -2406,6 +2406,15 @@
                 </div>
               </button></li>
 
+              <li><button class="mission-card" id="mission-hvac" type="button" data-mission="hvac" aria-pressed="false">
+                <span class="mission-card-check" aria-hidden="true">✓</span>
+                <div>
+                  <div class="mission-card-icon" aria-hidden="true">🛠️</div>
+                  <h3>HVAC Equipment Review Model</h3>
+                  <p>Review fictional HVAC equipment inspection scores and decide whether the model needs more testing. These are practice scores, not real equipment readings or safety limits.</p>
+                </div>
+              </button></li>
+
               <li><button class="mission-card" id="mission-veterinary" type="button" data-mission="veterinary" aria-pressed="false">
                 <span class="mission-card-check" aria-hidden="true">✓</span>
                 <div>
@@ -2596,9 +2605,10 @@
               <p class="task-step">Step 5 of 8</p>
               <h2 id="stage5-heading" class="stage-heading" tabindex="-1">Choose Three Rescue Records</h2>
               <p class="task-goal">Add exactly three examples that fill the missing area you found.</p>
-              <p class="task-instruction">Records that fill the missing area give Version 2 more practice with the cases Version 1 kept getting wrong.</p>
+              <p class="task-instruction">Choose new training examples that address the missing pattern. None of these records exactly matches a comparison record. Do not copy comparison records into training.</p>
             </header>
 
+            <p id="datasetReviewNotice" class="feedback-box warning" role="status" hidden>Rescue examples were updated to keep them separate from comparison records. Your earlier practice and written notes are preserved. Select three records again, retrain, and revise your report using the new results.</p>
             <div id="rescueCounter" class="task-status" aria-live="polite">Select exactly 3 rescue records. 0 of 3 selected.</div>
             <div id="rescueSetSummary" class="feedback-box">Choose the records that best fill the missing area.</div>
             <div id="rescueSelectionFeedback" class="feedback-box">Select a rescue record to start.</div>
@@ -2665,7 +2675,7 @@
             <header class="stage-task-header">
               <p class="task-step">Step 6 of 8</p>
               <h2 id="stage6-heading" class="stage-heading" tabindex="-1">Compare Version 1 and Version 2</h2>
-              <p class="task-goal">Look at the evidence below. Then decide whether the results prove the model is ready for real-world use.</p>
+              <p class="task-goal">Compare both versions on the same six practice records. We used these results to identify the weak spot, so this is a development comparison, not a final independent test. A fresh set of unseen records is needed before trusting the model.</p>
             </header>
 
             <div id="retestComparisonArea" aria-live="polite"></div>
@@ -2683,7 +2693,7 @@
                 <div class="inline-choice">
                   <label for="perfect-no">
                     <input id="perfect-no" type="radio" name="perfect" value="no" />
-                    No. The model improved, but six test records are not enough to prove it is safe.
+                    No. Six practice records cannot prove safety, even if the score improves. A fresh, independent test and human review are needed.
                   </label>
                 </div>
               </fieldset>
@@ -2798,7 +2808,7 @@
                 <span id="achievementLabel" class="status-badge current">Mission in progress</span>
               </div>
               <h3 id="report-complete-heading">Final Rescue Report</h3>
-              <p>Use your results to explain what changed from Version 1 to Version 2 and what decision the evidence supports.</p>
+              <p>Use your results to explain what changed from Version 1 to Version 2 and what decision the evidence supports. Your mission, model scores and selected record IDs are added automatically to the report.</p>
             </div>
 
             <div class="report-summary-grid">
@@ -2817,11 +2827,11 @@
               <div class="reflection-prompt-grid">
                 <div class="field-card">
                   <label for="reflectionFix">What changed in the training data?</label>
-                  <textarea id="reflectionFix" placeholder="Describe the targeted training examples that helped Version 2 improve."></textarea>
+                  <textarea id="reflectionFix" placeholder="Describe the training examples you selected and whether they addressed the missing pattern."></textarea>
                 </div>
                 <div class="field-card">
                   <label for="reflectionEvidence">What evidence supports your final decision?</label>
-                  <textarea id="reflectionEvidence" placeholder="Point to the comparison results, error pattern, and human-review reasoning."></textarea>
+                  <textarea id="reflectionEvidence" placeholder="Explain what the score difference and error pattern mean. The actual scores and record IDs are included automatically."></textarea>
                 </div>
               </div>
             </section>
@@ -2850,8 +2860,8 @@
                 </div>
 
                 <div class="field-card">
-                  <label for="reflectionPerformance">Version 2 performed</label>
-                  <select id="reflectionPerformance">
+                  <label for="reflectionPerformance">Version 2 performed (filled from the comparison)</label>
+                  <select id="reflectionPerformance" disabled>
                     <option value="">Select one...</option>
                     <option value="better">better</option>
                     <option value="worse">worse</option>
@@ -2935,12 +2945,12 @@
 
       var IMPROVEMENTS = [
         { id: 'I1', f: [9, 9, 8, 9], y: 'Ready', note: 'High-quality Ready case' },
-        { id: 'I2', f: [6, 5, 6, 5], y: 'Needs Review', note: 'Borderline Needs Review case' },
+        { id: 'I2', f: [6, 4, 5, 6], y: 'Needs Review', note: 'Borderline Needs Review case' },
         { id: 'I3', f: [8, 8, 9, 8], y: 'Ready', note: 'Another strong Ready case' },
         { id: 'I4', f: [2, 2, 3, 2], y: 'Needs Review', note: 'Very low Needs Review case' },
-        { id: 'I5', f: [5, 6, 5, 6], y: 'Needs Review', note: 'Borderline Needs Review case' },
+        { id: 'I5', f: [5, 6, 6, 4], y: 'Needs Review', note: 'Borderline Needs Review case' },
         { id: 'I6', f: [7, 8, 7, 7], y: 'Ready', note: 'Mid-high Ready case' },
-        { id: 'I7', f: [5, 5, 5, 5], y: 'Needs Review', note: 'Middle Needs Review case' },
+        { id: 'I7', f: [4, 5, 5, 6], y: 'Needs Review', note: 'Middle Needs Review case' },
         { id: 'I8', f: [4, 8, 4, 8], y: 'Ready', note: 'Unusual pattern Ready case' }
       ];
 
@@ -2971,6 +2981,7 @@
 
       var logic = window.ModelRescueLogic || {};
       var STORAGE_KEY = 'gll-model-rescue-simulation-redesign-v2';
+      var DATASET_VERSION = 3;
       var TOTAL_STEPS = 8;
       var PERFORMING_WELL_RATIO = 0.8;
       var UTILITY_GAP_PX = 16;
@@ -2992,6 +3003,12 @@
           icon: '🚗',
           description: 'Made-up car inspection records for a model review.',
           featureLabels: ['Performance Score', 'Safety Check', 'Electrical Score', 'Frame Integrity']
+        },
+        hvac: {
+          name: 'HVAC Equipment Review Model',
+          icon: '🛠️',
+          description: 'Made-up HVAC inspection scores for learning about model behavior, not actual service readings or approved safety limits.',
+          featureLabels: ['Airflow Score', 'Condition Score', 'Electrical Review Score', 'Service Readiness']
         },
         veterinary: {
           name: 'Veterinary Review Model',
@@ -3021,6 +3038,8 @@
 
       function createDefaultState() {
         return {
+          datasetVersion: DATASET_VERSION,
+          datasetReviewRequired: false,
           started: false,
           currentStage: 0,
           completedStages: [],
@@ -3063,7 +3082,9 @@
           }
           var parsed = JSON.parse(raw);
           var base = createDefaultState();
-          return {
+          var restored = {
+            datasetVersion: parsed.datasetVersion,
+            datasetReviewRequired: !!parsed.datasetReviewRequired,
             started: !!parsed.started,
             currentStage: typeof parsed.currentStage === 'number' ? parsed.currentStage : base.currentStage,
             completedStages: Array.isArray(parsed.completedStages) ? parsed.completedStages : base.completedStages,
@@ -3096,15 +3117,40 @@
               evidence: parsed.reflections && typeof parsed.reflections.evidence === 'string' ? parsed.reflections.evidence : ''
             }
           };
+          return migrateDatasetState(restored);
         } catch (error) {
           return createDefaultState();
         }
       }
 
+      // Keep earlier practice and written notes, but invalidate comparisons based on old rescue data.
+      function migrateDatasetState(saved) {
+        if (saved.datasetVersion === DATASET_VERSION) return saved;
+        saved.datasetVersion = DATASET_VERSION;
+        if (saved.currentStage >= 5 || saved.selectedImprovements.length || saved.compare || saved.improvementApplied) {
+          saved.currentStage = 5;
+          saved.completedStages = saved.completedStages.filter(function (stage) { return stage <= 4; });
+          saved.selectedImprovements = [];
+          saved.rationaleChoice = '';
+          saved.improvementApplied = false;
+          saved.compare = null;
+          saved.retestAnswer = '';
+          saved.retestCorrect = false;
+          saved.authorityChoice = '';
+          saved.authorityCorrect = false;
+          saved.understandingAnswer = '';
+          saved.understandingCorrect = false;
+          saved.reflections.performance = '';
+          saved.reflections.recordReason = '';
+          saved.datasetReviewRequired = true;
+        }
+        return saved;
+      }
+
       var state = loadState();
 
       function saveState() {
-        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (error) { /* Continue in memory if browser storage is blocked. */ }
       }
 
       function clearNode(node) {
@@ -4385,9 +4431,9 @@
           return;
         }
         if (state.retestCorrect) {
-          showFeedback('retestFeedback', 'Correct. Version 2 improved, but six test records are not enough to prove that the model is safe. It still needs human review and more testing in a safe, supervised setting.', 'good');
+          showFeedback('retestFeedback', 'Correct. These six practice records helped guide the improvement. Whether the score improved or not, the model still needs fresh, independent testing and qualified human review.', 'good');
         } else {
-          showFeedback('retestFeedback', 'Not yet. Better results are useful, but they are not enough to prove the model is safe. Think about how many records were tested.', 'bad');
+          showFeedback('retestFeedback', 'Not yet. A small set used to guide model changes cannot establish real-world safety. Think about why fresh records are needed.', 'bad');
         }
       }
 
@@ -4420,7 +4466,7 @@
           box.textContent = 'Complete the comparison first.';
           return;
         }
-        box.textContent = 'Evidence: Version 1 got ' + state.compare.v1Score + ' of 6 correct. Version 2 got ' + state.compare.v2Score + ' of 6 correct. Middle-range examples: ' + getMiddleRangeRepresentationStatus(2) + '. Human review: required. Test set: 6 records.';
+        box.textContent = 'Evidence: Version 1 got ' + state.compare.v1Score + ' of 6 correct. Version 2 got ' + state.compare.v2Score + ' of 6 correct. Middle-range examples: ' + getMiddleRangeRepresentationStatus(2) + '. Human review: required. Development comparison: 6 records. Fresh independent testing required.';
       }
 
       function renderAuthoritySelection() {
@@ -4464,7 +4510,7 @@
           if (checkBtn) {
             checkBtn.classList.add('hidden');
           }
-          showFeedback('understandingFeedback', 'Correct. Six test records is a very small sample. Models must be tested with many more examples, including new and unusual cases, before they can be trusted in real settings.', 'good');
+          showFeedback('understandingFeedback', 'Correct. Six practice records are a very small sample, and they helped guide the improvement. Test the final model on many more independent, unseen examples, including unusual cases, before trusting it in real settings.', 'good');
         } else {
           if (checkBtn) {
             checkBtn.classList.remove('hidden');
@@ -4579,7 +4625,7 @@
       }
 
       function renderReflectionFields() {
-        if (!state.reflections.performance && state.compare) {
+        if (state.compare && state.reflections.performance !== getPerformanceWord()) {
           state.reflections.performance = getPerformanceWord();
           saveState();
         }
@@ -4595,19 +4641,24 @@
       function buildReportText() {
         var weakSpot = state.reflections.weakSpot;
         var recordReason = state.reflections.recordReason;
-        var performance = state.reflections.performance;
+        var performance = getPerformanceWord();
         var oversight = state.reflections.oversight.trim();
         var fix = state.reflections.fix.trim();
         var evidence = state.reflections.evidence.trim();
-        if (!weakSpot || !recordReason || !performance || !oversight || !fix || !evidence) {
+        if (!getMission() || !state.compare || state.selectedImprovements.length !== 3 || !weakSpot || !recordReason || !performance || !oversight || !fix || !evidence) {
           return '';
         }
-        return 'I tested the made-up model and found that it struggled when ' + weakSpot + '. ' +
+        return 'Mission: ' + getMission().name + '. ' +
+          'Version 1 model result: ' + state.compare.v1Score + '/' + TEST.length + ' (' + formatPercent(state.compare.v1Score, TEST.length) + '%). ' +
+          'Rescue record IDs: ' + state.selectedImprovements.join(', ') + '. ' +
+          'Version 2 model result: ' + state.compare.v2Score + '/' + TEST.length + ' (' + formatPercent(state.compare.v2Score, TEST.length) + '%). ' +
+          'I tested the made-up model and found that it struggled when ' + weakSpot + '. ' +
           'I selected new training records that ' + recordReason + '. ' +
           'Version 2 performed ' + (performance === 'the same' ? 'the same as' : performance + ' than') + ' Version 1. ' +
           'A trained person should make the final decision because ' + oversight + '. ' +
-          'What fixed the model: ' + fix + '. ' +
-          'Evidence for my decision: ' + evidence + '.';
+          'Training changes: ' + fix + '. ' +
+          'Evidence for my decision: ' + evidence + '. ' +
+          'Evaluation limit: these six practice records helped guide the rescue; a fresh independent test is required.';
       }
 
       function updateReportPreview() {
@@ -4622,7 +4673,7 @@
 
       function resetState() {
         state = createDefaultState();
-        window.localStorage.removeItem(STORAGE_KEY);
+        try { window.localStorage.removeItem(STORAGE_KEY); } catch (error) { /* Continue with the in-memory reset. */ }
         hideFeedback('stage3Feedback');
         hideFeedback('patternQFeedback');
         hideFeedback('understandingFeedback');
@@ -4751,6 +4802,7 @@
         }
         var finishMission = function (message, type) {
           markStageComplete(8);
+          state.datasetReviewRequired = false;
           saveState();
           renderAll();
           showFeedback('copyReportStatus', message, type);
@@ -4981,6 +5033,7 @@
       }
 
       function renderAll() {
+        document.getElementById('datasetReviewNotice').hidden = !state.datasetReviewRequired;
         updateStagePanels();
         updateProgressUI();
         updateMissionSummary();
