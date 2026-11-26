@@ -683,6 +683,92 @@ $('delete-grouping').addEventListener('click',deleteSelectedGrouping);
 $('export-groupings').addEventListener('click',downloadGroupingBackup);
 $('import-groupings').addEventListener('click',function(){$('import-groupings-file').click();});
 $('import-groupings-file').addEventListener('change',importGroupingBackup);
+
+/* Four short guided tips; progress is recorded on this browser only. */
+var tourKey='gci-group-generator-tour-v1';
+var tourSteps=[
+ {target:'.start-here',title:'Choose where to start',description:'Load a saved class list or restore groups you used before. New to the tool? You can enter a class list in the next section.'},
+ {target:'#generate',title:'Create your groups',description:'Enter one student per line, choose students per group or the number of groups, then select Generate groups. Load example lets you practice without student names.'},
+ {target:'.result-header',title:'Adjust and save',description:'Use the Move menu beside a student to adjust groups. Save groups to keep the exact assignments. You can also reshuffle or undo the last change.'},
+ {target:'.more-actions',title:'Present or share',description:'Use Present for a clean classroom display. Open More actions to copy, print, or download PDF, Word, Excel, PowerPoint, or text.'}
+];
+var tourIndex=-1,tourTarget=null,tourReturnFocus=null;
+function tourVisited(){
+ try{return localStorage.getItem(tourKey)==='seen';}catch(e){return false;}
+}
+function tourRemember(){
+ try{localStorage.setItem(tourKey,'seen');}catch(e){}
+}
+function positionTour(){
+ var card=$('quick-tour'),target=tourTarget;
+ if(card.hidden||!target||typeof target.getBoundingClientRect!=='function')return;
+ var rect=target.getBoundingClientRect();
+ var screenW=window.innerWidth||1024,screenH=window.innerHeight||800;
+ var width=card.offsetWidth||Math.min(346,screenW-24),height=card.offsetHeight||235;
+ var left=Math.max(12,Math.min(screenW-width-12,rect.left+(rect.width-width)/2));
+ var above=rect.top-height-14,below=rect.bottom+14;
+ var top=below+height<=screenH-12?below:(above>=12?above:Math.max(12,screenH-height-12));
+ card.style.left=Math.round(left)+'px';card.style.top=Math.round(top)+'px';
+}
+function showTourStep(index){
+ if(tourIndex<0)return;
+ if(tourTarget)tourTarget.classList.remove('tour-target');
+ tourIndex=Math.max(0,Math.min(tourSteps.length-1,index));
+ var step=tourSteps[tourIndex];
+ tourTarget=document.querySelector(step.target);
+ $('tour-progress').textContent='Step '+(tourIndex+1)+' of '+tourSteps.length;
+ $('tour-title').textContent=step.title;
+ $('tour-description').textContent=step.description;
+ $('tour-back').disabled=tourIndex===0;
+ $('tour-next').textContent=tourIndex===tourSteps.length-1?'Finish':'Next';
+ if(tourTarget){
+  tourTarget.classList.add('tour-target');
+  if(typeof tourTarget.scrollIntoView==='function')tourTarget.scrollIntoView({behavior:'auto',block:'center'});
+ }
+ positionTour();
+ // The heading announces the new step to assistive technology users.
+ if(typeof $('tour-title').focus==='function')$('tour-title').focus();
+}
+function startTour(){
+ if(tourIndex>=0||document.body.classList.contains('projector'))return;
+ tourReturnFocus=document.activeElement;
+ tourIndex=0;
+ $('quick-tour').hidden=false;$('tour-scrim').hidden=false;
+ document.body.classList.add('tour-active');
+ showTourStep(0);
+}
+function endTour(){
+ if(tourIndex<0)return;
+ tourRemember();
+ if(tourTarget)tourTarget.classList.remove('tour-target');
+ tourTarget=null;tourIndex=-1;
+ $('quick-tour').hidden=true;$('tour-scrim').hidden=true;
+ document.body.classList.remove('tour-active');
+ var focusBack=tourReturnFocus&&tourReturnFocus!==document.body?tourReturnFocus:$('tour-trigger');
+ tourReturnFocus=null;
+ if(focusBack&&typeof focusBack.focus==='function')focusBack.focus();
+}
+$('tour-trigger').addEventListener('click',startTour);
+$('tour-skip').addEventListener('click',endTour);
+$('tour-scrim').addEventListener('click',endTour);
+$('tour-next').addEventListener('click',function(){
+ if(tourIndex===tourSteps.length-1)endTour();
+ else showTourStep(tourIndex+1);
+});
+$('tour-back').addEventListener('click',function(){if(tourIndex>0)showTourStep(tourIndex-1);});
+document.addEventListener('keydown',function(event){
+ if(tourIndex<0)return;
+ if(event.key==='Escape'){event.preventDefault();endTour();return;}
+ if(event.key!=='Tab')return;
+ var focusable=[$('tour-skip'),$('tour-back'),$('tour-next')].filter(function(button){return !button.disabled;});
+ var first=focusable[0],last=focusable[focusable.length-1];
+ if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+ else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+});
+window.addEventListener('resize',positionTour);
+window.addEventListener('scroll',positionTour);
+if(!tourVisited())setTimeout(function(){if(!tourVisited())startTour();},600);
+
 loadOptions();loadGroupingOptions();refresh();render();
 var navToggle=document.querySelector('.nav-toggle'),navList=document.getElementById('primary-nav-list');
 if(navToggle&&navList){
