@@ -308,3 +308,33 @@ test('switching saved classes requires permission before discarding an active gr
  el.undo.click();
  assert.deepEqual(a.students(),before);
 });
+
+
+test('last-name-first comma names stay together unless separator option is selected',()=>{
+ const a=launch(),{el}=a;
+ el.roster.value='Smith, John\nLopez, Maria';
+ el.roster.fire('input');
+ assert.equal(el.students.textContent,2);
+ el.generate.click();
+ assert.equal(a.students().length,2);
+ assert.ok(a.students().includes('Smith, John'));
+ el['comma-separator'].checked=true;
+ el['comma-separator'].fire('change');
+ assert.equal(el.students.textContent,4);
+ assert.equal(el.groups.children.length,0);
+ el.undo.click();
+ assert.equal(el['comma-separator'].checked,false);
+ assert.equal(a.students().length,2);
+ assert.ok(a.students().includes('Lopez, Maria'));
+});
+test('comma-separated roster mode remains available as an explicit option',()=>{
+ const a=launch(),{el}=a;
+ el.roster.value='Alex,Sam,Jordan';
+ el.roster.fire('input');
+ assert.equal(el.students.textContent,1);
+ el['comma-separator'].checked=true;
+ el['comma-separator'].fire('change');
+ assert.equal(el.students.textContent,3);
+ el.generate.click();
+ assert.deepEqual(new Set(a.students()),new Set(['Alex','Sam','Jordan']));
+});
