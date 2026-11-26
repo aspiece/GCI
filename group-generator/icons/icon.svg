@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="Classroom Group Generator">
+  <rect width="512" height="512" rx="88" fill="#193341"/>
+  <rect x="113" y="106" width="286" height="300" rx="34" fill="#fffdf9"/>
+  <rect x="136" y="136" width="240" height="35" rx="9" fill="#a87747"/>
+  <g fill="#193341">
+    <circle cx="184" cy="237" r="22"/><rect x="158" y="270" width="52" height="78" rx="15"/>
+    <circle cx="256" cy="237" r="22"/><rect x="230" y="270" width="52" height="78" rx="15"/>
+    <circle cx="328" cy="237" r="22"/><rect x="302" y="270" width="52" height="78" rx="15"/>
+  </g>
+  <rect x="154" y="364" width="204" height="13" rx="7" fill="#68817b"/>
+</svg>
