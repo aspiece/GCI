@@ -51,15 +51,18 @@ function launch(){
  };
  const location={origin:'https://geneseelearninglab.com',pathname:'/group-generator/'};
  const navigator={clipboard:{writeText:async text=>{navigator.copied=text}}};
- const URL={createObjectURL:()=> 'blob:generated',revokeObjectURL:()=>{}};
- function Blob(){}
- const confirm=()=>true,prompt=()=> 'Period A';
+ const downloads=new Map();let nextBlob=0;
+ const URL={createObjectURL:file=>{const url='blob:generated-'+(++nextBlob);downloads.set(url,file);return url},revokeObjectURL:()=>{}};
+ const Blob=globalThis.Blob;
+ let promptValue='Period A',confirmValue=true;
+ const confirm=()=>confirmValue,prompt=()=>promptValue;
+ window.GroupExport={make:async(format,items)=>new Blob(['office-'+format+'-'+items.length])};
  new Function('document','window','localStorage','navigator','location','URL','Blob','confirm','prompt','setTimeout','clearTimeout','Uint32Array',script)(
   document,window,localStorage,navigator,location,URL,Blob,confirm,prompt,()=>0,()=>{},Uint32Array
  );
  function sizes(){return el.groups.children.map(card=>card.children.at(-1).children.length)}
  function students(){return el.groups.children.flatMap(card=>card.children.at(-1).children.map(li=>li.children[0].textContent))}
- return {el,store,window,navigator,toggle,sizes,students}
+ return {el,store,window,navigator,toggle,sizes,students,downloads,setPrompt:value=>{promptValue=value},setConfirm:value=>{confirmValue=value}}
 }
 test('starts with disabled result actions and validates an empty roster',()=>{
  const {el}=launch();
@@ -136,4 +139,88 @@ test('shares only the application URL; copying and presentation controls work',a
  assert.equal(toggle.attrs['aria-expanded'],'true');
  toggle.click();
  assert.equal(toggle.attrs['aria-expanded'],'false');
+});
+
+
+test('saving a grouping preserves exact manual moves and restores them locally',()=>{
+ const a=launch(),{el,store}=a;
+ el.roster.value='Alex\nSam\nTaylor\nJordan';el.roster.fire('input');
+ el['mode-count'].click();el.quantity.value='2';el.quantity.fire('change');el.generate.click();
+ const move=el.groups.children[0].children[1].children[0].children[1];
+ move.value='1';move.fire('change');
+ const expected=a.students().slice();
+ const sizes=a.sizes().slice();
+ assert.deepEqual(sizes,[1,3]);
+ assert.equal(el['save-grouping'].disabled,false);
+ el['save-grouping'].click();
+ const stored=JSON.parse(store.get('gci-group-generator-groupings-v1'));
+ assert.equal(stored['Period A'].mode,'count');
+ assert.equal(stored['Period A'].quantity,2);
+ assert.deepEqual(stored['Period A'].groups.map(group=>group.length),sizes);
+ el.clear.click();
+ assert.equal(el.groups.children.length,0);
+ el['load-grouping'].click();
+ assert.deepEqual(a.students(),expected);
+ assert.deepEqual(a.sizes(),sizes);
+ assert.equal(el.quantity.value,2);
+ assert.equal(el['mode-count'].attrs['aria-pressed'],'true');
+ assert.match(el['saved-grouping-state'].textContent,/saved/);
+});
+test('update, duplicate and delete are separate from saved class lists',()=>{
+ const a=launch(),{el,store,setPrompt}=a;
+ el.sample.click();el.generate.click();
+ el['save-grouping'].click();
+ const key='gci-group-generator-groupings-v1';
+ assert.equal(Object.keys(JSON.parse(store.get(key))).length,1);
+ const before=JSON.parse(store.get(key))['Period A'].groups.map(group=>group.slice());
+ const move=el.groups.children[0].children[1].children[0].children[1];
+ move.value='1';move.fire('change');
+ assert.match(el['saved-grouping-state'].textContent,/unsaved changes/);
+ el['update-grouping'].click();
+ const updated=JSON.parse(store.get(key))['Period A'].groups;
+ assert.notDeepEqual(updated,before);
+ setPrompt('Period A Copy');
+ el['duplicate-grouping'].click();
+ const duplicated=JSON.parse(store.get(key));
+ assert.deepEqual(duplicated['Period A Copy'].groups,updated);
+ el['delete-grouping'].click();
+ assert.ok(JSON.parse(store.get(key))['Period A']);
+ assert.equal(JSON.parse(store.get(key))['Period A Copy'],undefined);
+ assert.equal(store.get('gci-group-generator-rosters-v1'),null);
+});
+test('JSON backup can be exported and imported, but invalid backups do not overwrite saved data',async()=>{
+ const a=launch(),{el,store,downloads,setConfirm}=a;
+ el.sample.click();el.generate.click();
+ el['save-grouping'].click();
+ el['export-groupings'].click();
+ assert.equal(downloads.size,1);
+ const backupText=await [...downloads.values()][0].text();
+ const backup=JSON.parse(backupText);
+ assert.equal(backup.kind,'gci-group-generator-groupings');
+ assert.ok(backup.groupings['Period A'].groups.length);
+ el['delete-grouping'].click();
+ assert.equal(Object.keys(JSON.parse(store.get('gci-group-generator-groupings-v1'))).length,0);
+ el['import-groupings-file'].files=[{size:backupText.length,text:async()=>backupText}];
+ await el['import-groupings-file'].fire('change');
+ assert.ok(JSON.parse(store.get('gci-group-generator-groupings-v1'))['Period A']);
+ const original=store.get('gci-group-generator-groupings-v1');
+ el['import-groupings-file'].files=[{size:30,text:async()=>'{not valid json'}];
+ await el['import-groupings-file'].fire('change');
+ assert.equal(store.get('gci-group-generator-groupings-v1'),original);
+ assert.match(el['saved-grouping-message'].textContent,/Import failed/);
+ const changed=JSON.parse(backupText);changed.groupings['Period A'].groups[0][0]='OTHER STUDENT';
+ changed.groupings['Period A'].roster[0]='OTHER STUDENT'; // May not match the first-group student, so reject import safely.
+ el['import-groupings-file'].files=[{size:1000,text:async()=>JSON.stringify(changed)}];
+ setConfirm(false);
+ await el['import-groupings-file'].fire('change');
+ assert.equal(store.get('gci-group-generator-groupings-v1'),original);
+});
+test('format selector triggers local Office download and keeps JSON backup separate',async()=>{
+ const a=launch(),{el,downloads}=a;
+ el.sample.click();el.generate.click();
+ el['export-format'].value='xlsx';
+ await el.download.click();
+ assert.equal(downloads.size,1);
+ assert.match(await [...downloads.values()][0].text(),/office-xlsx-6/);
+ assert.equal(el['export-groupings'].disabled,true);
 });
