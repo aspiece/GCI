@@ -114,6 +114,27 @@ body.projector .gg-app .mover{display:none!important}
  .gg-app *{color:#000!important;box-shadow:none!important}
 }
 
+
+.gg-app .saved-groupings{margin-top:23px;border-top:1px solid var(--gg-border);padding-top:22px}
+.gg-app .saved-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}
+.gg-app .saved-heading h3{font:700 20px/1.3 Georgia,"Times New Roman",serif;margin:0 0 5px}
+.gg-app .saved-heading .help{margin:0}
+.gg-app .saved-count{display:inline-block;white-space:nowrap;font-size:11px;font-weight:700;background:#eeeae2;border:1px solid #d4d0c7;padding:5px 9px;color:#415663}
+.gg-app .saved-grouping-main{display:grid;grid-template-columns:minmax(150px,1fr) auto auto auto;gap:8px;align-items:center}
+.gg-app .saved-grouping-main select{min-width:0}
+.gg-app .saved-state{margin:10px 0;color:#53616b}
+.gg-app .saved-groupings-manage{margin-top:13px}
+.gg-app .saved-groupings-manage>summary{cursor:pointer;font-size:12px;font-weight:700;color:#244b60;text-decoration:underline;text-underline-offset:3px;padding:5px 0}
+.gg-app .saved-groupings-manage>summary:focus-visible{outline:3px solid #a87747;outline-offset:2px}
+.gg-app .saved-grouping-tools{display:flex;gap:8px;flex-wrap:wrap;margin:11px 0}
+.gg-app .export-format-label{display:block;min-width:200px;max-width:275px}
+.gg-app .export-format-label select{width:100%;min-height:38px;font-size:12px;padding:7px;border-radius:2px}
+.gg-app .export-hint{margin:-3px 0 15px;font-size:11px}
+.gg-app .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.gg-app .saved-groupings-manage input[type=file][hidden]{display:none!important}
+@media(max-width:790px){.gg-app .saved-grouping-main{grid-template-columns:repeat(3,minmax(0,1fr))}.gg-app .saved-grouping-main select{grid-column:1/-1}.gg-app .saved-grouping-main .btn{width:100%;padding:9px 5px}.gg-app .export-format-label{min-width:0;max-width:100%;flex:1 1 220px}}
+@media(max-width:400px){.gg-app .saved-heading{flex-wrap:wrap}.gg-app .saved-grouping-main{grid-template-columns:repeat(2,minmax(0,1fr))}.gg-app #load-grouping{grid-column:1}.gg-app #save-grouping{grid-column:2}.gg-app #update-grouping{grid-column:1/-1}}
+
 </style>
 </head>
 <body>
@@ -170,14 +191,46 @@ body.projector .gg-app .mover{display:none!important}
     <div class="toolbar">
      <button id="shuffle" class="btn" type="button" disabled>Reshuffle</button>
      <button id="copy" class="btn" type="button" disabled>Copy</button>
-     <button id="download" class="btn" type="button" disabled>Export</button>
+     <label class="export-format-label" for="export-format"><span class="visually-hidden">Download format</span>
+      <select id="export-format" aria-label="Choose group export format">
+       <option value="txt">Plain text (.txt)</option>
+       <option value="docx">Word / Google Docs (.docx)</option>
+       <option value="xlsx">Excel / Google Sheets (.xlsx)</option>
+       <option value="pptx">PowerPoint / Google Slides (.pptx)</option>
+      </select>
+     </label>
+     <button id="download" class="btn" type="button" disabled>Download</button>
      <button id="print" class="btn" type="button" disabled>Print</button>
      <button id="project" class="btn" type="button" disabled>Projector view</button>
     </div>
    </div>
    <div id="empty" class="empty"><div><div class="empty-icon" aria-hidden="true">01</div><h3>Start with a class list</h3><p>Add a roster or try the example class, then select <strong>Generate groups</strong>. Your balanced groups will appear here.</p></div></div>
+   <p class="export-hint help">To use Google Docs, Sheets, or Slides, upload the downloaded Office file to Google Drive.</p>
    <div id="groups" class="groups" aria-live="polite" hidden></div>
    <div class="help" id="move-help" hidden style="margin-top:14px">Groups are initially balanced by size. Use the Move menu beside a name to adjust assignments. Empty groups are removed automatically.</div>
+   <section class="saved-groupings" aria-labelledby="saved-groupings-title">
+    <div class="saved-heading"><div><h3 id="saved-groupings-title">Saved groupings</h3><p class="help">Keep exact student assignments for future lessons, including manual changes.</p></div><span id="saved-grouping-count" class="saved-count">0 saved</span></div>
+    <label for="saved-groupings">Saved arrangements</label>
+    <div class="saved-grouping-main">
+      <select id="saved-groupings" aria-label="Choose saved group assignments"><option value="">Choose a saved grouping...</option></select>
+      <button class="btn" id="load-grouping" type="button" disabled>Load</button>
+      <button class="btn btn-primary" id="save-grouping" type="button" disabled>Save new</button>
+      <button class="btn" id="update-grouping" type="button" disabled>Update</button>
+    </div>
+    <p id="saved-grouping-state" class="help saved-state">Generate groups to save your first arrangement.</p>
+    <details class="saved-groupings-manage">
+      <summary>Manage saved groupings and backups</summary>
+      <div class="saved-grouping-tools">
+        <button id="duplicate-grouping" class="btn" type="button" disabled>Duplicate selected</button>
+        <button id="delete-grouping" class="btn btn-clear" type="button" disabled>Delete selected</button>
+        <button id="export-groupings" class="btn" type="button" disabled>Download JSON backup</button>
+        <button id="import-groupings" class="btn" type="button">Import JSON backup</button>
+        <input id="import-groupings-file" type="file" accept=".json,application/json" hidden aria-label="Choose a saved grouping JSON backup">
+      </div>
+      <p class="help">Backups include student names. Keep them in a school-approved, secure location. Browser saves are device-specific and are not automatically synced.</p>
+    </details>
+    <p id="saved-grouping-message" class="status" role="status" aria-live="polite"></p>
+   </section>
   </section>
  </div>
 </main>
@@ -194,6 +247,8 @@ body.projector .gg-app .mover{display:none!important}
  </div>
 </footer>
 <div id="toast" role="status" hidden></div>
+<script src="vendor/jszip.min.js"></script>
+<script src="export-formats.js"></script>
 <script>
 (function(){
 'use strict';
