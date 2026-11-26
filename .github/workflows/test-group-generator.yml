@@ -1,0 +1,29 @@
+name: Test Classroom Group Generator
+
+on:
+  push:
+    paths:
+      - 'group-generator/**'
+      - '.github/workflows/test-group-generator.yml'
+  pull_request:
+    paths:
+      - 'group-generator/**'
+      - '.github/workflows/test-group-generator.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Group Generator regression tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run Group Generator tests
+        run: node --test group-generator/tests/group-generator.test.cjs
