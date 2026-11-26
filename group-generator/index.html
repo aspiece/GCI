@@ -135,6 +135,55 @@ body.projector .gg-app .mover{display:none!important}
 @media(max-width:790px){.gg-app .saved-grouping-main{grid-template-columns:repeat(3,minmax(0,1fr))}.gg-app .saved-grouping-main select{grid-column:1/-1}.gg-app .saved-grouping-main .btn{width:100%;padding:9px 5px}.gg-app .export-format-label{min-width:0;max-width:100%;flex:1 1 220px}}
 @media(max-width:400px){.gg-app .saved-heading{flex-wrap:wrap}.gg-app .saved-grouping-main{grid-template-columns:repeat(2,minmax(0,1fr))}.gg-app #load-grouping{grid-column:1}.gg-app #save-grouping{grid-column:2}.gg-app #update-grouping{grid-column:1/-1}}
 
+
+/* Unified Start Here and a focused teacher workflow. */
+.gg-app .start-here{margin:0 0 20px;padding:20px 22px;border-top-color:#254b60}
+.gg-app .start-heading h2{font-size:24px;margin:3px 0 4px}
+.gg-app .start-heading p{margin:0 0 15px;max-width:650px}
+.gg-app .start-options{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:19px}
+.gg-app .start-option{min-width:0;border-top:1px solid var(--gg-border);padding-top:12px}
+.gg-app .start-option+.start-option{border-left:1px solid var(--gg-border);padding-left:19px}
+.gg-app .start-option>h3{font-size:17px;margin:0 0 12px}
+.gg-app .start-class-row{display:flex;align-items:center;gap:7px}
+.gg-app .start-class-row select{min-width:0;flex:1}
+.gg-app .start-class-row .btn{flex:0 0 auto}
+.gg-app .start-option .saved-groupings{margin:0;border:0;padding:0}
+.gg-app .start-option .saved-heading{margin-bottom:13px}
+.gg-app .start-option .saved-heading h3{font:700 17px/1.35 Georgia,"Times New Roman",serif;margin:0}
+.gg-app .start-option .saved-heading p{display:none}
+.gg-app .start-option .saved-grouping-main{grid-template-columns:minmax(0,1fr) auto auto auto}
+.gg-app .start-option .saved-grouping-main .btn{font-size:12px}
+.gg-app .results{scroll-margin-top:90px}
+.gg-app .result-header{gap:12px}
+.gg-app .result-header h2{font-size:22px}
+.gg-app .toolbar{align-items:center}
+.gg-app .toolbar .btn{min-height:42px}
+.gg-app .toolbar .btn-primary{font-weight:750}
+.gg-app .more-actions{position:relative}
+.gg-app .more-actions>summary{cursor:pointer;display:flex;align-items:center;justify-content:center;list-style:none;border:1px solid #aab4b7;border-radius:2px;background:#f6f4ef;color:#21465a;font:700 12px/1.3 "Segoe UI",Arial,sans-serif;min-height:42px;padding:9px 12px}
+.gg-app .more-actions>summary::-webkit-details-marker{display:none}
+.gg-app .more-actions>summary:after{content:"▾";margin-left:7px}
+.gg-app .more-actions[open]>summary:after{content:"▴"}
+.gg-app .more-actions>summary:focus-visible{outline:3px solid #a87747;outline-offset:2px}
+.gg-app .more-actions-inner{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:12px;margin-top:6px;background:#eeeae2;border:1px solid #d4d0c7;min-width:min(100%,300px);border-radius:2px}
+.gg-app .more-actions-inner .export-format-label{min-width:200px;flex:1 1 230px;margin:0}
+.gg-app .more-actions-inner .export-format-label span{font-size:12px;display:block;margin-bottom:4px;font-weight:700}
+.gg-app .more-actions-inner .btn{min-height:42px}
+.gg-app .undo-action:not([hidden]){border-style:dashed}
+.gg-app .empty{min-height:225px}
+.gg-app .export-hint{margin:14px 0 4px}
+.gg-app .result-status{font-size:12px;margin:3px 0 0;color:#596773}
+body.projector .gg-app .start-here,body.projector .gg-app .setup,body.projector .gg-app .more-actions,body.projector .gg-app .toolbar,body.projector .gg-app .export-hint,body.projector .gg-app #move-help{display:none!important}
+body.projector .exit-projector:not([hidden]){position:fixed;right:18px;top:15px;z-index:150;display:block;background:#244b60;border:1px solid #a87747;border-radius:2px;color:white;padding:11px 16px;font-weight:700;cursor:pointer;box-shadow:0 4px 18px rgba(0,0,0,.25)}
+@media(max-width:900px){.gg-app .start-options{grid-template-columns:1fr}.gg-app .start-option+.start-option{border-left:0;padding-left:0}.gg-app .start-here{padding:17px}.gg-app .start-option .saved-grouping-main{grid-template-columns:minmax(0,1fr) auto auto auto}}
+@media(max-width:580px){.gg-app .start-option .saved-grouping-main{grid-template-columns:repeat(3,minmax(0,1fr))}.gg-app .start-option .saved-grouping-main select{grid-column:1/-1}.gg-app .start-option .saved-grouping-main .btn{font-size:12px}.gg-app .toolbar{justify-content:flex-start}.gg-app .toolbar .btn{flex:1 1 auto}.gg-app .more-actions{flex:1 0 100%}.gg-app .more-actions>summary{width:100%}}
+@media print{
+ .gg-app .start-here,.gg-app .saved-groupings,.gg-app .more-actions,.gg-app .toolbar,.gg-app .export-hint,.gg-app .undo-action,#exit-projector{display:none!important}
+ .gg-app .gg-hero,.gg-app .setup,.gg-app .topbar,.gg-app .foot,.site-nav,.site-footer{display:none!important}
+ .gg-app .empty{display:none!important}
+ .gg-app .group{break-inside:avoid}
+}
+
 </style>
 </head>
 <body>
@@ -159,56 +208,19 @@ body.projector .gg-app .mover{display:none!important}
 </header>
 <main id="main-content" tabindex="-1">
  <section class="gg-hero" aria-labelledby="tool-title"><div><div class="eyebrow">CLASSROOM TOOLS</div><h1 id="tool-title">Random group generator</h1><p class="lede">Enter a class roster and choose a group size or number of groups. Assign students at random, then make any changes you need.</p></div><div class="privacy">Class lists stay in this browser. Avoid saving rosters on shared devices.</div></section>
- <div class="layout">
-  <section class="panel setup" aria-labelledby="setup-title">
-   <h2 id="setup-title">Set up your class</h2>
-   <div class="field">
-    <label for="saved">Saved class lists</label>
-    <div class="row"><select id="saved" aria-label="Saved class lists" style="flex:1"><option value="">Choose a saved class...</option></select><button id="delete-saved" class="btn btn-clear" type="button" title="Delete selected saved class">Delete</button></div>
-    <p class="help">Saved only in this browser. On a shared computer, use Clear and delete saved lists when finished.</p>
-   </div>
-   <div class="field">
-    <label for="roster">Student names <span id="roster-count">(0 students)</span></label>
-    <textarea id="roster" spellcheck="false" placeholder="One name per line&#10;Alex Rivera&#10;Jordan Lee&#10;Taylor Morgan"></textarea>
-    <p class="help">Paste names one per line, or separated by commas. Duplicate names are kept in case students share a name.</p>
-    <div class="row" style="margin-top:10px"><button id="sample" class="btn" type="button">Load example</button><button id="save" class="btn" type="button">Save class list</button><button id="clear" class="btn btn-clear" type="button">Clear</button></div>
-   </div>
-   <hr>
-   <label>How should we divide the class?</label>
-   <div class="segment" role="group" aria-label="Grouping mode">
-    <button id="mode-size" aria-pressed="true" type="button">Students per group</button>
-    <button id="mode-count" aria-pressed="false" type="button">Number of groups</button>
-   </div>
-   <label id="quantity-label" for="quantity">Students per group</label>
-   <div class="stepper"><button id="minus" type="button" aria-label="Decrease by one">−</button><input id="quantity" type="number" min="1" max="999" value="4" inputmode="numeric"><button id="plus" type="button" aria-label="Increase by one">+</button></div>
-   <div class="summary"><span><strong id="students">0</strong> students</span><span><strong id="prediction">0</strong> groups expected</span></div>
-   <button id="generate" class="btn btn-primary btn-block" type="button">Generate groups</button>
-   <div id="status" class="status" role="status" aria-live="polite"></div>
-  </section>
-  <section class="panel results" aria-labelledby="results-heading">
-   <div class="result-header">
-    <div><div class="eyebrow">Your groups</div><h2 id="results-heading">Ready to shuffle</h2></div>
-    <div class="toolbar">
-     <button id="shuffle" class="btn" type="button" disabled>Reshuffle</button>
-     <button id="copy" class="btn" type="button" disabled>Copy</button>
-     <label class="export-format-label" for="export-format"><span class="visually-hidden">Download format</span>
-      <select id="export-format" aria-label="Choose group export format">
-       <option value="txt">Plain text (.txt)</option>
-       <option value="docx">Word / Google Docs (.docx)</option>
-       <option value="xlsx">Excel / Google Sheets (.xlsx)</option>
-       <option value="pptx">PowerPoint / Google Slides (.pptx)</option>
-       <option value="pdf">PDF document (.pdf)</option>
-      </select>
-     </label>
-     <button id="download" class="btn" type="button" disabled>Download</button>
-     <button id="print" class="btn" type="button" disabled>Print</button>
-     <button id="project" class="btn" type="button" disabled>Projector view</button>
+ <section class="start-here panel" aria-labelledby="start-heading">
+  <div class="start-heading"><div><span class="eyebrow">GET STARTED</span><h2 id="start-heading">Start here</h2><p class="help">Load your class roster or restore a saved grouping. Or enter a new list below.</p></div></div>
+  <div class="start-options">
+   <div class="start-option">
+    <h3>1. Saved class list</h3>
+    <label for="saved">Choose a class</label>
+    <div class="start-class-row">
+     <select id="saved" aria-label="Saved class lists"><option value="">Choose a saved class...</option></select>
+     <button id="delete-saved" class="btn btn-clear" type="button" title="Delete selected saved class">Delete</button>
     </div>
+    <p class="help">Selecting a class fills the roster below. Groups can then be generated.</p>
    </div>
-   <div id="empty" class="empty"><div><div class="empty-icon" aria-hidden="true">01</div><h3>Start with a class list</h3><p>Add a roster or try the example class, then select <strong>Generate groups</strong>. Your balanced groups will appear here.</p></div></div>
-   <p class="export-hint help">Download a PDF for printing or sharing, or upload Word, Excel, and PowerPoint files to Google Drive to open in Docs, Sheets, and Slides.</p>
-   <div id="groups" class="groups" aria-live="polite" hidden></div>
-   <div class="help" id="move-help" hidden style="margin-top:14px">Groups are initially balanced by size. Use the Move menu beside a name to adjust assignments. Empty groups are removed automatically.</div>
+   <div class="start-option">
    <section class="saved-groupings" aria-labelledby="saved-groupings-title">
     <div class="saved-heading"><div><h3 id="saved-groupings-title">Saved groupings</h3><p class="help">Keep exact student assignments for future lessons, including manual changes.</p></div><span id="saved-grouping-count" class="saved-count">0 saved</span></div>
     <label for="saved-groupings">Saved arrangements</label>
@@ -232,9 +244,66 @@ body.projector .gg-app .mover{display:none!important}
     </details>
     <p id="saved-grouping-message" class="status" role="status" aria-live="polite"></p>
    </section>
+   </div>
+  </div>
+ </section>
+ <div class="layout">
+  <section class="panel setup" aria-labelledby="setup-title">
+   <h2 id="setup-title">Set up your class</h2>
+   <div class="field">
+    <label for="roster">Student names <span id="roster-count">(0 students)</span></label>
+    <textarea id="roster" spellcheck="false" placeholder="One name per line&#10;Alex Rivera&#10;Jordan Lee&#10;Taylor Morgan"></textarea>
+    <p class="help">Paste names one per line, or separated by commas. Duplicate names are kept in case students share a name.</p>
+    <div class="row" style="margin-top:10px"><button id="sample" class="btn" type="button">Load example</button><button id="save" class="btn" type="button">Save class list</button><button id="clear" class="btn btn-clear" type="button">Clear</button></div>
+   </div>
+   <hr>
+   <label>How should we divide the class?</label>
+   <div class="segment" role="group" aria-label="Grouping mode">
+    <button id="mode-size" aria-pressed="true" type="button">Students per group</button>
+    <button id="mode-count" aria-pressed="false" type="button">Number of groups</button>
+   </div>
+   <label id="quantity-label" for="quantity">Students per group</label>
+   <div class="stepper"><button id="minus" type="button" aria-label="Decrease by one">−</button><input id="quantity" type="number" min="1" max="999" value="4" inputmode="numeric"><button id="plus" type="button" aria-label="Increase by one">+</button></div>
+   <div class="summary"><span><strong id="students">0</strong> students</span><span><strong id="prediction">0</strong> groups expected</span></div>
+   <button id="generate" class="btn btn-primary btn-block" type="button">Generate groups</button>
+   <div id="status" class="status" role="status" aria-live="polite"></div>
+  </section>
+  <section class="panel results" aria-labelledby="results-heading">
+   <div class="result-header">
+    <div><div class="eyebrow">Your groups</div><h2 id="results-heading">Ready to shuffle</h2></div>
+    <div class="toolbar">
+      <button id="save-current" class="btn btn-primary" type="button" disabled>Save groups</button>
+      <button id="shuffle" class="btn" type="button" disabled>Reshuffle</button>
+      <button id="project" class="btn" type="button" disabled>Present</button>
+      <button id="undo" class="btn btn-clear undo-action" type="button" disabled hidden>Undo change</button>
+      <details class="more-actions">
+       <summary>More actions</summary>
+       <div class="more-actions-inner">
+        <button id="copy" class="btn" type="button" disabled>Copy groups</button>
+        <label class="export-format-label" for="export-format"><span>Download format</span>
+         <select id="export-format" aria-label="Choose group export format">
+          <option value="pdf">PDF document (.pdf)</option>
+          <option value="docx">Word / Google Docs (.docx)</option>
+          <option value="xlsx">Excel / Google Sheets (.xlsx)</option>
+          <option value="pptx">PowerPoint / Google Slides (.pptx)</option>
+          <option value="txt">Plain text (.txt)</option>
+         </select>
+        </label>
+        <button id="download" class="btn" type="button" disabled>Download</button>
+        <button id="print" class="btn" type="button" disabled>Print</button>
+       </div>
+      </details>
+    </div>
+   </div>
+   <div id="empty" class="empty"><div><div class="empty-icon" aria-hidden="true">01</div><h3>Start with a class list</h3><p>Add a roster or try the example class, then select <strong>Generate groups</strong>. Your balanced groups will appear here.</p></div></div>
+   <p class="export-hint help">Download PDF, Word, Excel, PowerPoint, or text from More actions. Office files can be opened in Google Docs, Sheets, or Slides after upload to Drive.</p>
+   <div id="groups" class="groups" aria-live="polite" hidden></div>
+   <div class="help" id="move-help" hidden style="margin-top:14px">Groups are initially balanced by size. Use the Move menu beside a name to adjust assignments. Empty groups are removed automatically.</div>
+
   </section>
  </div>
 </main>
+<button id="exit-projector" type="button" class="exit-projector" hidden>Exit presentation (Esc)</button>
 <div class="foot">Free classroom tool · No account required · Class information is processed in your browser.</div>
 </div>
 </div>
