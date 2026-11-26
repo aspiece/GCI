@@ -184,6 +184,10 @@ body.projector .exit-projector:not([hidden]){position:fixed;right:18px;top:15px;
  .gg-app .group{break-inside:avoid}
 }
 
+
+.gg-app .separator-toggle{display:flex;align-items:center;gap:9px;margin-top:10px;color:#53616b;font-size:12px;font-weight:650;line-height:1.5;cursor:pointer}
+.gg-app .separator-toggle input{width:18px;height:18px;min-height:18px;margin:0;padding:0;flex:0 0 18px;accent-color:#244b60}
+
 </style>
 </head>
 <body>
@@ -253,7 +257,8 @@ body.projector .exit-projector:not([hidden]){position:fixed;right:18px;top:15px;
    <div class="field">
     <label for="roster">Student names <span id="roster-count">(0 students)</span></label>
     <textarea id="roster" spellcheck="false" placeholder="One name per line&#10;Alex Rivera&#10;Jordan Lee&#10;Taylor Morgan"></textarea>
-    <p class="help">Paste names one per line, or separated by commas. Duplicate names are kept in case students share a name.</p>
+    <p class="help">Enter one student per line. Duplicate names are retained. Names such as "Smith, John" will stay together.</p>
+    <label class="separator-toggle" for="comma-separator"><input type="checkbox" id="comma-separator"> Treat commas as separators (for simple comma-separated lists)</label>
     <div class="row" style="margin-top:10px"><button id="sample" class="btn" type="button">Load example</button><button id="save" class="btn" type="button">Save class list</button><button id="clear" class="btn btn-clear" type="button">Clear</button></div>
    </div>
    <hr>
@@ -327,7 +332,7 @@ var $=function(id){return document.getElementById(id);};
 var roster=$('roster'), quantity=$('quantity'), groupsEl=$('groups');
 var mode='size', groups=[], storageKey='gci-group-generator-rosters-v1', colors=['#274c61','#a87747','#68817b','#647589','#9a735c','#5b7e83','#8a8475','#718a6a'];
 var sample=['Alex Rivera','Jordan Lee','Taylor Morgan','Casey Brooks','Sam Carter','Riley Park','Morgan Chen','Jamie Ellis','Avery Bell','Quinn Davis','Harper James','Drew Bennett','Parker Reed','Cameron Clark','Skyler Woods','Bailey Gray','Emerson Moore','Logan Kim','Rowan Bailey','Charlie Adams','Kendall Price','Robin Hayes','Finley Scott','Jesse Cooper'];
-function names(){return roster.value.split(/[\n,\r]+/).map(function(n){return n.trim();}).filter(Boolean);}
+function names(){return roster.value.split($('comma-separator').checked?/[\n,\r]+/ : /[\n\r]+/).map(function(n){return n.trim();}).filter(Boolean);}
 function readSaved(){try{var parsed=JSON.parse(localStorage.getItem(storageKey)||'{}'),out=Object.create(null);if(!parsed||typeof parsed!=='object'||Array.isArray(parsed))return out;Object.keys(parsed).forEach(function(key){if(typeof parsed[key]==='string')out[key]=parsed[key];});return out;}catch(e){return Object.create(null);}}
 function writeSaved(obj){try{localStorage.setItem(storageKey,JSON.stringify(obj));return true;}catch(e){message('Browser storage is unavailable. Class lists cannot be saved here.');return false;}}
 function message(s){$('status').textContent=s;}
@@ -450,6 +455,7 @@ function loadSelectedGrouping(){
  var rec=all[name];
  if(groups.length&&groupFingerprint(currentRecord())!==groupFingerprint(rec)&&!confirm('Replace the current group arrangement with "'+name+'"? Unsaved changes will be lost.'))return;
  roster.value=rec.roster.join('\n');
+ $('comma-separator').checked=false;
  mode=rec.mode;quantity.value=rec.quantity;
  $('mode-size').setAttribute('aria-pressed',String(mode==='size'));
  $('mode-count').setAttribute('aria-pressed',String(mode==='count'));
@@ -542,7 +548,7 @@ function rememberUndo(){
 function undoLastChange(){
  if(!undoSnapshot)return;
  var saved=undoSnapshot;undoSnapshot=null;
- roster.value=saved.roster.join('\n');mode=saved.mode;quantity.value=saved.quantity;
+ roster.value=saved.roster.join('\n');$('comma-separator').checked=false;mode=saved.mode;quantity.value=saved.quantity;
  $('mode-size').setAttribute('aria-pressed',String(mode==='size'));
  $('mode-count').setAttribute('aria-pressed',String(mode==='count'));
  $('quantity-label').textContent=mode==='size'?'Students per group':'Number of groups';
@@ -593,18 +599,19 @@ quantity.addEventListener('input',function(){invalidate();});
 roster.addEventListener('input',invalidate);
 $('generate').addEventListener('click',generate);
 $('shuffle').addEventListener('click',generate);
-$('sample').addEventListener('click',function(){if((roster.value.trim()||groups.length)&&!confirm('Replace the current roster and groups with example students?'))return;rememberUndo();roster.value=sample.join('\n');$('saved').value='';invalidate();toast('Example class loaded');});
+$('sample').addEventListener('click',function(){if((roster.value.trim()||groups.length)&&!confirm('Replace the current roster and groups with example students?'))return;rememberUndo();roster.value=sample.join('\n');$('comma-separator').checked=false;$('saved').value='';invalidate();toast('Example class loaded');});
+$('comma-separator').addEventListener('change',invalidate);
 $('clear').addEventListener('click',function(){if((roster.value.trim()||groups.length)&&!confirm('Clear the current roster and groups? Saved classes and saved groupings are kept.'))return;rememberUndo();roster.value='';$('saved').value='';invalidate();});
 $('save').addEventListener('click',function(){var a=names();if(!a.length){message('Add names before saving a class.');return;}var selected=$('saved').value;var answer=prompt('Name this class:',selected||'Period 1');if(answer===null)return;var key=answer.trim();if(!key){message('Enter a class name to save.');return;}var all=readSaved();if(Object.prototype.hasOwnProperty.call(all,key)&&key!==selected&&!confirm('Replace saved class "'+key+'"?'))return;all[key]=a.join('\n');if(writeSaved(all)){loadOptions(key);toast('Class list saved on this device');message('');}});
 $('saved').addEventListener('change',function(){
  var key=this.value,all=readSaved();
  if(!key){refresh();return;}
  if(groups.length&&!confirm('Load this class list? Current group assignments will be replaced. Save them first if you want to keep them.')){this.value='';refresh();return;}
- rememberUndo();roster.value=String(all[key]||'');
+ rememberUndo();roster.value=String(all[key]||'');$('comma-separator').checked=false;
  invalidate();toast('Loaded '+key);
 });
 $('delete-saved').addEventListener('click',function(){var key=$('saved').value;if(!key)return;if(!confirm('Delete saved class "'+key+'" from this browser?'))return;var all=readSaved();delete all[key];if(writeSaved(all)){loadOptions('');toast('Saved class deleted');}});
-$('copy').addEventListener('click',async function(){var copied=await copyText(format());if(copied)toast('Group assignments copied');else message('Clipboard unavailable. Use Export to save the groups.');});
+$('copy').addEventListener('click',async function(){var copied=await copyText(format());if(copied)toast('Group assignments copied');else message('Clipboard unavailable. Use More actions → Download to save the groups.');});
 $('download').addEventListener('click',async function(){
  if(!groups.length)return;
  var chosen=$('export-format').value,button=$('download'),backup=groups.map(function(g){return g.slice();});
