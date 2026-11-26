@@ -68,7 +68,7 @@ test('Large groups are split into multiple readable slides',async()=>{
  assert.match(s2,/Student 25/);
 });
 test('Unsupported format or empty groups cannot create an Office file',async()=>{
- await assert.rejects(browser.GroupExport.make('pdf',groups),/Unsupported/);
+ await assert.rejects(browser.GroupExport.make('odt',groups),/Unsupported/);
  await assert.rejects(browser.GroupExport.make('docx',[]),/Generate or load/);
 });
 
