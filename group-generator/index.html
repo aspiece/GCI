@@ -575,7 +575,14 @@ var ul=document.createElement('ul');ul.className='names';group.forEach(function(
  if(nextControl&&typeof nextControl.focus==='function')nextControl.focus();else $('undo').focus();});li.appendChild(select);}ul.appendChild(li);});card.appendChild(ul);groupsEl.appendChild(card);});
 }
 function loadOptions(selected){var all=readSaved(),sel=$('saved');sel.replaceChildren();var first=document.createElement('option');first.value='';first.textContent='Choose a saved class...';sel.appendChild(first);Object.keys(all).sort(function(a,b){return a.localeCompare(b);}).forEach(function(name){var opt=document.createElement('option');opt.value=name;opt.textContent=name;sel.appendChild(opt);});sel.value=selected&&Object.prototype.hasOwnProperty.call(all,selected)?selected:'';refresh();}
-function projector(on){document.body.classList.toggle('projector',on);$('project').textContent=on?'Exit projector':'Projector view';$('project').setAttribute('aria-pressed',on?'true':'false');}
+function projector(on){
+ document.body.classList.toggle('projector',on);
+ $('project').textContent=on?'Exit presentation':'Present';
+ $('project').setAttribute('aria-pressed',on?'true':'false');
+ $('exit-projector').hidden=!on;
+ if(on&&typeof $('exit-projector').focus==='function')$('exit-projector').focus();
+ else if(!on&&typeof $('project').focus==='function')$('project').focus();
+}
 $('mode-size').addEventListener('click',function(){mode='size';setMode();});
 $('mode-count').addEventListener('click',function(){mode='count';setMode();});
 function setMode(){$('mode-size').setAttribute('aria-pressed',String(mode==='size'));$('mode-count').setAttribute('aria-pressed',String(mode==='count'));$('quantity-label').textContent=mode==='size'?'Students per group':'Number of groups';quantity.value=mode==='size'?4:5;invalidate();}
@@ -586,10 +593,16 @@ quantity.addEventListener('input',function(){invalidate();});
 roster.addEventListener('input',invalidate);
 $('generate').addEventListener('click',generate);
 $('shuffle').addEventListener('click',generate);
-$('sample').addEventListener('click',function(){if(roster.value.trim()&&!confirm('Replace your current roster with example students?'))return;roster.value=sample.join('\n');$('saved').value='';invalidate();toast('Example class loaded');});
-$('clear').addEventListener('click',function(){if(roster.value.trim()&&!confirm('Clear the current roster? Saved classes will not be deleted.'))return;roster.value='';$('saved').value='';invalidate();});
+$('sample').addEventListener('click',function(){if((roster.value.trim()||groups.length)&&!confirm('Replace the current roster and groups with example students?'))return;rememberUndo();roster.value=sample.join('\n');$('saved').value='';invalidate();toast('Example class loaded');});
+$('clear').addEventListener('click',function(){if((roster.value.trim()||groups.length)&&!confirm('Clear the current roster and groups? Saved classes and saved groupings are kept.'))return;rememberUndo();roster.value='';$('saved').value='';invalidate();});
 $('save').addEventListener('click',function(){var a=names();if(!a.length){message('Add names before saving a class.');return;}var selected=$('saved').value;var answer=prompt('Name this class:',selected||'Period 1');if(answer===null)return;var key=answer.trim();if(!key){message('Enter a class name to save.');return;}var all=readSaved();if(Object.prototype.hasOwnProperty.call(all,key)&&key!==selected&&!confirm('Replace saved class "'+key+'"?'))return;all[key]=a.join('\n');if(writeSaved(all)){loadOptions(key);toast('Class list saved on this device');message('');}});
-$('saved').addEventListener('change',function(){var key=this.value,all=readSaved();if(!key){refresh();return;}roster.value=String(all[key]||'');invalidate();toast('Loaded '+key);});
+$('saved').addEventListener('change',function(){
+ var key=this.value,all=readSaved();
+ if(!key){refresh();return;}
+ if(groups.length&&!confirm('Load this class list? Current group assignments will be replaced. Save them first if you want to keep them.')){this.value='';refresh();return;}
+ rememberUndo();roster.value=String(all[key]||'');
+ invalidate();toast('Loaded '+key);
+});
 $('delete-saved').addEventListener('click',function(){var key=$('saved').value;if(!key)return;if(!confirm('Delete saved class "'+key+'" from this browser?'))return;var all=readSaved();delete all[key];if(writeSaved(all)){loadOptions('');toast('Saved class deleted');}});
 $('copy').addEventListener('click',async function(){var copied=await copyText(format());if(copied)toast('Group assignments copied');else message('Clipboard unavailable. Use Export to save the groups.');});
 $('download').addEventListener('click',async function(){
@@ -611,6 +624,9 @@ $('download').addEventListener('click',async function(){
 });
 $('print').addEventListener('click',function(){window.print();});
 $('project').addEventListener('click',function(){projector(!document.body.classList.contains('projector'));});
+$('exit-projector').addEventListener('click',function(){projector(false);});
+$('save-current').addEventListener('click',saveCurrentGrouping);
+$('undo').addEventListener('click',undoLastChange);
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&document.body.classList.contains('projector'))projector(false);});
 $('share').addEventListener('click',async function(){var copied=await copyText(location.origin+location.pathname);toast(copied?'App link copied (no student names included)':'Copy the app URL from the address bar');});
 $('saved-groupings').addEventListener('change',refreshGroupingButtons);
