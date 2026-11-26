@@ -2406,6 +2406,15 @@
                 </div>
               </button></li>
 
+              <li><button class="mission-card" id="mission-hvac" type="button" data-mission="hvac" aria-pressed="false">
+                <span class="mission-card-check" aria-hidden="true">✓</span>
+                <div>
+                  <div class="mission-card-icon" aria-hidden="true">🛠️</div>
+                  <h3>HVAC Equipment Review Model</h3>
+                  <p>Review fictional HVAC equipment inspection scores and decide whether the model needs more testing. These are practice scores, not real equipment readings or safety limits.</p>
+                </div>
+              </button></li>
+
               <li><button class="mission-card" id="mission-veterinary" type="button" data-mission="veterinary" aria-pressed="false">
                 <span class="mission-card-check" aria-hidden="true">✓</span>
                 <div>
@@ -2992,6 +3001,12 @@
           icon: '🚗',
           description: 'Made-up car inspection records for a model review.',
           featureLabels: ['Performance Score', 'Safety Check', 'Electrical Score', 'Frame Integrity']
+        },
+        hvac: {
+          name: 'HVAC Equipment Review Model',
+          icon: '🛠️',
+          description: 'Made-up HVAC inspection scores for learning about model behavior, not actual service readings or approved safety limits.',
+          featureLabels: ['Airflow Score', 'Condition Score', 'Electrical Review Score', 'Service Readiness']
         },
         veterinary: {
           name: 'Veterinary Review Model',
