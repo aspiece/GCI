@@ -767,7 +767,7 @@ function showTourStep(index){
  if(typeof $('tour-title').focus==='function')$('tour-title').focus();
 }
 function startTour(){
- if(tourIndex>=0||document.body.classList.contains('projector'))return;
+ if(tourIndex>=0||document.body.classList.contains('projector')||$('install-guide').open)return;
  tourReturnFocus=document.activeElement;
  tourIndex=0;
  $('quick-tour').hidden=false;$('tour-scrim').hidden=false;
