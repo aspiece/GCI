@@ -3,104 +3,147 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#101a2e">
+<meta name="theme-color" content="#193341">
 <meta name="description" content="Create random, balanced classroom groups. Free, shareable and private.">
 <title>Classroom Group Generator | Genesee Learning Lab</title>
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../styles.css">
 <style>
-:root{color-scheme:dark;font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;--bg:#0d1424;--surface:#16223a;--surface2:#1d2c49;--border:#344765;--text:#eff6ff;--muted:#adbed9;--mint:#a5f3d4}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;background:radial-gradient(ellipse at 8% 0,#273e66 0,transparent 37%),radial-gradient(ellipse at 92% 5%,#214d50 0,transparent 34%),var(--bg);color:var(--text);min-height:100vh}
-button,input,textarea,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}
-button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #a5f3d4;outline-offset:3px}
-.skip{position:absolute;top:-70px;left:8px;background:white;color:black;padding:12px;z-index:10}.skip:focus{top:8px}
-.wrap{max-width:1260px;margin:0 auto;padding:28px 24px 40px}
-.topbar,.brand,.hero,.toolbar,.result-header,.row,.summary{display:flex;align-items:center;gap:12px}
-.topbar,.hero,.result-header{justify-content:space-between}
-.topbar{margin-bottom:42px;flex-wrap:wrap}
-.logo{display:grid;place-items:center;width:48px;height:48px;border-radius:15px;background:linear-gradient(135deg,#abf7d9,#88b6fd);color:#0e2441;font-weight:900;letter-spacing:-.06em;font-size:20px}
-.brand-name{font-size:17px;font-weight:850;line-height:1.2}.brand-sub{display:block;font-weight:500;color:var(--muted);font-size:12px;margin-top:3px}
-.link{color:#c4e9ff;text-decoration:none;font-size:13px;font-weight:650}.link:hover{text-decoration:underline}
-h1{font-size:clamp(30px,4vw,52px);margin:7px 0 11px;letter-spacing:-.06em;line-height:1.07}
-.eyebrow{color:var(--mint);font-size:12px;font-weight:850;letter-spacing:.13em;text-transform:uppercase}
-.lede{color:var(--muted);line-height:1.6;margin:0;max-width:635px;font-size:15px}
-.hero{align-items:end;margin-bottom:26px;flex-wrap:wrap}
-.privacy{padding:8px 13px;border-radius:100px;border:1px solid #346253;background:#193d39;color:#b9ffdf;font-size:12px;font-weight:800;white-space:nowrap}
-.layout{display:grid;grid-template-columns:minmax(320px,390px) minmax(0,1fr);gap:20px;align-items:start}
-.panel{background:#132039ee;border:1px solid var(--border);box-shadow:0 15px 42px #0003;border-radius:22px;padding:22px;min-width:0}
-.panel h2{font-size:18px;margin:0 0 18px;letter-spacing:-.025em}
-label{display:block;font-size:13px;font-weight:800;color:#e1eaff;margin-bottom:8px}
-input,textarea,select{width:100%;border:1px solid #415879;background:#0e192d;color:#f3f8ff;border-radius:11px;padding:11px}
-input::placeholder,textarea::placeholder{color:#8096b4}
-textarea{min-height:206px;resize:vertical;line-height:1.6}
-.help{font-size:12px;color:var(--muted);margin:7px 0 0;line-height:1.5}
-.field{margin-bottom:18px}
-.row{flex-wrap:wrap}.row>*{min-width:0}
-.btn{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:11px;background:var(--surface2);color:#f1f7ff;padding:10px 14px;font-weight:750;font-size:13px;min-height:42px;transition:background .12s,transform .12s}
-.btn:hover{background:#28405e;transform:translateY(-1px)}
-.btn-primary{background:var(--mint);color:#103b31;border-color:var(--mint);font-weight:900}
-.btn-primary:hover{background:#c6ffe9}
-.btn-clear{background:transparent}
-.btn-block{width:100%;font-size:15px;padding:13px 15px}
-hr{height:1px;border:0;background:var(--border);margin:21px 0}
-.segment{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border:1px solid var(--border);background:#0c192e;border-radius:12px;margin-bottom:14px}
-.segment button{border:0;border-radius:9px;background:transparent;color:#b9c9df;padding:10px 4px;font-size:12px;font-weight:800}
-.segment button[aria-pressed="true"]{background:#314a6d;color:#fff}
-.stepper{display:flex;align-items:center;gap:10px}
-.stepper button{width:43px;height:43px;border:1px solid var(--border);border-radius:10px;background:#263b5b;color:#fff;font-size:23px}
-.stepper input{width:85px;text-align:center;font-size:19px;font-weight:900}
-.summary{justify-content:space-between;flex-wrap:wrap;font-size:13px;color:var(--muted);margin:16px 0}
-.summary strong{color:var(--mint)}
-.status{min-height:20px;font-size:12px;color:#ffdaad;margin-top:9px;line-height:1.5}
-.result-header{align-items:flex-start;flex-wrap:wrap;margin-bottom:18px}
-.result-header h2{font-size:22px;margin:4px 0 0}
-.toolbar{flex-wrap:wrap;justify-content:flex-end;gap:7px}
-.toolbar .btn{padding:8px 10px;min-height:36px;font-size:12px}
-.empty{border:1px dashed #4e6385;border-radius:18px;background:linear-gradient(150deg,#192841,#111d32);min-height:365px;display:flex;align-items:center;justify-content:center;text-align:center;padding:35px}
-.empty-icon{font-size:49px;line-height:1}
-.empty h3{margin:17px 0 7px;font-size:21px}
-.empty p{font-size:14px;color:var(--muted);line-height:1.6;max-width:340px;margin:0 auto}
-.groups{display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:14px}
-.group{border:1px solid #3b506f;border-radius:16px;overflow:hidden;background:#1a2a45;min-width:0}
-.group-top{padding:14px;display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid #3b506f}
-.group-title{display:flex;align-items:center;gap:9px;font-weight:850}
-.dot{width:11px;height:11px;border-radius:50%;background:var(--dot);box-shadow:0 0 12px var(--dot)}
-.group-count{font-size:12px;color:#bbcae0}
-.names{list-style:none;margin:0;padding:9px}
-.names li{display:flex;align-items:center;gap:6px;justify-content:space-between;background:#253856;padding:10px 9px;margin-bottom:6px;border-radius:10px;min-width:0}
-.names li:last-child{margin-bottom:0}
-.person{font-size:14px;font-weight:700;overflow-wrap:anywhere;min-width:0}
-.mover{width:67px;flex:0 0 67px;padding:5px 1px;font-size:11px;min-height:30px;border-radius:7px}
-.foot{color:#8fa7c4;text-align:center;font-size:12px;margin-top:26px}
-.projector .setup,.projector .hero,.projector .foot,.projector .share-btn{display:none}
-.projector .layout{display:block}.projector .wrap{max-width:none;padding:16px 26px}
-.projector .topbar{margin-bottom:14px}.projector .results{min-height:85vh}
-.projector .groups{grid-template-columns:repeat(auto-fit,minmax(265px,1fr));gap:18px}
-.projector .group-top{padding:17px}.projector .group-title{font-size:22px}
-.projector .person{font-size:clamp(18px,2vw,26px)}.projector .names li{padding:13px}
-.projector .mover{display:none}
-#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#d1ffea;color:#113d2e;padding:12px 18px;border-radius:12px;font-size:13px;font-weight:800;z-index:20;max-width:90vw;box-shadow:0 10px 40px #0007}
+
+/* Group Generator — classic Genesee Learning Lab styles. Shared site nav/footer use ../styles.css. */
+:root{color-scheme:light}
+.gg-app{--gg-ink:#24343d;--gg-muted:#596773;--gg-navy:#193341;--gg-accent:#a87747;--gg-paper:#fffdf9;--gg-border:#d4d0c7;color:var(--gg-ink);font:15px/1.6 "Segoe UI",Arial,sans-serif}
+.gg-app *{box-sizing:border-box}
+.gg-app button,.gg-app input,.gg-app textarea,.gg-app select{font:inherit}
+.gg-app button{cursor:pointer}
+.gg-app button:disabled{opacity:.52;cursor:not-allowed}
+.gg-app button:focus-visible,.gg-app input:focus-visible,.gg-app textarea:focus-visible,.gg-app select:focus-visible,.gg-app a:focus-visible{outline:3px solid #a87747;outline-offset:2px}
+.gg-app .wrap{max-width:1200px;margin:0 auto;padding:25px 24px 52px}
+.gg-app .topbar,.gg-app .brand,.gg-app .gg-hero,.gg-app .toolbar,.gg-app .result-header,.gg-app .row,.gg-app .summary{display:flex;align-items:center;gap:12px}
+.gg-app .topbar,.gg-app .gg-hero,.gg-app .result-header{justify-content:space-between}
+.gg-app .topbar{padding-bottom:14px;margin-bottom:30px;border-bottom:1px solid var(--gg-border);flex-wrap:wrap}
+.gg-app .brand{display:block;line-height:1.4}
+.gg-app .brand-name{display:block;font:700 17px/1.3 Georgia,"Times New Roman",serif}
+.gg-app .brand-sub{display:block;font-weight:500;color:var(--gg-muted);font-size:12px;margin-top:2px}
+.gg-app .topbar-actions{display:flex;align-items:center;flex-wrap:wrap;gap:14px}
+.gg-app .link{color:#254c61;text-decoration:underline;text-underline-offset:3px;font-size:13px;font-weight:700}
+.gg-app .link:hover{color:#173648}
+.gg-app h1,.gg-app h2,.gg-app h3{font-family:Georgia,"Times New Roman",serif;color:var(--gg-ink);font-weight:700;letter-spacing:-.015em}
+.gg-app h1{font-size:clamp(30px,4vw,43px);margin:4px 0 10px;line-height:1.2}
+.gg-app .eyebrow{color:#865b38;font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase}
+.gg-app .lede{color:var(--gg-muted);line-height:1.7;margin:0;max-width:685px;font-size:15px}
+.gg-app .gg-hero{align-items:end;margin-bottom:26px;flex-wrap:wrap;gap:20px}
+.gg-app .privacy{padding:7px 10px;border-left:3px solid #a87747;background:#eeeae2;color:#364d57;font-size:12px;font-weight:650;max-width:265px}
+.gg-app .layout{display:grid;grid-template-columns:minmax(300px,360px) minmax(0,1fr);gap:20px;align-items:start}
+.gg-app .panel{background:var(--gg-paper);border:1px solid var(--gg-border);border-top:3px solid #a87747;box-shadow:none;border-radius:2px;padding:21px;min-width:0}
+.gg-app .panel h2{font-size:20px;margin:0 0 17px}
+.gg-app label{display:block;font-size:13px;font-weight:700;color:var(--gg-ink);margin-bottom:8px}
+.gg-app input,.gg-app textarea,.gg-app select{width:100%;border:1px solid #aeb5b1;background:#fff;color:#24343d;border-radius:2px;padding:10px 11px;min-height:42px}
+.gg-app input::placeholder,.gg-app textarea::placeholder{color:#667682}
+.gg-app textarea{min-height:205px;resize:vertical;line-height:1.55}
+.gg-app .help{font-size:12px;color:var(--gg-muted);margin:7px 0 0;line-height:1.6}
+.gg-app .field{margin-bottom:18px}
+.gg-app .row{flex-wrap:wrap}
+.gg-app .row>*{min-width:0}
+.gg-app .btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;border:1px solid #aab4b7;border-radius:2px;background:#f6f4ef;color:#21465a;padding:10px 13px;font-weight:700;font-size:13px;min-height:42px;line-height:1.3;text-decoration:none;transition:background .12s,border-color .12s;white-space:normal}
+.gg-app .btn:hover:not(:disabled){background:#e6e7e2;border-color:#778f9a;transform:none;box-shadow:none}
+.gg-app .btn-primary{background:#244b60;color:#fff;border-color:#244b60}
+.gg-app .btn-primary:hover:not(:disabled){background:#16384a;color:#fff;border-color:#16384a}
+.gg-app .btn-clear{background:transparent}
+.gg-app .btn-block{width:100%;font-size:15px;padding:13px 15px}
+.gg-app hr{height:1px;border:0;background:var(--gg-border);margin:22px 0}
+.gg-app .segment{display:grid;grid-template-columns:1fr 1fr;gap:3px;padding:3px;border:1px solid var(--gg-border);background:#f0ede7;border-radius:2px;margin-bottom:14px}
+.gg-app .segment button{border:1px solid transparent;border-radius:2px;background:transparent;color:#344d5a;padding:9px 5px;font-size:12px;line-height:1.4;font-weight:700}
+.gg-app .segment button[aria-pressed="true"]{background:#244b60;color:white;border-color:#244b60}
+.gg-app .stepper{display:flex;align-items:center;gap:10px}
+.gg-app .stepper button{width:43px;height:43px;border:1px solid #98a9b1;border-radius:2px;background:#eef0ef;color:#24475a;font-size:22px}
+.gg-app .stepper button:hover{background:#e0e8e8}
+.gg-app .stepper input{width:88px;text-align:center;font-size:18px;font-weight:700;min-height:43px}
+.gg-app .summary{justify-content:space-between;flex-wrap:wrap;font-size:13px;color:var(--gg-muted);margin:16px 0}
+.gg-app .summary strong{color:#244b60}
+.gg-app .status{min-height:20px;font-size:12px;color:#825429;margin-top:9px;line-height:1.6}
+.gg-app .result-header{align-items:flex-start;flex-wrap:wrap;margin-bottom:16px}
+.gg-app .result-header h2{font-size:23px;margin:4px 0 0}
+.gg-app .toolbar{flex-wrap:wrap;justify-content:flex-end;gap:7px}
+.gg-app .toolbar .btn{padding:8px 11px;min-height:38px;font-size:12px}
+.gg-app .empty{border:1px dashed #b8b9b3;background:#f6f4ef;min-height:310px;display:flex;align-items:center;justify-content:center;text-align:center;padding:35px;border-radius:2px}
+.gg-app .empty-icon{display:inline-block;font:700 22px Georgia,"Times New Roman",serif;color:#956e48;border-bottom:2px solid #a87747;padding-bottom:7px}
+.gg-app .empty h3{margin:17px 0 9px;font-size:22px}
+.gg-app .empty p{font-size:14px;color:var(--gg-muted);line-height:1.6;max-width:380px;margin:0 auto}
+.gg-app .groups{display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:12px}
+.gg-app .group{border:1px solid #cec7b8;border-top:3px solid var(--dot,#244b60);border-radius:2px;background:#fffdf9;min-width:0;overflow:hidden}
+.gg-app .group-top{padding:13px 14px;display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid #d9d4ca}
+.gg-app .group-title{display:flex;align-items:center;gap:9px;font:700 17px Georgia,"Times New Roman",serif}
+.gg-app .dot{width:9px;height:9px;flex:0 0 9px;border-radius:50%;background:var(--dot)}
+.gg-app .group-count{font-size:12px;color:var(--gg-muted);white-space:nowrap}
+.gg-app .names{list-style:none;margin:0;padding:5px 12px}
+.gg-app .names li{display:flex;align-items:center;gap:10px;justify-content:space-between;padding:10px 3px;border-bottom:1px solid #ebe6de;min-width:0}
+.gg-app .names li:last-child{border-bottom:0}
+.gg-app .person{font-size:14px;font-weight:650;overflow-wrap:anywhere;min-width:0}
+.gg-app .mover{width:88px;max-width:45%;flex:0 0 88px;padding:6px 4px;font-size:12px;min-height:34px}
+.gg-app .foot{color:var(--gg-muted);text-align:left;font-size:12px;margin-top:25px;padding-top:15px;border-top:1px solid var(--gg-border)}
+body.projector .site-nav,body.projector .site-footer{display:none!important}
+body.projector .gg-app .setup,body.projector .gg-app .gg-hero,body.projector .gg-app .foot,body.projector .gg-app .share-btn,body.projector .gg-app .topbar-actions{display:none!important}
+body.projector .gg-app .layout{display:block}
+body.projector .gg-app .wrap{max-width:none;padding:16px 25px}
+body.projector .gg-app .topbar{margin-bottom:14px}
+body.projector .gg-app .results{min-height:85vh}
+body.projector .gg-app .groups{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+body.projector .gg-app .group-top{padding:16px}
+body.projector .gg-app .group-title{font-size:23px}
+body.projector .gg-app .person{font-size:clamp(18px,2vw,26px)}
+body.projector .gg-app .names li{padding:12px 3px}
+body.projector .gg-app .mover{display:none!important}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#244b60;color:#fff;padding:12px 17px;border:1px solid #a87747;border-radius:2px;font-size:13px;font-weight:700;z-index:120;max-width:90vw;box-shadow:0 9px 30px #0003}
 [hidden]{display:none!important}
-@media(max-width:850px){.layout{grid-template-columns:1fr}.wrap{padding:18px 14px 32px}.topbar{margin-bottom:30px}.hero{margin-bottom:20px}.panel{padding:17px}.result-header{gap:12px}.toolbar{justify-content:flex-start}}
-@media print{*{color:#000!important;box-shadow:none!important;text-shadow:none!important}body{background:#fff!important}.topbar,.hero,.setup,.toolbar,.foot,.mover{display:none!important}.wrap{padding:0}.layout{display:block}.panel{border:0;padding:0;background:white}.result-header{margin:0 0 15px}.groups{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.group{border:1px solid #777;background:white;break-inside:avoid}.group-top{border-bottom:1px solid #aaa}.names li{background:#fff;border-bottom:1px solid #ddd;border-radius:0}.dot{background:#888!important}}
+@media(max-width:870px){.gg-app .layout{grid-template-columns:1fr}.gg-app .wrap{padding:18px 14px 32px}.gg-app .topbar{margin-bottom:23px}.gg-app .gg-hero{margin-bottom:19px}.gg-app .panel{padding:18px}.gg-app .toolbar{justify-content:flex-start}}
+@media(max-width:480px){.gg-app .row .btn{flex:1 0 auto}.gg-app .toolbar{width:100%}.gg-app .toolbar .btn{flex:1 1 auto}.gg-app .privacy{max-width:none}}
+@media print{
+ body{background:white!important;color:black!important}
+ .site-nav,.site-footer,.gg-app .topbar,.gg-app .gg-hero,.gg-app .setup,.gg-app .toolbar,.gg-app .foot,.gg-app .mover,.gg-app #move-help,#toast{display:none!important}
+ .gg-app .wrap{max-width:none;padding:0}
+ .gg-app .layout{display:block}
+ .gg-app .panel{border:0;padding:0;background:white}
+ .gg-app .result-header{margin:0 0 13px}
+ .gg-app .groups{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+ .gg-app .group{border:1px solid #777;border-top:2px solid #777;break-inside:avoid}
+ .gg-app .group-top{border-bottom:1px solid #aaa}
+ .gg-app .names li{border-bottom:1px solid #ddd}
+ .gg-app .dot{background:#777!important}
+ .gg-app *{color:#000!important;box-shadow:none!important}
+}
+
 </style>
 </head>
 <body>
-<a class="skip" href="#roster">Skip to class roster</a>
+<a class="skip-link" href="#main-content">Skip to main content</a>
+<nav class="site-nav" aria-label="Main navigation">
+ <div class="nav-inner">
+  <a class="nav-brand" href="../index.html" aria-label="Genesee Learning Lab — Home"><span class="nav-brand-icon" aria-hidden="true">GL</span>Genesee Learning Lab</a>
+  <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav-list" aria-label="Open navigation menu">&#9776;</button>
+  <ul id="primary-nav-list" class="nav-links" role="list">
+   <li><a href="../index.html">Home</a></li>
+   <li><a href="../projects.html" aria-current="page">Projects</a></li>
+   <li><a href="../programs.html">Programs</a></li>
+   <li><a href="../contact.html">Contact</a></li>
+  </ul>
+ </div>
+</nav>
+<div class="gg-app">
 <div class="wrap">
 <header class="topbar">
- <div class="brand"><div class="logo" aria-hidden="true">GL</div><div class="brand-name">Classroom Group Generator<span class="brand-sub">A Genesee Learning Lab classroom tool</span></div></div>
- <button class="btn share-btn" id="share" type="button">Share this app</button>
+ <div class="brand"><span class="brand-name">Classroom Group Generator</span><span class="brand-sub">Genesee Learning Lab &nbsp;/&nbsp; Classroom tools</span></div>
+ <div class="topbar-actions"><a class="link" href="../projects.html">All projects</a><button class="btn share-btn" id="share" type="button">Copy app link</button></div>
 </header>
-<main>
- <section class="hero"><div><div class="eyebrow">Fast. Fair. Classroom-ready.</div><h1>Better groups, in seconds.</h1><p class="lede">Paste your class list, pick a group size, and shuffle. Perfect for collaborative work, labs, and discussions.</p></div><div class="privacy">● Names stay on this device</div></section>
+<main id="main-content" tabindex="-1">
+ <section class="gg-hero" aria-labelledby="tool-title"><div><div class="eyebrow">CLASSROOM TOOLS</div><h1 id="tool-title">Random group generator</h1><p class="lede">Enter a class roster and choose a group size or number of groups. Assign students at random, then make any changes you need.</p></div><div class="privacy">Class lists stay in this browser. Avoid saving rosters on shared devices.</div></section>
  <div class="layout">
   <section class="panel setup" aria-labelledby="setup-title">
    <h2 id="setup-title">Set up your class</h2>
    <div class="field">
     <label for="saved">Saved class lists</label>
     <div class="row"><select id="saved" aria-label="Saved class lists" style="flex:1"><option value="">Choose a saved class...</option></select><button id="delete-saved" class="btn btn-clear" type="button" title="Delete selected saved class">Delete</button></div>
-    <p class="help">Saved locally in this browser, not shared with other devices.</p>
+    <p class="help">Saved only in this browser. On a shared computer, use Clear and delete saved lists when finished.</p>
    </div>
    <div class="field">
     <label for="roster">Student names <span id="roster-count" style="color:var(--mint);font-weight:700">(0 students)</span></label>
@@ -117,28 +160,38 @@ hr{height:1px;border:0;background:var(--border);margin:21px 0}
    <label id="quantity-label" for="quantity">Students per group</label>
    <div class="stepper"><button id="minus" type="button" aria-label="Decrease by one">−</button><input id="quantity" type="number" min="1" max="999" value="4" inputmode="numeric"><button id="plus" type="button" aria-label="Increase by one">+</button></div>
    <div class="summary"><span><strong id="students">0</strong> students</span><span><strong id="prediction">0</strong> groups expected</span></div>
-   <button id="generate" class="btn btn-primary btn-block" type="button">✦ Generate groups</button>
+   <button id="generate" class="btn btn-primary btn-block" type="button">Generate groups</button>
    <div id="status" class="status" role="status" aria-live="polite"></div>
   </section>
   <section class="panel results" aria-labelledby="results-heading">
    <div class="result-header">
     <div><div class="eyebrow">Your groups</div><h2 id="results-heading">Ready to shuffle</h2></div>
     <div class="toolbar">
-     <button id="shuffle" class="btn" type="button" disabled>↻ Reshuffle</button>
+     <button id="shuffle" class="btn" type="button" disabled>Reshuffle</button>
      <button id="copy" class="btn" type="button" disabled>Copy</button>
      <button id="download" class="btn" type="button" disabled>Export</button>
      <button id="print" class="btn" type="button" disabled>Print</button>
      <button id="project" class="btn" type="button" disabled>Projector view</button>
     </div>
    </div>
-   <div id="empty" class="empty"><div><div class="empty-icon" aria-hidden="true">🎲</div><h3>Every team starts here</h3><p>Add a roster or try the example class, then select <strong>Generate groups</strong>. Your balanced groups will appear here.</p></div></div>
+   <div id="empty" class="empty"><div><div class="empty-icon" aria-hidden="true">01</div><h3>Start with a class list</h3><p>Add a roster or try the example class, then select <strong>Generate groups</strong>. Your balanced groups will appear here.</p></div></div>
    <div id="groups" class="groups" aria-live="polite" hidden></div>
    <div class="help" id="move-help" hidden style="margin-top:14px">Need to make a quick adjustment? Use the Move menu beside a name to switch groups.</div>
   </section>
  </div>
 </main>
-<div class="foot">Free classroom tool · No accounts · No student data sent to a server · Genesee Learning Lab</div>
+<div class="foot">Free classroom tool · No account required · Class information is processed in your browser.</div>
 </div>
+</div>
+<footer class="site-footer" aria-label="Site footer">
+ <div class="footer-inner">
+  <div class="footer-grid">
+   <div><p class="footer-brand">Genesee Learning Lab</p><p class="footer-tagline">Hands-on computer science and technology education in Genesee County.</p></div>
+   <nav class="footer-col" aria-label="Footer navigation"><h4>Explore</h4><ul role="list"><li><a href="../index.html">Home</a></li><li><a href="../projects.html">Projects</a></li><li><a href="../programs.html">Programs</a></li><li><a href="../contact.html">Contact</a></li></ul></nav>
+  </div>
+  <div class="footer-bottom"><span>&copy; 2026 Genesee Learning Lab</span><span>Built for classroom use</span></div>
+ </div>
+</footer>
 <div id="toast" role="status" hidden></div>
 <script>
 (function(){
