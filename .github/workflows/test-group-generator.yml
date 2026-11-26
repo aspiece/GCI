@@ -26,4 +26,4 @@ jobs:
         with:
           node-version: '22'
       - name: Run Group Generator tests
-        run: node --test group-generator/tests/group-generator.test.cjs
+        run: node --test group-generator/tests/*.test.cjs
