@@ -464,7 +464,7 @@ function loadSelectedGrouping(){
  groups=rec.groups.map(function(g){return g.slice();});
  rememberGroupContext();
  activeGroupingName=name;activeGroupingFingerprint=groupFingerprint(rec);
- render();refresh();message('');groupNotice('Restored "'+name+'" exactly as saved.');toast('Grouping loaded');
+ render();refresh();message('');groupNotice('Restored "'+name+'" exactly as saved.');toast('Grouping loaded');focusResultsOnMobile();
 }
 function updateSelectedGrouping(){
  var name=$('saved-groupings').value,all=readGroupings();
