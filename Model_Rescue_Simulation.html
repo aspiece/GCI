@@ -2807,7 +2807,7 @@
                 <span id="achievementLabel" class="status-badge current">Mission in progress</span>
               </div>
               <h3 id="report-complete-heading">Final Rescue Report</h3>
-              <p>Use your results to explain what changed from Version 1 to Version 2 and what decision the evidence supports.</p>
+              <p>Use your results to explain what changed from Version 1 to Version 2 and what decision the evidence supports. Your mission, model scores and selected record IDs are added automatically to the report.</p>
             </div>
 
             <div class="report-summary-grid">
@@ -2830,7 +2830,7 @@
                 </div>
                 <div class="field-card">
                   <label for="reflectionEvidence">What evidence supports your final decision?</label>
-                  <textarea id="reflectionEvidence" placeholder="Point to the comparison results, error pattern, and human-review reasoning."></textarea>
+                  <textarea id="reflectionEvidence" placeholder="Explain what the score difference and error pattern mean. The actual scores and record IDs are included automatically."></textarea>
                 </div>
               </div>
             </section>
@@ -4614,10 +4614,14 @@
         var oversight = state.reflections.oversight.trim();
         var fix = state.reflections.fix.trim();
         var evidence = state.reflections.evidence.trim();
-        if (!weakSpot || !recordReason || !performance || !oversight || !fix || !evidence) {
+        if (!getMission() || !state.compare || state.selectedImprovements.length !== 3 || !weakSpot || !recordReason || !performance || !oversight || !fix || !evidence) {
           return '';
         }
-        return 'I tested the made-up model and found that it struggled when ' + weakSpot + '. ' +
+        return 'Mission: ' + getMission().name + '. ' +
+          'Version 1 model result: ' + state.compare.v1Score + '/' + TEST.length + ' (' + formatPercent(state.compare.v1Score, TEST.length) + '%). ' +
+          'Rescue record IDs: ' + state.selectedImprovements.join(', ') + '. ' +
+          'Version 2 model result: ' + state.compare.v2Score + '/' + TEST.length + ' (' + formatPercent(state.compare.v2Score, TEST.length) + '%). ' +
+          'I tested the made-up model and found that it struggled when ' + weakSpot + '. ' +
           'I selected new training records that ' + recordReason + '. ' +
           'Version 2 performed ' + (performance === 'the same' ? 'the same as' : performance + ' than') + ' Version 1. ' +
           'A trained person should make the final decision because ' + oversight + '. ' +
