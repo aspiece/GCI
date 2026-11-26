@@ -5,8 +5,9 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
 const JSZip=require('../vendor/jszip.min.js');
+const jsPDF=require('../vendor/jspdf.umd.min.js').jsPDF;
 const script=fs.readFileSync(path.join(__dirname,'..','export-formats.js'),'utf8');
-const browser={JSZip};
+const browser={JSZip,jspdf:{jsPDF}};
 new Function('window',script)(browser);
 const groups=[
  ['Alex & Jordan','<Taylor>','Sam'],
@@ -69,4 +70,22 @@ test('Large groups are split into multiple readable slides',async()=>{
 test('Unsupported format or empty groups cannot create an Office file',async()=>{
  await assert.rejects(browser.GroupExport.make('pdf',groups),/Unsupported/);
  await assert.rejects(browser.GroupExport.make('docx',[]),/Generate or load/);
+});
+
+
+test('PDF download produces a valid PDF container with pages',async()=>{
+ const pdf=await browser.GroupExport.make('pdf',groups);
+ assert.match(pdf.type,/application\/pdf/);
+ const bytes=Buffer.from(await pdf.arrayBuffer());
+ assert.ok(bytes.length>900,'PDF must include printable group content');
+ assert.equal(bytes.subarray(0,5).toString('latin1'),'%PDF-');
+ assert.match(bytes.toString('latin1'),/\/Type \/Page\b/);
+ assert.match(bytes.toString('latin1'),/\/Count 1/);
+});
+test('Long PDF groupings paginate instead of clipping names',async()=>{
+ const names=Array.from({length:120},(_,i)=>'Student '+(i+1));
+ const pdf=await browser.GroupExport.make('pdf',[names]);
+ const contents=Buffer.from(await pdf.arrayBuffer()).toString('latin1');
+ assert.match(contents,/\/Count [2-9]\b/);
+ assert.match(contents,/\/Type \/Page\b/);
 });
