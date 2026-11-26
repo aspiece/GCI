@@ -224,3 +224,87 @@ test('format selector triggers local Office download and keeps JSON backup separ
  assert.match(await [...downloads.values()][0].text(),/office-xlsx-6/);
  assert.equal(el['export-groupings'].disabled,true);
 });
+
+
+test('main Save groups creates and updates exact assignments without creating duplicates',()=>{
+ const a=launch(),{el,store}=a;
+ el.sample.click();el.generate.click();
+ el['save-current'].click();
+ const key='gci-group-generator-groupings-v1';
+ assert.deepEqual(Object.keys(JSON.parse(store.get(key))),['Period A']);
+ const move=el.groups.children[0].children[1].children[0].children[1];
+ move.value='1';move.fire('change');
+ el['save-current'].click();
+ const stored=JSON.parse(store.get(key));
+ assert.equal(Object.keys(stored).length,1);
+ assert.deepEqual(stored['Period A'].groups.map(g=>g.length),a.sizes());
+});
+test('Undo restores exact groups after moving a student',()=>{
+ const a=launch(),{el}=a;
+ el.sample.click();el.generate.click();
+ const before=a.students().slice(),sizes=a.sizes().slice();
+ const move=el.groups.children[0].children[1].children[0].children[1];
+ move.value='1';move.fire('change');
+ assert.equal(el.undo.hidden,false);
+ assert.notDeepEqual(a.sizes(),sizes);
+ el.undo.click();
+ assert.deepEqual(a.students(),before);
+ assert.deepEqual(a.sizes(),sizes);
+ assert.equal(el.undo.hidden,true);
+});
+test('reshuffle asks before replacing assignments and Undo restores previous version',()=>{
+ const a=launch(),{el,setConfirm}=a;
+ el.sample.click();el.generate.click();
+ const before=a.students().slice();
+ setConfirm(false);el.shuffle.click();
+ assert.deepEqual(a.students(),before);
+ setConfirm(true);el.shuffle.click();
+ assert.equal(el.undo.hidden,false);
+ el.undo.click();
+ assert.deepEqual(a.students(),before);
+});
+test('editing the roster preserves a recoverable copy of previous grouping',()=>{
+ const a=launch(),{el}=a;
+ el.roster.value='Alex\nSam\nJordan';el.roster.fire('input');el.generate.click();
+ const before=a.students().slice();
+ el.roster.value='Alex\nSam';el.roster.fire('input');
+ assert.equal(a.sizes().length,0);
+ assert.equal(el.undo.hidden,false);
+ el.undo.click();
+ assert.equal(el.roster.value,'Alex\nSam\nJordan');
+ assert.deepEqual(a.students(),before);
+});
+test('changing group settings supports Undo with original size and mode',()=>{
+ const a=launch(),{el}=a;
+ el.sample.click();el.generate.click();
+ const before=a.students().slice();
+ el['mode-count'].click();
+ assert.equal(el.groups.children.length,0);
+ el.undo.click();
+ assert.deepEqual(a.students(),before);
+ assert.equal(el['mode-size'].attrs['aria-pressed'],'true');
+ assert.equal(el.quantity.value,4);
+});
+test('projector has a visible exit and does not require escape to return',()=>{
+ const {el}=launch();
+ el.sample.click();el.generate.click();
+ el.project.click();
+ assert.equal(el['exit-projector'].hidden,false);
+ el['exit-projector'].click();
+ assert.equal(el['exit-projector'].hidden,true);
+ assert.equal(el.project.attrs['aria-pressed'],'false');
+});
+test('switching saved classes requires permission before discarding an active grouping',()=>{
+ const a=launch(),{el,setConfirm}=a;
+ el.roster.value='Student One\nStudent Two';el.roster.fire('input');
+ el.save.click();
+ el.sample.click();el.generate.click();
+ const before=a.students().slice();
+ el.saved.value='Period A';setConfirm(false);el.saved.fire('change');
+ assert.deepEqual(a.students(),before);
+ el.saved.value='Period A';setConfirm(true);el.saved.fire('change');
+ assert.equal(el.groups.children.length,0);
+ assert.equal(el.roster.value,'Student One\nStudent Two');
+ el.undo.click();
+ assert.deepEqual(a.students(),before);
+});
