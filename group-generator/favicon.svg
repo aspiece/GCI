@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Classroom Group Generator: three students in a group">
+  <rect width="64" height="64" rx="12" fill="#193341"/>
+  <rect x="9" y="8" width="46" height="48" rx="8" fill="#fffdf9"/>
+  <rect x="14" y="14" width="36" height="5" rx="2.5" fill="#a87747"/>
+  <g fill="#193341">
+    <circle cx="22" cy="30" r="4.5"/>
+    <circle cx="32" cy="30" r="4.5"/>
+    <circle cx="42" cy="30" r="4.5"/>
+    <rect x="17.5" y="36" width="9" height="12" rx="3"/>
+    <rect x="27.5" y="36" width="9" height="12" rx="3"/>
+    <rect x="37.5" y="36" width="9" height="12" rx="3"/>
+  </g>
+  <rect x="17" y="51" width="30" height="2" rx="1" fill="#68817b"/>
+</svg>
