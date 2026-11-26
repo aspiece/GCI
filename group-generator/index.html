@@ -188,6 +188,13 @@ body.projector .exit-projector:not([hidden]){position:fixed;right:18px;top:15px;
 .gg-app .separator-toggle{display:flex;align-items:center;gap:9px;margin-top:10px;color:#53616b;font-size:12px;font-weight:650;line-height:1.5;cursor:pointer}
 .gg-app .separator-toggle input{width:18px;height:18px;min-height:18px;margin:0;padding:0;flex:0 0 18px;accent-color:#244b60}
 
+
+.gg-app .start-option .saved-grouping-main{display:flex;align-items:center;gap:8px}
+.gg-app .start-option .saved-grouping-main select{flex:1 1 auto;min-width:0;width:100%}
+.gg-app .start-option .saved-grouping-main .btn{flex:0 0 auto}
+.gg-app .start-option .saved-groupings-manage{margin-top:8px}
+@media(max-width:480px){.gg-app .start-option .saved-grouping-main{display:grid;grid-template-columns:minmax(0,1fr) auto}.gg-app .start-option .saved-grouping-main select{grid-column:1/-1}.gg-app .start-option .saved-grouping-main .btn{grid-column:1/-1;width:100%}}
+
 </style>
 </head>
 <body>
@@ -231,13 +238,13 @@ body.projector .exit-projector:not([hidden]){position:fixed;right:18px;top:15px;
     <div class="saved-grouping-main">
       <select id="saved-groupings" aria-label="Choose saved group assignments"><option value="">Choose a saved grouping...</option></select>
       <button class="btn" id="load-grouping" type="button" disabled>Load</button>
-      <button class="btn btn-primary" id="save-grouping" type="button" disabled>Save new</button>
-      <button class="btn" id="update-grouping" type="button" disabled>Update</button>
     </div>
     <p id="saved-grouping-state" class="help saved-state">Generate groups to save your first arrangement.</p>
     <details class="saved-groupings-manage">
       <summary>Manage saved groupings and backups</summary>
       <div class="saved-grouping-tools">
+        <button class="btn" id="save-grouping" type="button" disabled>Save as new</button>
+        <button class="btn" id="update-grouping" type="button" disabled>Update selected</button>
         <button id="duplicate-grouping" class="btn" type="button" disabled>Duplicate selected</button>
         <button id="delete-grouping" class="btn btn-clear" type="button" disabled>Delete selected</button>
         <button id="export-groupings" class="btn" type="button" disabled>Download JSON backup</button>
