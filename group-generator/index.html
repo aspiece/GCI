@@ -336,10 +336,21 @@ function clamp(n,min,max){return Math.min(max,Math.max(min,Number.isFinite(n)?n:
 function requested(){return clamp(Math.floor(Number(quantity.value)),1,999);}
 function groupCount(n){return n===0?0:Math.min(n,mode==='size'?Math.ceil(n/requested()):requested());}
 function refresh(){var a=names();$('roster-count').textContent='('+a.length+' students)';$('students').textContent=a.length;$('prediction').textContent=groupCount(a.length);$('delete-saved').disabled=!$('saved').value;}
-function invalidate(){groups=[];render();message('');refresh();}
+function invalidate(){rememberUndo();groups=[];groupContext=null;render();refresh();message(undoSnapshot?'Previous assignments can be restored with Undo change.':'');}
 function randomIndex(max){if(window.crypto&&window.crypto.getRandomValues){var unit=4294967296;var limit=unit-(unit%max);var arr=new Uint32Array(1);do{window.crypto.getRandomValues(arr);}while(arr[0]>=limit);return arr[0]%max;}return Math.floor(Math.random()*max);}
 function randomize(arr){var copy=arr.slice();for(var i=copy.length-1;i>0;i--){var j=randomIndex(i+1),v=copy[i];copy[i]=copy[j];copy[j]=v;}return copy;}
-function generate(){var a=names();if(!a.length){message('Add at least one student to get started.');roster.focus();return;}quantity.value=requested();var n=groupCount(a.length),shuffled=randomize(a);groups=Array.from({length:n},function(){return [];});shuffled.forEach(function(person,i){groups[i%n].push(person);});render();refresh();message('');toast('Groups generated!');}
+function generate(){
+ var a=names();
+ if(!a.length){message('Add at least one student to get started.');roster.focus();return;}
+ if(groups.length&&!confirm('Create new random groups? Current assignments will be replaced. Save them first if you want to keep them.'))return;
+ rememberUndo();
+ quantity.value=requested();
+ var n=groupCount(a.length),shuffled=randomize(a);
+ groups=Array.from({length:n},function(){return [];});
+ shuffled.forEach(function(person,i){groups[i%n].push(person);});
+ rememberGroupContext();render();refresh();message('');toast('Groups generated!');
+ focusResultsOnMobile();
+}
 function format(){return groups.map(function(g,i){return 'Group '+(i+1)+' ('+g.length+')\n'+g.map(function(n){return '• '+n;}).join('\n');}).join('\n\n');}
 function copyText(text){if(navigator.clipboard&&navigator.clipboard.writeText){return navigator.clipboard.writeText(text).then(function(){return true;}).catch(function(){return fallbackCopy(text);});}return Promise.resolve(fallbackCopy(text));}
 function fallbackCopy(text){var temp=document.createElement('textarea');temp.value=text;temp.setAttribute('readonly','');temp.style.position='fixed';temp.style.opacity='0';document.body.appendChild(temp);temp.select();var success=false;try{success=Boolean(document.execCommand('copy'));}catch(e){}temp.remove();return success;}
@@ -396,6 +407,7 @@ function refreshGroupingButtons(){
  $('saved-grouping-count').textContent=number+' saved';
  $('load-grouping').disabled=!valid;
  $('save-grouping').disabled=!hasGroups;
+ $('save-current').disabled=!hasGroups;
  $('update-grouping').disabled=!valid||!hasGroups;
  $('duplicate-grouping').disabled=!valid;
  $('delete-grouping').disabled=!valid;
@@ -442,7 +454,9 @@ function loadSelectedGrouping(){
  $('mode-size').setAttribute('aria-pressed',String(mode==='size'));
  $('mode-count').setAttribute('aria-pressed',String(mode==='count'));
  $('quantity-label').textContent=mode==='size'?'Students per group':'Number of groups';
+ rememberUndo();
  groups=rec.groups.map(function(g){return g.slice();});
+ rememberGroupContext();
  activeGroupingName=name;activeGroupingFingerprint=groupFingerprint(rec);
  render();refresh();message('');groupNotice('Restored "'+name+'" exactly as saved.');toast('Grouping loaded');
 }
@@ -509,9 +523,56 @@ async function importGroupingBackup(){
  finally{input.value='';}
 }
 
-function render(){var enabled=groups.length>0;$('shuffle').disabled=!enabled;$('copy').disabled=!enabled;$('download').disabled=!enabled;$('print').disabled=!enabled;$('project').disabled=!enabled;refreshGroupingButtons();$('empty').hidden=enabled;groupsEl.hidden=!enabled;$('move-help').hidden=!enabled;groupsEl.replaceChildren();$('results-heading').textContent=enabled?groups.length+' groups':'Ready to shuffle';if(!enabled){if(document.body.classList.contains('projector'))projector(false);return;}
+
+/* Keep a one-step recovery point before replacing or changing group assignments. */
+var undoSnapshot=null,groupContext=null;
+function rememberGroupContext(){groupContext={roster:names().slice(),mode:mode,quantity:requested()};}
+function setUndoAvailability(){var btn=$('undo');btn.disabled=!undoSnapshot;btn.hidden=!undoSnapshot;}
+function rememberUndo(){
+ if(!groups.length)return;
+ var ctx=groupContext||{roster:names(),mode:mode,quantity:requested()};
+ undoSnapshot={
+  groups:groups.map(function(g){return g.slice();}),
+  roster:ctx.roster.slice(),mode:ctx.mode,quantity:ctx.quantity,
+  activeGroupingName:activeGroupingName,activeGroupingFingerprint:activeGroupingFingerprint,
+  selectedGrouping:$('saved-groupings').value
+ };
+ setUndoAvailability();
+}
+function undoLastChange(){
+ if(!undoSnapshot)return;
+ var saved=undoSnapshot;undoSnapshot=null;
+ roster.value=saved.roster.join('\n');mode=saved.mode;quantity.value=saved.quantity;
+ $('mode-size').setAttribute('aria-pressed',String(mode==='size'));
+ $('mode-count').setAttribute('aria-pressed',String(mode==='count'));
+ $('quantity-label').textContent=mode==='size'?'Students per group':'Number of groups';
+ groups=saved.groups.map(function(g){return g.slice();});
+ groupContext={roster:saved.roster.slice(),mode:saved.mode,quantity:saved.quantity};
+ activeGroupingName=saved.activeGroupingName;activeGroupingFingerprint=saved.activeGroupingFingerprint;
+ $('saved-groupings').value=saved.selectedGrouping;
+ render();refresh();message('Previous group assignments restored.');toast('Change undone');
+}
+function saveCurrentGrouping(){
+ if(!groups.length)return;
+ var selected=$('saved-groupings').value;
+ if(selected&&selected===activeGroupingName&&Object.prototype.hasOwnProperty.call(readGroupings(),selected))updateSelectedGrouping();
+ else saveNewGrouping();
+}
+function focusResultsOnMobile(){
+ if(window.matchMedia&&window.matchMedia('(max-width: 870px)').matches){
+  var result=document.querySelector('.gg-app .results');
+  if(result&&typeof result.scrollIntoView==='function')result.scrollIntoView({behavior:'smooth',block:'start'});
+ }
+}
+
+function render(){var enabled=groups.length>0;$('shuffle').disabled=!enabled;$('copy').disabled=!enabled;$('download').disabled=!enabled;$('print').disabled=!enabled;$('project').disabled=!enabled;refreshGroupingButtons();setUndoAvailability();$('empty').hidden=enabled;groupsEl.hidden=!enabled;$('move-help').hidden=!enabled;groupsEl.replaceChildren();$('results-heading').textContent=enabled?groups.length+' groups':'Ready to shuffle';if(!enabled){if(document.body.classList.contains('projector'))projector(false);return;}
 groups.forEach(function(group,gidx){var card=document.createElement('article');card.className='group';card.style.setProperty('--dot',colors[gidx%colors.length]);var header=document.createElement('div');header.className='group-top';var title=document.createElement('div');title.className='group-title';var dot=document.createElement('span');dot.className='dot';dot.style.setProperty('--dot',colors[gidx%colors.length]);dot.setAttribute('aria-hidden','true');title.appendChild(dot);var words=document.createElement('span');words.textContent='Group '+(gidx+1);title.appendChild(words);header.appendChild(title);var count=document.createElement('span');count.className='group-count';count.textContent=group.length+' '+(group.length===1?'student':'students');header.appendChild(count);card.appendChild(header);
-var ul=document.createElement('ul');ul.className='names';group.forEach(function(person,pidx){var li=document.createElement('li');var n=document.createElement('span');n.className='person';n.textContent=person;li.appendChild(n);if(groups.length>1){var select=document.createElement('select');select.className='mover';select.setAttribute('aria-label','Move '+person+' to another group');var keep=document.createElement('option');keep.textContent='Move…';keep.value='';select.appendChild(keep);groups.forEach(function(other,otherIdx){if(gidx===otherIdx)return;var opt=document.createElement('option');opt.value=String(otherIdx);opt.textContent='Group '+(otherIdx+1);select.appendChild(opt);});select.addEventListener('change',function(){if(select.value==='')return;var to=Number(select.value);var from=groups[gidx],destination=groups[to];destination.push(from.splice(pidx,1)[0]);if(!from.length)groups.splice(gidx,1);var newIndex=groups.indexOf(destination)+1;render();toast('Student moved to Group '+newIndex);});li.appendChild(select);}ul.appendChild(li);});card.appendChild(ul);groupsEl.appendChild(card);});
+var ul=document.createElement('ul');ul.className='names';group.forEach(function(person,pidx){var li=document.createElement('li');var n=document.createElement('span');n.className='person';n.textContent=person;li.appendChild(n);if(groups.length>1){var select=document.createElement('select');select.className='mover';select.setAttribute('aria-label','Move '+person+' to another group');var keep=document.createElement('option');keep.textContent='Move…';keep.value='';select.appendChild(keep);groups.forEach(function(other,otherIdx){if(gidx===otherIdx)return;var opt=document.createElement('option');opt.value=String(otherIdx);opt.textContent='Group '+(otherIdx+1);select.appendChild(opt);});select.addEventListener('change',function(){if(select.value==='')return;var to=Number(select.value);rememberUndo();var from=groups[gidx],destination=groups[to];
+ destination.push(from.splice(pidx,1)[0]);if(!from.length)groups.splice(gidx,1);
+ var newIndex=groups.indexOf(destination)+1;render();toast('Student moved to Group '+newIndex);
+ var target=groupsEl.children[newIndex-1],rows=target&&target.children&&target.children[1]&&target.children[1].children;
+ var last=rows&&rows[rows.length-1],nextControl=last&&last.children&&last.children[1];
+ if(nextControl&&typeof nextControl.focus==='function')nextControl.focus();else $('undo').focus();});li.appendChild(select);}ul.appendChild(li);});card.appendChild(ul);groupsEl.appendChild(card);});
 }
 function loadOptions(selected){var all=readSaved(),sel=$('saved');sel.replaceChildren();var first=document.createElement('option');first.value='';first.textContent='Choose a saved class...';sel.appendChild(first);Object.keys(all).sort(function(a,b){return a.localeCompare(b);}).forEach(function(name){var opt=document.createElement('option');opt.value=name;opt.textContent=name;sel.appendChild(opt);});sel.value=selected&&Object.prototype.hasOwnProperty.call(all,selected)?selected:'';refresh();}
 function projector(on){document.body.classList.toggle('projector',on);$('project').textContent=on?'Exit projector':'Projector view';$('project').setAttribute('aria-pressed',on?'true':'false');}
