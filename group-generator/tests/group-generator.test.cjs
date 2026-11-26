@@ -8,7 +8,7 @@ const html=fs.readFileSync(path.join(__dirname,'..','index.html'),'utf8');
 const script=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)].at(-1)?.[1];
 assert.ok(script,'Group Generator script must exist');
 
-function launch(){
+function launch(persistedStore){
  class Classes{
   constructor(){this.state=new Set()}
   contains(k){return this.state.has(k)}
@@ -27,27 +27,41 @@ function launch(){
   setAttribute(k,v){this.attrs[k]=String(v)}
   getAttribute(k){return this.attrs[k]??null}
   remove(){this.removed=true}
-  focus(){this.focused=true}
+  focus(){this.focused=true;document.activeElement=this}
+  scrollIntoView(){this.scrolled=true}
+  getBoundingClientRect(){return {left:180,top:190,right:400,bottom:280,width:220,height:90}}
   select(){this.selected=true}
  }
  const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);
  const el=Object.fromEntries(ids.map(id=>[id,new Node('div',id)]));
  el.quantity.value='4';
  const toggle=new Node('button','nav-toggle');
+ const tourTargets={
+  '.start-here':new Node('section','start-here'),
+  '#generate':el.generate,
+  '.result-header':new Node('div','result-header'),
+  '.more-actions':new Node('details','more-actions')
+ };
+ const documentListeners={};
  const document={
-  body:new Node('body'),
+  body:new Node('body'),activeElement:null,
   getElementById:id=>el[id]||null,
-  querySelector:s=>s==='.nav-toggle'?toggle:null,
+  querySelector:selector=>selector==='.nav-toggle'?toggle:(tourTargets[selector]||null),
   createElement:tag=>new Node(tag),
-  addEventListener:()=>{},
+  addEventListener:(type,fn)=>{(documentListeners[type]??=[]).push(fn)},
   execCommand:()=>true
  };
- const store=new Map();
+ document.activeElement=document.body;
+ el['quick-tour'].hidden=true;el['tour-scrim'].hidden=true;
+ const store=persistedStore||new Map();
  const localStorage={getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(k,v)};
  let random=1977;
+ const windowListeners={},timers=[];
  const window={
+  innerWidth:1024,innerHeight:768,
   crypto:{getRandomValues:arr=>{random=(Math.imul(random,1664525)+1013904223)>>>0;arr[0]=random;return arr}},
-  print:()=>{window.printed=true}
+  print:()=>{window.printed=true},
+  addEventListener:(type,fn)=>{(windowListeners[type]??=[]).push(fn)}
  };
  const location={origin:'https://geneseelearninglab.com',pathname:'/group-generator/'};
  const navigator={clipboard:{writeText:async text=>{navigator.copied=text}}};
@@ -58,11 +72,11 @@ function launch(){
  const confirm=()=>confirmValue,prompt=()=>promptValue;
  window.GroupExport={make:async(format,items)=>new Blob(['office-'+format+'-'+items.length])};
  new Function('document','window','localStorage','navigator','location','URL','Blob','confirm','prompt','setTimeout','clearTimeout','Uint32Array',script)(
-  document,window,localStorage,navigator,location,URL,Blob,confirm,prompt,()=>0,()=>{},Uint32Array
+  document,window,localStorage,navigator,location,URL,Blob,confirm,prompt,(fn,delay)=>{timers.push({fn,delay});return timers.length},()=>{},Uint32Array
  );
  function sizes(){return el.groups.children.map(card=>card.children.at(-1).children.length)}
  function students(){return el.groups.children.flatMap(card=>card.children.at(-1).children.map(li=>li.children[0].textContent))}
- return {el,store,window,navigator,toggle,sizes,students,downloads,setPrompt:value=>{promptValue=value},setConfirm:value=>{confirmValue=value}}
+ return {el,store,window,navigator,toggle,sizes,students,downloads,tourTargets,document,runTourIntro:()=>timers.filter(t=>t.delay===600).forEach(t=>t.fn()),fireKey:event=>(documentListeners.keydown||[]).forEach(fn=>fn({preventDefault(){this.prevented=true},...event})),setPrompt:value=>{promptValue=value},setConfirm:value=>{confirmValue=value}}
 }
 test('starts with disabled result actions and validates an empty roster',()=>{
  const {el}=launch();
@@ -337,4 +351,63 @@ test('comma-separated roster mode remains available as an explicit option',()=>{
  assert.equal(el.students.textContent,3);
  el.generate.click();
  assert.deepEqual(new Set(a.students()),new Set(['Alex','Sam','Jordan']));
+});
+
+
+test('orientation automatically opens only on first visit and can be dismissed permanently',()=>{
+ const browserStorage=new Map();
+ const a=launch(browserStorage),{el}=a;
+ assert.equal(browserStorage.has('gci-group-generator-tour-v1'),false);
+ a.runTourIntro();
+ assert.equal(el['quick-tour'].hidden,false);
+ assert.equal(el['tour-scrim'].hidden,false);
+ assert.equal(el['tour-progress'].textContent,'Step 1 of 4');
+ assert.equal(a.tourTargets['.start-here'].classList.contains('tour-target'),true);
+ assert.equal(a.document.activeElement,el['tour-title']);
+ el['tour-skip'].click();
+ assert.equal(el['quick-tour'].hidden,true);
+ assert.equal(browserStorage.get('gci-group-generator-tour-v1'),'seen');
+ assert.equal(a.tourTargets['.start-here'].classList.contains('tour-target'),false);
+ const b=launch(browserStorage);
+ b.runTourIntro();
+ assert.equal(b.el['quick-tour'].hidden,true);
+ b.el['tour-trigger'].click();
+ assert.equal(b.el['quick-tour'].hidden,false);
+ b.el['tour-skip'].click();
+ assert.equal(b.el['quick-tour'].hidden,true);
+});
+test('four orientation steps support Next, Back, Finish and highlighted targets',()=>{
+ const a=launch(),{el,tourTargets}=a;
+ el['tour-trigger'].click();
+ assert.equal(el['tour-progress'].textContent,'Step 1 of 4');
+ assert.equal(el['tour-back'].disabled,true);
+ el['tour-next'].click();
+ assert.equal(el['tour-progress'].textContent,'Step 2 of 4');
+ assert.equal(tourTargets['#generate'].classList.contains('tour-target'),true);
+ assert.equal(tourTargets['.start-here'].classList.contains('tour-target'),false);
+ el['tour-next'].click();
+ assert.equal(el['tour-progress'].textContent,'Step 3 of 4');
+ assert.equal(tourTargets['.result-header'].classList.contains('tour-target'),true);
+ el['tour-back'].click();
+ assert.equal(el['tour-progress'].textContent,'Step 2 of 4');
+ el['tour-next'].click();el['tour-next'].click();
+ assert.equal(el['tour-progress'].textContent,'Step 4 of 4');
+ assert.equal(el['tour-next'].textContent,'Finish');
+ assert.equal(tourTargets['.more-actions'].classList.contains('tour-target'),true);
+ el['tour-next'].click();
+ assert.equal(el['quick-tour'].hidden,true);
+ assert.equal(a.store.get('gci-group-generator-tour-v1'),'seen');
+});
+test('orientation can be closed by Escape, then reopened without affecting class data',()=>{
+ const a=launch(),{el,fireKey}=a;
+ el.sample.click();el.generate.click();
+ const original=a.students().slice();
+ el['tour-trigger'].click();
+ fireKey({key:'Escape'});
+ assert.equal(el['quick-tour'].hidden,true);
+ assert.deepEqual(a.students(),original);
+ el['tour-trigger'].click();
+ assert.equal(el['quick-tour'].hidden,false);
+ el['tour-scrim'].click();
+ assert.equal(el['quick-tour'].hidden,true);
 });
