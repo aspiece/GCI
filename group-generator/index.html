@@ -197,6 +197,7 @@ body.projector .gg-app .mover{display:none!important}
        <option value="docx">Word / Google Docs (.docx)</option>
        <option value="xlsx">Excel / Google Sheets (.xlsx)</option>
        <option value="pptx">PowerPoint / Google Slides (.pptx)</option>
+       <option value="pdf">PDF document (.pdf)</option>
       </select>
      </label>
      <button id="download" class="btn" type="button" disabled>Download</button>
@@ -205,7 +206,7 @@ body.projector .gg-app .mover{display:none!important}
     </div>
    </div>
    <div id="empty" class="empty"><div><div class="empty-icon" aria-hidden="true">01</div><h3>Start with a class list</h3><p>Add a roster or try the example class, then select <strong>Generate groups</strong>. Your balanced groups will appear here.</p></div></div>
-   <p class="export-hint help">To use Google Docs, Sheets, or Slides, upload the downloaded Office file to Google Drive.</p>
+   <p class="export-hint help">Download a PDF for printing or sharing, or upload Word, Excel, and PowerPoint files to Google Drive to open in Docs, Sheets, and Slides.</p>
    <div id="groups" class="groups" aria-live="polite" hidden></div>
    <div class="help" id="move-help" hidden style="margin-top:14px">Groups are initially balanced by size. Use the Move menu beside a name to adjust assignments. Empty groups are removed automatically.</div>
    <section class="saved-groupings" aria-labelledby="saved-groupings-title">
@@ -248,6 +249,7 @@ body.projector .gg-app .mover{display:none!important}
 </footer>
 <div id="toast" role="status" hidden></div>
 <script src="vendor/jszip.min.js"></script>
+<script src="vendor/jspdf.umd.min.js"></script>
 <script src="export-formats.js"></script>
 <script>
 (function(){
