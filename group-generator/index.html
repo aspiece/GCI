@@ -273,7 +273,172 @@ function format(){return groups.map(function(g,i){return 'Group '+(i+1)+' ('+g.l
 function copyText(text){if(navigator.clipboard&&navigator.clipboard.writeText){return navigator.clipboard.writeText(text).then(function(){return true;}).catch(function(){return fallbackCopy(text);});}return Promise.resolve(fallbackCopy(text));}
 function fallbackCopy(text){var temp=document.createElement('textarea');temp.value=text;temp.setAttribute('readonly','');temp.style.position='fixed';temp.style.opacity='0';document.body.appendChild(temp);temp.select();var success=false;try{success=Boolean(document.execCommand('copy'));}catch(e){}temp.remove();return success;}
 
-function render(){var enabled=groups.length>0;$('shuffle').disabled=!enabled;$('copy').disabled=!enabled;$('download').disabled=!enabled;$('print').disabled=!enabled;$('project').disabled=!enabled;$('empty').hidden=enabled;groupsEl.hidden=!enabled;$('move-help').hidden=!enabled;groupsEl.replaceChildren();$('results-heading').textContent=enabled?groups.length+' groups':'Ready to shuffle';if(!enabled){if(document.body.classList.contains('projector'))projector(false);return;}
+
+/* Saved groupings use a separate browser key from Saved Class Lists. */
+var groupingStorageKey='gci-group-generator-groupings-v1';
+var activeGroupingName='',activeGroupingFingerprint='';
+function groupNotice(value){$('saved-grouping-message').textContent=value;}
+function safeGroupingName(name){return typeof name==='string'&&name.length>0&&name.length<=100&&!/[\u0000-\u001f]/.test(name);}
+function normalizeGrouping(record){
+ if(!record||typeof record!=='object'||Array.isArray(record)||record.version!==1||!Array.isArray(record.groups)||!record.groups.length||record.groups.length>1000)throw new Error('Invalid group arrangement.');
+ var total=0,flat=[];
+ var newGroups=record.groups.map(function(g){
+  if(!Array.isArray(g)||!g.length)throw new Error('A grouping has an empty team.');
+  return g.map(function(n){
+   if(typeof n!=='string'||!n.trim()||n.length>150)throw new Error('An entry has an invalid student name.');
+   total++;flat.push(n);return n;
+  });
+ });
+ if(total>5000)throw new Error('Saved groupings exceed the student limit.');
+ var original=Array.isArray(record.roster)?record.roster.slice():flat.slice();
+ if(original.length!==flat.length||original.some(function(n){return typeof n!=='string'||!n.trim()||n.length>150;}))throw new Error('Roster does not match the grouping.');
+ var frequencies=new Map();
+ flat.forEach(function(n){frequencies.set(n,(frequencies.get(n)||0)+1);});
+ original.forEach(function(n){frequencies.set(n,(frequencies.get(n)||0)-1);});
+ if(Array.from(frequencies.values()).some(function(n){return n!==0;}))throw new Error('Roster entries differ from the saved grouping.');
+ if(record.mode!=='size'&&record.mode!=='count')throw new Error('Invalid grouping mode.');
+ var number=Number(record.quantity);
+ if(!Number.isInteger(number)||number<1||number>999)throw new Error('Invalid group quantity.');
+ return {version:1,mode:record.mode,quantity:number,roster:original,groups:newGroups,updatedAt:typeof record.updatedAt==='string'?record.updatedAt:''};
+}
+function readGroupings(){
+ var out=Object.create(null),raw;
+ try{raw=JSON.parse(localStorage.getItem(groupingStorageKey)||'{}');}catch(e){groupNotice('Saved groupings could not be read in this browser.');return out;}
+ if(!raw||typeof raw!=='object'||Array.isArray(raw))return out;
+ Object.keys(raw).forEach(function(name){if(!safeGroupingName(name))return;try{out[name]=normalizeGrouping(raw[name]);}catch(e){}});
+ return out;
+}
+function writeGroupings(data){
+ try{localStorage.setItem(groupingStorageKey,JSON.stringify(data));return true;}
+ catch(e){groupNotice('Unable to save groupings. Check browser storage permissions or available space.');return false;}
+}
+function currentRecord(){
+ return {version:1,mode:mode,quantity:requested(),roster:names(),groups:groups.map(function(g){return g.slice();}),updatedAt:new Date().toISOString()};
+}
+function groupFingerprint(record){
+ return JSON.stringify([record.mode,record.quantity,record.roster,record.groups]);
+}
+function refreshGroupingButtons(){
+ var all=readGroupings(),selected=$('saved-groupings').value,
+ valid=Boolean(selected&&Object.prototype.hasOwnProperty.call(all,selected));
+ var number=Object.keys(all).length,hasGroups=groups.length>0;
+ $('saved-grouping-count').textContent=number+' saved';
+ $('load-grouping').disabled=!valid;
+ $('save-grouping').disabled=!hasGroups;
+ $('update-grouping').disabled=!valid||!hasGroups;
+ $('duplicate-grouping').disabled=!valid;
+ $('delete-grouping').disabled=!valid;
+ $('export-groupings').disabled=number===0;
+ var description;
+ if(!hasGroups)description='Generate groups or load a saved arrangement to get started.';
+ else if(valid&&activeGroupingName===selected){
+  description=groupFingerprint(currentRecord())===activeGroupingFingerprint?'Loaded: '+selected+' (saved)':'Loaded: '+selected+' — unsaved changes';
+ }else if(valid)description='Selected: '+selected+'. Choose Load to restore those assignments, or Update to replace the saved version.';
+ else description='Current groups have not been saved. Select Save new to keep this arrangement.';
+ $('saved-grouping-state').textContent=description;
+}
+function loadGroupingOptions(selected){
+ var all=readGroupings(),chooser=$('saved-groupings'),key=selected===undefined?chooser.value:selected;
+ chooser.replaceChildren();
+ var first=document.createElement('option');first.value='';first.textContent='Choose a saved grouping...';chooser.appendChild(first);
+ Object.keys(all).sort(function(a,b){return a.localeCompare(b);}).forEach(function(name){
+  var rec=all[name],opt=document.createElement('option');opt.value=name;opt.textContent=name+' ('+rec.groups.length+' groups)';chooser.appendChild(opt);
+ });
+ chooser.value=key&&Object.prototype.hasOwnProperty.call(all,key)?key:'';
+ refreshGroupingButtons();
+}
+function saveNewGrouping(){
+ if(!groups.length){groupNotice('Generate groups before saving.');return;}
+ var proposed=prompt('Name this grouping:',activeGroupingName||'Period 1 - Project Groups');
+ if(proposed===null)return;
+ var key=proposed.trim();
+ if(!safeGroupingName(key)){groupNotice('Use a grouping name between 1 and 100 characters.');return;}
+ var all=readGroupings();
+ if(Object.prototype.hasOwnProperty.call(all,key)&&!confirm('Replace saved grouping "'+key+'"?'))return;
+ if(!Object.prototype.hasOwnProperty.call(all,key)&&Object.keys(all).length>=100){groupNotice('You have reached 100 saved groupings. Delete an old one before adding more.');return;}
+ var rec=currentRecord();
+ try{rec=normalizeGrouping(rec);}catch(e){groupNotice(e.message);return;}
+ all[key]=rec;
+ if(writeGroupings(all)){activeGroupingName=key;activeGroupingFingerprint=groupFingerprint(rec);loadGroupingOptions(key);groupNotice('Saved "'+key+'" in this browser.');toast('Grouping saved');}
+}
+function loadSelectedGrouping(){
+ var name=$('saved-groupings').value,all=readGroupings();
+ if(!Object.prototype.hasOwnProperty.call(all,name))return;
+ var rec=all[name];
+ if(groups.length&&groupFingerprint(currentRecord())!==groupFingerprint(rec)&&!confirm('Replace the current group arrangement with "'+name+'"? Unsaved changes will be lost.'))return;
+ roster.value=rec.roster.join('\n');
+ mode=rec.mode;quantity.value=rec.quantity;
+ $('mode-size').setAttribute('aria-pressed',String(mode==='size'));
+ $('mode-count').setAttribute('aria-pressed',String(mode==='count'));
+ $('quantity-label').textContent=mode==='size'?'Students per group':'Number of groups';
+ groups=rec.groups.map(function(g){return g.slice();});
+ activeGroupingName=name;activeGroupingFingerprint=groupFingerprint(rec);
+ render();refresh();message('');groupNotice('Restored "'+name+'" exactly as saved.');toast('Grouping loaded');
+}
+function updateSelectedGrouping(){
+ var name=$('saved-groupings').value,all=readGroupings();
+ if(!name||!Object.prototype.hasOwnProperty.call(all,name)||!groups.length)return;
+ if(!confirm('Update saved grouping "'+name+'" with the groups currently on screen?'))return;
+ var rec;
+ try{rec=normalizeGrouping(currentRecord());}catch(e){groupNotice(e.message);return;}
+ all[name]=rec;
+ if(writeGroupings(all)){activeGroupingName=name;activeGroupingFingerprint=groupFingerprint(rec);loadGroupingOptions(name);groupNotice('Updated "'+name+'".');toast('Saved grouping updated');}
+}
+function duplicateSelectedGrouping(){
+ var name=$('saved-groupings').value,all=readGroupings();
+ if(!name||!Object.prototype.hasOwnProperty.call(all,name))return;
+ if(Object.keys(all).length>=100){groupNotice('You have reached 100 saved groupings.');return;}
+ var next=prompt('Name the duplicated grouping:',name+' - Copy');
+ if(next===null)return;
+ next=next.trim();
+ if(!safeGroupingName(next)){groupNotice('Use a grouping name between 1 and 100 characters.');return;}
+ if(Object.prototype.hasOwnProperty.call(all,next)){groupNotice('That name is already in use. Choose another name.');return;}
+ var rec=normalizeGrouping(all[name]);rec.updatedAt=new Date().toISOString();all[next]=rec;
+ if(writeGroupings(all)){loadGroupingOptions(next);groupNotice('Duplicated "'+name+'" as "'+next+'".');toast('Grouping duplicated');}
+}
+function deleteSelectedGrouping(){
+ var name=$('saved-groupings').value,all=readGroupings();
+ if(!name||!Object.prototype.hasOwnProperty.call(all,name))return;
+ if(!confirm('Delete saved grouping "'+name+'" from this browser? This does not delete the groups currently shown.'))return;
+ delete all[name];
+ if(writeGroupings(all)){if(activeGroupingName===name){activeGroupingName='';activeGroupingFingerprint='';}loadGroupingOptions('');groupNotice('Deleted saved grouping "'+name+'".');toast('Saved grouping deleted');}
+}
+function downloadBlob(blob,filename){
+ var url=URL.createObjectURL(blob),link=document.createElement('a');
+ link.href=url;link.download=filename;document.body.appendChild(link);link.click();link.remove();
+ setTimeout(function(){URL.revokeObjectURL(url);},1000);
+}
+function downloadGroupingBackup(){
+ var all=readGroupings(),count=Object.keys(all).length;
+ if(!count){groupNotice('There are no saved groupings to back up.');return;}
+ var data={kind:'gci-group-generator-groupings',version:1,exportedAt:new Date().toISOString(),groupings:all};
+ downloadBlob(new Blob([JSON.stringify(data,null,2)+'\n'],{type:'application/json;charset=utf-8'}),'classroom-groupings-backup.json');
+ groupNotice('Downloaded a backup of '+count+' saved '+(count===1?'grouping':'groupings')+'. Keep student names secure.');
+ toast('Groupings backup downloaded');
+}
+async function importGroupingBackup(){
+ var input=$('import-groupings-file'),file=input.files&&input.files[0];
+ if(!file)return;
+ try{
+  if(file.size>5*1024*1024)throw new Error('Backup is too large (5 MB maximum).');
+  var text=await file.text(),backup=JSON.parse(text);
+  if(!backup||backup.kind!=='gci-group-generator-groupings'||backup.version!==1||!backup.groupings||typeof backup.groupings!=='object'||Array.isArray(backup.groupings))throw new Error('This is not a valid Group Generator backup.');
+  var keys=Object.keys(backup.groupings);
+  if(!keys.length||keys.length>100)throw new Error('Backup must contain between 1 and 100 saved groupings.');
+  var incoming=Object.create(null);
+  keys.forEach(function(key){if(!safeGroupingName(key))throw new Error('Invalid saved grouping name.');incoming[key]=normalizeGrouping(backup.groupings[key]);});
+  var all=readGroupings(),conflicts=keys.filter(function(key){return Object.prototype.hasOwnProperty.call(all,key);});
+  if(conflicts.length&&!confirm('Replace '+conflicts.length+' existing saved '+(conflicts.length===1?'grouping':'groupings')+' with the versions in this backup? Cancel to leave your saved groupings unchanged.'))return;
+  var merged=Object.create(null);
+  Object.keys(all).forEach(function(key){merged[key]=all[key];});
+  keys.forEach(function(key){merged[key]=incoming[key];});
+  if(Object.keys(merged).length>100)throw new Error('Import would exceed the 100 saved groupings limit. Delete some saved groupings first.');
+  if(writeGroupings(merged)){loadGroupingOptions();groupNotice('Imported '+keys.length+' saved '+(keys.length===1?'grouping':'groupings')+'. Your current displayed groups have not changed.');toast('Grouping backup imported');}
+ }catch(e){groupNotice('Import failed: '+(e&&e.message?e.message:'Invalid backup file')+'. No groupings were changed.');}
+ finally{input.value='';}
+}
+
+function render(){var enabled=groups.length>0;$('shuffle').disabled=!enabled;$('copy').disabled=!enabled;$('download').disabled=!enabled;$('print').disabled=!enabled;$('project').disabled=!enabled;refreshGroupingButtons();$('empty').hidden=enabled;groupsEl.hidden=!enabled;$('move-help').hidden=!enabled;groupsEl.replaceChildren();$('results-heading').textContent=enabled?groups.length+' groups':'Ready to shuffle';if(!enabled){if(document.body.classList.contains('projector'))projector(false);return;}
 groups.forEach(function(group,gidx){var card=document.createElement('article');card.className='group';card.style.setProperty('--dot',colors[gidx%colors.length]);var header=document.createElement('div');header.className='group-top';var title=document.createElement('div');title.className='group-title';var dot=document.createElement('span');dot.className='dot';dot.style.setProperty('--dot',colors[gidx%colors.length]);dot.setAttribute('aria-hidden','true');title.appendChild(dot);var words=document.createElement('span');words.textContent='Group '+(gidx+1);title.appendChild(words);header.appendChild(title);var count=document.createElement('span');count.className='group-count';count.textContent=group.length+' '+(group.length===1?'student':'students');header.appendChild(count);card.appendChild(header);
 var ul=document.createElement('ul');ul.className='names';group.forEach(function(person,pidx){var li=document.createElement('li');var n=document.createElement('span');n.className='person';n.textContent=person;li.appendChild(n);if(groups.length>1){var select=document.createElement('select');select.className='mover';select.setAttribute('aria-label','Move '+person+' to another group');var keep=document.createElement('option');keep.textContent='Move…';keep.value='';select.appendChild(keep);groups.forEach(function(other,otherIdx){if(gidx===otherIdx)return;var opt=document.createElement('option');opt.value=String(otherIdx);opt.textContent='Group '+(otherIdx+1);select.appendChild(opt);});select.addEventListener('change',function(){if(select.value==='')return;var to=Number(select.value);var from=groups[gidx],destination=groups[to];destination.push(from.splice(pidx,1)[0]);if(!from.length)groups.splice(gidx,1);var newIndex=groups.indexOf(destination)+1;render();toast('Student moved to Group '+newIndex);});li.appendChild(select);}ul.appendChild(li);});card.appendChild(ul);groupsEl.appendChild(card);});
 }
