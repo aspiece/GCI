@@ -186,7 +186,7 @@ test('update, duplicate and delete are separate from saved class lists',()=>{
  el['delete-grouping'].click();
  assert.ok(JSON.parse(store.get(key))['Period A']);
  assert.equal(JSON.parse(store.get(key))['Period A Copy'],undefined);
- assert.equal(store.get('gci-group-generator-rosters-v1'),null);
+ assert.equal(store.get('gci-group-generator-rosters-v1'),undefined);
 });
 test('JSON backup can be exported and imported, but invalid backups do not overwrite saved data',async()=>{
  const a=launch(),{el,store,downloads,setConfirm}=a;
