@@ -6,7 +6,13 @@
 <meta name="theme-color" content="#193341">
 <meta name="description" content="Create random, balanced classroom groups. Free, shareable and private.">
 <title>Classroom Group Generator | Genesee Learning Lab</title>
-<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="icon" href="./favicon.svg" type="image/svg+xml" sizes="any">
+<link rel="icon" href="./icons/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" sizes="180x180">
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Group Generator">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="stylesheet" href="../styles.css">
 <style>
 
@@ -219,6 +225,26 @@ body.projector .tour-reopen{display:none!important}
 @media print{.tour-popover,.tour-scrim,.tour-reopen{display:none!important}}
 @media(prefers-reduced-motion:reduce){body.tour-active .tour-target{scroll-behavior:auto!important}}
 
+
+/* Installable app controls are optional and never obstruct the first-visit tour. */
+.gg-app .install-app{border-color:#254b60;background:#244b60;color:#fffdf9;min-height:40px;padding:8px 12px}
+.gg-app .install-app:hover:not(:disabled){background:#16384a;color:#fff}
+.gg-app .pwa-update:not([hidden]){border-color:#b28350;background:#eeeae2;color:#244b60;min-height:40px}
+.gg-app .install-app[hidden],.gg-app .pwa-update[hidden]{display:none!important}
+.gg-app .install-app:focus-visible,.gg-app .pwa-update:focus-visible{outline:3px solid #a87747;outline-offset:2px}
+.gg-app .install-guide{max-width:min(520px,calc(100% - 28px));width:100%;box-sizing:border-box;border:1px solid #bdb5a7;border-top:4px solid #a87747;border-radius:3px;background:#fffdf9;color:#24343d;box-shadow:0 18px 54px #0003;padding:21px 23px}
+.gg-app .install-guide::backdrop{background:rgba(16,32,40,.56)}
+.gg-app .install-guide-head{display:flex;gap:12px;justify-content:space-between;align-items:flex-start}
+.gg-app .install-guide h2{font:700 23px/1.25 Georgia,"Times New Roman",serif;margin:5px 0 14px}
+.gg-app .install-guide p{font-size:14px;color:#53616b;line-height:1.65}
+.gg-app .install-guide ol{padding-left:22px;margin:14px 0 19px}
+.gg-app .install-guide li{font-size:14px;line-height:1.6;padding-left:4px;margin:7px 0}
+.gg-app .install-guide .install-privacy-note{font-size:12px;border-top:1px solid #d4d0c7;padding-top:13px;margin:0}
+.gg-app .pwa-status-wrap{max-width:1200px;padding:0 24px;margin:0 auto}
+.gg-app #pwa-status:not([hidden]){font-size:12px;border-left:3px solid #a87747;background:#eeeae2;padding:8px 12px;margin:0 0 12px;color:#354955}
+@media(max-width:600px){.gg-app .install-guide{padding:15px}.gg-app .install-guide h2{font-size:20px}.gg-app .pwa-status-wrap{padding:0 14px}.gg-app .install-app{font-size:12px}}
+@media print{.gg-app .install-guide,.gg-app .install-app,.gg-app .pwa-update,.gg-app .pwa-status-wrap{display:none!important}}
+
 </style>
 </head>
 <body>
@@ -239,7 +265,7 @@ body.projector .tour-reopen{display:none!important}
 <div class="wrap">
 <header class="topbar">
  <div class="brand"><span class="brand-name">Classroom Group Generator</span><span class="brand-sub">Genesee Learning Lab &nbsp;/&nbsp; Classroom tools</span></div>
- <div class="topbar-actions"><button class="tour-reopen" id="tour-trigger" type="button" aria-label="Take a quick tour of the Group Generator">Quick tour</button><a class="link" href="../projects.html">All projects</a><button class="btn share-btn" id="share" type="button">Copy app link</button></div>
+ <div class="topbar-actions"><button class="btn install-app" id="install-app" type="button">Install app</button><button class="btn pwa-update" id="pwa-update" type="button" hidden>Update available</button><button class="tour-reopen" id="tour-trigger" type="button" aria-label="Take a quick tour of the Group Generator">Quick tour</button><a class="link" href="../projects.html">All projects</a><button class="btn share-btn" id="share" type="button">Copy app link</button></div>
 </header>
 <main id="main-content" tabindex="-1">
  <section class="gg-hero" aria-labelledby="tool-title"><div><div class="eyebrow">CLASSROOM TOOLS</div><h1 id="tool-title">Random group generator</h1><p class="lede">Enter a class roster and choose a group size or number of groups. Assign students at random, then make any changes you need.</p></div><div class="privacy">Class lists stay in this browser. Avoid saving rosters on shared devices.</div></section>
@@ -339,6 +365,16 @@ body.projector .tour-reopen{display:none!important}
   </section>
  </div>
 </main>
+<div class="pwa-status-wrap"><p id="pwa-status" role="status" aria-live="polite" hidden></p></div>
+<dialog id="install-guide" class="install-guide" aria-labelledby="install-guide-title" aria-describedby="install-guide-intro">
+  <div class="install-guide-head">
+    <div><span class="eyebrow">INSTALLATION HELP</span><h2 id="install-guide-title">Install Group Generator</h2></div>
+    <button class="btn" id="install-guide-close" type="button">Close</button>
+  </div>
+  <p id="install-guide-intro">Add the Group Generator to your device for quick access.</p>
+  <ol id="install-guide-steps"></ol>
+  <p class="install-privacy-note">Saved class lists and groupings stay in this browser or app storage. They are not synced across devices; use a JSON backup before changing devices or browser profiles. Once the app has loaded online, the generator can also work offline.</p>
+</dialog>
 <div id="tour-scrim" class="tour-scrim" hidden aria-hidden="true"></div>
 <section id="quick-tour" class="tour-popover" role="dialog" aria-modal="true" aria-labelledby="tour-title" aria-describedby="tour-description" hidden>
  <div class="tour-topline"><span id="tour-progress" class="tour-progress">Step 1 of 4</span><button id="tour-skip" class="tour-dismiss" type="button" aria-label="Skip the orientation">Skip tour ×</button></div>
@@ -363,6 +399,7 @@ body.projector .tour-reopen{display:none!important}
 <script src="vendor/jszip.min.js"></script>
 <script src="vendor/jspdf.umd.min.js"></script>
 <script src="export-formats.js"></script>
+<script src="./app-install.js"></script>
 <script>
 (function(){
 'use strict';
