@@ -460,12 +460,37 @@ $('save').addEventListener('click',function(){var a=names();if(!a.length){messag
 $('saved').addEventListener('change',function(){var key=this.value,all=readSaved();if(!key){refresh();return;}roster.value=String(all[key]||'');invalidate();toast('Loaded '+key);});
 $('delete-saved').addEventListener('click',function(){var key=$('saved').value;if(!key)return;if(!confirm('Delete saved class "'+key+'" from this browser?'))return;var all=readSaved();delete all[key];if(writeSaved(all)){loadOptions('');toast('Saved class deleted');}});
 $('copy').addEventListener('click',async function(){var copied=await copyText(format());if(copied)toast('Group assignments copied');else message('Clipboard unavailable. Use Export to save the groups.');});
-$('download').addEventListener('click',function(){var file=new Blob([format()+'\n'],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(file),link=document.createElement('a');link.href=url;link.download='classroom-groups.txt';document.body.appendChild(link);link.click();link.remove();setTimeout(function(){URL.revokeObjectURL(url);},1000);});
+$('download').addEventListener('click',async function(){
+ if(!groups.length)return;
+ var chosen=$('export-format').value,button=$('download'),backup=groups.map(function(g){return g.slice();});
+ button.disabled=true;
+ try{
+  var file;
+  if(chosen==='txt')file=new Blob([format()+'\n'],{type:'text/plain;charset=utf-8'});
+  else{
+   if(!window.GroupExport)throw new Error('The document export library is unavailable. Reload the page and try again.');
+   file=await window.GroupExport.make(chosen,backup);
+  }
+  downloadBlob(file,'classroom-groups.'+chosen);
+  message('');
+  toast(chosen.toUpperCase()+' download created');
+ }catch(e){message('Download failed: '+(e&&e.message?e.message:'Unable to create this file')+'. Try another format.');}
+ finally{button.disabled=!groups.length;}
+});
 $('print').addEventListener('click',function(){window.print();});
 $('project').addEventListener('click',function(){projector(!document.body.classList.contains('projector'));});
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&document.body.classList.contains('projector'))projector(false);});
 $('share').addEventListener('click',async function(){var copied=await copyText(location.origin+location.pathname);toast(copied?'App link copied (no student names included)':'Copy the app URL from the address bar');});
-loadOptions();refresh();render();
+$('saved-groupings').addEventListener('change',refreshGroupingButtons);
+$('save-grouping').addEventListener('click',saveNewGrouping);
+$('load-grouping').addEventListener('click',loadSelectedGrouping);
+$('update-grouping').addEventListener('click',updateSelectedGrouping);
+$('duplicate-grouping').addEventListener('click',duplicateSelectedGrouping);
+$('delete-grouping').addEventListener('click',deleteSelectedGrouping);
+$('export-groupings').addEventListener('click',downloadGroupingBackup);
+$('import-groupings').addEventListener('click',function(){$('import-groupings-file').click();});
+$('import-groupings-file').addEventListener('change',importGroupingBackup);
+loadOptions();loadGroupingOptions();refresh();render();
 var navToggle=document.querySelector('.nav-toggle'),navList=document.getElementById('primary-nav-list');
 if(navToggle&&navList){
   navToggle.addEventListener('click',function(){var open=navList.classList.toggle('is-open');navToggle.setAttribute('aria-expanded',String(open));navToggle.setAttribute('aria-label',open?'Close navigation menu':'Open navigation menu');});
