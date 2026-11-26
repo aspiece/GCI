@@ -3,11 +3,11 @@
    The worker controls only the Group Generator directory. */
 'use strict';
 const CACHE_PREFIX='gci-group-generator-shell-';
-const CACHE_NAME=CACHE_PREFIX+'v1';
+const CACHE_NAME=CACHE_PREFIX+'v2';
 const HOME=new URL('./',self.registration.scope);
 const INDEX=new URL('index.html',HOME);
 const CORE_FILES=[
- './','./index.html','./manifest.webmanifest','./app-install.js','./export-formats.js',
+ './','./index.html','./favicon.svg','./manifest.webmanifest','./app-install.js','./export-formats.js',
  './vendor/jszip.min.js','./vendor/jspdf.umd.min.js','../styles.css',
  './icons/icon.svg','./icons/icon-192.png','./icons/icon-512.png',
  './icons/icon-maskable-512.png','./icons/apple-touch-icon.png'
