@@ -118,6 +118,19 @@ test('offline shell pre-caches only public static assets and serves the app with
    assert.ok(response&&response.ok,'offline '+name);
  }
 });
+test('every offline shell asset exists in the repository',()=>{
+ const sw=fromApp('sw.js');
+ const section=/const CORE_FILES=\[([\s\S]*?)\];/.exec(sw);
+ assert.ok(section,'offline asset list exists');
+ const paths=[...section[1].matchAll(/'([^']+)'/g)].map(m=>m[1]);
+ assert.ok(paths.length>=10);
+ paths.forEach(file=>{
+  const local=file==='./'?'index.html':file;
+  assert.ok(fs.existsSync(path.resolve(appPath,local)),file+' is missing');
+ });
+ assert.ok(paths.includes('./favicon.svg'));
+ assert.ok(paths.includes('../styles.css'));
+});
 test('service worker never intercepts private data or out-of-scope requests',async()=>{
  const sw=simulateSW();
  await sw.dispatch('install');
